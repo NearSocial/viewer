@@ -1,0 +1,27 @@
+$primary: #333;
+
+@import "node_modules/bootstrap/scss/bootstrap";
+
+body, html {
+  background: #fbfbfb;
+  -webkit-font-smoothing: antialiased;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.flex-buttons {
+  display: flex;
+  flex-flow: row wrap;
+
+  .btn {
+    flex: 1 1;
+  }
+}
+
+.btn-success {
+  .text-secondary {
+    color: #fff !important;
+  };
+}
