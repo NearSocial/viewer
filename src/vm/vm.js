@@ -1,8 +1,10 @@
 import React from "react";
 
 export default class VM {
-  constructor(near) {
+  constructor(near, gkey) {
     this.near = near;
+    this.gkey = gkey;
+    this.gIndex = 0;
   }
 
   requireIdentifier(id) {
@@ -48,6 +50,7 @@ export default class VM {
       const name = this.requireJSXIdentifier(attribute.name);
       attributes[name] = await this.execCode(attribute.value);
     }
+    attributes.key = `${this.gkey}-${this.gIndex++}`;
     const children = [];
     for (let i = 0; i < code.children.length; i++) {
       children.push(await this.execCode(code.children[i]));
@@ -55,7 +58,7 @@ export default class VM {
     if (element === "div") {
       return <div {...attributes}>{children}</div>;
     } else if (element === "img") {
-      return <img {...attributes} />;
+      return <img {...attributes} alt={attributes.alt ?? "not defined"} />;
     } else if (element === "br") {
       return <br {...attributes} />;
     } else if (element === "span") {
@@ -79,8 +82,14 @@ export default class VM {
         return (this.state[left] += right);
       } else if (code.operator === "-=") {
         return (this.state[left] -= right);
+      } else if (code.operator === "*=") {
+        return (this.state[left] *= right);
+      } else if (code.operator === "/=") {
+        return (this.state[left] /= right);
       } else {
-        throw new Error("Unknown operator '" + code.operator + "'");
+        throw new Error(
+          "Unknown AssignmentExpression operator '" + code.operator + "'"
+        );
       }
     } else if (type === "MemberExpression") {
       const object = await this.execCode(code.object);
@@ -125,6 +134,79 @@ export default class VM {
       return code.value;
     } else if (type === "JSXExpressionContainer") {
       return await this.execCode(code.expression);
+    } else if (type === "BinaryExpression") {
+      const left = await this.execCode(code.left);
+      const right = await this.execCode(code.right);
+      if (code.operator === "+") {
+        return left + right;
+      } else if (code.operator === "-") {
+        return left - right;
+      } else if (code.operator === "*") {
+        return left * right;
+      } else if (code.operator === "/") {
+        return left * right;
+      } else {
+        throw new Error(
+          "Unknown BinaryExpression operator '" + code.operator + "'"
+        );
+      }
+    } else if (type === "UnaryExpression") {
+      const argument = await this.execCode(code.argument);
+      if (code.operator === "-") {
+        return -argument;
+      } else if (code.operator === "!") {
+        return !argument;
+      } else {
+        throw new Error(
+          "Unknown UnaryExpression operator '" + code.operator + "'"
+        );
+      }
+    } else if (type === "LogicalExpression") {
+      const left = await this.execCode(code.left);
+      if (code.operator === "||") {
+        return left || (await this.execCode(code.right));
+      } else if (code.operator === "&&") {
+        return left && (await this.execCode(code.right));
+      } else if (code.operator === "??") {
+        return left ?? (await this.execCode(code.right));
+      } else {
+        throw new Error(
+          "Unknown LogicalExpression operator '" + code.operator + "'"
+        );
+      }
+    } else if (type === "ConditionalExpression") {
+      const test = await this.execCode(code.test);
+      return test
+        ? await this.execCode(code.consequent)
+        : await this.execCode(code.alternate);
+    } else if (type === "UpdateExpression") {
+      const argument = this.requireIdentifier(code.argument);
+      if (code.operator === "++") {
+        return code.prefix ? ++this.state[argument] : this.state[argument]++;
+      } else if (code.operator === "--") {
+        return code.prefix ? --this.state[argument] : this.state[argument]--;
+      } else {
+        throw new Error(
+          "Unknown UpdateExpression operator '" + code.operator + "'"
+        );
+      }
+    } else if (type === "ObjectExpression") {
+      let object = {};
+      for (let i = 0; i < code.properties.length; i++) {
+        const property = code.properties[i];
+        if (property.type !== "Property") {
+          throw new Error("Unknown property type: " + property.type);
+        }
+        const key = this.requireIdentifier(property.key);
+        object[key] = await this.execCode(property.value);
+      }
+      return object;
+    } else if (type === "ArrayExpression") {
+      let array = [];
+      for (let i = 0; i < code.elements.length; i++) {
+        array.push(await this.execCode(code.elements[i]));
+      }
+      return array;
     } else {
       throw new Error("Unknown expression type '" + type + "'");
     }
@@ -136,6 +218,7 @@ export default class VM {
     }
     this.state = { props };
     this.code = code;
+    let lastExpression = null;
     const body = this.code.body;
     for (let i = 0; i < body.length; i++) {
       const token = body[i];
@@ -148,12 +231,20 @@ export default class VM {
           }
         }
       } else if (token.type === "ReturnStatement") {
-        return await this.execCode(token.argument);
+        lastExpression = await this.execCode(token.argument);
+        break;
       } else if (token.type === "ExpressionStatement") {
-        return await this.execCode(token.expression);
+        lastExpression = await this.execCode(token.expression);
       }
     }
 
-    return <div>Test</div>;
+    return (typeof lastExpression === "object" &&
+      !!lastExpression["$$typeof"]) ||
+      typeof lastExpression === "string" ||
+      typeof lastExpression === "number" ? (
+      lastExpression
+    ) : (
+      <pre>{JSON.stringify(lastExpression, undefined, 2)}</pre>
+    );
   }
 }

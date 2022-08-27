@@ -4,6 +4,7 @@ import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
 import { useNear } from "../../data/near";
 import VM from "../../vm/vm";
+import { Loading } from "../../data/utils";
 
 // const Element = {
 //   Text: "text",
@@ -42,35 +43,17 @@ export default function Widget(props) {
     const code = parseCode(rawCode);
     console.log(code);
     setElement(<pre>{JSON.stringify(code, null, 2)}</pre>);
-    new VM(near)
+    new VM(near, gkey)
       .renderCode(code, codeProps || {})
       .then((element) => {
         setElement(element ?? "Failed");
       })
       .catch((e) => console.error(e.message));
-  }, [near, rawCode, codeProps]);
+  }, [near, gkey, rawCode, codeProps]);
 
-  return element ? (
+  return element !== null && element !== undefined ? (
     <div className="position-relative overflow-hidden">{element}</div>
   ) : (
-    "Loading"
+    Loading
   );
-
-  // if (typeof src === "string") {
-  //   return src;
-  // } else if (Array.isArray(src)) {
-  //   return src.map((w, index) => (
-  //     <Widget key={`${gkey}-w-${index}`} {...props} src={w} />
-  //   ));
-  // }
-  // let element = null;
-  // if (src.element === Element.Text) {
-  //   element = <span>{src.content}</span>;
-  // } else if (src.element === Element.Image) {
-  //   element = <img src={src.content} alt={src.alt} />;
-  // } else if (src.element === Element.Widget) {
-  //   element = <Widget src={src.content} />;
-  // } else {
-  //   element = <div>Unknown element</div>;
-  // }
 }
