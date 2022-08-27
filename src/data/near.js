@@ -7,8 +7,6 @@ import { useEffect, useState } from "react";
 export const TGas = Big(10).pow(12);
 export const MaxGasPerTransaction = TGas.mul(300);
 export const StorageCostPerByte = Big(10).pow(19);
-export const TokenStorageDeposit = StorageCostPerByte.mul(125);
-export const BridgeTokenStorageDeposit = StorageCostPerByte.mul(1250);
 
 export const randomPublicKey = nearAPI.utils.PublicKey.from(
   "ed25519:8fWHD35Rjd78yeowShh9GwhRudRtLLsGCRjZtgPjAtw9"

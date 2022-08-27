@@ -1,11 +1,6 @@
 import Big from "big.js";
-import {
-  BridgeTokenStorageDeposit,
-  NearConfig,
-  TokenStorageDeposit,
-} from "./near";
+import { NearConfig } from "./near";
 import React from "react";
-import Timer from "react-compound-timer";
 
 const MinAccountIdLen = 2;
 const MaxAccountIdLen = 64;
@@ -135,25 +130,3 @@ export const availableNearBalance = (account) => {
 
 export const isoDate = (d) =>
   d ? new Date(d).toISOString().substring(0, 10) : "";
-
-export const formatTimer = () => (
-  <React.Fragment>
-    <Timer.Days
-      formatValue={(v) => (v > 1 ? `${v} days ` : v ? `1 day ` : "")}
-    />
-    <Timer.Hours />:
-    <Timer.Minutes formatValue={(v) => `${v}`.padStart(2, "0")} />
-    :
-    <Timer.Seconds formatValue={(v) => `${v}`.padStart(2, "0")} />
-  </React.Fragment>
-);
-
-export const isBridgeToken = (tokenAccountId) => {
-  return tokenAccountId.endsWith(".bridge.near");
-};
-
-export const tokenStorageDeposit = async (tokenAccountId) => {
-  return isBridgeToken(tokenAccountId)
-    ? BridgeTokenStorageDeposit
-    : TokenStorageDeposit;
-};
