@@ -16,6 +16,15 @@ export const Loading = (
   />
 );
 
+export const ErrorFallback = ({ error }) => {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+    </div>
+  );
+};
+
 export function isValidAccountId(accountId) {
   return (
     accountId &&

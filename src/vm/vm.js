@@ -67,34 +67,51 @@ export default class VM {
       throw new Error("Unsupported element: " + element);
     }
   }
+
+  async resolveKey(code, computed) {
+    return computed ? await this.execCode(code) : this.requireIdentifier(code);
+  }
+
+  async resolveMemberExpression(code) {
+    if (code.type === "Identifier") {
+      return [this.state, code.name];
+    } else if (code.type === "MemberExpression") {
+      const [innerObj, key] = await this.resolveMemberExpression(code.object);
+      const property = await this.resolveKey(code.property, code.computed);
+      return [innerObj?.[key], property];
+    } else {
+      throw new Error("Unsupported member type: '" + code.type + "'");
+    }
+  }
+
   async execCodeInternal(code) {
     if (!code) {
       return null;
     }
     const type = code?.type;
     if (type === "AssignmentExpression") {
+      const [obj, key] = await this.resolveMemberExpression(code.left);
       const right = await this.execCode(code.right);
-      const left = this.requireIdentifier(code.left);
 
       if (code.operator === "=") {
-        return (this.state[left] = right);
+        return (obj[key] = right);
       } else if (code.operator === "+=") {
-        return (this.state[left] += right);
+        return (obj[key] += right);
       } else if (code.operator === "-=") {
-        return (this.state[left] -= right);
+        return (obj[key] -= right);
       } else if (code.operator === "*=") {
-        return (this.state[left] *= right);
+        return (obj[key] *= right);
       } else if (code.operator === "/=") {
-        return (this.state[left] /= right);
+        return (obj[key] /= right);
       } else {
         throw new Error(
           "Unknown AssignmentExpression operator '" + code.operator + "'"
         );
       }
     } else if (type === "MemberExpression") {
-      const object = await this.execCode(code.object);
-      const property = this.requireIdentifier(code.property);
-      return object?.[property];
+      const obj = await this.execCode(code.object);
+      const key = await this.resolveKey(code.property, code.computed);
+      return obj?.[key];
     } else if (type === "Identifier") {
       return this.state[code.name];
     } else if (type === "JSXExpressionContainer") {
@@ -180,11 +197,11 @@ export default class VM {
         ? await this.execCode(code.consequent)
         : await this.execCode(code.alternate);
     } else if (type === "UpdateExpression") {
-      const argument = this.requireIdentifier(code.argument);
+      const [obj, key] = await this.resolveMemberExpression(code.argument);
       if (code.operator === "++") {
-        return code.prefix ? ++this.state[argument] : this.state[argument]++;
+        return code.prefix ? ++obj[key] : obj[key]++;
       } else if (code.operator === "--") {
-        return code.prefix ? --this.state[argument] : this.state[argument]--;
+        return code.prefix ? --obj[key] : obj[key]--;
       } else {
         throw new Error(
           "Unknown UpdateExpression operator '" + code.operator + "'"
@@ -197,7 +214,7 @@ export default class VM {
         if (property.type !== "Property") {
           throw new Error("Unknown property type: " + property.type);
         }
-        const key = this.requireIdentifier(property.key);
+        const key = await this.resolveKey(property.key, property.computed);
         object[key] = await this.execCode(property.value);
       }
       return object;

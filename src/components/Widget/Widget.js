@@ -4,7 +4,8 @@ import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
 import { useNear } from "../../data/near";
 import VM from "../../vm/vm";
-import { Loading } from "../../data/utils";
+import { ErrorFallback, Loading } from "../../data/utils";
+import { ErrorBoundary } from "react-error-boundary";
 
 // const Element = {
 //   Text: "text",
@@ -52,7 +53,17 @@ export default function Widget(props) {
   }, [near, gkey, rawCode, codeProps]);
 
   return element !== null && element !== undefined ? (
-    <div className="position-relative overflow-hidden">{element}</div>
+    <div className="position-relative overflow-hidden">
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => {
+          setElement(null);
+        }}
+        resetKeys={[element]}
+      >
+        {element}
+      </ErrorBoundary>
+    </div>
   ) : (
     Loading
   );

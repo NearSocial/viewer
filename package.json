@@ -18,6 +18,7 @@
     "prettier": "^2.7.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-error-boundary": "^3.1.4",
     "react-markdown": "^7.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.0",
