@@ -46,10 +46,7 @@ export default class VM {
         throw new Error("Non JSXAttribute: " + attribute.type);
       }
       const name = this.requireJSXIdentifier(attribute.name);
-      if (attribute.value.type !== "JSXExpressionContainer") {
-        throw new Error("Non JSXExpressionContainer: " + attribute.value.type);
-      }
-      attributes[name] = await this.execCode(attribute.value.expression);
+      attributes[name] = await this.execCode(attribute.value);
     }
     const children = [];
     for (let i = 0; i < code.children.length; i++) {
@@ -91,6 +88,8 @@ export default class VM {
       return object?.[property];
     } else if (type === "Identifier") {
       return this.state[code.name];
+    } else if (type === "JSXExpressionContainer") {
+      return await this.execCode(code.expression);
     } else if (type === "TemplateLiteral") {
       const quasis = [];
       for (let i = 0; i < code.quasis.length; i++) {

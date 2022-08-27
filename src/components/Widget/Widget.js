@@ -50,7 +50,11 @@ export default function Widget(props) {
       .catch((e) => console.error(e.message));
   }, [near, rawCode, codeProps]);
 
-  return element || "Loading";
+  return element ? (
+    <div className="position-relative overflow-hidden">{element}</div>
+  ) : (
+    "Loading"
+  );
 
   // if (typeof src === "string") {
   //   return src;
