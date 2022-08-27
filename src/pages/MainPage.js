@@ -2,6 +2,8 @@ import React, { useCallback, useState } from "react";
 import Widget from "../components/Widget/Widget";
 import ls from "local-storage";
 import { LsKey } from "../data/near";
+import prettier from "prettier";
+import parserBabel from "prettier/parser-babel";
 
 const EditorCodeKey = LsKey + "editorCode:";
 
@@ -15,6 +17,21 @@ export default function MainPage(props) {
     },
     [setCode]
   );
+  const reformat = useCallback(
+    (code) => {
+      try {
+        const formatedCode = prettier.format(code, {
+          parser: "babel",
+          plugins: [parserBabel],
+        });
+        updateCode(formatedCode);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [updateCode]
+  );
+
   return (
     <div>
       <div className="container">
@@ -23,10 +40,16 @@ export default function MainPage(props) {
             <h6>Editor</h6>
             <div className="mb-3">
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary me-2"
                 onClick={() => setRenderCode(code)}
               >
                 Render
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => reformat(code)}
+              >
+                Format
               </button>
             </div>
             <textarea
