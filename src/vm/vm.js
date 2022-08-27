@@ -49,6 +49,22 @@ export default class VM {
       }
       const name = this.requireJSXIdentifier(attribute.name);
       attributes[name] = await this.execCode(attribute.value);
+      if (
+        name === "value" &&
+        element === "input" &&
+        attribute.value.type === "JSXExpressionContainer"
+      ) {
+        attributes.onChange = async (e) => {
+          e.preventDefault();
+          const value = e.target.value;
+          const [obj, key] = await this.resolveMemberExpression(
+            attribute.value.expression
+          );
+          obj[key] = value;
+          this.setState(this.state.state);
+          return false;
+        };
+      }
     }
     attributes.key = `${this.gkey}-${this.gIndex++}`;
     const children = [];
@@ -60,9 +76,13 @@ export default class VM {
     } else if (element === "img") {
       return <img {...attributes} alt={attributes.alt ?? "not defined"} />;
     } else if (element === "br") {
-      return <br {...attributes} />;
+      return <br />;
     } else if (element === "span") {
       return <span {...attributes}>{children}</span>;
+    } else if (element === "pre") {
+      return <pre {...attributes}>{children}</pre>;
+    } else if (element === "input") {
+      return <input {...attributes} />;
     } else {
       throw new Error("Unsupported element: " + element);
     }
@@ -131,15 +151,20 @@ export default class VM {
       return quasis.join("");
     } else if (type === "CallExpression") {
       const callee = this.requireIdentifier(code.callee);
+      const args = [];
+      for (let i = 0; i < code.arguments.length; i++) {
+        args.push(await this.execCode(code.arguments[i]));
+      }
       if (callee === "socialGetr") {
-        const args = [];
-        for (let i = 0; i < code.arguments.length; i++) {
-          args.push(await this.execCode(code.arguments[i]));
-        }
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for socialGetr");
         }
         return await this.socialGetr(args[0]);
+      } else if (callee === "stringify") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'value' for stringify");
+        }
+        return JSON.stringify(args[0], undefined, 2);
       } else {
         throw new Error("Unknown callee method '" + callee + "'");
       }
@@ -229,11 +254,12 @@ export default class VM {
     }
   }
 
-  async renderCode(code, props) {
+  async renderCode(code, initialState, setState) {
     if (!code || code.type !== "Program") {
       throw new Error("Not a program");
     }
-    this.state = { props };
+    this.state = JSON.parse(JSON.stringify(initialState));
+    this.setState = setState;
     this.code = code;
     let lastExpression = null;
     const body = this.code.body;

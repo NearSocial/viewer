@@ -82,6 +82,7 @@ async function _initNear() {
   });
 
   _near.keyStore = keyStore;
+  console.log(keyStore);
   _near.nearConnection = nearConnection;
 
   _near.walletConnection = new nearAPI.WalletConnection(
@@ -97,6 +98,7 @@ async function _initNear() {
       "get",
       "get_num_accounts",
       "get_accounts_paged",
+      "is_write_permission_granted",
     ],
     changeMethods: ["set", "grant_write_permission", "storage_deposit"],
   });

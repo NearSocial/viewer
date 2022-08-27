@@ -33,24 +33,39 @@ export default function Widget(props) {
   const [gkey] = useState(uuid());
   const rawCode = props.code;
   const codeProps = props.props;
+  const [state, setState] = useState({});
+  const [code, setCode] = useState(null);
 
   const near = useNear();
   const [element, setElement] = useState(null);
 
   useEffect(() => {
+    const code = parseCode(rawCode);
+    console.log(code);
+    setCode(code);
+  }, [rawCode]);
+
+  useEffect(() => {
     if (!near) {
       return;
     }
-    const code = parseCode(rawCode);
-    console.log(code);
-    setElement(<pre>{JSON.stringify(code, null, 2)}</pre>);
     new VM(near, gkey)
-      .renderCode(code, codeProps || {})
+      .renderCode(
+        code,
+        {
+          props: codeProps || {},
+          context: {
+            accountId: near.accountId,
+          },
+          state,
+        },
+        setState
+      )
       .then((element) => {
         setElement(element ?? "Failed");
       })
       .catch((e) => console.error(e.message));
-  }, [near, gkey, rawCode, codeProps]);
+  }, [near, gkey, code, codeProps, state]);
 
   return element !== null && element !== undefined ? (
     <div className="position-relative overflow-hidden">

@@ -20,13 +20,18 @@ const loadAccount = async (near, setAccount) => {
     refresh: async () => await loadAccount(near, setAccount),
   };
   if (accountId) {
-    const [rawAccount, state] = await Promise.all([
-      near.contract.get_account({
+    const [rawStorage, writePermission, state] = await Promise.all([
+      near.contract.storage_balance_of({
         account_id: accountId,
+      }),
+      near.contract.is_write_permission_granted({
+        predecessor_id: accountId,
+        key: `${accountId}`,
       }),
       near.account.state(),
     ]);
-    account.account = keysToCamel(rawAccount);
+    account.storage = keysToCamel(rawStorage);
+    account.writePermission = writePermission;
     account.state = state;
   }
 
