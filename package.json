@@ -4,9 +4,8 @@
   "homepage": "/",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
+    "acorn": "^8.8.0",
+    "acorn-jsx": "^5.3.2",
     "big.js": "^6.1.1",
     "bn.js": "^5.1.1",
     "bootstrap": "^5.0.1",
@@ -61,6 +60,6 @@
     ]
   },
   "devDependencies": {
-    "prettier": "^2.2.1"
+    "prettier": "^2.7.1"
   }
 }
