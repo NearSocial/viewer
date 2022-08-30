@@ -82,7 +82,6 @@ async function _initNear() {
   });
 
   _near.keyStore = keyStore;
-  console.log(keyStore);
   _near.nearConnection = nearConnection;
 
   _near.walletConnection = new nearAPI.WalletConnection(

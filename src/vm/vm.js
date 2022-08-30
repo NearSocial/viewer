@@ -1,5 +1,9 @@
 import React from "react";
 
+const ReactKey = "$$typeof";
+const isReactObject = (o) => typeof o === "object" && !!o[ReactKey];
+const StakeKey = "state";
+
 export default class VM {
   constructor(near, gkey) {
     this.near = near;
@@ -48,22 +52,30 @@ export default class VM {
         throw new Error("Non JSXAttribute: " + attribute.type);
       }
       const name = this.requireJSXIdentifier(attribute.name);
-      attributes[name] = await this.execCode(attribute.value);
+
       if (
         name === "value" &&
         element === "input" &&
         attribute.value.type === "JSXExpressionContainer"
       ) {
+        const [obj, key] = await this.resolveMemberExpression(
+          attribute.value.expression,
+          {
+            requireState: true,
+          }
+        );
+        attributes.value = obj?.[key];
         attributes.onChange = async (e) => {
           e.preventDefault();
           const value = e.target.value;
-          const [obj, key] = await this.resolveMemberExpression(
-            attribute.value.expression
-          );
+          console.log(this.state.state, obj, key, value);
+
           obj[key] = value;
-          this.setState(this.state.state);
+          this.setReactState(JSON.parse(JSON.stringify(this.state.state)));
           return false;
         };
+      } else {
+        attributes[name] = await this.execCode(attribute.value);
       }
     }
     attributes.key = `${this.gkey}-${this.gIndex++}`;
@@ -89,16 +101,77 @@ export default class VM {
   }
 
   async resolveKey(code, computed) {
-    return computed ? await this.execCode(code) : this.requireIdentifier(code);
+    const key =
+      !computed && code.type === "Identifier"
+        ? code.name
+        : await this.execCode(code);
+    if (key === ReactKey) {
+      throw new Error(`${ReactKey} can't be used`);
+    }
+    return key;
   }
 
-  async resolveMemberExpression(code) {
+  async callFunction(callee, args) {
+    if (callee === "socialGetr") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'keys' for socialGetr");
+      }
+      return await this.socialGetr(args[0]);
+    } else if (callee === "stringify") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'value' for stringify");
+      }
+      return JSON.stringify(args[0], undefined, 2);
+    } else if (callee === "initState") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'initialState' for initState");
+      }
+      if (typeof args[0] !== "object") {
+        throw new Error();
+      }
+      if (this.state.state !== undefined) {
+        return null;
+      }
+      this.setReactState(JSON.parse(JSON.stringify(args[0])));
+      this.setNeedRefresh(new Date().getTime());
+      throw new Error("initializing the state");
+    } else {
+      throw new Error("Unknown callee method '" + callee + "'");
+    }
+  }
+
+  /// Resolves the underlying object and the key to modify.
+  /// Should only be used by left hand expressions for assignments.
+  /// Options:
+  /// - requireState requires the top object key be `state`
+  async resolveMemberExpression(code, options) {
     if (code.type === "Identifier") {
+      if (code.name === ReactKey) {
+        throw new Error(`${ReactKey} can't be used`);
+      }
+      if (options?.requireState) {
+        if (code.name !== StakeKey) {
+          throw new Error(`The top object should be ${StakeKey}`);
+        }
+      } else {
+        if (code.name === StakeKey) {
+          throw new Error(
+            `State can't be modified directly. Use "initState" to initialize the state.`
+          );
+        }
+      }
       return [this.state, code.name];
     } else if (code.type === "MemberExpression") {
-      const [innerObj, key] = await this.resolveMemberExpression(code.object);
+      const [innerObj, key] = await this.resolveMemberExpression(
+        code.object,
+        options
+      );
       const property = await this.resolveKey(code.property, code.computed);
-      return [innerObj?.[key], property];
+      const obj = innerObj?.[key];
+      if (isReactObject(obj)) {
+        throw new Error("React objects shouldn't be modified");
+      }
+      return [obj, property];
     } else {
       throw new Error("Unsupported member type: '" + code.type + "'");
     }
@@ -110,7 +183,7 @@ export default class VM {
     }
     const type = code?.type;
     if (type === "AssignmentExpression") {
-      const [obj, key] = await this.resolveMemberExpression(code.left);
+      const [obj, key] = await this.resolveMemberExpression(code.left, true);
       const right = await this.execCode(code.right);
 
       if (code.operator === "=") {
@@ -155,19 +228,7 @@ export default class VM {
       for (let i = 0; i < code.arguments.length; i++) {
         args.push(await this.execCode(code.arguments[i]));
       }
-      if (callee === "socialGetr") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for socialGetr");
-        }
-        return await this.socialGetr(args[0]);
-      } else if (callee === "stringify") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'value' for stringify");
-        }
-        return JSON.stringify(args[0], undefined, 2);
-      } else {
-        throw new Error("Unknown callee method '" + callee + "'");
-      }
+      return await this.callFunction(callee, args);
     } else if (type === "Literal") {
       return code.value;
     } else if (type === "JSXElement") {
@@ -249,17 +310,27 @@ export default class VM {
         array.push(await this.execCode(code.elements[i]));
       }
       return array;
+    } else if (type === "JSXEmptyExpression") {
+      return null;
     } else {
       throw new Error("Unknown expression type '" + type + "'");
     }
   }
 
-  async renderCode(code, initialState, setState) {
+  async renderCode(
+    code,
+    initialState,
+    reactState,
+    setReactState,
+    setNeedRefresh
+  ) {
     if (!code || code.type !== "Program") {
       throw new Error("Not a program");
     }
     this.state = JSON.parse(JSON.stringify(initialState));
-    this.setState = setState;
+    this.state.state = reactState;
+    this.setReactState = setReactState;
+    this.setNeedRefresh = setNeedRefresh;
     this.code = code;
     let lastExpression = null;
     const body = this.code.body;
@@ -281,8 +352,7 @@ export default class VM {
       }
     }
 
-    return (typeof lastExpression === "object" &&
-      !!lastExpression["$$typeof"]) ||
+    return isReactObject(lastExpression) ||
       typeof lastExpression === "string" ||
       typeof lastExpression === "number" ? (
       lastExpression
