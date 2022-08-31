@@ -29,8 +29,10 @@ export default function Widget(props) {
   const rawCode = props.code;
   const codeProps = props.props;
   const [state, setState] = useState(undefined);
+  const [cache, setCache] = useState({});
   const [code, setCode] = useState(null);
-  const [needRefresh, setNeedRefresh] = useState(0);
+  const [context, setContext] = useState({});
+  const [vm, setVm] = useState(null);
 
   const near = useNear();
   const [element, setElement] = useState(null);
@@ -56,35 +58,42 @@ export default function Widget(props) {
     if (!near || !code) {
       return;
     }
-    new VM(near, gkey)
-      .renderCode(
-        code,
-        {
+    setVm(new VM(near, gkey, code, setState, setCache));
+  }, [near, gkey, code]);
+
+  useEffect(() => {
+    if (!near) {
+      return;
+    }
+    setContext({
+      accountId: near.accountId,
+    });
+  }, [near]);
+
+  useEffect(() => {
+    if (!vm) {
+      return;
+    }
+    try {
+      setElement(
+        vm.renderCode({
           props: codeProps || {},
-          context: {
-            accountId: near.accountId,
-          },
-        },
-        state,
-        setState,
-        setNeedRefresh
-      )
-      .then((element) => {
-        setElement(element ?? "Failed");
-      })
-      .catch((e) => {
-        setElement(
-          <div>
-            Execution error:
-            <pre>{e.message}</pre>
-            <pre>{e.stack}</pre>
-          </div>
-        );
-        console.error(e);
-      });
-    // `state` doesn't trigger rerender. Only an explicit update requires full rerender.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [near, gkey, code, codeProps, state, needRefresh]);
+          context,
+          state,
+          cache,
+        }) ?? "Execution failed"
+      );
+    } catch (e) {
+      setElement(
+        <div>
+          Execution error:
+          <pre>{e.message}</pre>
+          <pre>{e.stack}</pre>
+        </div>
+      );
+      console.error(e);
+    }
+  }, [vm, codeProps, context, state, cache]);
 
   return element !== null && element !== undefined ? (
     <div className="position-relative overflow-hidden">

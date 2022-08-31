@@ -1,14 +1,24 @@
 import React from "react";
 
 const ReactKey = "$$typeof";
-const isReactObject = (o) => typeof o === "object" && !!o[ReactKey];
+const isReactObject = (o) =>
+  o !== null && typeof o === "object" && !!o[ReactKey];
 const StakeKey = "state";
 
+const ExecutionDebug = false;
+
 export default class VM {
-  constructor(near, gkey) {
+  constructor(near, gkey, code, setReactState, setCache) {
+    if (!code || code.type !== "Program") {
+      throw new Error("Not a program");
+    }
     this.near = near;
     this.gkey = gkey;
-    this.gIndex = 0;
+    this.code = code;
+    this.setReactState = setReactState;
+    this.setCache = setCache;
+    this.fetchingCache = {};
+    this.alive = true;
   }
 
   requireIdentifier(id) {
@@ -25,25 +35,48 @@ export default class VM {
     return id.name;
   }
 
-  async socialGetr(key) {
+  async asyncSocialGetr(key) {
     let data = await this.near.contract.get({
       keys: [`${key}/**`],
     });
-    console.log(data);
+    // console.log(data);
     key.split("/").forEach((part) => {
       data = data?.[part];
     });
     return data;
   }
 
-  async execCode(code) {
-    console.log("Executing code:", code?.type);
-    const res = await this.execCodeInternal(code);
-    console.log(code?.type, res);
+  socialGetr(key) {
+    if (key in this.cache) {
+      return this.cache[key];
+    }
+    if (!(key in this.fetchingCache)) {
+      this.fetchingCache[key] = true;
+      this.asyncSocialGetr(key)
+        .then((data) => {
+          if (this.alive) {
+            this.setCache(
+              Object.assign({}, this.cache, {
+                [key]: data,
+              })
+            );
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+    return null;
+  }
+
+  execCode(code) {
+    ExecutionDebug && console.log("Executing code:", code?.type);
+    const res = this.execCodeInternal(code);
+    ExecutionDebug && console.log(code?.type, res);
     return res;
   }
 
-  async renderElement(code) {
+  renderElement(code) {
     const element = this.requireJSXIdentifier(code.openingElement.name);
     const attributes = {};
     for (let i = 0; i < code.openingElement.attributes.length; i++) {
@@ -58,30 +91,27 @@ export default class VM {
         element === "input" &&
         attribute.value.type === "JSXExpressionContainer"
       ) {
-        const [obj, key] = await this.resolveMemberExpression(
+        const [obj, key] = this.resolveMemberExpression(
           attribute.value.expression,
           {
             requireState: true,
           }
         );
         attributes.value = obj?.[key];
-        attributes.onChange = async (e) => {
+        attributes.onChange = (e) => {
           e.preventDefault();
-          const value = e.target.value;
-          console.log(this.state.state, obj, key, value);
-
-          obj[key] = value;
-          this.setReactState(JSON.parse(JSON.stringify(this.state.state)));
+          obj[key] = e.target.value;
+          this.setReactState(this.state.state);
           return false;
         };
       } else {
-        attributes[name] = await this.execCode(attribute.value);
+        attributes[name] = this.execCode(attribute.value);
       }
     }
     attributes.key = `${this.gkey}-${this.gIndex++}`;
     const children = [];
     for (let i = 0; i < code.children.length; i++) {
-      children.push(await this.execCode(code.children[i]));
+      children.push(this.execCode(code.children[i]));
     }
     if (element === "div") {
       return <div {...attributes}>{children}</div>;
@@ -100,23 +130,21 @@ export default class VM {
     }
   }
 
-  async resolveKey(code, computed) {
+  resolveKey(code, computed) {
     const key =
-      !computed && code.type === "Identifier"
-        ? code.name
-        : await this.execCode(code);
+      !computed && code.type === "Identifier" ? code.name : this.execCode(code);
     if (key === ReactKey) {
       throw new Error(`${ReactKey} can't be used`);
     }
     return key;
   }
 
-  async callFunction(callee, args) {
+  callFunction(callee, args) {
     if (callee === "socialGetr") {
       if (args.length < 1) {
         throw new Error("Missing argument 'keys' for socialGetr");
       }
-      return await this.socialGetr(args[0]);
+      return this.socialGetr(args[0]);
     } else if (callee === "stringify") {
       if (args.length < 1) {
         throw new Error("Missing argument 'value' for stringify");
@@ -126,15 +154,15 @@ export default class VM {
       if (args.length < 1) {
         throw new Error("Missing argument 'initialState' for initState");
       }
-      if (typeof args[0] !== "object") {
-        throw new Error();
+      if (args[0] === null || typeof args[0] !== "object") {
+        throw new Error("'initialState' is not an object");
       }
       if (this.state.state !== undefined) {
         return null;
       }
-      this.setReactState(JSON.parse(JSON.stringify(args[0])));
-      this.setNeedRefresh(new Date().getTime());
-      throw new Error("initializing the state");
+      const newState = JSON.parse(JSON.stringify(args[0]));
+      this.setReactState(newState);
+      this.state.state = newState;
     } else {
       throw new Error("Unknown callee method '" + callee + "'");
     }
@@ -144,7 +172,7 @@ export default class VM {
   /// Should only be used by left hand expressions for assignments.
   /// Options:
   /// - requireState requires the top object key be `state`
-  async resolveMemberExpression(code, options) {
+  resolveMemberExpression(code, options) {
     if (code.type === "Identifier") {
       if (code.name === ReactKey) {
         throw new Error(`${ReactKey} can't be used`);
@@ -162,11 +190,11 @@ export default class VM {
       }
       return [this.state, code.name];
     } else if (code.type === "MemberExpression") {
-      const [innerObj, key] = await this.resolveMemberExpression(
+      const [innerObj, key] = this.resolveMemberExpression(
         code.object,
         options
       );
-      const property = await this.resolveKey(code.property, code.computed);
+      const property = this.resolveKey(code.property, code.computed);
       const obj = innerObj?.[key];
       if (isReactObject(obj)) {
         throw new Error("React objects shouldn't be modified");
@@ -177,14 +205,14 @@ export default class VM {
     }
   }
 
-  async execCodeInternal(code) {
+  execCodeInternal(code) {
     if (!code) {
       return null;
     }
     const type = code?.type;
     if (type === "AssignmentExpression") {
-      const [obj, key] = await this.resolveMemberExpression(code.left, true);
-      const right = await this.execCode(code.right);
+      const [obj, key] = this.resolveMemberExpression(code.left, true);
+      const right = this.execCode(code.right);
 
       if (code.operator === "=") {
         return (obj[key] = right);
@@ -202,13 +230,13 @@ export default class VM {
         );
       }
     } else if (type === "MemberExpression") {
-      const obj = await this.execCode(code.object);
-      const key = await this.resolveKey(code.property, code.computed);
+      const obj = this.execCode(code.object);
+      const key = this.resolveKey(code.property, code.computed);
       return obj?.[key];
     } else if (type === "Identifier") {
       return this.state[code.name];
     } else if (type === "JSXExpressionContainer") {
-      return await this.execCode(code.expression);
+      return this.execCode(code.expression);
     } else if (type === "TemplateLiteral") {
       const quasis = [];
       for (let i = 0; i < code.quasis.length; i++) {
@@ -218,7 +246,7 @@ export default class VM {
         }
         quasis.push(element.value.cooked);
         if (!element.tail) {
-          quasis.push(await this.execCode(code.expressions[i]));
+          quasis.push(this.execCode(code.expressions[i]));
         }
       }
       return quasis.join("");
@@ -226,20 +254,20 @@ export default class VM {
       const callee = this.requireIdentifier(code.callee);
       const args = [];
       for (let i = 0; i < code.arguments.length; i++) {
-        args.push(await this.execCode(code.arguments[i]));
+        args.push(this.execCode(code.arguments[i]));
       }
-      return await this.callFunction(callee, args);
+      return this.callFunction(callee, args);
     } else if (type === "Literal") {
       return code.value;
     } else if (type === "JSXElement") {
-      return await this.renderElement(code);
+      return this.renderElement(code);
     } else if (type === "JSXText") {
       return code.value;
     } else if (type === "JSXExpressionContainer") {
-      return await this.execCode(code.expression);
+      return this.execCode(code.expression);
     } else if (type === "BinaryExpression") {
-      const left = await this.execCode(code.left);
-      const right = await this.execCode(code.right);
+      const left = this.execCode(code.left);
+      const right = this.execCode(code.right);
       if (code.operator === "+") {
         return left + right;
       } else if (code.operator === "-") {
@@ -254,7 +282,7 @@ export default class VM {
         );
       }
     } else if (type === "UnaryExpression") {
-      const argument = await this.execCode(code.argument);
+      const argument = this.execCode(code.argument);
       if (code.operator === "-") {
         return -argument;
       } else if (code.operator === "!") {
@@ -265,25 +293,25 @@ export default class VM {
         );
       }
     } else if (type === "LogicalExpression") {
-      const left = await this.execCode(code.left);
+      const left = this.execCode(code.left);
       if (code.operator === "||") {
-        return left || (await this.execCode(code.right));
+        return left || this.execCode(code.right);
       } else if (code.operator === "&&") {
-        return left && (await this.execCode(code.right));
+        return left && this.execCode(code.right);
       } else if (code.operator === "??") {
-        return left ?? (await this.execCode(code.right));
+        return left ?? this.execCode(code.right);
       } else {
         throw new Error(
           "Unknown LogicalExpression operator '" + code.operator + "'"
         );
       }
     } else if (type === "ConditionalExpression") {
-      const test = await this.execCode(code.test);
+      const test = this.execCode(code.test);
       return test
-        ? await this.execCode(code.consequent)
-        : await this.execCode(code.alternate);
+        ? this.execCode(code.consequent)
+        : this.execCode(code.alternate);
     } else if (type === "UpdateExpression") {
-      const [obj, key] = await this.resolveMemberExpression(code.argument);
+      const [obj, key] = this.resolveMemberExpression(code.argument);
       if (code.operator === "++") {
         return code.prefix ? ++obj[key] : obj[key]++;
       } else if (code.operator === "--") {
@@ -300,14 +328,14 @@ export default class VM {
         if (property.type !== "Property") {
           throw new Error("Unknown property type: " + property.type);
         }
-        const key = await this.resolveKey(property.key, property.computed);
-        object[key] = await this.execCode(property.value);
+        const key = this.resolveKey(property.key, property.computed);
+        object[key] = this.execCode(property.value);
       }
       return object;
     } else if (type === "ArrayExpression") {
       let array = [];
       for (let i = 0; i < code.elements.length; i++) {
-        array.push(await this.execCode(code.elements[i]));
+        array.push(this.execCode(code.elements[i]));
       }
       return array;
     } else if (type === "JSXEmptyExpression") {
@@ -317,22 +345,17 @@ export default class VM {
     }
   }
 
-  async renderCode(
-    code,
-    initialState,
-    reactState,
-    setReactState,
-    setNeedRefresh
-  ) {
-    if (!code || code.type !== "Program") {
-      throw new Error("Not a program");
-    }
-    this.state = JSON.parse(JSON.stringify(initialState));
-    this.state.state = reactState;
-    this.setReactState = setReactState;
-    this.setNeedRefresh = setNeedRefresh;
-    this.code = code;
-    let lastExpression = null;
+  renderCode({ props, context, state, cache }) {
+    this.gIndex = 0;
+    this.state = JSON.parse(
+      JSON.stringify({
+        props,
+        context,
+        state,
+      })
+    );
+    this.cache = cache;
+    let result = null;
     const body = this.code.body;
     for (let i = 0; i < body.length; i++) {
       const token = body[i];
@@ -340,24 +363,25 @@ export default class VM {
         for (let j = 0; j < token.declarations.length; j++) {
           const declaration = token.declarations[j];
           if (declaration.type === "VariableDeclarator") {
-            this.state[this.requireIdentifier(declaration.id)] =
-              await this.execCode(declaration.init);
+            this.state[this.requireIdentifier(declaration.id)] = this.execCode(
+              declaration.init
+            );
           }
         }
       } else if (token.type === "ReturnStatement") {
-        lastExpression = await this.execCode(token.argument);
+        result = this.execCode(token.argument);
         break;
       } else if (token.type === "ExpressionStatement") {
-        lastExpression = await this.execCode(token.expression);
+        result = this.execCode(token.expression);
       }
     }
 
-    return isReactObject(lastExpression) ||
-      typeof lastExpression === "string" ||
-      typeof lastExpression === "number" ? (
-      lastExpression
+    return isReactObject(result) ||
+      typeof result === "string" ||
+      typeof result === "number" ? (
+      result
     ) : (
-      <pre>{JSON.stringify(lastExpression, undefined, 2)}</pre>
+      <pre>{JSON.stringify(result, undefined, 2)}</pre>
     );
   }
 }
