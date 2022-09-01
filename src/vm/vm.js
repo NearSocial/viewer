@@ -8,8 +8,8 @@ const StakeKey = "state";
 const ExecutionDebug = false;
 
 export default class VM {
-  constructor(near, gkey, code, setReactState, setCache) {
-    if (!code || code.type !== "Program") {
+  constructor(near, gkey, code, setReactState, setCache, commitData) {
+    if (!code) {
       throw new Error("Not a program");
     }
     this.near = near;
@@ -17,6 +17,7 @@ export default class VM {
     this.code = code;
     this.setReactState = setReactState;
     this.setCache = setCache;
+    this.commitData = commitData;
     this.fetchingCache = {};
     this.alive = true;
   }
@@ -69,7 +70,7 @@ export default class VM {
     return null;
   }
 
-  execCode(code) {
+  executeExpression(code) {
     ExecutionDebug && console.log("Executing code:", code?.type);
     const res = this.execCodeInternal(code);
     ExecutionDebug && console.log(code?.type, res);
@@ -79,6 +80,12 @@ export default class VM {
   renderElement(code) {
     const element = this.requireJSXIdentifier(code.openingElement.name);
     const attributes = {};
+    if (element === "input") {
+      attributes.className = "form-control";
+    } else if (element === "CommitButton") {
+      attributes.className = "btn btn-success";
+    }
+
     for (let i = 0; i < code.openingElement.attributes.length; i++) {
       const attribute = code.openingElement.attributes[i];
       if (attribute.type !== "JSXAttribute") {
@@ -104,14 +111,21 @@ export default class VM {
           this.setReactState(this.state.state);
           return false;
         };
+      } else if (name === "data" && element === "CommitButton") {
+        attributes.onClick = (e) => {
+          e.preventDefault();
+          const data = this.executeExpression(attribute.value);
+          this.commitData(data);
+          return false;
+        };
       } else {
-        attributes[name] = this.execCode(attribute.value);
+        attributes[name] = this.executeExpression(attribute.value);
       }
     }
     attributes.key = `${this.gkey}-${this.gIndex++}`;
     const children = [];
     for (let i = 0; i < code.children.length; i++) {
-      children.push(this.execCode(code.children[i]));
+      children.push(this.executeExpression(code.children[i]));
     }
     if (element === "div") {
       return <div {...attributes}>{children}</div>;
@@ -125,6 +139,8 @@ export default class VM {
       return <pre {...attributes}>{children}</pre>;
     } else if (element === "input") {
       return <input {...attributes} />;
+    } else if (element === "CommitButton") {
+      return <button {...attributes}>{children}</button>;
     } else {
       throw new Error("Unsupported element: " + element);
     }
@@ -132,7 +148,9 @@ export default class VM {
 
   resolveKey(code, computed) {
     const key =
-      !computed && code.type === "Identifier" ? code.name : this.execCode(code);
+      !computed && code.type === "Identifier"
+        ? code.name
+        : this.executeExpression(code);
     if (key === ReactKey) {
       throw new Error(`${ReactKey} can't be used`);
     }
@@ -212,7 +230,7 @@ export default class VM {
     const type = code?.type;
     if (type === "AssignmentExpression") {
       const [obj, key] = this.resolveMemberExpression(code.left, true);
-      const right = this.execCode(code.right);
+      const right = this.executeExpression(code.right);
 
       if (code.operator === "=") {
         return (obj[key] = right);
@@ -230,13 +248,13 @@ export default class VM {
         );
       }
     } else if (type === "MemberExpression") {
-      const obj = this.execCode(code.object);
+      const obj = this.executeExpression(code.object);
       const key = this.resolveKey(code.property, code.computed);
       return obj?.[key];
     } else if (type === "Identifier") {
       return this.state[code.name];
     } else if (type === "JSXExpressionContainer") {
-      return this.execCode(code.expression);
+      return this.executeExpression(code.expression);
     } else if (type === "TemplateLiteral") {
       const quasis = [];
       for (let i = 0; i < code.quasis.length; i++) {
@@ -246,7 +264,7 @@ export default class VM {
         }
         quasis.push(element.value.cooked);
         if (!element.tail) {
-          quasis.push(this.execCode(code.expressions[i]));
+          quasis.push(this.executeExpression(code.expressions[i]));
         }
       }
       return quasis.join("");
@@ -254,7 +272,7 @@ export default class VM {
       const callee = this.requireIdentifier(code.callee);
       const args = [];
       for (let i = 0; i < code.arguments.length; i++) {
-        args.push(this.execCode(code.arguments[i]));
+        args.push(this.executeExpression(code.arguments[i]));
       }
       return this.callFunction(callee, args);
     } else if (type === "Literal") {
@@ -264,10 +282,10 @@ export default class VM {
     } else if (type === "JSXText") {
       return code.value;
     } else if (type === "JSXExpressionContainer") {
-      return this.execCode(code.expression);
+      return this.executeExpression(code.expression);
     } else if (type === "BinaryExpression") {
-      const left = this.execCode(code.left);
-      const right = this.execCode(code.right);
+      const left = this.executeExpression(code.left);
+      const right = this.executeExpression(code.right);
       if (code.operator === "+") {
         return left + right;
       } else if (code.operator === "-") {
@@ -276,13 +294,17 @@ export default class VM {
         return left * right;
       } else if (code.operator === "/") {
         return left * right;
+      } else if (code.operator === "===" || code.operator === "==") {
+        return left === right;
+      } else if (code.operator === "!==" || code.operator === "!=") {
+        return left !== right;
       } else {
         throw new Error(
           "Unknown BinaryExpression operator '" + code.operator + "'"
         );
       }
     } else if (type === "UnaryExpression") {
-      const argument = this.execCode(code.argument);
+      const argument = this.executeExpression(code.argument);
       if (code.operator === "-") {
         return -argument;
       } else if (code.operator === "!") {
@@ -293,23 +315,23 @@ export default class VM {
         );
       }
     } else if (type === "LogicalExpression") {
-      const left = this.execCode(code.left);
+      const left = this.executeExpression(code.left);
       if (code.operator === "||") {
-        return left || this.execCode(code.right);
+        return left || this.executeExpression(code.right);
       } else if (code.operator === "&&") {
-        return left && this.execCode(code.right);
+        return left && this.executeExpression(code.right);
       } else if (code.operator === "??") {
-        return left ?? this.execCode(code.right);
+        return left ?? this.executeExpression(code.right);
       } else {
         throw new Error(
           "Unknown LogicalExpression operator '" + code.operator + "'"
         );
       }
     } else if (type === "ConditionalExpression") {
-      const test = this.execCode(code.test);
+      const test = this.executeExpression(code.test);
       return test
-        ? this.execCode(code.consequent)
-        : this.execCode(code.alternate);
+        ? this.executeExpression(code.consequent)
+        : this.executeExpression(code.alternate);
     } else if (type === "UpdateExpression") {
       const [obj, key] = this.resolveMemberExpression(code.argument);
       if (code.operator === "++") {
@@ -329,13 +351,13 @@ export default class VM {
           throw new Error("Unknown property type: " + property.type);
         }
         const key = this.resolveKey(property.key, property.computed);
-        object[key] = this.execCode(property.value);
+        object[key] = this.executeExpression(property.value);
       }
       return object;
     } else if (type === "ArrayExpression") {
       let array = [];
       for (let i = 0; i < code.elements.length; i++) {
-        array.push(this.execCode(code.elements[i]));
+        array.push(this.executeExpression(code.elements[i]));
       }
       return array;
     } else if (type === "JSXEmptyExpression") {
@@ -343,6 +365,53 @@ export default class VM {
     } else {
       throw new Error("Unknown expression type '" + type + "'");
     }
+  }
+
+  executeCode(code) {
+    if (!code) {
+      return null;
+    }
+    if (code.type === "EmptyStatement") {
+      return null;
+    }
+    if (code.type !== "Program" && code.type !== "BlockStatement") {
+      throw new Error("Unknown code type '" + code.type + "'");
+    }
+    const body = code.body;
+    for (let i = 0; i < body.length; i++) {
+      const token = body[i];
+      if (token.type === "VariableDeclaration") {
+        for (let j = 0; j < token.declarations.length; j++) {
+          const declaration = token.declarations[j];
+          if (declaration.type === "VariableDeclarator") {
+            this.state[this.requireIdentifier(declaration.id)] =
+              this.executeExpression(declaration.init);
+          }
+        }
+      } else if (token.type === "ReturnStatement") {
+        return {
+          result: this.executeExpression(token.argument),
+        };
+      } else if (token.type === "ExpressionStatement") {
+        this.executeExpression(token.expression);
+      } else if (token.type === "BlockStatement") {
+        const result = this.executeCode(token);
+        if (result) {
+          return result;
+        }
+      } else if (token.type === "IfStatement") {
+        const test = this.executeExpression(token.test);
+        const result = !!test
+          ? this.executeCode(token.consequent)
+          : this.executeCode(token.alternate);
+        if (result) {
+          return result;
+        }
+      } else {
+        throw new Error("Unknown token type '" + token.type + "'");
+      }
+    }
+    return null;
   }
 
   renderCode({ props, context, state, cache }) {
@@ -355,26 +424,8 @@ export default class VM {
       })
     );
     this.cache = cache;
-    let result = null;
-    const body = this.code.body;
-    for (let i = 0; i < body.length; i++) {
-      const token = body[i];
-      if (token.type === "VariableDeclaration") {
-        for (let j = 0; j < token.declarations.length; j++) {
-          const declaration = token.declarations[j];
-          if (declaration.type === "VariableDeclarator") {
-            this.state[this.requireIdentifier(declaration.id)] = this.execCode(
-              declaration.init
-            );
-          }
-        }
-      } else if (token.type === "ReturnStatement") {
-        result = this.execCode(token.argument);
-        break;
-      } else if (token.type === "ExpressionStatement") {
-        result = this.execCode(token.expression);
-      }
-    }
+    const executionResult = this.executeCode(this.code);
+    const result = executionResult?.result;
 
     return isReactObject(result) ||
       typeof result === "string" ||

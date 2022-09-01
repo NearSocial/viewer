@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
-import { useNear } from "../../data/near";
+import { StorageCostPerByte, TGas, useNear } from "../../data/near";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
+import Big from "big.js";
 
-// const Element = {
-//   Text: "text",
-//   Image: "image",
-//   Widget: "widget",
-//   Link: "link",
-//   Markdown: "markdown",
-// };
+const MinStorageBalance = StorageCostPerByte.mul(5000);
+const AdditionalStorageBalance = StorageCostPerByte.mul(20000);
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -22,6 +18,31 @@ const AcornOptions = {
 
 const parseCode = (code) => {
   return Parser.extend(jsx()).parse(code, AcornOptions);
+};
+
+const asyncCommitData = async (near, data) => {
+  const accountId = near.accountId;
+  if (!accountId) {
+    alert("You're not logged in, bro");
+    return;
+  }
+  console.log("Committing data", data);
+  const storageBalance = await near.contract.storage_balance_of({
+    account_id: accountId,
+  });
+  const deposit = Big(storageBalance?.available || "0").gte(MinStorageBalance)
+    ? Big(1)
+    : AdditionalStorageBalance;
+
+  return await near.contract.set(
+    {
+      data: {
+        [near.accountId]: data,
+      },
+    },
+    TGas.mul(100).toFixed(0),
+    deposit.toFixed(0)
+  );
 };
 
 export default function Widget(props) {
@@ -54,12 +75,25 @@ export default function Widget(props) {
     }
   }, [rawCode]);
 
+  const commitData = useCallback(
+    (data) => {
+      if (!near) {
+        return null;
+      }
+      asyncCommitData(near, data)
+        .then(() => {})
+        .catch(() => {});
+    },
+    [near]
+  );
+
   useEffect(() => {
     if (!near || !code) {
       return;
     }
-    setVm(new VM(near, gkey, code, setState, setCache));
-  }, [near, gkey, code]);
+    setState(undefined);
+    setVm(new VM(near, gkey, code, setState, setCache, commitData));
+  }, [near, gkey, code, commitData]);
 
   useEffect(() => {
     if (!near) {
