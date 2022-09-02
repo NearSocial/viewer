@@ -1,6 +1,7 @@
 import Big from "big.js";
 import { NearConfig } from "./near";
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 const MinAccountIdLen = 2;
 const MaxAccountIdLen = 64;
@@ -139,3 +140,9 @@ export const availableNearBalance = (account) => {
 
 export const isoDate = (d) =>
   d ? new Date(d).toISOString().substring(0, 10) : "";
+
+export function useQuery() {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}

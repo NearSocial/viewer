@@ -1,11 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Widget } from "../components/Widget/Widget";
 import { useParams } from "react-router-dom";
+import { useQuery } from "../data/utils";
 
 export default function ViewPage(props) {
   const { widgetSrc } = useParams();
+  const query = useQuery();
+  const [widgetProps, setWidgetProps] = useState({});
+
   const src = widgetSrc || "eugenethedream/widget/Welcome";
   const setForkSrc = props.setForkSrc;
+
+  useEffect(() => {
+    setWidgetProps(
+      [...query.entries()].reduce((props, [key, value]) => {
+        props[key] = value;
+        return props;
+      }, {})
+    );
+  }, [query]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -13,5 +26,5 @@ export default function ViewPage(props) {
     }, 1);
   }, [src, setForkSrc]);
 
-  return <Widget src={src} />;
+  return <Widget src={src} props={widgetProps} />;
 }

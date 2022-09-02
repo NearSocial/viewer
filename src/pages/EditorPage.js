@@ -13,6 +13,7 @@ import { useHistory, useParams } from "react-router-dom";
 const EditorCodeKey = LsKey + "editorCode:";
 const WidgetNameKey = LsKey + "widgetName:";
 const LastWidgetPathKey = LsKey + "widgetPath:";
+const WidgetPropsKey = LsKey + "widgetProps:";
 
 export default function EditorPage(props) {
   const { widgetSrc } = useParams();
@@ -22,6 +23,11 @@ export default function EditorPage(props) {
   const [widgetName, setWidgetName] = useState(ls.get(WidgetNameKey) || "");
   const [widgetPath, setWidgetPath] = useState(null);
   const [renderCode, setRenderCode] = useState(code);
+  const [widgetProps, setWidgetProps] = useState(
+    ls.get(WidgetPropsKey) || "{}"
+  );
+  const [parsedWidgetProps, setParsedWidgetProps] = useState({});
+  const [propsError, setPropsError] = useState(null);
   const near = useNear();
   const accountId = near?.accountId;
 
@@ -44,6 +50,18 @@ export default function EditorPage(props) {
     },
     [history, accountId]
   );
+
+  useEffect(() => {
+    ls.set(WidgetPropsKey, widgetProps);
+    try {
+      const parsedWidgetProps = JSON.parse(widgetProps);
+      setParsedWidgetProps(parsedWidgetProps);
+      setPropsError(null);
+    } catch (e) {
+      setParsedWidgetProps({});
+      setPropsError(e.message);
+    }
+  }, [widgetProps]);
 
   useEffect(() => {
     if (!near) {
@@ -86,14 +104,17 @@ export default function EditorPage(props) {
       <div className="container">
         <div className="row mb-3 min-vh-100">
           <div className="col-6">
-            <h6>Editor</h6>
-            <div className="mb-3">
-              <label htmlFor="widget-name">Widget Name</label>
+            <h5>Editor</h5>
+            <div className="input-group mb-3">
+              <span className="input-group-text" id="widget-path-prefix">
+                {accountId}/widget/
+              </span>
               <input
                 type="text"
                 className="form-control"
                 id="widget-name"
-                placeholder="Example"
+                placeholder="MyWidget"
+                aria-describedby="widget-path-prefix"
                 value={widgetName}
                 onChange={(e) => updateWidgetName(e.target.value)}
               />
@@ -113,8 +134,9 @@ export default function EditorPage(props) {
               </button>
             </div>
             <textarea
-              className="form-control font-monospace h-50 mb-3"
+              className="form-control font-monospace mb-3"
               value={code}
+              rows={20}
               onChange={(e) => updateCode(e.target.value)}
             />
             <div className="mb-3">
@@ -147,9 +169,21 @@ export default function EditorPage(props) {
               )}
             </div>
           </div>
-          <div className="col-6">
-            <h6>Widget</h6>
-            <Widget code={renderCode} />
+          <div className="col-6 mb-3">
+            <div>
+              Props for debugging (JSON)
+              <textarea
+                className="form-control font-monospace mb-3"
+                value={widgetProps}
+                rows={5}
+                onChange={(e) => setWidgetProps(e.target.value)}
+              />
+              {propsError && (
+                <pre className="alert alert-danger">{propsError}</pre>
+              )}
+            </div>
+            <h5>Widget</h5>
+            <Widget code={renderCode} props={parsedWidgetProps} />
           </div>
         </div>
       </div>

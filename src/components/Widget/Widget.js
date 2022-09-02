@@ -65,6 +65,7 @@ export function Widget(props) {
   const src = props.src;
   const rawCode = props.code;
   const codeProps = props.props;
+
   const [code, setCode] = useState(null);
   const [state, setState] = useState(undefined);
   const [cache, setCache] = useState({});
@@ -96,7 +97,7 @@ export function Widget(props) {
       setParsedCode(parsedCode);
     } catch (e) {
       setElement(
-        <div>
+        <div className="alert alert-danger">
           Compile error:
           <pre>{e.message}</pre>
           <pre>{e.stack}</pre>
@@ -150,7 +151,7 @@ export function Widget(props) {
       );
     } catch (e) {
       setElement(
-        <div>
+        <div className="alert alert-danger">
           Execution error:
           <pre>{e.message}</pre>
           <pre>{e.stack}</pre>
