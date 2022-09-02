@@ -1,4 +1,5 @@
 import React from "react";
+import { socialGet, Widget } from "../components/Widget/Widget";
 
 const ReactKey = "$$typeof";
 const isReactObject = (o) =>
@@ -36,24 +37,13 @@ export default class VM {
     return id.name;
   }
 
-  async asyncSocialGetr(key) {
-    let data = await this.near.contract.get({
-      keys: [`${key}/**`],
-    });
-    // console.log(data);
-    key.split("/").forEach((part) => {
-      data = data?.[part];
-    });
-    return data;
-  }
-
   socialGetr(key) {
     if (key in this.cache) {
       return this.cache[key];
     }
     if (!(key in this.fetchingCache)) {
       this.fetchingCache[key] = true;
-      this.asyncSocialGetr(key)
+      socialGet(this.near, key, true)
         .then((data) => {
           if (this.alive) {
             this.setCache(
@@ -132,13 +122,17 @@ export default class VM {
     } else if (element === "img") {
       return <img {...attributes} alt={attributes.alt ?? "not defined"} />;
     } else if (element === "br") {
-      return <br />;
+      return <br {...attributes} />;
     } else if (element === "span") {
       return <span {...attributes}>{children}</span>;
+    } else if (element === "a") {
+      return <a {...attributes}>{children}</a>;
     } else if (element === "pre") {
       return <pre {...attributes}>{children}</pre>;
     } else if (element === "input") {
       return <input {...attributes} />;
+    } else if (element === "Widget") {
+      return <Widget {...attributes} />;
     } else if (element === "CommitButton") {
       return <button {...attributes}>{children}</button>;
     } else {

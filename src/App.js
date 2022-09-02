@@ -5,7 +5,8 @@ import "bootstrap/dist/js/bootstrap.bundle";
 import "./App.scss";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import { NearConfig, useNearPromise } from "./data/near";
-import MainPage from "./pages/MainPage";
+import EditorPage from "./pages/EditorPage";
+import ViewPage from "./pages/ViewPage";
 
 export const refreshAllowanceObj = {};
 
@@ -13,6 +14,7 @@ function App(props) {
   const [connected, setConnected] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [signedAccountId, setSignedAccountId] = useState(null);
+  const [forkSrc, setForkSrc] = useState(null);
 
   const _near = useNearPromise();
 
@@ -58,6 +60,7 @@ function App(props) {
 
   const passProps = {
     refreshAllowance: () => refreshAllowance(),
+    setForkSrc,
     signedAccountId,
     signedIn,
     connected,
@@ -124,6 +127,13 @@ function App(props) {
                     Main
                   </Link>
                 </li>
+                {forkSrc && (
+                  <li className="nav-item">
+                    <Link className="nav-link" aria-current="page" to={forkSrc}>
+                      Fork
+                    </Link>
+                  </li>
+                )}
               </ul>
               <form className="d-flex">{header}</form>
             </div>
@@ -131,8 +141,11 @@ function App(props) {
         </nav>
 
         <Switch>
-          <Route exact path={"/"}>
-            <MainPage {...passProps} />
+          <Route path={"/edit/:widgetSrc*"}>
+            <EditorPage {...passProps} />
+          </Route>
+          <Route path={"/:widgetSrc*"}>
+            <ViewPage {...passProps} />
           </Route>
         </Switch>
       </Router>

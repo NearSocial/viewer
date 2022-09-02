@@ -20,7 +20,7 @@ const parseCode = (code) => {
   return Parser.extend(jsx()).parse(code, AcornOptions);
 };
 
-const asyncCommitData = async (near, data) => {
+export const asyncCommitData = async (near, data) => {
   const accountId = near.accountId;
   if (!accountId) {
     alert("You're not logged in, bro");
@@ -45,13 +45,30 @@ const asyncCommitData = async (near, data) => {
   );
 };
 
-export default function Widget(props) {
+export const socialGet = async (near, key, recursive) => {
+  if (!near) {
+    return null;
+  }
+  let data = await near.contract.get({
+    keys: [recursive ? `${key}/**` : key],
+  });
+
+  key.split("/").forEach((part) => {
+    data = data?.[part];
+  });
+
+  return data;
+};
+
+export function Widget(props) {
   const [gkey] = useState(uuid());
+  const src = props.src;
   const rawCode = props.code;
   const codeProps = props.props;
+  const [code, setCode] = useState(null);
   const [state, setState] = useState(undefined);
   const [cache, setCache] = useState({});
-  const [code, setCode] = useState(null);
+  const [parsedCode, setParsedCode] = useState(null);
   const [context, setContext] = useState({});
   const [vm, setVm] = useState(null);
 
@@ -59,10 +76,24 @@ export default function Widget(props) {
   const [element, setElement] = useState(null);
 
   useEffect(() => {
+    if (!near) {
+      return;
+    }
+    if (src) {
+      socialGet(near, src.toString()).then(setCode);
+    } else {
+      setCode(rawCode);
+    }
+  }, [near, src, rawCode]);
+
+  useEffect(() => {
+    if (!code) {
+      return;
+    }
     try {
-      const code = parseCode(rawCode);
-      console.log(code);
-      setCode(code);
+      const parsedCode = parseCode(code);
+      console.log(parsedCode);
+      setParsedCode(parsedCode);
     } catch (e) {
       setElement(
         <div>
@@ -73,7 +104,7 @@ export default function Widget(props) {
       );
       console.error(e);
     }
-  }, [rawCode]);
+  }, [code]);
 
   const commitData = useCallback(
     (data) => {
@@ -88,12 +119,12 @@ export default function Widget(props) {
   );
 
   useEffect(() => {
-    if (!near || !code) {
+    if (!near || !parsedCode) {
       return;
     }
     setState(undefined);
-    setVm(new VM(near, gkey, code, setState, setCache, commitData));
-  }, [near, gkey, code, commitData]);
+    setVm(new VM(near, gkey, parsedCode, setState, setCache, commitData));
+  }, [near, gkey, parsedCode, commitData]);
 
   useEffect(() => {
     if (!near) {
