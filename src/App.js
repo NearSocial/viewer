@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import "error-polyfill";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "@near-wallet-selector/modal-ui/styles.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import "./App.scss";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
-import { NearConfig, useNearPromise } from "./data/near";
+import { NearConfig, useNear } from "./data/near";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
+import { setupModal } from "@near-wallet-selector/modal-ui";
 
 export const refreshAllowanceObj = {};
 
@@ -15,31 +17,38 @@ function App(props) {
   const [signedIn, setSignedIn] = useState(false);
   const [signedAccountId, setSignedAccountId] = useState(null);
   const [forkSrc, setForkSrc] = useState(null);
+  const [walletModal, setWalletModal] = useState(null);
 
-  const _near = useNearPromise();
+  const near = useNear();
+
+  useEffect(() => {
+    if (!near) {
+      return;
+    }
+    setWalletModal(
+      setupModal(near.selector, { contractId: NearConfig.contractName })
+    );
+  }, [near]);
 
   const requestSignIn = useCallback(
-    async (e) => {
+    (e) => {
       e && e.preventDefault();
-      const appTitle = "viewer";
-      const near = await _near;
-
-      await near.walletConnection.requestSignIn(
-        NearConfig.contractName,
-        appTitle
-      );
+      walletModal.show();
       return false;
     },
-    [_near]
+    [walletModal]
   );
 
   const logOut = useCallback(async () => {
-    const near = await _near;
-    near.walletConnection.signOut();
+    if (!near) {
+      return;
+    }
+    const wallet = await near.selector.wallet();
+    wallet.signOut();
     near.accountId = null;
     setSignedIn(false);
     setSignedAccountId(null);
-  }, [_near]);
+  }, [near]);
 
   const refreshAllowance = useCallback(async () => {
     alert(
@@ -51,12 +60,13 @@ function App(props) {
   refreshAllowanceObj.refreshAllowance = refreshAllowance;
 
   useEffect(() => {
-    _near.then((near) => {
-      setSignedIn(!!near.accountId);
-      setSignedAccountId(near.accountId);
-      setConnected(true);
-    });
-  }, [_near]);
+    if (!near) {
+      return;
+    }
+    setSignedIn(!!near.accountId);
+    setSignedAccountId(near.accountId);
+    setConnected(true);
+  }, [near]);
 
   const passProps = {
     refreshAllowance: () => refreshAllowance(),

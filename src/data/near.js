@@ -3,6 +3,10 @@ import { singletonHook } from "react-singleton-hook";
 import Big from "big.js";
 import { refreshAllowanceObj } from "../App";
 import { useEffect, useState } from "react";
+import { setupWalletSelector } from "@near-wallet-selector/core";
+import { setupNearWallet } from "@near-wallet-selector/near-wallet";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupSender } from "@near-wallet-selector/sender";
 
 export const TGas = Big(10).pow(12);
 export const MaxGasPerTransaction = TGas.mul(300);
@@ -39,20 +43,35 @@ export const MainNearConfig = {
 export const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;
 export const LsKey = NearConfig.contractName + ":v01:";
 
-function wrapContract(account, contractId, options) {
-  const nearContract = new nearAPI.Contract(account, contractId, options);
+function setupContract(near, contractId, options) {
+  // const nearContract = new nearAPI.Contract(wallet, contractId, options);
   const { viewMethods = [], changeMethods = [] } = options;
   const contract = {
-    account,
+    near,
     contractId,
   };
   viewMethods.forEach((methodName) => {
-    contract[methodName] = nearContract[methodName];
+    contract[methodName] = (args) =>
+      near.viewCall(contractId, methodName, args);
   });
   changeMethods.forEach((methodName) => {
-    contract[methodName] = async (...args) => {
+    contract[methodName] = async (args, gas, deposit) => {
       try {
-        return await nearContract[methodName](...args);
+        const wallet = await near.selector.wallet();
+        return await wallet.signAndSendTransaction({
+          signerId: near.accountId,
+          actions: [
+            {
+              type: "FunctionCall",
+              params: {
+                methodName,
+                args,
+                gas: gas ?? TGas.mul(30).toFixed(0),
+                deposit: deposit ?? "0",
+              },
+            },
+          ],
+        });
       } catch (e) {
         const msg = e.toString();
         if (msg.indexOf("does not have enough balance") !== -1) {
@@ -65,12 +84,43 @@ function wrapContract(account, contractId, options) {
   return contract;
 }
 
+async function viewCall(
+  provider,
+  blockId,
+  contractId,
+  methodName,
+  args,
+  finality
+) {
+  args = args || {};
+  const result = await provider.query({
+    request_type: "call_function",
+    account_id: contractId,
+    method_name: methodName,
+    args_base64: Buffer.from(JSON.stringify(args)).toString("base64"),
+    block_id: blockId,
+    finality,
+  });
+
+  return (
+    result.result &&
+    result.result.length > 0 &&
+    JSON.parse(Buffer.from(result.result).toString())
+  );
+}
+
 async function _initNear() {
   const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
+  const selector = await setupWalletSelector({
+    network: "testnet",
+    modules: [setupNearWallet(), setupMyNearWallet(), setupSender()],
+  });
+
   const nearConnection = await nearAPI.connect(
     Object.assign({ deps: { keyStore } }, NearConfig)
   );
   const _near = {};
+  _near.selector = selector;
 
   _near.nearArchivalConnection = nearAPI.Connection.fromConfig({
     networkId: NearConfig.networkId,
@@ -84,14 +134,26 @@ async function _initNear() {
   _near.keyStore = keyStore;
   _near.nearConnection = nearConnection;
 
-  _near.walletConnection = new nearAPI.WalletConnection(
-    nearConnection,
-    NearConfig.contractName
-  );
-  _near.accountId = _near.walletConnection.getAccountId();
-  _near.account = _near.walletConnection.account();
+  // _near.walletConnection = new nearAPI.WalletConnection(
+  //   nearConnection,
+  //   NearConfig.contractName
+  // );
+  _near.accountId = selector.store.getState()?.accounts?.[0]?.accountId;
+  // _near.account = _near.walletConnection.account();
 
-  _near.contract = wrapContract(_near.account, NearConfig.contractName, {
+  _near.archivalViewCall = (args) =>
+    viewCall(_near.nearArchivalConnection.provider, ...args);
+  _near.viewCall = (contractId, methodName, args) =>
+    viewCall(
+      _near.nearConnection.connection.provider,
+      undefined,
+      contractId,
+      methodName,
+      args,
+      "optimistic"
+    );
+
+  _near.contract = setupContract(_near, NearConfig.contractName, {
     viewMethods: [
       "storage_balance_of",
       "get",
@@ -101,7 +163,7 @@ async function _initNear() {
     ],
     changeMethods: ["set", "grant_write_permission", "storage_deposit"],
   });
-
+  /*
   _near.fetchBlockHash = async () => {
     const block = await nearConnection.connection.provider.block({
       finality: "final",
@@ -168,23 +230,7 @@ async function _initNear() {
       callbackUrl
     );
   };
-
-  _near.archivalViewCall = async (blockId, contractId, methodName, args) => {
-    args = args || {};
-    const result = await _near.nearArchivalConnection.provider.query({
-      request_type: "call_function",
-      account_id: contractId,
-      method_name: methodName,
-      args_base64: Buffer.from(JSON.stringify(args)).toString("base64"),
-      block_id: blockId,
-    });
-
-    return (
-      result.result &&
-      result.result.length > 0 &&
-      JSON.parse(Buffer.from(result.result).toString())
-    );
-  };
+  */
 
   return _near;
 }
