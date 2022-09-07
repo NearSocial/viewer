@@ -4,7 +4,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "@near-wallet-selector/modal-ui/styles.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import "./App.scss";
-import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
 import { NearConfig, useNear } from "./data/near";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
