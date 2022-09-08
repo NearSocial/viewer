@@ -1,6 +1,6 @@
 {
-  "short_name": "viewer",
-  "name": "viewer",
+  "short_name": "Social08 Viewer",
+  "name": "Social08 Viewer - Browser for Social08",
   "icons": [
     {
       "src": "favicon.png",
