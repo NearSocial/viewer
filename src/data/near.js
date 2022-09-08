@@ -16,9 +16,10 @@ export const randomPublicKey = nearAPI.utils.PublicKey.from(
   "ed25519:8fWHD35Rjd78yeowShh9GwhRudRtLLsGCRjZtgPjAtw9"
 );
 
-// const isLocalhost = window.location.hostname === "localhost";
+const isLocalhost = window.location.hostname === "localhost";
 
-export const IsMainnet = false;
+export const IsMainnet =
+  window.location.hostname === "view.social08.org" || isLocalhost;
 const TestnetContract = "v0.social08.testnet";
 const TestNearConfig = {
   networkId: "testnet",
@@ -28,8 +29,9 @@ const TestNearConfig = {
   walletUrl: "https://wallet.testnet.near.org",
   storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.testnet",
+  defaultWidget: "eugenethedream/widget/Welcome",
 };
-const MainnetContract = "thewiki.near";
+const MainnetContract = "db.social08.near";
 export const MainNearConfig = {
   networkId: "mainnet",
   nodeUrl: "https://rpc.mainnet.near.org",
@@ -38,6 +40,7 @@ export const MainNearConfig = {
   walletUrl: "https://wallet.near.org",
   storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.near",
+  defaultWidget: "mob.near/widget/Welcome",
 };
 
 export const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;
@@ -112,7 +115,7 @@ async function viewCall(
 async function _initNear() {
   const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
   const selector = await setupWalletSelector({
-    network: "testnet",
+    network: IsMainnet ? "mainnet" : "testnet",
     modules: [setupNearWallet(), setupMyNearWallet(), setupSender()],
   });
 

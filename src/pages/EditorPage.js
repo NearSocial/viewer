@@ -18,6 +18,7 @@ const WidgetPropsKey = LsKey + "widgetProps:";
 export default function EditorPage(props) {
   const { widgetSrc } = useParams();
   const history = useHistory();
+  const setForkSrc = props.setForkSrc;
 
   const [code, setCode] = useState(ls.get(EditorCodeKey) || "");
   const [widgetName, setWidgetName] = useState(ls.get(WidgetNameKey) || "");
@@ -30,6 +31,10 @@ export default function EditorPage(props) {
   const [propsError, setPropsError] = useState(null);
   const near = useNear();
   const accountId = near?.accountId;
+
+  useEffect(() => {
+    setForkSrc(null);
+  }, [setForkSrc]);
 
   const updateCode = useCallback(
     (code) => {
@@ -160,7 +165,7 @@ export default function EditorPage(props) {
               {widgetPath && (
                 <a
                   className="ms-2 btn btn-outline-primary"
-                  href={`/${widgetPath}`}
+                  href={`#/${widgetPath}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

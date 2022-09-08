@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Widget } from "../components/Widget/Widget";
 import { useParams } from "react-router-dom";
 import { useQuery } from "../data/utils";
+import { NearConfig } from "../data/near";
 
 export default function ViewPage(props) {
   const { widgetSrc } = useParams();
   const query = useQuery();
   const [widgetProps, setWidgetProps] = useState({});
 
-  const src = widgetSrc || "eugenethedream/widget/Welcome";
+  const src = widgetSrc || NearConfig.defaultWidget;
   const setForkSrc = props.setForkSrc;
 
   useEffect(() => {

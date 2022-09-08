@@ -5,7 +5,7 @@ import "@near-wallet-selector/modal-ui/styles.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import "./App.scss";
 import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
-import { NearConfig, useNear } from "./data/near";
+import { IsMainnet, NearConfig, useNear } from "./data/near";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
@@ -134,13 +134,13 @@ function App(props) {
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
                   <Link className="nav-link" aria-current="page" to="/">
-                    Main
+                    {IsMainnet ? "Main" : "Testnet"}
                   </Link>
                 </li>
                 {forkSrc && (
                   <li className="nav-item">
                     <Link className="nav-link" aria-current="page" to={forkSrc}>
-                      Fork
+                      Fork widget
                     </Link>
                   </li>
                 )}
