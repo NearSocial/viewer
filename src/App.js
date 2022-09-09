@@ -22,6 +22,10 @@ function App(props) {
   const near = useNear();
 
   useEffect(() => {
+    window.history.replaceState({}, "/", "/" + window.location.hash);
+  });
+
+  useEffect(() => {
     if (!near) {
       return;
     }

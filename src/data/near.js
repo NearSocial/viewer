@@ -163,6 +163,7 @@ async function _initNear() {
       "get_num_accounts",
       "get_accounts_paged",
       "is_write_permission_granted",
+      "keys",
     ],
     changeMethods: ["set", "grant_write_permission", "storage_deposit"],
   });

@@ -1,6 +1,8 @@
 import React from "react";
 import { socialGet, Widget } from "../components/Widget/Widget";
 
+const LoopLimit = 10000;
+
 const ReactKey = "$$typeof";
 const KeywordKey = "$$keyword";
 const isReactObject = (o) =>
@@ -55,13 +57,13 @@ export default class VM {
     return id.name;
   }
 
-  cachedSocialGet(key, recursive) {
+  cachedPromise(key, promise) {
     if (key in this.cache) {
       return this.cache[key];
     }
     if (!(key in this.fetchingCache)) {
       this.fetchingCache[key] = true;
-      socialGet(this.near, key, recursive)
+      promise()
         .then((data) => {
           if (this.alive) {
             this.setCache(
@@ -76,6 +78,20 @@ export default class VM {
         });
     }
     return null;
+  }
+
+  cachedSocialGet(key, recursive) {
+    return this.cachedPromise(`get:${recursive}:${key}`, () =>
+      socialGet(this.near, key, recursive)
+    );
+  }
+
+  cachedSocialKeys(key) {
+    return this.cachedPromise(`keys:${key}`, () =>
+      this.near.contract.keys({
+        keys: [key],
+      })
+    );
   }
 
   executeExpression(code) {
@@ -177,14 +193,19 @@ export default class VM {
     if (obj === this.state) {
       if (callee === "Social.getr" || callee === "socialGetr") {
         if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for socialGetr");
+          throw new Error("Missing argument 'keys' for Social.getr");
         }
         return this.cachedSocialGet(args[0], true);
       } else if (callee === "Social.get" || callee === "socialGet") {
         if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for socialGet");
+          throw new Error("Missing argument 'keys' for Social.get");
         }
         return this.cachedSocialGet(args[0], false);
+      } else if (callee === "Social.keys") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'keys' for Social.keys");
+        }
+        return this.cachedSocialKeys(args[0]);
       } else if (callee === "JSON.stringify" || callee === "stringify") {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for JSON.stringify");
@@ -237,6 +258,8 @@ export default class VM {
         return obj.push(...args);
       } else if (callee === "join") {
         return obj.join(...args);
+      } else if (callee === "slice") {
+        return obj.slice(...args);
       } else {
         throw new Error("Unknown callee method '" + callee + "' on an array");
       }
@@ -350,6 +373,14 @@ export default class VM {
         return left * right;
       } else if (code.operator === "/") {
         return left * right;
+      } else if (code.operator === "<") {
+        return left < right;
+      } else if (code.operator === ">") {
+        return left > right;
+      } else if (code.operator === "<=") {
+        return left <= right;
+      } else if (code.operator === ">=") {
+        return left >= right;
       } else if (code.operator === "===" || code.operator === "==") {
         return left === right;
       } else if (code.operator === "!==" || code.operator === "!=") {
@@ -423,6 +454,86 @@ export default class VM {
     }
   }
 
+  executeStatement(token) {
+    if (!token || token.type === "EmptyStatement") {
+      return null;
+    } else if (token.type === "VariableDeclaration") {
+      for (let j = 0; j < token.declarations.length; j++) {
+        const declaration = token.declarations[j];
+        if (declaration.type === "VariableDeclarator") {
+          this.state[this.requireIdentifier(declaration.id)] =
+            this.executeExpression(declaration.init);
+        }
+      }
+    } else if (token.type === "ReturnStatement") {
+      return {
+        result: this.executeExpression(token.argument),
+      };
+    } else if (token.type === "ExpressionStatement") {
+      this.executeExpression(token.expression);
+    } else if (token.type === "BlockStatement") {
+      const result = this.executeCode(token);
+      if (result) {
+        return result;
+      }
+    } else if (token.type === "ForStatement") {
+      this.executeStatement(token.init);
+      while (this.loopLimit-- > 0) {
+        if (token.test) {
+          const test = this.executeExpression(token.test);
+          if (!test) {
+            break;
+          }
+        }
+        const result = this.executeCode(token.body);
+        if (result) {
+          if (result.break) {
+            break;
+          } else {
+            return result;
+          }
+        }
+        this.executeExpression(token.update);
+      }
+      if (this.loopLimit <= 0) {
+        throw new Error("Exceeded loop limit");
+      }
+    } else if (token.type === "WhileStatement") {
+      while (this.loopLimit-- > 0) {
+        const test = this.executeExpression(token.test);
+        if (!test) {
+          break;
+        }
+        const result = this.executeCode(token.body);
+        if (result) {
+          if (result.break) {
+            break;
+          } else {
+            return result;
+          }
+        }
+      }
+      if (this.loopLimit <= 0) {
+        throw new Error("Exceeded loop limit");
+      }
+    } else if (token.type === "IfStatement") {
+      const test = this.executeExpression(token.test);
+      const result = !!test
+        ? this.executeCode(token.consequent)
+        : this.executeCode(token.alternate);
+      if (result) {
+        return result;
+      }
+    } else if (token.type === "BreakStatement") {
+      return {
+        break: true,
+      };
+    } else {
+      throw new Error("Unknown token type '" + token.type + "'");
+    }
+    return null;
+  }
+
   executeCode(code) {
     if (!code) {
       return null;
@@ -435,36 +546,9 @@ export default class VM {
     }
     const body = code.body;
     for (let i = 0; i < body.length; i++) {
-      const token = body[i];
-      if (token.type === "VariableDeclaration") {
-        for (let j = 0; j < token.declarations.length; j++) {
-          const declaration = token.declarations[j];
-          if (declaration.type === "VariableDeclarator") {
-            this.state[this.requireIdentifier(declaration.id)] =
-              this.executeExpression(declaration.init);
-          }
-        }
-      } else if (token.type === "ReturnStatement") {
-        return {
-          result: this.executeExpression(token.argument),
-        };
-      } else if (token.type === "ExpressionStatement") {
-        this.executeExpression(token.expression);
-      } else if (token.type === "BlockStatement") {
-        const result = this.executeCode(token);
-        if (result) {
-          return result;
-        }
-      } else if (token.type === "IfStatement") {
-        const test = this.executeExpression(token.test);
-        const result = !!test
-          ? this.executeCode(token.consequent)
-          : this.executeCode(token.alternate);
-        if (result) {
-          return result;
-        }
-      } else {
-        throw new Error("Unknown token type '" + token.type + "'");
+      const result = this.executeStatement(body[i]);
+      if (result) {
+        return result;
       }
     }
     return null;
@@ -489,7 +573,11 @@ export default class VM {
       })
     );
     this.cache = cache;
+    this.loopLimit = LoopLimit;
     const executionResult = this.executeCode(this.code);
+    if (executionResult?.break) {
+      throw new Error("BreakStatement outside of a loop");
+    }
     const result = executionResult?.result;
 
     return isReactObject(result) ||
