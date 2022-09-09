@@ -171,64 +171,79 @@ export default class VM {
     const keyword = obj?.[KeywordKey];
     if (keyword) {
       callee = `${keyword}.${callee}`;
+      obj = this.state;
     }
 
-    if (callee === "Social.getr" || callee === "socialGetr") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'keys' for socialGetr");
+    if (obj === this.state) {
+      if (callee === "Social.getr" || callee === "socialGetr") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'keys' for socialGetr");
+        }
+        return this.cachedSocialGet(args[0], true);
+      } else if (callee === "Social.get" || callee === "socialGet") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'keys' for socialGet");
+        }
+        return this.cachedSocialGet(args[0], false);
+      } else if (callee === "JSON.stringify" || callee === "stringify") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'obj' for JSON.stringify");
+        }
+        return JSON.stringify(args[0], undefined, 2);
+      } else if (callee === "JSON.parse") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 's' for JSON.parse");
+        }
+        try {
+          const obj = JSON.parse(args[0]);
+          assertValidObject(obj);
+          return obj;
+        } catch (e) {
+          return null;
+        }
+      } else if (callee === "Object.keys") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'obj' for Object.keys");
+        }
+        return Object.keys(args[0]);
+      } else if (callee === "Object.values") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'obj' for Object.values");
+        }
+        return Object.values(args[0]);
+      } else if (callee === "Object.entries") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'obj' for Object.entries");
+        }
+        return Object.entries(args[0]);
+      } else if (callee === "initState") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'initialState' for initState");
+        }
+        if (args[0] === null || typeof args[0] !== "object") {
+          throw new Error("'initialState' is not an object");
+        }
+        if (this.state.state !== undefined) {
+          return null;
+        }
+        const newState = JSON.parse(JSON.stringify(args[0]));
+        this.setReactState(newState);
+        this.state.state = newState;
+      } else {
+        throw new Error("Unknown callee method '" + callee + "'");
       }
-      return this.cachedSocialGet(args[0], true);
-    } else if (callee === "Social.get" || callee === "socialGet") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'keys' for socialGet");
+    } else if (Array.isArray(obj)) {
+      if (callee === "push") {
+        return obj.push(...args);
+      } else if (callee === "join") {
+        return obj.join(...args);
+      } else {
+        throw new Error("Unknown callee method '" + callee + "' on an array");
       }
-      return this.cachedSocialGet(args[0], false);
-    } else if (callee === "JSON.stringify" || callee === "stringify") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'obj' for JSON.stringify");
-      }
-      return JSON.stringify(args[0], undefined, 2);
-    } else if (callee === "JSON.parse") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 's' for JSON.parse");
-      }
-      try {
-        const obj = JSON.parse(args[0]);
-        assertValidObject(obj);
-        return obj;
-      } catch (e) {
-        return null;
-      }
-    } else if (callee === "Object.keys") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'obj' for Object.keys");
-      }
-      return Object.keys(args[0]);
-    } else if (callee === "Object.values") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'obj' for Object.values");
-      }
-      return Object.values(args[0]);
-    } else if (callee === "Object.entries") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'obj' for Object.entries");
-      }
-      return Object.entries(args[0]);
-    } else if (callee === "initState") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'initialState' for initState");
-      }
-      if (args[0] === null || typeof args[0] !== "object") {
-        throw new Error("'initialState' is not an object");
-      }
-      if (this.state.state !== undefined) {
-        return null;
-      }
-      const newState = JSON.parse(JSON.stringify(args[0]));
-      this.setReactState(newState);
-      this.state.state = newState;
     } else {
-      throw new Error("Unknown callee method '" + callee + "'");
+      throw new Error(
+        "Unsupported callee method '" + callee + "' on a given object"
+      );
     }
   }
 
