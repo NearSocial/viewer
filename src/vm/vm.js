@@ -161,7 +161,7 @@ export default class VM {
       if (args.length < 1) {
         throw new Error("Missing argument 'keys' for socialGet");
       }
-      return this.socialGet(args[0], false);
+      return this.cachedSocialGet(args[0], false);
     } else if (callee === "stringify") {
       if (args.length < 1) {
         throw new Error("Missing argument 'value' for stringify");
