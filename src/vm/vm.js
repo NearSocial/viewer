@@ -37,13 +37,13 @@ export default class VM {
     return id.name;
   }
 
-  socialGetr(key) {
+  cachedSocialGet(key, recursive) {
     if (key in this.cache) {
       return this.cache[key];
     }
     if (!(key in this.fetchingCache)) {
       this.fetchingCache[key] = true;
-      socialGet(this.near, key, true)
+      socialGet(this.near, key, recursive)
         .then((data) => {
           if (this.alive) {
             this.setCache(
@@ -156,7 +156,12 @@ export default class VM {
       if (args.length < 1) {
         throw new Error("Missing argument 'keys' for socialGetr");
       }
-      return this.socialGetr(args[0]);
+      return this.cachedSocialGet(args[0], true);
+    } else if (callee === "socialGet") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'keys' for socialGet");
+      }
+      return this.socialGet(args[0], false);
     } else if (callee === "stringify") {
       if (args.length < 1) {
         throw new Error("Missing argument 'value' for stringify");
