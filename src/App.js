@@ -111,15 +111,16 @@ function App(props) {
       <Router basename={process.env.PUBLIC_URL}>
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
           <div className="container-fluid">
-            <a className="navbar-brand" href="/" title="viewer">
+            <Link className="navbar-brand" to="/" title="viewer">
               <img
                 src="/favicon.png"
                 alt="viewer logo"
                 height="24"
                 className="d-inline-block align-text-top me-2"
               />
-              viewer
-            </a>
+              {!IsMainnet && "Testnet "}
+              Viewer
+            </Link>
             <button
               className="navbar-toggler"
               type="button"
@@ -137,13 +138,21 @@ function App(props) {
             >
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <Link className="nav-link" aria-current="page" to="/">
-                    {IsMainnet ? "Main" : "Testnet"}
+                  <Link
+                    className="btn btn-outline-light me-2"
+                    aria-current="page"
+                    to="/edit/new"
+                  >
+                    New widget
                   </Link>
                 </li>
                 {forkSrc && (
                   <li className="nav-item">
-                    <Link className="nav-link" aria-current="page" to={forkSrc}>
+                    <Link
+                      className="btn btn-outline-light me-2"
+                      aria-current="page"
+                      to={forkSrc}
+                    >
                       Fork widget
                     </Link>
                   </li>

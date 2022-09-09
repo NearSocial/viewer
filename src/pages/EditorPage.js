@@ -15,12 +15,14 @@ const WidgetNameKey = LsKey + "widgetName:";
 const LastWidgetPathKey = LsKey + "widgetPath:";
 const WidgetPropsKey = LsKey + "widgetProps:";
 
+const DefaultEditorCode = "return <div>Hello World</div>;";
+
 export default function EditorPage(props) {
   const { widgetSrc } = useParams();
   const history = useHistory();
   const setForkSrc = props.setForkSrc;
 
-  const [code, setCode] = useState(ls.get(EditorCodeKey) || "");
+  const [code, setCode] = useState(ls.get(EditorCodeKey) || DefaultEditorCode);
   const [widgetName, setWidgetName] = useState(ls.get(WidgetNameKey) || "");
   const [widgetPath, setWidgetPath] = useState(null);
   const [renderCode, setRenderCode] = useState(code);
@@ -75,15 +77,22 @@ export default function EditorPage(props) {
     if (widgetSrc) {
       if (ls.get(LastWidgetPathKey) !== widgetSrc) {
         ls.set(LastWidgetPathKey, widgetSrc);
-        socialGet(near, widgetSrc).then((code) => {
-          if (code) {
-            const widgetName = widgetSrc.split("/").slice(2).join("/");
-            ls.set(WidgetNameKey, widgetName);
-            setWidgetName(widgetName);
-            updateCode(code);
-            setRenderCode(code);
-          }
-        });
+        if (widgetSrc === "new") {
+          ls.set(WidgetNameKey, null);
+          setWidgetName("");
+          updateCode(DefaultEditorCode);
+          setRenderCode(DefaultEditorCode);
+        } else {
+          socialGet(near, widgetSrc).then((code) => {
+            if (code) {
+              const widgetName = widgetSrc.split("/").slice(2).join("/");
+              ls.set(WidgetNameKey, widgetName);
+              setWidgetName(widgetName);
+              updateCode(code);
+              setRenderCode(code);
+            }
+          });
+        }
       }
       setWidgetPath(widgetSrc);
     }
