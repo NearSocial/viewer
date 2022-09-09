@@ -2,11 +2,29 @@ import React from "react";
 import { socialGet, Widget } from "../components/Widget/Widget";
 
 const ReactKey = "$$typeof";
+const KeywordKey = "$$keyword";
 const isReactObject = (o) =>
   o !== null && typeof o === "object" && !!o[ReactKey];
+const isKeywordObject = (o) =>
+  o !== null && typeof o === "object" && !!o[KeywordKey];
 const StakeKey = "state";
 
 const ExecutionDebug = false;
+
+const assertNotReservedKey = (key) => {
+  if (key === ReactKey || key === KeywordKey) {
+    throw new Error(`${key} is reserved and can't be used`);
+  }
+};
+
+const assertValidObject = (o) => {
+  if (o !== null && typeof o === "object") {
+    Object.entries(o).forEach(([key, value]) => {
+      assertNotReservedKey(key);
+      assertValidObject(value);
+    });
+  }
+};
 
 export default class VM {
   constructor(near, gkey, code, setReactState, setCache, commitData) {
@@ -145,28 +163,57 @@ export default class VM {
       !computed && code.type === "Identifier"
         ? code.name
         : this.executeExpression(code);
-    if (key === ReactKey) {
-      throw new Error(`${ReactKey} can't be used`);
-    }
+    assertNotReservedKey(key);
     return key;
   }
 
-  callFunction(callee, args) {
-    if (callee === "socialGetr") {
+  callFunction(obj, callee, args) {
+    const keyword = obj?.[KeywordKey];
+    if (keyword) {
+      callee = `${keyword}.${callee}`;
+    }
+
+    if (callee === "Social.getr" || callee === "socialGetr") {
       if (args.length < 1) {
         throw new Error("Missing argument 'keys' for socialGetr");
       }
       return this.cachedSocialGet(args[0], true);
-    } else if (callee === "socialGet") {
+    } else if (callee === "Social.get" || callee === "socialGet") {
       if (args.length < 1) {
         throw new Error("Missing argument 'keys' for socialGet");
       }
       return this.cachedSocialGet(args[0], false);
-    } else if (callee === "stringify") {
+    } else if (callee === "JSON.stringify" || callee === "stringify") {
       if (args.length < 1) {
-        throw new Error("Missing argument 'value' for stringify");
+        throw new Error("Missing argument 'obj' for JSON.stringify");
       }
       return JSON.stringify(args[0], undefined, 2);
+    } else if (callee === "JSON.parse") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 's' for JSON.parse");
+      }
+      try {
+        const obj = JSON.parse(args[0]);
+        assertValidObject(obj);
+        return obj;
+      } catch (e) {
+        return null;
+      }
+    } else if (callee === "Object.keys") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'obj' for Object.keys");
+      }
+      return Object.keys(args[0]);
+    } else if (callee === "Object.values") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'obj' for Object.values");
+      }
+      return Object.values(args[0]);
+    } else if (callee === "Object.entries") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'obj' for Object.entries");
+      }
+      return Object.entries(args[0]);
     } else if (callee === "initState") {
       if (args.length < 1) {
         throw new Error("Missing argument 'initialState' for initState");
@@ -191,19 +238,9 @@ export default class VM {
   /// - requireState requires the top object key be `state`
   resolveMemberExpression(code, options) {
     if (code.type === "Identifier") {
-      if (code.name === ReactKey) {
-        throw new Error(`${ReactKey} can't be used`);
-      }
-      if (options?.requireState) {
-        if (code.name !== StakeKey) {
-          throw new Error(`The top object should be ${StakeKey}`);
-        }
-      } else {
-        if (code.name === StakeKey) {
-          throw new Error(
-            `State can't be modified directly. Use "initState" to initialize the state.`
-          );
-        }
+      assertNotReservedKey(code.name);
+      if (options?.requireState && code.name !== StakeKey) {
+        throw new Error(`The top object should be ${StakeKey}`);
       }
       return [this.state, code.name];
     } else if (code.type === "MemberExpression") {
@@ -215,6 +252,9 @@ export default class VM {
       const obj = innerObj?.[key];
       if (isReactObject(obj)) {
         throw new Error("React objects shouldn't be modified");
+      }
+      if (!options?.callee && isKeywordObject(obj)) {
+        throw new Error("Keyword objects shouldn't be modified");
       }
       return [obj, property];
     } else {
@@ -268,12 +308,14 @@ export default class VM {
       }
       return quasis.join("");
     } else if (type === "CallExpression") {
-      const callee = this.requireIdentifier(code.callee);
+      const [obj, callee] = this.resolveMemberExpression(code.callee, {
+        callee: true,
+      });
       const args = [];
       for (let i = 0; i < code.arguments.length; i++) {
         args.push(this.executeExpression(code.arguments[i]));
       }
-      return this.callFunction(callee, args);
+      return this.callFunction(obj, callee, args);
     } else if (type === "Literal") {
       return code.value;
     } else if (type === "JSXElement") {
@@ -420,6 +462,15 @@ export default class VM {
         props,
         context,
         state,
+        JSON: {
+          $$keyword: "JSON",
+        },
+        Object: {
+          $$keyword: "Object",
+        },
+        Social: {
+          $$keyword: "Social",
+        },
       })
     );
     this.cache = cache;
