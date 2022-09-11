@@ -21,9 +21,16 @@ function App(props) {
 
   const near = useNear();
 
+  const location = window.location;
+
   useEffect(() => {
-    window.history.replaceState({}, "/", "/" + window.location.hash);
-  });
+    if (
+      !location.search.includes("?account_id") &&
+      (location.search || location.href.includes("/?#"))
+    ) {
+      window.history.replaceState({}, "/", "/" + location.hash);
+    }
+  }, [location]);
 
   useEffect(() => {
     if (!near) {
