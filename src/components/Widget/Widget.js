@@ -49,13 +49,19 @@ export const socialGet = async (near, key, recursive) => {
   if (!near) {
     return null;
   }
+  key = recursive ? `${key}/**` : `${key}`;
   let data = await near.contract.get({
-    keys: [recursive ? `${key}/**` : key],
+    keys: [key],
   });
 
-  key.split("/").forEach((part) => {
+  const parts = key.split("/");
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (part === "*" || part === "**") {
+      break;
+    }
     data = data?.[part];
-  });
+  }
 
   return data;
 };

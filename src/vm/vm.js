@@ -13,6 +13,28 @@ const StakeKey = "state";
 
 const ExecutionDebug = false;
 
+const ApprovedTags = {
+  h1: true,
+  h2: true,
+  h3: true,
+  h4: true,
+  h5: true,
+  h6: true,
+  div: true,
+  span: true,
+  strong: true,
+  sub: true,
+  sup: true,
+  a: true,
+  pre: true,
+  i: true,
+  b: true,
+  br: false,
+  img: false,
+  Widget: false,
+  CommitButton: true,
+};
+
 const assertNotReservedKey = (key) => {
   if (key === ReactKey || key === KeywordKey) {
     throw new Error(`${key} is reserved and can't be used`);
@@ -147,28 +169,27 @@ export default class VM {
       }
     }
     attributes.key = `${this.gkey}-${this.gIndex++}`;
+    if (element === "img") {
+      attributes.alt = attributes.alt ?? "not defined";
+    }
+    const withChildren = ApprovedTags[element];
+    if (withChildren === false && code.children.length) {
+      throw new Error(
+        "And element '" + element + "' contains children, but shouldn't"
+      );
+    }
     const children = [];
     for (let i = 0; i < code.children.length; i++) {
       children.push(this.executeExpression(code.children[i]));
     }
-    if (element === "div") {
-      return <div {...attributes}>{children}</div>;
-    } else if (element === "img") {
-      return <img {...attributes} alt={attributes.alt ?? "not defined"} />;
-    } else if (element === "br") {
-      return <br {...attributes} />;
-    } else if (element === "span") {
-      return <span {...attributes}>{children}</span>;
-    } else if (element === "a") {
-      return <a {...attributes}>{children}</a>;
-    } else if (element === "pre") {
-      return <pre {...attributes}>{children}</pre>;
-    } else if (element === "input") {
-      return <input {...attributes} />;
-    } else if (element === "Widget") {
+    if (element === "Widget") {
       return <Widget {...attributes} />;
     } else if (element === "CommitButton") {
       return <button {...attributes}>{children}</button>;
+    } else if (withChildren === true) {
+      return React.createElement(element, { ...attributes }, ...children);
+    } else if (withChildren === false) {
+      return React.createElement(element, { ...attributes });
     } else {
       throw new Error("Unsupported element: " + element);
     }
