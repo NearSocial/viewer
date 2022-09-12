@@ -117,7 +117,7 @@ export default function EditorPage(props) {
     <div>
       <div className="container">
         <div className="row mb-3 min-vh-100">
-          <div className="col-6">
+          <div className="col-md-6">
             <h5>Editor</h5>
             <div className="input-group mb-3">
               <span className="input-group-text" id="widget-path-prefix">
@@ -183,7 +183,7 @@ export default function EditorPage(props) {
               )}
             </div>
           </div>
-          <div className="col-6 mb-3">
+          <div className="col-md-6 mb-3">
             <div>
               Props for debugging (JSON)
               <textarea
