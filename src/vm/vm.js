@@ -286,6 +286,14 @@ export default class VM {
       } else {
         throw new Error("Unknown callee method '" + callee + "' on an array");
       }
+    } else if (typeof obj === "string") {
+      if (callee === "toLowerCase") {
+        return obj.toLowerCase();
+      } else if (callee === "toUpperCase") {
+        return obj.toUpperCase();
+      } else {
+        throw new Error("Unknown callee method '" + callee + "' on a string");
+      }
     } else {
       throw new Error(
         "Unsupported callee method '" + callee + "' on a given object"
