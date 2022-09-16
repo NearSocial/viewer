@@ -30,6 +30,7 @@ const ApprovedTags = {
   i: true,
   b: true,
   input: true,
+  button: true,
   br: false,
   hr: false,
   img: false,
@@ -40,6 +41,12 @@ const ApprovedTags = {
 const assertNotReservedKey = (key) => {
   if (key === ReactKey || key === KeywordKey) {
     throw new Error(`${key} is reserved and can't be used`);
+  }
+};
+
+const assertNotKeywordObject = (obj) => {
+  if (isKeywordObject(obj)) {
+    throw new Error("Keyword objects shouldn't be modified");
   }
 };
 
@@ -132,6 +139,8 @@ export default class VM {
       attributes.className = "form-control";
     } else if (element === "CommitButton") {
       attributes.className = "btn btn-success";
+    } else if (element === "button") {
+      attributes.className = "btn btn-primary";
     }
 
     for (let i = 0; i < code.openingElement.attributes.length; i++) {
@@ -164,6 +173,25 @@ export default class VM {
           e.preventDefault();
           const data = this.executeExpression(attribute.value);
           this.commitData(data);
+          return false;
+        };
+      } else if (
+        name === "onClick" &&
+        element === "button" &&
+        attribute.value.type === "JSXExpressionContainer"
+      ) {
+        console.log(attribute.value);
+        const callee = this.requireIdentifier(attribute.value.expression);
+        attributes.onClick = (e) => {
+          e.preventDefault();
+          if (!this.alive) {
+            return false;
+          }
+          if (callee in this.functions) {
+            this.executeCode(this.functions[callee].body);
+          } else {
+            throw new Error("Callee '" + callee + "' is not defined");
+          }
           return false;
         };
       } else {
@@ -260,9 +288,9 @@ export default class VM {
           throw new Error("Missing argument 'obj' for Object.entries");
         }
         return Object.entries(args[0]);
-      } else if (callee === "initState") {
+      } else if (callee === "initState" || callee === "State.init") {
         if (args.length < 1) {
-          throw new Error("Missing argument 'initialState' for initState");
+          throw new Error("Missing argument 'initialState' for State.init");
         }
         if (args[0] === null || typeof args[0] !== "object") {
           throw new Error("'initialState' is not an object");
@@ -273,6 +301,19 @@ export default class VM {
         const newState = JSON.parse(JSON.stringify(args[0]));
         this.setReactState(newState);
         this.state.state = newState;
+      } else if (callee === "State.update") {
+        if (this.state.state === undefined) {
+          throw new Error("The error was not initialized");
+        }
+        const newState = JSON.parse(JSON.stringify(this.state.state));
+        this.setReactState(newState);
+        this.state.state = newState;
+      } else if (callee in this.functions) {
+        const f = this.functions[callee];
+        for (let i = 0; i < Math.min(f.params.length, args.length); i++) {
+          this.state[f.params[i]] = args[i];
+        }
+        return this.executeCode(f.body);
       } else {
         throw new Error("Unknown callee method '" + callee + "'");
       }
@@ -322,8 +363,8 @@ export default class VM {
       if (isReactObject(obj)) {
         throw new Error("React objects shouldn't be modified");
       }
-      if (!options?.callee && isKeywordObject(obj)) {
-        throw new Error("Keyword objects shouldn't be modified");
+      if (!options?.callee) {
+        assertNotKeywordObject(obj);
       }
       return [obj, property];
     } else {
@@ -337,7 +378,8 @@ export default class VM {
     }
     const type = code?.type;
     if (type === "AssignmentExpression") {
-      const [obj, key] = this.resolveMemberExpression(code.left, true);
+      const [obj, key] = this.resolveMemberExpression(code.left);
+      assertNotKeywordObject(obj[key]);
       const right = this.executeExpression(code.right);
 
       if (code.operator === "=") {
@@ -380,10 +422,7 @@ export default class VM {
       const [obj, callee] = this.resolveMemberExpression(code.callee, {
         callee: true,
       });
-      const args = [];
-      for (let i = 0; i < code.arguments.length; i++) {
-        args.push(this.executeExpression(code.arguments[i]));
-      }
+      const args = code.arguments.map((arg) => this.executeExpression(arg));
       return this.callFunction(obj, callee, args);
     } else if (type === "Literal") {
       return code.value;
@@ -462,22 +501,16 @@ export default class VM {
         );
       }
     } else if (type === "ObjectExpression") {
-      let object = {};
-      for (let i = 0; i < code.properties.length; i++) {
-        const property = code.properties[i];
+      return code.properties.reduce((object, property) => {
         if (property.type !== "Property") {
           throw new Error("Unknown property type: " + property.type);
         }
         const key = this.resolveKey(property.key, property.computed);
         object[key] = this.executeExpression(property.value);
-      }
-      return object;
+        return object;
+      }, {});
     } else if (type === "ArrayExpression") {
-      let array = [];
-      for (let i = 0; i < code.elements.length; i++) {
-        array.push(this.executeExpression(code.elements[i]));
-      }
-      return array;
+      return code.elements.map((element) => this.executeExpression(element));
     } else if (type === "JSXEmptyExpression") {
       return null;
     } else {
@@ -489,16 +522,32 @@ export default class VM {
     if (!token || token.type === "EmptyStatement") {
       return null;
     } else if (token.type === "VariableDeclaration") {
-      for (let j = 0; j < token.declarations.length; j++) {
-        const declaration = token.declarations[j];
+      token.declarations.forEach((declaration) => {
         if (declaration.type === "VariableDeclarator") {
-          this.state[this.requireIdentifier(declaration.id)] =
-            this.executeExpression(declaration.init);
+          const identifier = this.requireIdentifier(declaration.id);
+          assertNotKeywordObject(this.state[identifier]);
+          this.state[identifier] = this.executeExpression(declaration.init);
+        } else {
+          throw new Error(
+            "Unknown variable declaration type '" + declaration.type + "'"
+          );
         }
-      }
+      });
     } else if (token.type === "ReturnStatement") {
       return {
         result: this.executeExpression(token.argument),
+      };
+    } else if (token.type === "FunctionDeclaration") {
+      const params = token.params.map((param) => {
+        const arg = this.requireIdentifier(param);
+        assertNotReservedKey(arg);
+        assertNotKeywordObject(this.state[arg]);
+        return arg;
+      });
+      const body = token.body;
+      this.functions[this.requireIdentifier(token.id)] = {
+        params,
+        body,
       };
     } else if (token.type === "ExpressionStatement") {
       this.executeExpression(token.expression);
@@ -601,8 +650,12 @@ export default class VM {
         Social: {
           $$keyword: "Social",
         },
+        State: {
+          $$keyword: "State",
+        },
       })
     );
+    this.functions = {};
     this.cache = cache;
     this.loopLimit = LoopLimit;
     const executionResult = this.executeCode(this.code);
