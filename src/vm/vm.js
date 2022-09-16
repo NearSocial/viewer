@@ -5,10 +5,13 @@ const LoopLimit = 10000;
 
 const ReactKey = "$$typeof";
 const KeywordKey = "$$keyword";
+const FunctionKeyword = "Function";
 const isReactObject = (o) =>
   o !== null && typeof o === "object" && !!o[ReactKey];
 const isKeywordObject = (o) =>
   o !== null && typeof o === "object" && !!o[KeywordKey];
+const isFunctionObject = (o) =>
+  o !== null && typeof o === "object" && o[KeywordKey] === FunctionKeyword;
 const StakeKey = "state";
 
 const ExecutionDebug = false;
@@ -181,16 +184,16 @@ export default class VM {
         attribute.value.type === "JSXExpressionContainer"
       ) {
         console.log(attribute.value);
-        const callee = this.requireIdentifier(attribute.value.expression);
+        const f = this.executeExpression(attribute.value.expression);
         attributes.onClick = (e) => {
           e.preventDefault();
           if (!this.alive) {
             return false;
           }
-          if (callee in this.functions) {
-            this.executeCode(this.functions[callee].body);
+          if (isFunctionObject(f)) {
+            this.executeFunction(f);
           } else {
-            throw new Error("Callee '" + callee + "' is not defined");
+            throw new Error("onClick is not a function");
           }
           return false;
         };
@@ -239,6 +242,14 @@ export default class VM {
     if (keyword) {
       callee = `${keyword}.${callee}`;
       obj = this.state;
+    }
+
+    if (isFunctionObject(obj?.[callee])) {
+      const f = obj?.[callee];
+      for (let i = 0; i < Math.min(f.params.length, args.length); i++) {
+        this.state[f.params[i]] = args[i];
+      }
+      return this.executeFunction(f);
     }
 
     if (obj === this.state) {
@@ -308,12 +319,6 @@ export default class VM {
         const newState = JSON.parse(JSON.stringify(this.state.state));
         this.setReactState(newState);
         this.state.state = newState;
-      } else if (callee in this.functions) {
-        const f = this.functions[callee];
-        for (let i = 0; i < Math.min(f.params.length, args.length); i++) {
-          this.state[f.params[i]] = args[i];
-        }
-        return this.executeCode(f.body);
       } else {
         throw new Error("Unknown callee method '" + callee + "'");
       }
@@ -513,9 +518,37 @@ export default class VM {
       return code.elements.map((element) => this.executeExpression(element));
     } else if (type === "JSXEmptyExpression") {
       return null;
+    } else if (type === "ArrowFunctionExpression") {
+      return this.createFunction(code.params, code.body, code.expression);
     } else {
       throw new Error("Unknown expression type '" + type + "'");
     }
+  }
+
+  createFunction(params, body, isExpression) {
+    params = params.map((param) => {
+      const arg = this.requireIdentifier(param);
+      assertNotReservedKey(arg);
+      assertNotKeywordObject(this.state[arg]);
+      return arg;
+    });
+    return {
+      [KeywordKey]: FunctionKeyword,
+      params,
+      isExpression,
+      body,
+    };
+  }
+
+  stateAssign(id, value) {
+    assertNotKeywordObject(this.state[id]);
+    this.state[id] = value;
+  }
+
+  executeFunction(f) {
+    return f.isExpression
+      ? this.executeExpression(f.body)
+      : this.executeStatement(f.body);
   }
 
   executeStatement(token) {
@@ -524,9 +557,10 @@ export default class VM {
     } else if (token.type === "VariableDeclaration") {
       token.declarations.forEach((declaration) => {
         if (declaration.type === "VariableDeclarator") {
-          const identifier = this.requireIdentifier(declaration.id);
-          assertNotKeywordObject(this.state[identifier]);
-          this.state[identifier] = this.executeExpression(declaration.init);
+          this.stateAssign(
+            this.requireIdentifier(declaration.id),
+            this.executeExpression(declaration.init)
+          );
         } else {
           throw new Error(
             "Unknown variable declaration type '" + declaration.type + "'"
@@ -538,23 +572,19 @@ export default class VM {
         result: this.executeExpression(token.argument),
       };
     } else if (token.type === "FunctionDeclaration") {
-      const params = token.params.map((param) => {
-        const arg = this.requireIdentifier(param);
-        assertNotReservedKey(arg);
-        assertNotKeywordObject(this.state[arg]);
-        return arg;
-      });
-      const body = token.body;
-      this.functions[this.requireIdentifier(token.id)] = {
-        params,
-        body,
-      };
+      this.stateAssign(
+        this.requireIdentifier(token.id),
+        this.createFunction(token.params, token.body, token.expression)
+      );
     } else if (token.type === "ExpressionStatement") {
       this.executeExpression(token.expression);
-    } else if (token.type === "BlockStatement") {
-      const result = this.executeCode(token);
-      if (result) {
-        return result;
+    } else if (token.type === "BlockStatement" || token.type === "Program") {
+      const body = token.body;
+      for (let i = 0; i < body.length; i++) {
+        const result = this.executeStatement(body[i]);
+        if (result) {
+          return result;
+        }
       }
     } else if (token.type === "ForStatement") {
       this.executeStatement(token.init);
@@ -565,7 +595,7 @@ export default class VM {
             break;
           }
         }
-        const result = this.executeCode(token.body);
+        const result = this.executeStatement(token.body);
         if (result) {
           if (result.break) {
             break;
@@ -584,7 +614,7 @@ export default class VM {
         if (!test) {
           break;
         }
-        const result = this.executeCode(token.body);
+        const result = this.executeStatement(token.body);
         if (result) {
           if (result.break) {
             break;
@@ -599,8 +629,8 @@ export default class VM {
     } else if (token.type === "IfStatement") {
       const test = this.executeExpression(token.test);
       const result = !!test
-        ? this.executeCode(token.consequent)
-        : this.executeCode(token.alternate);
+        ? this.executeStatement(token.consequent)
+        : this.executeStatement(token.alternate);
       if (result) {
         return result;
       }
@@ -614,26 +644,6 @@ export default class VM {
     return null;
   }
 
-  executeCode(code) {
-    if (!code) {
-      return null;
-    }
-    if (code.type === "EmptyStatement") {
-      return null;
-    }
-    if (code.type !== "Program" && code.type !== "BlockStatement") {
-      throw new Error("Unknown code type '" + code.type + "'");
-    }
-    const body = code.body;
-    for (let i = 0; i < body.length; i++) {
-      const result = this.executeStatement(body[i]);
-      if (result) {
-        return result;
-      }
-    }
-    return null;
-  }
-
   renderCode({ props, context, state, cache }) {
     this.gIndex = 0;
     this.state = JSON.parse(
@@ -642,23 +652,22 @@ export default class VM {
         context,
         state,
         JSON: {
-          $$keyword: "JSON",
+          [KeywordKey]: "JSON",
         },
         Object: {
-          $$keyword: "Object",
+          [KeywordKey]: "Object",
         },
         Social: {
-          $$keyword: "Social",
+          [KeywordKey]: "Social",
         },
         State: {
-          $$keyword: "State",
+          [KeywordKey]: "State",
         },
       })
     );
-    this.functions = {};
     this.cache = cache;
     this.loopLimit = LoopLimit;
-    const executionResult = this.executeCode(this.code);
+    const executionResult = this.executeStatement(this.code);
     if (executionResult?.break) {
       throw new Error("BreakStatement outside of a loop");
     }
