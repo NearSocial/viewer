@@ -146,3 +146,20 @@ export function useQuery() {
 
   return React.useMemo(() => new URLSearchParams(search), [search]);
 }
+
+export const ipfsUpload = async (f) => {
+  const formData = new FormData();
+
+  formData.append("file", f);
+  const res = await fetch("https://api.web3.storage/upload", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${process.env.REACT_APP_WEB3STORAGE_TOKEN}`,
+    },
+    body: formData,
+  });
+  return (await res.json()).cid;
+};
+
+export const ipfsUrl = (cid) => `https://${cid}.ipfs.w3s.link`;
