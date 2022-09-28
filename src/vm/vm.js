@@ -1,5 +1,7 @@
 import React from "react";
 import { socialGet, Widget } from "../components/Widget/Widget";
+import { ipfsUpload, ipfsUrl, Loading } from "../data/utils";
+import Files from "react-files";
 
 const LoopLimit = 10000;
 
@@ -39,6 +41,7 @@ const ApprovedTags = {
   img: false,
   Widget: false,
   CommitButton: true,
+  IpfsImageUpload: false,
 };
 
 const assertNotReservedKey = (key) => {
@@ -138,12 +141,15 @@ export default class VM {
   renderElement(code) {
     const element = this.requireJSXIdentifier(code.openingElement.name);
     const attributes = {};
+    const status = {};
     if (element === "input") {
       attributes.className = "form-control";
     } else if (element === "CommitButton") {
       attributes.className = "btn btn-success";
     } else if (element === "button") {
       attributes.className = "btn btn-primary";
+    } else if (element === "IpfsImageUpload") {
+      attributes.className = "btn btn-outline-primary";
     }
 
     for (let i = 0; i < code.openingElement.attributes.length; i++) {
@@ -179,6 +185,40 @@ export default class VM {
           return false;
         };
       } else if (
+        name === "image" &&
+        element === "IpfsImageUpload" &&
+        attribute.value.type === "JSXExpressionContainer"
+      ) {
+        let [obj, key] = this.resolveMemberExpression(
+          attribute.value.expression,
+          {
+            requireState: true,
+          }
+        );
+        status.img = obj[key];
+        attributes.onChange = async (files) => {
+          obj[key] = null;
+          if (files?.length > 0) {
+            obj[key] = {
+              uploading: true,
+              cid: null,
+            };
+            this.setReactState(this.state.state);
+            const cid = await ipfsUpload(files[0]);
+            [obj, key] = this.resolveMemberExpression(
+              attribute.value.expression,
+              {
+                requireState: true,
+              }
+            );
+            obj[key] = {
+              cid,
+            };
+          }
+          this.setReactState(this.state.state);
+          return false;
+        };
+      } else if (
         name === "onClick" &&
         element === "button" &&
         attribute.value.type === "JSXExpressionContainer"
@@ -211,14 +251,46 @@ export default class VM {
         "And element '" + element + "' contains children, but shouldn't"
       );
     }
-    const children = [];
-    for (let i = 0; i < code.children.length; i++) {
-      children.push(this.executeExpression(code.children[i]));
-    }
+    const children = code.children.map((child) =>
+      this.executeExpression(child)
+    );
     if (element === "Widget") {
       return <Widget {...attributes} />;
     } else if (element === "CommitButton") {
       return <button {...attributes}>{children}</button>;
+    } else if (element === "IpfsImageUpload") {
+      return (
+        <div className="image-upload" key={`${this.gkey}-${this.gIndex++}`}>
+          {status.img?.cid && (
+            <div
+              className="d-inline-block me-2 overflow-hidden align-middle"
+              style={{ width: "2.5em", height: "2.5em" }}
+            >
+              <img
+                className="rounded w-100 h-100"
+                style={{ objectFit: "cover" }}
+                src={ipfsUrl(status.img?.cid)}
+                alt="upload preview"
+              />
+            </div>
+          )}
+          <Files
+            multiple={false}
+            accepts={["image/*"]}
+            minFileSize={1}
+            clickable
+            {...attributes}
+          >
+            {status.img?.uploading ? (
+              <>{Loading} Uploading</>
+            ) : status.img?.cid ? (
+              "Replace"
+            ) : (
+              "Upload an Image"
+            )}
+          </Files>
+        </div>
+      );
     } else if (withChildren === true) {
       return React.createElement(element, { ...attributes }, ...children);
     } else if (withChildren === false) {
