@@ -8,8 +8,8 @@ import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import Big from "big.js";
 
-const MinStorageBalance = StorageCostPerByte.mul(5000);
-const AdditionalStorageBalance = StorageCostPerByte.mul(20000);
+const MinStorageBalance = StorageCostPerByte.mul(2000);
+const AdditionalStorageBalance = StorageCostPerByte.mul(2500);
 
 const AcornOptions = {
   ecmaVersion: 13,
