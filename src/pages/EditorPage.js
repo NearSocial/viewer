@@ -9,6 +9,11 @@ import { LsKey, useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
+import Editor from "react-simple-code-editor";
+import { highlight, languages } from "prismjs/components/prism-core";
+import "prismjs/components/prism-clike";
+import "prismjs/components/prism-javascript";
+import "prismjs/themes/prism.css";
 
 const EditorCodeKey = LsKey + "editorCode:";
 const WidgetNameKey = LsKey + "widgetName:";
@@ -133,29 +138,28 @@ export default function EditorPage(props) {
                 onChange={(e) => updateWidgetName(e.target.value)}
               />
             </div>
+            <div className="form-control mb-3 overflow-auto code-editor">
+              <Editor
+                className="font-monospace"
+                textareaClassName="outline-none"
+                value={code}
+                highlight={(code) => highlight(code, languages.js)}
+                onValueChange={(code) => updateCode(code)}
+                onBlur={() => reformat(code)}
+                style={{
+                  fontSize: 14,
+                }}
+              />
+            </div>
             <div className="mb-3">
               <button
-                className="btn btn-secondary me-2"
+                className="btn btn-success"
                 onClick={() => setRenderCode(code)}
               >
-                Render
+                Render preview
               </button>
               <button
-                className="btn btn-secondary"
-                onClick={() => reformat(code)}
-              >
-                Format
-              </button>
-            </div>
-            <textarea
-              className="form-control font-monospace mb-3"
-              value={code}
-              rows={20}
-              onChange={(e) => updateCode(e.target.value)}
-            />
-            <div className="mb-3">
-              <button
-                className="btn btn-primary"
+                className="btn btn-primary ms-2"
                 onClick={(e) => {
                   e.preventDefault();
                   updateWidgetName(widgetName);
@@ -178,13 +182,11 @@ export default function EditorPage(props) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  View Widget
+                  Open Widget in a new tab
                 </a>
               )}
             </div>
-          </div>
-          <div className="col-md-6 mb-3">
-            <div>
+            <div className="mb-3">
               Props for debugging (JSON)
               <textarea
                 className="form-control font-monospace mb-3"
@@ -196,6 +198,8 @@ export default function EditorPage(props) {
                 <pre className="alert alert-danger">{propsError}</pre>
               )}
             </div>
+          </div>
+          <div className="col-md-6 mb-3">
             <h5>Widget</h5>
             <Widget code={renderCode} props={parsedWidgetProps} />
           </div>
