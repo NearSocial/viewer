@@ -2,6 +2,7 @@ import React from "react";
 import { socialGet, Widget } from "../components/Widget/Widget";
 import { ipfsUpload, ipfsUrl, Loading } from "../data/utils";
 import Files from "react-files";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 
 const LoopLimit = 10000;
 
@@ -253,8 +254,13 @@ export default class VM {
       }
     }
     attributes.key = `${this.gkey}-${this.gIndex++}`;
+    attributes.dangerouslySetInnerHTML = undefined;
     if (element === "img") {
       attributes.alt = attributes.alt ?? "not defined";
+    } else if (element === "a") {
+      if ("href" in attributes) {
+        attributes.href = sanitizeUrl(attributes.href);
+      }
     }
     const withChildren = ApprovedTags[element];
     if (withChildren === false && code.children.length) {
