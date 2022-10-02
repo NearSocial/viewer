@@ -1,6 +1,6 @@
 {
-  "short_name": "Social08 Viewer",
-  "name": "Social08 Viewer - Browser for Social08",
+  "short_name": "Near Social Browser",
+  "name": "Near Social Browser for SocialDB",
   "icons": [
     {
       "src": "favicon.png",

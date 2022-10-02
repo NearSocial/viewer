@@ -98,14 +98,14 @@ function App(props) {
     </div>
   ) : signedIn ? (
     <div>
-      <button className="btn btn-outline-light" onClick={() => logOut()}>
+      <button className="btn btn-outline-light m-1" onClick={() => logOut()}>
         Sign out {signedAccountId}
       </button>
     </div>
   ) : (
     <div>
       <button
-        className="btn btn-outline-light"
+        className="btn btn-outline-light m-1"
         onClick={(e) => requestSignIn(e)}
       >
         Sign in with NEAR Wallet
@@ -126,7 +126,7 @@ function App(props) {
                 className="d-inline-block align-text-top me-2"
               />
               {!IsMainnet && "Testnet "}
-              Viewer
+              Near Social Browser
             </Link>
             <button
               className="navbar-toggler"
@@ -143,10 +143,10 @@ function App(props) {
               className="collapse navbar-collapse"
               id="navbarSupportedContent"
             >
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <ul className="navbar-nav me-auto mb-lg-0">
                 <li className="nav-item">
                   <Link
-                    className="btn btn-outline-light me-2"
+                    className="btn btn-outline-light m-1"
                     aria-current="page"
                     to="/edit/new"
                   >
@@ -156,7 +156,7 @@ function App(props) {
                 {forkSrc && (
                   <li className="nav-item">
                     <Link
-                      className="btn btn-outline-light me-2"
+                      className="btn btn-outline-light m-1"
                       aria-current="page"
                       to={forkSrc}
                     >

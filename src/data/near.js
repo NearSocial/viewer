@@ -16,10 +16,14 @@ export const randomPublicKey = nearAPI.utils.PublicKey.from(
   "ed25519:8fWHD35Rjd78yeowShh9GwhRudRtLLsGCRjZtgPjAtw9"
 );
 
-const isLocalhost = window.location.hostname === "localhost";
+const MainnetDomains = {
+  "view.social08.org": true,
+  "near.social": true,
+  "social.near.page": true,
+  localhost: true,
+};
 
-export const IsMainnet =
-  window.location.hostname === "view.social08.org" || isLocalhost;
+export const IsMainnet = window.location.hostname in MainnetDomains;
 const TestnetContract = "v0.social08.testnet";
 const TestNearConfig = {
   networkId: "testnet",
