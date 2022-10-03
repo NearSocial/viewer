@@ -35,7 +35,7 @@ const TestNearConfig = {
   wrapNearAccountId: "wrap.testnet",
   defaultWidget: "eugenethedream/widget/Welcome",
 };
-const MainnetContract = "db.social08.near";
+const MainnetContract = "social.near";
 export const MainNearConfig = {
   networkId: "mainnet",
   nodeUrl: "https://rpc.mainnet.near.org",
