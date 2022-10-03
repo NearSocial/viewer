@@ -24,7 +24,7 @@ const MainnetDomains = {
 };
 
 export const IsMainnet = window.location.hostname in MainnetDomains;
-const TestnetContract = "v0.social08.testnet";
+const TestnetContract = "v1.social08.testnet";
 const TestNearConfig = {
   networkId: "testnet",
   nodeUrl: "https://rpc.testnet.near.org",
