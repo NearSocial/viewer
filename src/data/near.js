@@ -146,6 +146,8 @@ async function _initNear() {
   //   NearConfig.contractName
   // );
   _near.accountId = selector.store.getState()?.accounts?.[0]?.accountId;
+
+  console.log(selector.store.getState());
   // _near.account = _near.walletConnection.account();
 
   _near.archivalViewCall = (args) =>

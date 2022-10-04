@@ -1,6 +1,6 @@
-# Viewer
+# Browser
 
-A framework for reusable components to render and modify SocialDB by Social08.
+A framework for reusable components to render and modify SocialDB by Near Social.
 
 ## Widget example
 
