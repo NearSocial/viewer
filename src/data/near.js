@@ -51,7 +51,6 @@ export const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;
 export const LsKey = NearConfig.contractName + ":v01:";
 
 function setupContract(near, contractId, options) {
-  // const nearContract = new nearAPI.Contract(wallet, contractId, options);
   const { viewMethods = [], changeMethods = [] } = options;
   const contract = {
     near,
@@ -141,14 +140,18 @@ async function _initNear() {
   _near.keyStore = keyStore;
   _near.nearConnection = nearConnection;
 
-  // _near.walletConnection = new nearAPI.WalletConnection(
-  //   nearConnection,
-  //   NearConfig.contractName
-  // );
-  _near.accountId = selector.store.getState()?.accounts?.[0]?.accountId;
-
-  console.log(selector.store.getState());
-  // _near.account = _near.walletConnection.account();
+  let walletState = selector.store.getState();
+  _near.connectedContractId = walletState?.contract?.contractId;
+  if (
+    _near.connectedContractId &&
+    _near.connectedContractId !== NearConfig.contractName
+  ) {
+    const wallet = await selector.wallet();
+    await wallet.signOut();
+    _near.connectedContractId = null;
+    walletState = selector.store.getState();
+  }
+  _near.accountId = walletState?.accounts?.[0]?.accountId;
 
   _near.archivalViewCall = (args) =>
     viewCall(_near.nearArchivalConnection.provider, ...args);
@@ -173,74 +176,6 @@ async function _initNear() {
     ],
     changeMethods: ["set", "grant_write_permission", "storage_deposit"],
   });
-  /*
-  _near.fetchBlockHash = async () => {
-    const block = await nearConnection.connection.provider.block({
-      finality: "final",
-    });
-    return nearAPI.utils.serialize.base_decode(block.header.hash);
-  };
-
-  _near.fetchBlockHeight = async () => {
-    const block = await nearConnection.connection.provider.block({
-      finality: "final",
-    });
-    return block.header.height;
-  };
-
-  _near.fetchNextNonce = async () => {
-    const accessKeys = await _near.account.getAccessKeys();
-    return accessKeys.reduce(
-      (nonce, accessKey) => Math.max(nonce, accessKey.access_key.nonce + 1),
-      1
-    );
-  };
-
-  _near.sendTransactions = async (items, callbackUrl) => {
-    let [nonce, blockHash] = await Promise.all([
-      _near.fetchNextNonce(),
-      _near.fetchBlockHash(),
-    ]);
-
-    const transactions = [];
-    let actions = [];
-    let currentReceiverId = null;
-    let currentTotalGas = Big(0);
-    items.push([null, null]);
-    items.forEach(([receiverId, action]) => {
-      const actionGas =
-        action && action.functionCall ? Big(action.functionCall.gas) : Big(0);
-      const newTotalGas = currentTotalGas.add(actionGas);
-      if (
-        receiverId !== currentReceiverId ||
-        newTotalGas.gt(MaxGasPerTransaction)
-      ) {
-        if (currentReceiverId !== null) {
-          transactions.push(
-            nearAPI.transactions.createTransaction(
-              _near.accountId,
-              randomPublicKey,
-              currentReceiverId,
-              nonce++,
-              actions,
-              blockHash
-            )
-          );
-          actions = [];
-        }
-        currentTotalGas = actionGas;
-        currentReceiverId = receiverId;
-      } else {
-        currentTotalGas = newTotalGas;
-      }
-      actions.push(action);
-    });
-    return await _near.walletConnection.requestSignTransactions(
-      transactions,
-      callbackUrl
-    );
-  };
-  */
 
   return _near;
 }
