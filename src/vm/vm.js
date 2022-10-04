@@ -426,6 +426,26 @@ export default class VM {
         return obj.toLowerCase();
       } else if (callee === "toUpperCase") {
         return obj.toUpperCase();
+      } else if (callee === "replace") {
+        return obj.replace(...args);
+      } else if (callee === "replaceAll") {
+        return obj.replaceAll(...args);
+      } else if (callee === "slice") {
+        return obj.slice(...args);
+      } else if (callee === "split") {
+        return obj.split(...args);
+      } else if (callee === "endsWith") {
+        return obj.endsWith(...args);
+      } else if (callee === "startsWith") {
+        return obj.startsWith(...args);
+      } else if (callee === "indexOf") {
+        return obj.indexOf(...args);
+      } else if (callee === "trim") {
+        return obj.trim(...args);
+      } else if (callee === "trimStart") {
+        return obj.trimStart(...args);
+      } else if (callee === "trimEnd") {
+        return obj.trimEnd(...args);
       } else {
         throw new Error("Unknown callee method '" + callee + "' on a string");
       }
