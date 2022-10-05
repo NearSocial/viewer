@@ -220,4 +220,13 @@ export const removeDuplicates = (data, prevData) => {
   return Object.keys(obj).length ? obj : undefined;
 };
 
-window.removeDuplicates = removeDuplicates;
+const stringify = (s) => (typeof s === "string" ? s : JSON.stringify(s));
+
+export const convertToStringLeaves = (data) => {
+  return isObject(data)
+    ? Object.entries(data).reduce((obj, [key, value]) => {
+        obj[stringify(key)] = convertToStringLeaves(value);
+        return obj;
+      }, {})
+    : stringify(data);
+};

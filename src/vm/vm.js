@@ -352,6 +352,12 @@ export default class VM {
           throw new Error("Missing argument 'keys' for Social.get");
         }
         return this.cachedSocialGet(args[0], false);
+      } else if (callee === "parseInt") {
+        return parseInt(...args);
+      } else if (callee === "parseFloat") {
+        return parseFloat(...args);
+      } else if (callee === "isNaN") {
+        return isNaN(...args);
       } else if (callee === "Social.keys") {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.keys");
