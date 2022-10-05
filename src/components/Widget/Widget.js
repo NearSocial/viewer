@@ -201,7 +201,7 @@ export function Widget(props) {
   }, [vm, codeProps, context, state, cache]);
 
   return element !== null && element !== undefined ? (
-    <div className="position-relative overflow-hidden">
+    <div className="d-inline-block position-relative overflow-hidden">
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
         onReset={() => {
