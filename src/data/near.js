@@ -174,8 +174,19 @@ async function _initNear() {
       "is_write_permission_granted",
       "keys",
     ],
-    changeMethods: ["set", "grant_write_permission", "storage_deposit"],
+    changeMethods: [
+      "set",
+      "grant_write_permission",
+      "storage_deposit",
+      "storage_withdraw",
+    ],
   });
+
+  _near.storageBalance = _near.accountId
+    ? await _near.contract.storage_balance_of({
+        account_id: _near.accountId,
+      })
+    : null;
 
   return _near;
 }

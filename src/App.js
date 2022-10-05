@@ -5,10 +5,17 @@ import "@near-wallet-selector/modal-ui/styles.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import "./App.scss";
 import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
-import { IsMainnet, NearConfig, useNear } from "./data/near";
+import {
+  IsMainnet,
+  NearConfig,
+  StorageCostPerByte,
+  TGas,
+  useNear,
+} from "./data/near";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
+import Big from "big.js";
 
 export const refreshAllowanceObj = {};
 
@@ -16,6 +23,7 @@ function App(props) {
   const [connected, setConnected] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [signedAccountId, setSignedAccountId] = useState(null);
+  const [availableStorage, setAvailableStorage] = useState(null);
   const [forkSrc, setForkSrc] = useState(null);
   const [walletModal, setWalletModal] = useState(null);
 
@@ -50,6 +58,15 @@ function App(props) {
     [walletModal]
   );
 
+  const withdrawStorage = useCallback(
+    async (e) => {
+      e && e.preventDefault();
+      await near.contract.storage_withdraw({}, TGas.mul(30).toFixed(0), "1");
+      return false;
+    },
+    [near]
+  );
+
   const logOut = useCallback(async () => {
     if (!near) {
       return;
@@ -76,6 +93,11 @@ function App(props) {
     }
     setSignedIn(!!near.accountId);
     setSignedAccountId(near.accountId);
+    setAvailableStorage(
+      near.storageBalance
+        ? Big(near.storageBalance.available).div(StorageCostPerByte)
+        : Big(0)
+    );
     setConnected(true);
   }, [near]);
 
@@ -98,7 +120,14 @@ function App(props) {
     </div>
   ) : signedIn ? (
     <div>
-      <button className="btn btn-outline-light m-1" onClick={() => logOut()}>
+      <button
+        className="btn btn-outline-light m-1 border-0"
+        onClick={(e) => withdrawStorage(e)}
+        title={`Withdraw all available storage`}
+      >
+        Available {availableStorage && availableStorage.div(1000).toFixed(2)}kb
+      </button>
+      <button className="btn btn-outline-light m-1" onClick={(e) => logOut(e)}>
         Sign out {signedAccountId}
       </button>
     </div>
@@ -160,7 +189,9 @@ function App(props) {
                       aria-current="page"
                       to={forkSrc}
                     >
-                      Fork widget
+                      {forkSrc.startsWith(`/edit/${signedAccountId}/widget/`)
+                        ? "Edit widget"
+                        : "Fork widget"}
                     </Link>
                   </li>
                 )}

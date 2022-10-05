@@ -74,6 +74,13 @@ export const bigMin = (a, b) => {
   return a || b;
 };
 
+export const bigMax = (a, b) => {
+  if (a && b) {
+    return a.gt(b) ? a : b;
+  }
+  return a || b;
+};
+
 export const bigToString = (b, p, len) => {
   if (b === null) {
     return "???";
@@ -162,3 +169,55 @@ export const ipfsUpload = async (f) => {
 };
 
 export const ipfsUrl = (cid) => `https://ipfs.near.social/ipfs/${cid}`;
+
+const EstimatedKeyValueSize = 40 * 3 + 8 + 12;
+const EstimatedNodeSize = 40 * 2 + 8 + 10;
+
+export const estimateDataSize = (data, prevData) =>
+  isObject(data)
+    ? Object.entries(data).reduce(
+        (s, [key, value]) => {
+          const prevValue = isObject(prevData) ? prevData[key] : undefined;
+          return (
+            s +
+            (prevValue !== undefined
+              ? estimateDataSize(value, prevValue)
+              : key.length * 2 +
+                estimateDataSize(value, undefined) +
+                EstimatedKeyValueSize)
+          );
+        },
+        isObject(prevData) ? 0 : EstimatedNodeSize
+      )
+    : (data?.length || 8) -
+      (typeof prevData === "string" ? prevData.length : 0);
+
+export const extractKeys = (data, prefix = "") =>
+  Object.entries(data)
+    .map(([key, value]) =>
+      isObject(value)
+        ? extractKeys(value, `${prefix}${key}/`)
+        : `${prefix}${key}`
+    )
+    .flat();
+
+export const removeDuplicates = (data, prevData) => {
+  const obj = Object.entries(data).reduce((obj, [key, value]) => {
+    const prevValue = isObject(prevData) ? prevData[key] : undefined;
+    if (isObject(value)) {
+      const newValue = isObject(prevValue)
+        ? removeDuplicates(value, prevValue)
+        : value;
+      if (newValue !== undefined) {
+        obj[key] = newValue;
+      }
+    } else if (value !== prevValue) {
+      obj[key] = value;
+    }
+
+    return obj;
+  }, {});
+  return Object.keys(obj).length ? obj : undefined;
+};
+
+window.removeDuplicates = removeDuplicates;

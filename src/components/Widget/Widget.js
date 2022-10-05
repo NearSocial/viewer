@@ -4,12 +4,20 @@ import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
 import { StorageCostPerByte, TGas, useNear } from "../../data/near";
 import VM from "../../vm/vm";
-import { ErrorFallback, Loading } from "../../data/utils";
+import {
+  bigMax,
+  ErrorFallback,
+  estimateDataSize,
+  extractKeys,
+  Loading,
+  removeDuplicates,
+} from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import Big from "big.js";
 
-const MinStorageBalance = StorageCostPerByte.mul(3000);
-const AdditionalStorageBalance = StorageCostPerByte.mul(5000);
+const MinStorageBalance = StorageCostPerByte.mul(2000);
+const InitialAccountStorageBalance = StorageCostPerByte.mul(500);
+const ExtraStorageBalance = StorageCostPerByte.mul(500);
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -20,7 +28,14 @@ const parseCode = (code) => {
   return Parser.extend(jsx()).parse(code, AcornOptions);
 };
 
-export const asyncCommitData = async (near, data) => {
+const fetchPreviousData = async (near, data) => {
+  const keys = extractKeys(data);
+  return await near.contract.get({
+    keys,
+  });
+};
+
+export const asyncCommitData = async (near, data, forceRewrite) => {
   const accountId = near.accountId;
   if (!accountId) {
     alert("You're not logged in, bro");
@@ -30,15 +45,33 @@ export const asyncCommitData = async (near, data) => {
   const storageBalance = await near.contract.storage_balance_of({
     account_id: accountId,
   });
-  const deposit = Big(storageBalance?.available || "0").gte(MinStorageBalance)
-    ? Big(1)
-    : AdditionalStorageBalance;
+  const availableStorage = Big(storageBalance?.available || "0");
+  data = {
+    [near.accountId]: data,
+  };
+  let previousData = {};
+  if (!forceRewrite) {
+    previousData = await fetchPreviousData(near, data);
+    data = removeDuplicates(data, previousData);
+  }
+  // console.log(data, previousData, estimateDataSize(data, previousData));
+  // return;
+  if (!data) {
+    return;
+  }
+  const expectedDataBalance = StorageCostPerByte.mul(
+    estimateDataSize(data, previousData)
+  )
+    .add(storageBalance ? Big(0) : InitialAccountStorageBalance)
+    .add(ExtraStorageBalance);
+  const deposit = bigMax(
+    expectedDataBalance.sub(availableStorage),
+    storageBalance ? Big(1) : MinStorageBalance
+  );
 
   return await near.contract.set(
     {
-      data: {
-        [near.accountId]: data,
-      },
+      data,
     },
     TGas.mul(100).toFixed(0),
     deposit.toFixed(0)
@@ -99,7 +132,7 @@ export function Widget(props) {
     }
     try {
       const parsedCode = parseCode(code);
-      console.log(parsedCode);
+      // console.log(parsedCode);
       setParsedCode(parsedCode);
     } catch (e) {
       setElement(

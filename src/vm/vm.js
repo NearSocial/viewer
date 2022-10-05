@@ -182,7 +182,7 @@ export default class VM {
             requireState: true,
           }
         );
-        attributes.value = obj?.[key];
+        attributes.value = obj?.[key] || "";
         attributes.onChange = (e) => {
           e.preventDefault();
           obj[key] = e.target.value;
@@ -235,7 +235,7 @@ export default class VM {
         element === "button" &&
         attribute.value.type === "JSXExpressionContainer"
       ) {
-        console.log(attribute.value);
+        // console.log(attribute.value);
         const f = this.executeExpression(attribute.value.expression);
         attributes.onClick = (e) => {
           e.preventDefault();
