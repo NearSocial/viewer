@@ -6,6 +6,7 @@ import { StorageCostPerByte, TGas, useNear } from "../../data/near";
 import VM from "../../vm/vm";
 import {
   bigMax,
+  convertToStringLeaves,
   ErrorFallback,
   estimateDataSize,
   extractKeys,
@@ -47,7 +48,7 @@ export const asyncCommitData = async (near, data, forceRewrite) => {
   });
   const availableStorage = Big(storageBalance?.available || "0");
   data = {
-    [near.accountId]: data,
+    [near.accountId]: convertToStringLeaves(data),
   };
   let previousData = {};
   if (!forceRewrite) {
