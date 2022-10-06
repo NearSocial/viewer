@@ -563,6 +563,8 @@ export default class VM {
         return left + right;
       } else if (code.operator === "-") {
         return left - right;
+      } else if (code.operator === "%") {
+        return left % right;
       } else if (code.operator === "*") {
         return left * right;
       } else if (code.operator === "/") {
