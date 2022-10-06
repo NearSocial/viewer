@@ -79,14 +79,24 @@ export const asyncCommitData = async (near, data, forceRewrite) => {
   );
 };
 
+const globalCache = {};
+
+const cachedGet = async (near, key) => {
+  if (key in globalCache) {
+    console.log("hit");
+    return await globalCache[key];
+  }
+  return await (globalCache[key] = near.contract.get({
+    keys: [key],
+  }));
+};
+
 export const socialGet = async (near, key, recursive) => {
   if (!near) {
     return null;
   }
   key = recursive ? `${key}/**` : `${key}`;
-  let data = await near.contract.get({
-    keys: [key],
-  });
+  let data = await cachedGet(near, key);
 
   const parts = key.split("/");
   for (let i = 0; i < parts.length; i++) {
@@ -105,6 +115,7 @@ export function Widget(props) {
   const src = props.src;
   const rawCode = props.code;
   const codeProps = props.props;
+  const depth = props.depth || 0;
 
   const [code, setCode] = useState(null);
   const [state, setState] = useState(undefined);
@@ -164,8 +175,10 @@ export function Widget(props) {
       return;
     }
     setState(undefined);
-    setVm(new VM(near, gkey, parsedCode, setState, setCache, commitData));
-  }, [near, gkey, parsedCode, commitData]);
+    setVm(
+      new VM(near, gkey, parsedCode, setState, setCache, commitData, depth)
+    );
+  }, [near, gkey, parsedCode, commitData, depth]);
 
   useEffect(() => {
     if (!near) {

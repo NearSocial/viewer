@@ -5,6 +5,7 @@ import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 
 const LoopLimit = 10000;
+const MaxDepth = 32;
 
 const ReactKey = "$$typeof";
 const KeywordKey = "$$keyword";
@@ -78,7 +79,7 @@ const assertValidObject = (o) => {
 };
 
 export default class VM {
-  constructor(near, gkey, code, setReactState, setCache, commitData) {
+  constructor(near, gkey, code, setReactState, setCache, commitData, depth) {
     if (!code) {
       throw new Error("Not a program");
     }
@@ -90,6 +91,7 @@ export default class VM {
     this.commitData = commitData;
     this.fetchingCache = {};
     this.alive = true;
+    this.depth = depth;
   }
 
   requireIdentifier(id) {
@@ -261,6 +263,8 @@ export default class VM {
       if ("href" in attributes) {
         attributes.href = sanitizeUrl(attributes.href);
       }
+    } else if (element === "Widget") {
+      attributes.depth = this.depth + 1;
     }
     const withChildren = ApprovedTags[element];
     if (withChildren === false && code.children.length) {
@@ -760,6 +764,9 @@ export default class VM {
   }
 
   renderCode({ props, context, state, cache }) {
+    if (this.depth >= MaxDepth) {
+      return "Too deep";
+    }
     this.gIndex = 0;
     this.state = JSON.parse(
       JSON.stringify({
