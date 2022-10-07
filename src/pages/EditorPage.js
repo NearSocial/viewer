@@ -201,7 +201,11 @@ export default function EditorPage(props) {
           </div>
           <div className="col-md-6 mb-3">
             <h5>Widget</h5>
-            <Widget code={renderCode} props={parsedWidgetProps} />
+            <div className="container">
+              <div className="row">
+                <Widget code={renderCode} props={parsedWidgetProps} />{" "}
+              </div>
+            </div>
           </div>
         </div>
       </div>
