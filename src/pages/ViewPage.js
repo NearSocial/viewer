@@ -27,5 +27,11 @@ export default function ViewPage(props) {
     }, 1);
   }, [src, setForkSrc]);
 
-  return <Widget src={src} props={widgetProps} />;
+  return (
+    <div className="container">
+      <div className="row">
+        <Widget src={src} props={widgetProps} />
+      </div>
+    </div>
+  );
 }

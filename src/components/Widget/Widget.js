@@ -83,7 +83,6 @@ const globalCache = {};
 
 const cachedGet = async (near, key) => {
   if (key in globalCache) {
-    console.log("hit");
     return await globalCache[key];
   }
   return await (globalCache[key] = near.contract.get({
