@@ -23,6 +23,8 @@ const MainnetDomains = {
   localhost: true,
 };
 
+const EnableWeb4FastRpc = false;
+
 export const IsMainnet = window.location.hostname in MainnetDomains;
 const TestnetContract = "v1.social08.testnet";
 const TestNearConfig = {
@@ -115,6 +117,28 @@ async function viewCall(
   );
 }
 
+async function web4ViewCall(contractId, methodName, args, fallback) {
+  if (!IsMainnet) {
+    return fallback();
+  }
+  args = args || {};
+  const url = new URL(
+    `https://rpc.web4.near.page/account/${contractId}/view/${methodName}`
+  );
+  Object.entries(args).forEach(([key, value]) => {
+    if (value !== undefined) {
+      url.searchParams.append(`${key}.json`, JSON.stringify(value));
+    }
+  });
+  try {
+    return await (await fetch(url.toString())).json();
+  } catch (e) {
+    console.log("Web4 view call failed", url.toString());
+    console.error(e);
+    return fallback();
+  }
+}
+
 async function _initNear() {
   const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
   const selector = await setupWalletSelector({
@@ -153,17 +177,32 @@ async function _initNear() {
   }
   _near.accountId = walletState?.accounts?.[0]?.accountId;
 
-  _near.archivalViewCall = (args) =>
-    viewCall(_near.nearArchivalConnection.provider, ...args);
-  _near.viewCall = (contractId, methodName, args) =>
-    viewCall(
-      _near.nearConnection.connection.provider,
-      undefined,
-      contractId,
-      methodName,
-      args,
-      "optimistic"
-    );
+  _near.viewCall = (contractId, methodName, args, blockId) => {
+    let finality = "optimistic";
+    if (blockId !== undefined && blockId !== null) {
+      if (blockId === "optimistic" && blockId === "final") {
+        finality = blockId;
+        blockId = undefined;
+      } else {
+        finality = undefined;
+        blockId = parseInt(blockId);
+      }
+    }
+    const nearViewCall = () =>
+      viewCall(
+        blockId
+          ? _near.nearArchivalConnection.provider
+          : _near.nearConnection.connection.provider,
+        blockId ?? undefined,
+        contractId,
+        methodName,
+        args,
+        finality
+      );
+    return finality === "optimistic" && EnableWeb4FastRpc
+      ? web4ViewCall(contractId, methodName, args, nearViewCall)
+      : nearViewCall();
+  };
 
   _near.contract = setupContract(_near, NearConfig.contractName, {
     viewMethods: [

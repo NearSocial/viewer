@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
-import { StorageCostPerByte, TGas, useNear } from "../../data/near";
+import { NearConfig, StorageCostPerByte, TGas, useNear } from "../../data/near";
 import VM from "../../vm/vm";
 import {
   bigMax,
@@ -19,6 +19,10 @@ import Big from "big.js";
 const MinStorageBalance = StorageCostPerByte.mul(2000);
 const InitialAccountStorageBalance = StorageCostPerByte.mul(500);
 const ExtraStorageBalance = StorageCostPerByte.mul(500);
+
+const Action = {
+  ViewCall: "ViewCall",
+};
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -81,21 +85,48 @@ export const asyncCommitData = async (near, data, forceRewrite) => {
 
 const globalCache = {};
 
-const cachedGet = async (near, key) => {
+const cachedPromise = async (key, promise) => {
+  key = JSON.stringify(key);
   if (key in globalCache) {
     return await globalCache[key];
   }
-  return await (globalCache[key] = near.contract.get({
-    keys: [key],
-  }));
+  return await (globalCache[key] = promise());
 };
 
-export const socialGet = async (near, key, recursive) => {
+export const cachedViewCall = async (
+  near,
+  contractId,
+  methodName,
+  args,
+  blockId
+) =>
+  cachedPromise(
+    {
+      action: Action.ViewCall,
+      contractId,
+      methodName,
+      args,
+      blockId,
+    },
+    () => near.viewCall(contractId, methodName, args, blockId)
+  );
+
+export const socialGet = async (near, key, recursive, blockId, options) => {
   if (!near) {
     return null;
   }
   key = recursive ? `${key}/**` : `${key}`;
-  let data = await cachedGet(near, key);
+  const args = {
+    keys: [key],
+    options,
+  };
+  let data = await cachedViewCall(
+    near,
+    NearConfig.contractName,
+    "get",
+    args,
+    blockId
+  );
 
   const parts = key.split("/");
   for (let i = 0; i < parts.length; i++) {
@@ -131,7 +162,9 @@ export function Widget(props) {
       return;
     }
     if (src) {
-      socialGet(near, src.toString()).then(setCode);
+      socialGet(near, src.toString())
+        .then(setCode)
+        .catch(() => setCode(null));
     } else {
       setCode(rawCode);
     }

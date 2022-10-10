@@ -1,8 +1,9 @@
 import React from "react";
-import { socialGet, Widget } from "../components/Widget/Widget";
+import { cachedViewCall, socialGet, Widget } from "../components/Widget/Widget";
 import { ipfsUpload, ipfsUrl, Loading } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
+import { NearConfig } from "../data/near";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -131,7 +132,7 @@ export default class VM {
     return null;
   }
 
-  cachedSocialGet(key, recursive) {
+  cachedSocialGet(key, recursive, blockId, options) {
     return this.cachedPromise(`get:${recursive}:${key}`, () =>
       socialGet(this.near, key, recursive)
     );
@@ -139,7 +140,7 @@ export default class VM {
 
   cachedSocialKeys(key) {
     return this.cachedPromise(`keys:${key}`, () =>
-      this.near.contract.keys({
+      cachedViewCall(this.near, NearConfig.contractName, "keys", {
         keys: [key],
       })
     );
