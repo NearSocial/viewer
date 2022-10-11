@@ -146,8 +146,8 @@ export default class VM {
     );
   }
 
-  cachedNearCall(contractName, methodName, args) {
-    return this.cachedPromise(`call:${contractName}:${methodName}:${args}`, () =>
+  cachedNearView(contractName, methodName, args) {
+    return this.cachedPromise(`viewCall:${contractName}:${methodName}:${JSON.stringify(args)}`, () =>
       cachedViewCall(this.near, contractName, methodName, args)
     );
   }
@@ -363,11 +363,11 @@ export default class VM {
           throw new Error("Missing argument 'keys' for Social.get");
         }
         return this.cachedSocialGet(args[0], false);
-      } else if (callee === "Near.call") {
+      } else if (callee === "Near.view") {
         if (args.length !== 3) {
-          throw new Error("Arguments must be 'contractName', 'methodName' and 'args' for Near.call");
+          throw new Error("Arguments must be 'contractName', 'methodName' and 'args' for Near.view");
         }
-        return this.cachedNearCall(...args);
+        return this.cachedNearView(...args);
       } else if (callee === "parseInt") {
         return parseInt(...args);
       } else if (callee === "parseFloat") {
