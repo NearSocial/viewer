@@ -146,6 +146,12 @@ export default class VM {
     );
   }
 
+  cachedNearCall(contractName, methodName, args) {
+    return this.cachedPromise(`call:${contractName}:${methodName}:${args}`, () =>
+      cachedViewCall(this.near, contractName, methodName, args)
+    );
+  }
+
   executeExpression(code) {
     ExecutionDebug && console.log("Executing code:", code?.type);
     const res = this.execCodeInternal(code);
@@ -357,6 +363,11 @@ export default class VM {
           throw new Error("Missing argument 'keys' for Social.get");
         }
         return this.cachedSocialGet(args[0], false);
+      } else if (callee === "Near.call") {
+        if (args.length !== 3) {
+          throw new Error("Arguments must be 'contractName', 'methodName' and 'args' for Near.call");
+        }
+        return this.cachedNearCall(...args);
       } else if (callee === "parseInt") {
         return parseInt(...args);
       } else if (callee === "parseFloat") {
@@ -462,7 +473,7 @@ export default class VM {
       }
     } else {
       throw new Error(
-        "Unsupported callee method '" + callee + "' on a given object"
+        "Unsupported callee method '" + callee + "' on a given object '" + obj + "'"
       );
     }
   }
@@ -784,6 +795,9 @@ export default class VM {
         },
         Social: {
           [KeywordKey]: "Social",
+        },
+        Near: {
+          [KeywordKey]: "Near",
         },
         State: {
           [KeywordKey]: "State",
