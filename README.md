@@ -2,6 +2,18 @@
 
 A framework for reusable components to render and modify SocialDB by Near Social.
 
+## Setup & Development
+
+Initialize repo:
+```
+yarn
+```
+
+Start development version:
+```
+yarn start
+```
+
 ## Widget example
 
 Profile view 
