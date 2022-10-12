@@ -133,22 +133,33 @@ export default class VM {
   }
 
   cachedSocialGet(key, recursive, blockId, options) {
-    return this.cachedPromise(`get:${recursive}:${key}`, () =>
-      socialGet(this.near, key, recursive)
+    return this.cachedPromise(
+      `get:${recursive}:${key}:${blockId}:${JSON.stringify(options)}`,
+      () => socialGet(this.near, key, recursive, blockId, options)
     );
   }
 
-  cachedSocialKeys(key) {
-    return this.cachedPromise(`keys:${key}`, () =>
-      cachedViewCall(this.near, NearConfig.contractName, "keys", {
-        keys: [key],
-      })
+  cachedSocialKeys(key, blockId, options) {
+    return this.cachedPromise(
+      `keys:${key}:${blockId}:${JSON.stringify(options)}`,
+      () =>
+        cachedViewCall(
+          this.near,
+          NearConfig.contractName,
+          "keys",
+          {
+            keys: [key],
+            options,
+          },
+          blockId
+        )
     );
   }
 
   cachedNearView(contractName, methodName, args) {
-    return this.cachedPromise(`viewCall:${contractName}:${methodName}:${JSON.stringify(args)}`, () =>
-      cachedViewCall(this.near, contractName, methodName, args)
+    return this.cachedPromise(
+      `viewCall:${contractName}:${methodName}:${JSON.stringify(args)}`,
+      () => cachedViewCall(this.near, contractName, methodName, args)
     );
   }
 
@@ -357,15 +368,17 @@ export default class VM {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.getr");
         }
-        return this.cachedSocialGet(args[0], true);
+        return this.cachedSocialGet(args[0], true, args[1], args[2]);
       } else if (callee === "Social.get" || callee === "socialGet") {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.get");
         }
-        return this.cachedSocialGet(args[0], false);
+        return this.cachedSocialGet(args[0], false, args[1], args[2]);
       } else if (callee === "Near.view") {
         if (args.length !== 3) {
-          throw new Error("Arguments must be 'contractName', 'methodName' and 'args' for Near.view");
+          throw new Error(
+            "Arguments must be 'contractName', 'methodName' and 'args' for Near.view"
+          );
         }
         return this.cachedNearView(...args);
       } else if (callee === "parseInt") {
@@ -378,7 +391,7 @@ export default class VM {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.keys");
         }
-        return this.cachedSocialKeys(args[0]);
+        return this.cachedSocialKeys(args[0], args[1], args[2]);
       } else if (callee === "JSON.stringify" || callee === "stringify") {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for JSON.stringify");
@@ -473,7 +486,11 @@ export default class VM {
       }
     } else {
       throw new Error(
-        "Unsupported callee method '" + callee + "' on a given object '" + obj + "'"
+        "Unsupported callee method '" +
+          callee +
+          "' on a given object '" +
+          obj +
+          "'"
       );
     }
   }
