@@ -47,7 +47,7 @@ export const MainNearConfig = {
   walletUrl: "https://wallet.near.org",
   storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.near",
-  defaultWidget: "mob.near/widget/Welcome",
+  defaultWidget: "mob.near/widget/Homepage",
   apiUrl: "https://api.near.social",
 };
 
