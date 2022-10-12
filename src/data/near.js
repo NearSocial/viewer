@@ -36,6 +36,7 @@ const TestNearConfig = {
   storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.testnet",
   defaultWidget: "eugenethedream/widget/Welcome",
+  apiUrl: null,
 };
 const MainnetContract = "social.near";
 export const MainNearConfig = {
@@ -47,10 +48,45 @@ export const MainNearConfig = {
   storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.near",
   defaultWidget: "mob.near/widget/Welcome",
+  apiUrl: "https://api.near.social",
 };
 
 export const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;
+
 export const LsKey = NearConfig.contractName + ":v01:";
+
+const ApiEnabled = IsMainnet;
+const SupportedApiMethods = {
+  get: true,
+  keys: true,
+};
+
+const apiCall = async (methodName, args, blockId, fallback) => {
+  if (!ApiEnabled || !(methodName in SupportedApiMethods)) {
+    return fallback();
+  }
+  args = args || {};
+
+  if (blockId) {
+    args.blockHeight = blockId;
+  }
+
+  try {
+    return await (
+      await fetch(`${NearConfig.apiUrl}/${methodName}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(args),
+      })
+    ).json();
+  } catch (e) {
+    console.log("API call failed", methodName, args);
+    console.error(e);
+    return fallback();
+  }
+};
 
 function setupContract(near, contractId, options) {
   const { viewMethods = [], changeMethods = [] } = options;
@@ -180,7 +216,7 @@ async function _initNear() {
   _near.viewCall = (contractId, methodName, args, blockId) => {
     let finality = "optimistic";
     if (blockId !== undefined && blockId !== null) {
-      if (blockId === "optimistic" && blockId === "final") {
+      if (blockId === "optimistic" || blockId === "final") {
         finality = blockId;
         blockId = undefined;
       } else {
@@ -188,6 +224,7 @@ async function _initNear() {
         blockId = parseInt(blockId);
       }
     }
+
     const nearViewCall = () =>
       viewCall(
         blockId
@@ -199,9 +236,15 @@ async function _initNear() {
         args,
         finality
       );
-    return finality === "optimistic" && EnableWeb4FastRpc
-      ? web4ViewCall(contractId, methodName, args, nearViewCall)
-      : nearViewCall();
+
+    const fastRpcCall = () =>
+      finality === "optimistic" && EnableWeb4FastRpc
+        ? web4ViewCall(contractId, methodName, args, nearViewCall)
+        : nearViewCall();
+
+    return contractId === NearConfig.contractName && finality === "final"
+      ? apiCall(methodName, args, blockId, fastRpcCall)
+      : fastRpcCall();
   };
 
   _near.contract = setupContract(_near, NearConfig.contractName, {
