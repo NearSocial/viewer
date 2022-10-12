@@ -287,17 +287,15 @@ export function Widget(props) {
   }, [vm, codeProps, context, state, cache]);
 
   return element !== null && element !== undefined ? (
-    <div className="d-inline-block position-relative overflow-hidden">
-      <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onReset={() => {
-          setElement(null);
-        }}
-        resetKeys={[element]}
-      >
-        {element}
-      </ErrorBoundary>
-    </div>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => {
+        setElement(null);
+      }}
+      resetKeys={[element]}
+    >
+      {element}
+    </ErrorBoundary>
   ) : (
     Loading
   );

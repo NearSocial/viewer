@@ -203,7 +203,9 @@ export default function EditorPage(props) {
             <h5>Widget</h5>
             <div className="container">
               <div className="row">
-                <Widget code={renderCode} props={parsedWidgetProps} />{" "}
+                <div className="d-inline-block position-relative overflow-hidden">
+                  <Widget code={renderCode} props={parsedWidgetProps} />
+                </div>
               </div>
             </div>
           </div>
