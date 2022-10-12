@@ -1,5 +1,10 @@
 import React from "react";
-import { cachedViewCall, socialGet, Widget } from "../components/Widget/Widget";
+import {
+  cachedFetch,
+  cachedViewCall,
+  socialGet,
+  Widget,
+} from "../components/Widget/Widget";
 import { ipfsUpload, ipfsUrl, Loading } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
@@ -134,14 +139,14 @@ export default class VM {
 
   cachedSocialGet(key, recursive, blockId, options) {
     return this.cachedPromise(
-      `get:${recursive}:${key}:${blockId}:${JSON.stringify(options)}`,
+      `get:${JSON.stringify({ key, recursive, blockId, options })}`,
       () => socialGet(this.near, key, recursive, blockId, options)
     );
   }
 
   cachedSocialKeys(key, blockId, options) {
     return this.cachedPromise(
-      `keys:${key}:${blockId}:${JSON.stringify(options)}`,
+      `keys:${JSON.stringify({ key, blockId, options })}`,
       () =>
         cachedViewCall(
           this.near,
@@ -156,10 +161,16 @@ export default class VM {
     );
   }
 
-  cachedNearView(contractName, methodName, args) {
+  cachedNearView(contractName, methodName, args, blockId) {
     return this.cachedPromise(
-      `viewCall:${contractName}:${methodName}:${JSON.stringify(args)}`,
-      () => cachedViewCall(this.near, contractName, methodName, args)
+      `viewCall:${JSON.stringify({ contractName, methodName, args, blockId })}`,
+      () => cachedViewCall(this.near, contractName, methodName, args, blockId)
+    );
+  }
+
+  cachedFetch(url, options) {
+    return this.cachedPromise(`fetch:${JSON.stringify({ url, options })}`, () =>
+      cachedFetch(url, options)
     );
   }
 
@@ -375,12 +386,19 @@ export default class VM {
         }
         return this.cachedSocialGet(args[0], false, args[1], args[2]);
       } else if (callee === "Near.view") {
-        if (args.length !== 3) {
+        if (args.length < 2) {
           throw new Error(
-            "Arguments must be 'contractName', 'methodName' and 'args' for Near.view"
+            "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
           );
         }
         return this.cachedNearView(...args);
+      } else if (callee === "fetch") {
+        if (args.length < 1) {
+          throw new Error(
+            "Method: fetch. Required arguments: 'url'. Optional: 'options'"
+          );
+        }
+        return this.cachedFetch(...args);
       } else if (callee === "parseInt") {
         return parseInt(...args);
       } else if (callee === "parseFloat") {

@@ -22,6 +22,7 @@ const ExtraStorageBalance = StorageCostPerByte.mul(500);
 
 const Action = {
   ViewCall: "ViewCall",
+  Fetch: "Fetch",
 };
 
 const AcornOptions = {
@@ -109,6 +110,45 @@ export const cachedViewCall = async (
       blockId,
     },
     () => near.viewCall(contractId, methodName, args, blockId)
+  );
+
+export const cachedFetch = async (url, options) =>
+  cachedPromise(
+    {
+      action: Action.Fetch,
+      url,
+      options,
+    },
+    async () => {
+      options = {
+        method: options?.method,
+        headers: options?.headers,
+        body: options?.body,
+      };
+      try {
+        const response = await fetch(url, options);
+        console.log(response);
+        const status = response.status;
+        const ok = response.ok;
+        const contentType = response.headers.get("content-type");
+        const body = await (ok &&
+        contentType &&
+        contentType.indexOf("application/json") !== -1
+          ? response.json()
+          : response.text());
+        return {
+          ok,
+          status,
+          contentType,
+          body,
+        };
+      } catch (e) {
+        return {
+          ok: false,
+          error: e.message,
+        };
+      }
+    }
   );
 
 export const socialGet = async (near, key, recursive, blockId, options) => {
