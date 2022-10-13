@@ -16,6 +16,7 @@ import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
+import EmbedPage from "./pages/EmbedPage";
 
 export const refreshAllowanceObj = {};
 
@@ -141,72 +142,79 @@ function App(props) {
       </button>
     </div>
   );
+  const nav = (
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
+      <div className="container-fluid">
+        <Link className="navbar-brand" to="/" title="viewer">
+          <img
+            src="/favicon.png"
+            alt="viewer logo"
+            height="24"
+            className="d-inline-block align-text-top me-2"
+          />
+          {!IsMainnet && "Testnet "}
+          Near Social Browser
+        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon" />
+        </button>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul className="navbar-nav me-auto mb-lg-0">
+            <li className="nav-item">
+              <Link
+                className="btn btn-outline-light m-1"
+                aria-current="page"
+                to="/edit/new"
+              >
+                New widget
+              </Link>
+            </li>
+            {forkSrc && (
+              <li className="nav-item">
+                <Link
+                  className="btn btn-outline-light m-1"
+                  aria-current="page"
+                  to={forkSrc}
+                >
+                  {forkSrc.startsWith(`/edit/${signedAccountId}/widget/`)
+                    ? "Edit widget"
+                    : "Fork widget"}
+                </Link>
+              </li>
+            )}
+          </ul>
+          <form className="d-flex">{header}</form>
+        </div>
+      </div>
+    </nav>
+  );
 
   return (
     <div className="App">
       <Router basename={process.env.PUBLIC_URL}>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
-          <div className="container-fluid">
-            <Link className="navbar-brand" to="/" title="viewer">
-              <img
-                src="/favicon.png"
-                alt="viewer logo"
-                height="24"
-                className="d-inline-block align-text-top me-2"
-              />
-              {!IsMainnet && "Testnet "}
-              Near Social Browser
-            </Link>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon" />
-            </button>
-            <div
-              className="collapse navbar-collapse"
-              id="navbarSupportedContent"
-            >
-              <ul className="navbar-nav me-auto mb-lg-0">
-                <li className="nav-item">
-                  <Link
-                    className="btn btn-outline-light m-1"
-                    aria-current="page"
-                    to="/edit/new"
-                  >
-                    New widget
-                  </Link>
-                </li>
-                {forkSrc && (
-                  <li className="nav-item">
-                    <Link
-                      className="btn btn-outline-light m-1"
-                      aria-current="page"
-                      to={forkSrc}
-                    >
-                      {forkSrc.startsWith(`/edit/${signedAccountId}/widget/`)
-                        ? "Edit widget"
-                        : "Fork widget"}
-                    </Link>
-                  </li>
-                )}
-              </ul>
-              <form className="d-flex">{header}</form>
-            </div>
-          </div>
-        </nav>
-
         <Switch>
+          <Route path={"/embed/:widgetSrc*"}>
+            <EmbedPage {...passProps} />
+          </Route>
           <Route path={"/edit/:widgetSrc*"}>
-            <EditorPage {...passProps} />
+            <>
+              {nav}
+              <EditorPage {...passProps} />
+            </>
           </Route>
           <Route path={"/:widgetSrc*"}>
-            <ViewPage {...passProps} />
+            <>
+              {nav}
+              <ViewPage {...passProps} />
+            </>
           </Route>
         </Switch>
       </Router>
