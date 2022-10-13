@@ -15,13 +15,10 @@ const MaxDepth = 32;
 
 const ReactKey = "$$typeof";
 const KeywordKey = "$$keyword";
-const FunctionKeyword = "Function";
 const isReactObject = (o) =>
   o !== null && typeof o === "object" && !!o[ReactKey];
 const isKeywordObject = (o) =>
   o !== null && typeof o === "object" && !!o[KeywordKey];
-const isFunctionObject = (o) =>
-  o !== null && typeof o === "object" && o[KeywordKey] === FunctionKeyword;
 const StakeKey = "state";
 
 const ExecutionDebug = false;
@@ -261,25 +258,6 @@ export default class VM {
           this.setReactState(this.state.state);
           return false;
         };
-      } else if (
-        name === "onClick" &&
-        element === "button" &&
-        attribute.value.type === "JSXExpressionContainer"
-      ) {
-        // console.log(attribute.value);
-        const f = this.executeExpression(attribute.value.expression);
-        attributes.onClick = (e) => {
-          e.preventDefault();
-          if (!this.alive) {
-            return false;
-          }
-          if (isFunctionObject(f)) {
-            this.executeFunction(f);
-          } else {
-            throw new Error("onClick is not a function");
-          }
-          return false;
-        };
       } else {
         attributes[name] = this.executeExpression(attribute.value);
       }
@@ -366,12 +344,8 @@ export default class VM {
       obj = this.state;
     }
 
-    if (isFunctionObject(obj?.[callee])) {
-      const f = obj?.[callee];
-      for (let i = 0; i < Math.min(f.params.length, args.length); i++) {
-        this.state[f.params[i]] = args[i];
-      }
-      return this.executeFunction(f);
+    if (obj?.[callee] instanceof Function) {
+      return obj?.[callee](...args);
     }
 
     if (obj === this.state) {
@@ -700,23 +674,30 @@ export default class VM {
       assertNotKeywordObject(this.state[arg]);
       return arg;
     });
-    return {
-      [KeywordKey]: FunctionKeyword,
-      params,
-      isExpression,
-      body,
+    return (...args) => {
+      if (!this.alive) {
+        return;
+      }
+      for (let i = 0; i < Math.min(params.length, args.length); i++) {
+        let v = null;
+        try {
+          v = JSON.parse(JSON.stringify(args[i]));
+        } catch (e) {
+          console.error(e);
+        }
+        this.state[params[i]] = v;
+      }
+      return (
+        isExpression
+          ? this.executeExpression(body)
+          : this.executeStatement(body)
+      )?.["result"];
     };
   }
 
   stateAssign(id, value) {
     assertNotKeywordObject(this.state[id]);
     this.state[id] = value;
-  }
-
-  executeFunction(f) {
-    return f.isExpression
-      ? this.executeExpression(f.body)
-      : this.executeStatement(f.body);
   }
 
   executeStatement(token) {
