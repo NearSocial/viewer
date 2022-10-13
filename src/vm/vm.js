@@ -95,6 +95,7 @@ export default class VM {
     this.fetchingCache = {};
     this.alive = true;
     this.depth = depth;
+    this.localCache = {};
   }
 
   requireIdentifier(id) {
@@ -112,19 +113,16 @@ export default class VM {
   }
 
   cachedPromise(key, promise) {
-    if (key in this.cache) {
-      return this.cache[key];
+    if (key in this.localCache) {
+      return this.localCache[key];
     }
     if (!(key in this.fetchingCache)) {
       this.fetchingCache[key] = true;
       promise()
         .then((data) => {
           if (this.alive) {
-            this.setCache(
-              Object.assign({}, this.cache, {
-                [key]: data,
-              })
-            );
+            this.localCache[key] = data;
+            this.setCache(Object.assign({}, this.localCache));
           }
         })
         .catch((e) => {
