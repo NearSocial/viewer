@@ -127,7 +127,6 @@ export const cachedFetch = async (url, options) =>
       };
       try {
         const response = await fetch(url, options);
-        console.log(response);
         const status = response.status;
         const ok = response.ok;
         const contentType = response.headers.get("content-type");

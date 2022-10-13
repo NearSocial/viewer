@@ -640,15 +640,18 @@ export default class VM {
       if (!this.alive) {
         return;
       }
-      for (let i = 0; i < Math.min(params.length, args.length); i++) {
-        let v = null;
-        try {
-          v = JSON.parse(JSON.stringify(args[i]));
-        } catch (e) {
-          console.error(e);
+      params.forEach((param, i) => {
+        let v = undefined;
+        const arg = args?.[i];
+        if (arg !== undefined) {
+          try {
+            v = JSON.parse(JSON.stringify(arg));
+          } catch (e) {
+            console.warn(e);
+          }
         }
-        this.state[params[i]] = v;
-      }
+        this.state[param] = v;
+      });
       return isExpression
         ? this.executeExpression(body)
         : this.executeStatement(body)?.["result"];
