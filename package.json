@@ -39,7 +39,7 @@
     "dev": "npm run serve -- --env mode=development",
     "prod": "npm run webpack -- --env mode=production",
     "prod:analyze": "npm run prod -- --env presets=analyze",
-    "deploy": "npm run prod",
+    "build": "npm run prod",
     "start": "npm run dev"
   },
   "eslintConfig": {
