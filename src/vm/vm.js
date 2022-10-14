@@ -9,6 +9,7 @@ import { ipfsUpload, ipfsUrl, Loading } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { NearConfig } from "../data/near";
+import { isObject } from "url/util";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -190,49 +191,52 @@ export default class VM {
       attributes.className = "btn btn-outline-primary";
     }
 
-    for (let i = 0; i < code.openingElement.attributes.length; i++) {
-      const attribute = code.openingElement.attributes[i];
-      if (attribute.type !== "JSXAttribute") {
-        throw new Error("Non JSXAttribute: " + attribute.type);
-      }
-      const name = this.requireJSXIdentifier(attribute.name);
+    const attributesMap = code.openingElement.attributes.reduce(
+      (obj, attribute) => {
+        if (attribute.type !== "JSXAttribute") {
+          throw new Error("Non JSXAttribute: " + attribute.type);
+        }
+        const name = this.requireJSXIdentifier(attribute.name);
+        obj[name] = attribute.value;
+        return obj;
+      },
+      {}
+    );
 
+    Object.entries(attributesMap).forEach(([name, value]) => {
+      attributes[name] = this.executeExpression(value);
+    });
+
+    Object.entries(attributesMap).forEach(([name, value]) => {
       if (
         name === "value" &&
         element === "input" &&
-        attribute.value.type === "JSXExpressionContainer"
+        value.type === "JSXExpressionContainer" &&
+        !("onChange" in attributesMap)
       ) {
-        const [obj, key] = this.resolveMemberExpression(
-          attribute.value.expression,
-          {
-            requireState: true,
-          }
-        );
+        const [obj, key] = this.resolveMemberExpression(value.expression, {
+          requireState: true,
+        });
         attributes.value = obj?.[key] || "";
         attributes.onChange = (e) => {
           e.preventDefault();
           obj[key] = e.target.value;
           this.setReactState(this.state.state);
-          return false;
         };
       } else if (name === "data" && element === "CommitButton") {
         attributes.onClick = (e) => {
           e.preventDefault();
-          const data = this.executeExpression(attribute.value);
+          const data = this.executeExpression(value);
           this.commitData(data);
-          return false;
         };
       } else if (
         name === "image" &&
         element === "IpfsImageUpload" &&
-        attribute.value.type === "JSXExpressionContainer"
+        value.type === "JSXExpressionContainer"
       ) {
-        let [obj, key] = this.resolveMemberExpression(
-          attribute.value.expression,
-          {
-            requireState: true,
-          }
-        );
+        let [obj, key] = this.resolveMemberExpression(value.expression, {
+          requireState: true,
+        });
         status.img = obj[key];
         attributes.onChange = async (files) => {
           obj[key] = null;
@@ -243,23 +247,17 @@ export default class VM {
             };
             this.setReactState(this.state.state);
             const cid = await ipfsUpload(files[0]);
-            [obj, key] = this.resolveMemberExpression(
-              attribute.value.expression,
-              {
-                requireState: true,
-              }
-            );
+            [obj, key] = this.resolveMemberExpression(value.expression, {
+              requireState: true,
+            });
             obj[key] = {
               cid,
             };
           }
           this.setReactState(this.state.state);
-          return false;
         };
-      } else {
-        attributes[name] = this.executeExpression(attribute.value);
       }
-    }
+    });
     attributes.key = `${this.gkey}-${this.gIndex++}`;
     attributes.dangerouslySetInnerHTML = undefined;
     if (element === "img") {
@@ -421,12 +419,16 @@ export default class VM {
           throw new Error("'initialState' is not an object");
         }
         if (this.state.state !== undefined) {
-          return null;
+          return;
         }
         const newState = JSON.parse(JSON.stringify(args[0]));
         this.setReactState(newState);
         this.state.state = newState;
       } else if (callee === "State.update") {
+        if (isObject(args[0])) {
+          this.state.state = this.state.state ?? {};
+          Object.assign(this.state.state, JSON.parse(JSON.stringify(args[0])));
+        }
         if (this.state.state === undefined) {
           throw new Error("The error was not initialized");
         }
@@ -640,9 +642,33 @@ export default class VM {
       }
       params.forEach((param, i) => {
         let v = undefined;
-        const arg = args?.[i];
+        let arg = args?.[i];
         if (arg !== undefined) {
           try {
+            if (arg.nativeEvent instanceof Event) {
+              arg.preventDefault();
+              arg = arg.nativeEvent;
+              arg = {
+                target: {
+                  value: arg?.target?.value,
+                  id: arg?.target?.id,
+                },
+                data: arg?.data,
+                code: arg?.code,
+                key: arg?.key,
+                ctrlKey: arg?.ctrlKey,
+                altKey: arg?.altKey,
+                shiftKey: arg?.shiftKey,
+                metaKey: arg?.metaKey,
+                button: arg?.button,
+                buttons: arg?.buttons,
+                clientX: arg?.clientX,
+                clientY: arg?.clientY,
+                screenX: arg?.screenX,
+                screenY: arg?.screenY,
+                touches: arg?.touches,
+              };
+            }
             v = JSON.parse(JSON.stringify(arg));
           } catch (e) {
             console.warn(e);
