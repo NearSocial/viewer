@@ -3,7 +3,7 @@ import "error-polyfill";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "@near-wallet-selector/modal-ui/styles.css";
 import "bootstrap/dist/js/bootstrap.bundle";
-import "./App.scss";
+import "App.scss";
 import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
 import {
   IsMainnet,
@@ -17,6 +17,7 @@ import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
+import Icon from "./images/icon.png";
 
 export const refreshAllowanceObj = {};
 
@@ -147,7 +148,7 @@ function App(props) {
       <div className="container-fluid">
         <Link className="navbar-brand" to="/" title="viewer">
           <img
-            src="/favicon.png"
+            src={Icon}
             alt="viewer logo"
             height="24"
             className="d-inline-block align-text-top me-2"
