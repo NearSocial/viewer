@@ -435,6 +435,8 @@ export default class VM {
         const newState = JSON.parse(JSON.stringify(this.state.state));
         this.setReactState(newState);
         this.state.state = newState;
+      } else if (callee === "console.log") {
+        return console.log(...args);
       } else {
         throw new Error("Unknown callee method '" + callee + "'");
       }
@@ -648,10 +650,12 @@ export default class VM {
             if (arg.nativeEvent instanceof Event) {
               arg.preventDefault();
               arg = arg.nativeEvent;
+              console.log(arg.target);
               arg = {
                 target: {
                   value: arg?.target?.value,
                   id: arg?.target?.id,
+                  dataset: arg?.target?.dataset,
                 },
                 data: arg?.data,
                 code: arg?.code,
@@ -804,6 +808,9 @@ export default class VM {
         },
         State: {
           [KeywordKey]: "State",
+        },
+        console: {
+          [KeywordKey]: "console",
         },
       })
     );
