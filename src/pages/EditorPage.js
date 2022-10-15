@@ -9,11 +9,7 @@ import { LsKey, useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism.css";
+import Editor from "@monaco-editor/react";
 
 const EditorCodeKey = LsKey + "editorCode:";
 const WidgetNameKey = LsKey + "widgetName:";
@@ -138,16 +134,13 @@ export default function EditorPage(props) {
                 onChange={(e) => updateWidgetName(e.target.value)}
               />
             </div>
-            <div className="form-control mb-3 overflow-auto code-editor">
+            <div className="form-control mb-3 code-editor">
               <Editor
-                className="font-monospace"
-                textareaClassName="outline-none"
                 value={code}
-                highlight={(code) => highlight(code, languages.js)}
-                onValueChange={(code) => updateCode(code)}
-                onBlur={() => reformat(code)}
-                style={{
-                  fontSize: 14,
+                defaultLanguage="javascript"
+                onChange={(code) => updateCode(code)}
+                wrapperProps={{
+                  onBlur: () => reformat(code),
                 }}
               />
             </div>
