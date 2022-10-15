@@ -36,6 +36,7 @@ function App(props) {
   useEffect(() => {
     if (
       !location.search.includes("?account_id") &&
+      !location.search.includes("&account_id") &&
       (location.search || location.href.includes("/?#"))
     ) {
       window.history.replaceState({}, "/", "/" + location.hash);
