@@ -7,6 +7,7 @@
     "@braintree/sanitize-url": "6.0.0",
     "@monaco-editor/react": "^4.4.6",
     "@near-wallet-selector/core": "^7.0.3",
+    "@near-wallet-selector/here-wallet": "^7.1.0",
     "@near-wallet-selector/modal-ui": "^7.0.3",
     "@near-wallet-selector/my-near-wallet": "^7.0.3",
     "@near-wallet-selector/near-wallet": "^7.0.3",
