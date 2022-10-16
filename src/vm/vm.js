@@ -22,7 +22,7 @@ const isKeywordObject = (o) =>
   o !== null && typeof o === "object" && !!o[KeywordKey];
 const StakeKey = "state";
 
-const ExecutionDebug = false;
+const ExecutionDebug = true;
 
 const ApprovedTags = {
   h1: true,
@@ -82,92 +82,49 @@ const assertValidObject = (o) => {
   }
 };
 
-export default class VM {
-  constructor(near, gkey, code, setReactState, setCache, commitData, depth) {
-    if (!code) {
-      throw new Error("Not a program");
+const requireIdentifier = (id) => {
+  if (id.type !== "Identifier") {
+    throw new Error("Non identifier: " + id.type);
+  }
+  return id.name;
+};
+
+const requireJSXIdentifier = (id) => {
+  if (id.type !== "JSXIdentifier") {
+    throw new Error("Non JSXIdentifier: " + id.type);
+  }
+  return id.name;
+};
+
+class Stack {
+  constructor(prevStack, state) {
+    this.prevStack = prevStack;
+    this.state = state;
+  }
+
+  findObj(name) {
+    if (name in this.state) {
+      return this.state;
     }
-    this.near = near;
-    this.gkey = gkey;
-    this.code = code;
-    this.setReactState = setReactState;
-    this.setCache = setCache;
-    this.commitData = commitData;
-    this.fetchingCache = {};
-    this.alive = true;
-    this.depth = depth;
-    this.localCache = {};
+    return this.prevStack ? this.prevStack.findObj(name) : undefined;
   }
 
-  requireIdentifier(id) {
-    if (id.type !== "Identifier") {
-      throw new Error("Non identifier: " + id.type);
+  get(name) {
+    if (name in this.state) {
+      return this.state[name];
     }
-    return id.name;
+    return this.prevStack ? this.prevStack.get(name) : undefined;
+  }
+}
+
+class VmStack {
+  constructor(vm, prevStack, state) {
+    this.vm = vm;
+    this.stack = new Stack(prevStack, state);
   }
 
-  requireJSXIdentifier(id) {
-    if (id.type !== "JSXIdentifier") {
-      throw new Error("Non JSXIdentifier: " + id.type);
-    }
-    return id.name;
-  }
-
-  cachedPromise(key, promise) {
-    if (key in this.localCache) {
-      return this.localCache[key];
-    }
-    if (!(key in this.fetchingCache)) {
-      this.fetchingCache[key] = true;
-      promise()
-        .then((data) => {
-          if (this.alive) {
-            this.localCache[key] = data;
-            this.setCache(Object.assign({}, this.localCache));
-          }
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
-    return null;
-  }
-
-  cachedSocialGet(key, recursive, blockId, options) {
-    return this.cachedPromise(
-      `get:${JSON.stringify({ key, recursive, blockId, options })}`,
-      () => socialGet(this.near, key, recursive, blockId, options)
-    );
-  }
-
-  cachedSocialKeys(key, blockId, options) {
-    return this.cachedPromise(
-      `keys:${JSON.stringify({ key, blockId, options })}`,
-      () =>
-        cachedViewCall(
-          this.near,
-          NearConfig.contractName,
-          "keys",
-          {
-            keys: [key],
-            options,
-          },
-          blockId
-        )
-    );
-  }
-
-  cachedNearView(contractName, methodName, args, blockId) {
-    return this.cachedPromise(
-      `viewCall:${JSON.stringify({ contractName, methodName, args, blockId })}`,
-      () => cachedViewCall(this.near, contractName, methodName, args, blockId)
-    );
-  }
-
-  cachedFetch(url, options) {
-    return this.cachedPromise(`fetch:${JSON.stringify({ url, options })}`, () =>
-      cachedFetch(url, options)
-    );
+  newStack() {
+    return new VmStack(this.vm, this.stack, {});
   }
 
   executeExpression(code) {
@@ -178,7 +135,7 @@ export default class VM {
   }
 
   renderElement(code) {
-    const element = this.requireJSXIdentifier(code.openingElement.name);
+    const element = requireJSXIdentifier(code.openingElement.name);
     const attributes = {};
     const status = {};
     if (element === "input") {
@@ -196,7 +153,7 @@ export default class VM {
         if (attribute.type !== "JSXAttribute") {
           throw new Error("Non JSXAttribute: " + attribute.type);
         }
-        const name = this.requireJSXIdentifier(attribute.name);
+        const name = requireJSXIdentifier(attribute.name);
         obj[name] = attribute.value;
         return obj;
       },
@@ -216,12 +173,13 @@ export default class VM {
       ) {
         const [obj, key] = this.resolveMemberExpression(value.expression, {
           requireState: true,
+          left: true,
         });
         attributes.value = obj?.[key] || "";
         attributes.onChange = (e) => {
           e.preventDefault();
           obj[key] = e.target.value;
-          this.setReactState(this.state.state);
+          this.vm.setReactState(this.vm.state.state);
         };
       } else if (name === "data" && element === "CommitButton") {
         attributes.onClick = (e) => {
@@ -236,6 +194,7 @@ export default class VM {
       ) {
         let [obj, key] = this.resolveMemberExpression(value.expression, {
           requireState: true,
+          left: true,
         });
         status.img = obj[key];
         attributes.onChange = async (files) => {
@@ -245,20 +204,21 @@ export default class VM {
               uploading: true,
               cid: null,
             };
-            this.setReactState(this.state.state);
+            this.vm.setReactState(this.vm.state.state);
             const cid = await ipfsUpload(files[0]);
             [obj, key] = this.resolveMemberExpression(value.expression, {
               requireState: true,
+              left: true,
             });
             obj[key] = {
               cid,
             };
           }
-          this.setReactState(this.state.state);
+          this.vm.setReactState(this.vm.state.state);
         };
       }
     });
-    attributes.key = `${this.gkey}-${this.gIndex++}`;
+    attributes.key = `${this.vm.gkey}-${this.vm.gIndex++}`;
     attributes.dangerouslySetInnerHTML = undefined;
     if (element === "img") {
       attributes.alt = attributes.alt ?? "not defined";
@@ -267,7 +227,7 @@ export default class VM {
         attributes.href = sanitizeUrl(attributes.href);
       }
     } else if (element === "Widget") {
-      attributes.depth = this.depth + 1;
+      attributes.depth = this.vm.depth + 1;
     }
     const withChildren = ApprovedTags[element];
     if (withChildren === false && code.children.length) {
@@ -284,7 +244,10 @@ export default class VM {
       return <button {...attributes}>{children}</button>;
     } else if (element === "IpfsImageUpload") {
       return (
-        <div className="image-upload" key={`${this.gkey}-${this.gIndex++}`}>
+        <div
+          className="image-upload"
+          key={`${this.vm.gkey}-${this.vm.gIndex++}`}
+        >
           {status.img?.cid && (
             <div
               className="d-inline-block me-2 overflow-hidden align-middle"
@@ -337,38 +300,37 @@ export default class VM {
     const keyword = obj?.[KeywordKey];
     if (keyword) {
       callee = `${keyword}.${callee}`;
-      obj = this.state;
+    } else {
+      if (obj?.[callee] instanceof Function) {
+        return obj?.[callee](...args);
+      }
     }
 
-    if (obj?.[callee] instanceof Function) {
-      return obj?.[callee](...args);
-    }
-
-    if (obj === this.state) {
+    if (keyword || obj === this.stack.state) {
       if (callee === "Social.getr" || callee === "socialGetr") {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.getr");
         }
-        return this.cachedSocialGet(args[0], true, args[1], args[2]);
+        return this.vm.cachedSocialGet(args[0], true, args[1], args[2]);
       } else if (callee === "Social.get" || callee === "socialGet") {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.get");
         }
-        return this.cachedSocialGet(args[0], false, args[1], args[2]);
+        return this.vm.cachedSocialGet(args[0], false, args[1], args[2]);
       } else if (callee === "Near.view") {
         if (args.length < 2) {
           throw new Error(
             "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
           );
         }
-        return this.cachedNearView(...args);
+        return this.vm.cachedNearView(...args);
       } else if (callee === "fetch") {
         if (args.length < 1) {
           throw new Error(
             "Method: fetch. Required arguments: 'url'. Optional: 'options'"
           );
         }
-        return this.cachedFetch(...args);
+        return this.vm.cachedFetch(...args);
       } else if (callee === "parseInt") {
         return parseInt(...args);
       } else if (callee === "parseFloat") {
@@ -379,7 +341,7 @@ export default class VM {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.keys");
         }
-        return this.cachedSocialKeys(args[0], args[1], args[2]);
+        return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
       } else if (callee === "JSON.stringify" || callee === "stringify") {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for JSON.stringify");
@@ -418,23 +380,26 @@ export default class VM {
         if (args[0] === null || typeof args[0] !== "object") {
           throw new Error("'initialState' is not an object");
         }
-        if (this.state.state !== undefined) {
+        if (this.vm.state.state !== undefined) {
           return;
         }
         const newState = JSON.parse(JSON.stringify(args[0]));
-        this.setReactState(newState);
-        this.state.state = newState;
+        this.vm.setReactState(newState);
+        this.vm.state.state = newState;
       } else if (callee === "State.update") {
         if (isObject(args[0])) {
-          this.state.state = this.state.state ?? {};
-          Object.assign(this.state.state, JSON.parse(JSON.stringify(args[0])));
+          this.vm.state.state = this.vm.state.state ?? {};
+          Object.assign(
+            this.vm.state.state,
+            JSON.parse(JSON.stringify(args[0]))
+          );
         }
-        if (this.state.state === undefined) {
+        if (this.vm.state.state === undefined) {
           throw new Error("The error was not initialized");
         }
-        const newState = JSON.parse(JSON.stringify(this.state.state));
-        this.setReactState(newState);
-        this.state.state = newState;
+        const newState = JSON.parse(JSON.stringify(this.vm.state.state));
+        this.vm.setReactState(newState);
+        this.vm.state.state = newState;
       } else if (callee === "console.log") {
         return console.log(...args);
       } else {
@@ -461,11 +426,19 @@ export default class VM {
       if (options?.requireState && code.name !== StakeKey) {
         throw new Error(`The top object should be ${StakeKey}`);
       }
-      return [this.state, code.name];
+      const obj = this.stack.findObj(code.name) ?? this.stack.state;
+      if (options?.left) {
+        if (!obj || !(code.name in obj)) {
+          throw new Error(`Accessing undeclared identifier '${code.name}'`);
+        }
+      }
+      return [obj, code.name];
     } else if (code.type === "MemberExpression") {
       const [innerObj, key] = this.resolveMemberExpression(
         code.object,
-        options
+        Object.assign({}, options, {
+          left: false,
+        })
       );
       const property = this.resolveKey(code.property, code.computed);
       const obj = innerObj?.[key];
@@ -487,7 +460,9 @@ export default class VM {
     }
     const type = code?.type;
     if (type === "AssignmentExpression") {
-      const [obj, key] = this.resolveMemberExpression(code.left);
+      const [obj, key] = this.resolveMemberExpression(code.left, {
+        left: true,
+      });
       assertNotKeywordObject(obj[key]);
       const right = this.executeExpression(code.right);
 
@@ -511,7 +486,7 @@ export default class VM {
       const key = this.resolveKey(code.property, code.computed);
       return obj?.[key];
     } else if (type === "Identifier") {
-      return this.state[code.name];
+      return this.stack.get(code.name);
     } else if (type === "JSXExpressionContainer") {
       return this.executeExpression(code.expression);
     } else if (type === "TemplateLiteral") {
@@ -601,7 +576,9 @@ export default class VM {
         ? this.executeExpression(code.consequent)
         : this.executeExpression(code.alternate);
     } else if (type === "UpdateExpression") {
-      const [obj, key] = this.resolveMemberExpression(code.argument);
+      const [obj, key] = this.resolveMemberExpression(code.argument, {
+        left: true,
+      });
       if (code.operator === "++") {
         return code.prefix ? ++obj[key] : obj[key]++;
       } else if (code.operator === "--") {
@@ -633,13 +610,14 @@ export default class VM {
 
   createFunction(params, body, isExpression) {
     params = params.map((param) => {
-      const arg = this.requireIdentifier(param);
+      const arg = requireIdentifier(param);
       assertNotReservedKey(arg);
-      assertNotKeywordObject(this.state[arg]);
+      assertNotKeywordObject(this.vm.state[arg]);
       return arg;
     });
+    const stack = this.newStack();
     return (...args) => {
-      if (!this.alive) {
+      if (!this.vm.alive) {
         return;
       }
       params.forEach((param, i) => {
@@ -678,27 +656,28 @@ export default class VM {
             console.warn(e);
           }
         }
-        this.state[param] = v;
+        stack.stackDeclare(param, v);
       });
       return isExpression
-        ? this.executeExpression(body)
-        : this.executeStatement(body)?.["result"];
+        ? stack.executeExpression(body)
+        : stack.executeStatement(body)?.["result"];
     };
   }
 
-  stateAssign(id, value) {
-    assertNotKeywordObject(this.state[id]);
-    this.state[id] = value;
+  stackDeclare(id, value) {
+    assertNotKeywordObject(this.vm.state[id]);
+    this.stack.state[id] = value;
   }
 
   executeStatement(token) {
+    console.log(token);
     if (!token || token.type === "EmptyStatement") {
       return null;
     } else if (token.type === "VariableDeclaration") {
       token.declarations.forEach((declaration) => {
         if (declaration.type === "VariableDeclarator") {
-          this.stateAssign(
-            this.requireIdentifier(declaration.id),
+          this.stackDeclare(
+            requireIdentifier(declaration.id),
             this.executeExpression(declaration.init)
           );
         } else {
@@ -712,30 +691,32 @@ export default class VM {
         result: this.executeExpression(token.argument),
       };
     } else if (token.type === "FunctionDeclaration") {
-      this.stateAssign(
-        this.requireIdentifier(token.id),
+      this.stackDeclare(
+        requireIdentifier(token.id),
         this.createFunction(token.params, token.body, token.expression)
       );
     } else if (token.type === "ExpressionStatement") {
       this.executeExpression(token.expression);
     } else if (token.type === "BlockStatement" || token.type === "Program") {
       const body = token.body;
+      const stack = this.newStack();
       for (let i = 0; i < body.length; i++) {
-        const result = this.executeStatement(body[i]);
+        const result = stack.executeStatement(body[i]);
         if (result) {
           return result;
         }
       }
     } else if (token.type === "ForStatement") {
-      this.executeStatement(token.init);
-      while (this.loopLimit-- > 0) {
+      const stack = this.newStack();
+      stack.executeStatement(token.init);
+      while (this.vm.loopLimit-- > 0) {
         if (token.test) {
-          const test = this.executeExpression(token.test);
+          const test = stack.executeExpression(token.test);
           if (!test) {
             break;
           }
         }
-        const result = this.executeStatement(token.body);
+        const result = stack.executeStatement(token.body);
         if (result) {
           if (result.break) {
             break;
@@ -743,18 +724,19 @@ export default class VM {
             return result;
           }
         }
-        this.executeExpression(token.update);
+        stack.executeExpression(token.update);
       }
-      if (this.loopLimit <= 0) {
+      if (this.vm.loopLimit <= 0) {
         throw new Error("Exceeded loop limit");
       }
     } else if (token.type === "WhileStatement") {
-      while (this.loopLimit-- > 0) {
-        const test = this.executeExpression(token.test);
+      const stack = this.newStack();
+      while (this.vm.loopLimit-- > 0) {
+        const test = stack.executeExpression(token.test);
         if (!test) {
           break;
         }
-        const result = this.executeStatement(token.body);
+        const result = stack.executeStatement(token.body);
         if (result) {
           if (result.break) {
             break;
@@ -763,14 +745,15 @@ export default class VM {
           }
         }
       }
-      if (this.loopLimit <= 0) {
+      if (this.vm.loopLimit <= 0) {
         throw new Error("Exceeded loop limit");
       }
     } else if (token.type === "IfStatement") {
       const test = this.executeExpression(token.test);
+      const stack = this.newStack();
       const result = !!test
-        ? this.executeStatement(token.consequent)
-        : this.executeStatement(token.alternate);
+        ? stack.executeStatement(token.consequent)
+        : stack.executeStatement(token.alternate);
       if (result) {
         return result;
       }
@@ -782,6 +765,81 @@ export default class VM {
       throw new Error("Unknown token type '" + token.type + "'");
     }
     return null;
+  }
+}
+
+export default class VM {
+  constructor(near, gkey, code, setReactState, setCache, commitData, depth) {
+    if (!code) {
+      throw new Error("Not a program");
+    }
+    this.near = near;
+    this.gkey = gkey;
+    this.code = code;
+    this.setReactState = setReactState;
+    this.setCache = setCache;
+    this.commitData = commitData;
+    this.fetchingCache = {};
+    this.alive = true;
+    this.depth = depth;
+    this.localCache = {};
+  }
+
+  cachedPromise(key, promise) {
+    if (key in this.localCache) {
+      return this.localCache[key];
+    }
+    if (!(key in this.fetchingCache)) {
+      this.fetchingCache[key] = true;
+      promise()
+        .then((data) => {
+          if (this.alive) {
+            this.localCache[key] = data;
+            this.setCache(Object.assign({}, this.localCache));
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+    return null;
+  }
+
+  cachedSocialGet(key, recursive, blockId, options) {
+    return this.cachedPromise(
+      `get:${JSON.stringify({ key, recursive, blockId, options })}`,
+      () => socialGet(this.near, key, recursive, blockId, options)
+    );
+  }
+
+  cachedSocialKeys(key, blockId, options) {
+    return this.cachedPromise(
+      `keys:${JSON.stringify({ key, blockId, options })}`,
+      () =>
+        cachedViewCall(
+          this.near,
+          NearConfig.contractName,
+          "keys",
+          {
+            keys: [key],
+            options,
+          },
+          blockId
+        )
+    );
+  }
+
+  cachedNearView(contractName, methodName, args, blockId) {
+    return this.cachedPromise(
+      `viewCall:${JSON.stringify({ contractName, methodName, args, blockId })}`,
+      () => cachedViewCall(this.near, contractName, methodName, args, blockId)
+    );
+  }
+
+  cachedFetch(url, options) {
+    return this.cachedPromise(`fetch:${JSON.stringify({ url, options })}`, () =>
+      cachedFetch(url, options)
+    );
   }
 
   renderCode({ props, context, state, cache }) {
@@ -816,7 +874,8 @@ export default class VM {
     );
     this.cache = cache;
     this.loopLimit = LoopLimit;
-    const executionResult = this.executeStatement(this.code);
+    this.vmStack = new VmStack(this, undefined, this.state);
+    const executionResult = this.vmStack.executeStatement(this.code);
     if (executionResult?.break) {
       throw new Error("BreakStatement outside of a loop");
     }
