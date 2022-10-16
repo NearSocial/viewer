@@ -22,7 +22,8 @@ const isKeywordObject = (o) =>
   o !== null && typeof o === "object" && !!o[KeywordKey];
 const StakeKey = "state";
 
-const ExecutionDebug = true;
+const ExpressionDebug = false;
+const StatementDebug = false;
 
 const ApprovedTags = {
   h1: true,
@@ -128,9 +129,9 @@ class VmStack {
   }
 
   executeExpression(code) {
-    ExecutionDebug && console.log("Executing code:", code?.type);
-    const res = this.execCodeInternal(code);
-    ExecutionDebug && console.log(code?.type, res);
+    ExpressionDebug && console.log("Executing code:", code?.type);
+    const res = this.executeExpressionInternal(code);
+    ExpressionDebug && console.log(code?.type, res);
     return res;
   }
 
@@ -454,7 +455,7 @@ class VmStack {
     }
   }
 
-  execCodeInternal(code) {
+  executeExpressionInternal(code) {
     if (!code) {
       return null;
     }
@@ -615,11 +616,11 @@ class VmStack {
       assertNotKeywordObject(this.vm.state[arg]);
       return arg;
     });
-    const stack = this.newStack();
     return (...args) => {
       if (!this.vm.alive) {
         return;
       }
+      const stack = this.newStack();
       params.forEach((param, i) => {
         let v = undefined;
         let arg = args?.[i];
@@ -628,7 +629,7 @@ class VmStack {
             if (arg.nativeEvent instanceof Event) {
               arg.preventDefault();
               arg = arg.nativeEvent;
-              console.log(arg.target);
+              // console.log(arg.target);
               arg = {
                 target: {
                   value: arg?.target?.value,
@@ -670,7 +671,7 @@ class VmStack {
   }
 
   executeStatement(token) {
-    console.log(token);
+    StatementDebug && console.log(token);
     if (!token || token.type === "EmptyStatement") {
       return null;
     } else if (token.type === "VariableDeclaration") {
