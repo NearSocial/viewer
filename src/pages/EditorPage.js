@@ -21,7 +21,7 @@ const DefaultEditorCode = "return <div>Hello World</div>;";
 export default function EditorPage(props) {
   const { widgetSrc } = useParams();
   const history = useHistory();
-  const setForkSrc = props.setForkSrc;
+  const setWidgetSrc = props.setWidgetSrc;
 
   const [code, setCode] = useState(ls.get(EditorCodeKey) || DefaultEditorCode);
   const [widgetName, setWidgetName] = useState(ls.get(WidgetNameKey) || "");
@@ -36,8 +36,8 @@ export default function EditorPage(props) {
   const accountId = near?.accountId;
 
   useEffect(() => {
-    setForkSrc(null);
-  }, [setForkSrc]);
+    setWidgetSrc(null);
+  }, [setWidgetSrc]);
 
   const updateCode = useCallback(
     (code) => {

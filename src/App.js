@@ -26,7 +26,7 @@ function App(props) {
   const [signedIn, setSignedIn] = useState(false);
   const [signedAccountId, setSignedAccountId] = useState(null);
   const [availableStorage, setAvailableStorage] = useState(null);
-  const [forkSrc, setForkSrc] = useState(null);
+  const [widgetSrc, setWidgetSrc] = useState(null);
   const [walletModal, setWalletModal] = useState(null);
 
   const near = useNear();
@@ -106,7 +106,7 @@ function App(props) {
 
   const passProps = {
     refreshAllowance: () => refreshAllowance(),
-    setForkSrc,
+    setWidgetSrc,
     signedAccountId,
     signedIn,
     connected,
@@ -179,18 +179,29 @@ function App(props) {
                 New widget
               </Link>
             </li>
-            {forkSrc && (
-              <li className="nav-item">
-                <Link
-                  className="btn btn-outline-light m-1"
-                  aria-current="page"
-                  to={forkSrc}
-                >
-                  {forkSrc.startsWith(`/edit/${signedAccountId}/widget/`)
-                    ? "Edit widget"
-                    : "Fork widget"}
-                </Link>
-              </li>
+            {widgetSrc && (
+              <>
+                <li className="nav-item">
+                  <Link
+                    className="btn btn-outline-light m-1"
+                    aria-current="page"
+                    to={`/edit/${widgetSrc}`}
+                  >
+                    {widgetSrc.startsWith(`${signedAccountId}/widget/`)
+                      ? "Edit widget"
+                      : "Fork widget"}
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link
+                    className="btn btn-outline-light m-1"
+                    aria-current="page"
+                    to={`/mob.near/widget/WidgetSource/?src=${widgetSrc}`}
+                  >
+                    View source
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
           <form className="d-flex">{header}</form>

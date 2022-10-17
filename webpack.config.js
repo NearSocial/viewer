@@ -24,6 +24,12 @@ module.exports = function (env) {
       module: {
         rules: [
           {
+            test: /\.m?js/,
+            resolve: {
+              fullySpecified: false,
+            },
+          },
+          {
             test: /\.js$/,
             use: ["babel-loader"],
             exclude: path.resolve(__dirname, "node_modules"),
@@ -40,6 +46,10 @@ module.exports = function (env) {
         extensions: [".js", ".jsx", ".json"],
       },
       plugins: [
+        new webpack.EnvironmentPlugin({
+          // Configure environment variables here.
+          ENVIRONMENT: "browser",
+        }),
         new CleanWebpackPlugin(),
         // Copies files from target to destination folder
         new CopyWebpackPlugin({
