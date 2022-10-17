@@ -186,7 +186,7 @@ class VmStack {
         attributes.onClick = (e) => {
           e.preventDefault();
           const data = this.executeExpression(value);
-          this.commitData(data);
+          this.vm.commitData(data);
         };
       } else if (
         name === "image" &&
