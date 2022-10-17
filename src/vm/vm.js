@@ -207,10 +207,13 @@ class VmStack {
             };
             this.vm.setReactState(this.vm.state.state);
             const cid = await ipfsUpload(files[0]);
-            [obj, key] = this.resolveMemberExpression(value.expression, {
-              requireState: true,
-              left: true,
-            });
+            [obj, key] = this.vm.vmStack.resolveMemberExpression(
+              value.expression,
+              {
+                requireState: true,
+                left: true,
+              }
+            );
             obj[key] = {
               cid,
             };
