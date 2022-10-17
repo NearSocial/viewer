@@ -37,6 +37,7 @@ const TestNearConfig = {
   storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.testnet",
   defaultWidget: "eugenethedream/widget/Welcome",
+  viewSourceWidget: "eugenethedream/widget/WidgetSource",
   apiUrl: null,
 };
 const MainnetContract = "social.near";
@@ -49,6 +50,7 @@ export const MainNearConfig = {
   storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.near",
   defaultWidget: "mob.near/widget/Homepage",
+  viewSourceWidget: "mob.near/widget/WidgetSource",
   apiUrl: "https://api.near.social",
 };
 

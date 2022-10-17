@@ -196,7 +196,7 @@ function App(props) {
                   <Link
                     className="btn btn-outline-light m-1"
                     aria-current="page"
-                    to={`/mob.near/widget/WidgetSource/?src=${widgetSrc}`}
+                    to={`/${NearConfig.viewSourceWidget}?src=${widgetSrc}`}
                   >
                     View source
                   </Link>
