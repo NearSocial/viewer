@@ -36,8 +36,11 @@ export default function EditorPage(props) {
   const accountId = near?.accountId;
 
   useEffect(() => {
-    setWidgetSrc(null);
-  }, [setWidgetSrc]);
+    setWidgetSrc({
+      edit: null,
+      view: widgetSrc,
+    });
+  }, [widgetSrc, setWidgetSrc]);
 
   const updateCode = useCallback(
     (code) => {

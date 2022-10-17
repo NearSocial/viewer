@@ -23,9 +23,19 @@ export default function ViewPage(props) {
 
   useEffect(() => {
     setTimeout(() => {
-      setWidgetSrc(src);
+      setWidgetSrc(
+        src === NearConfig.viewSourceWidget && query.get("src")
+          ? {
+              edit: query.get("src"),
+              view: null,
+            }
+          : {
+              edit: src,
+              view: src,
+            }
+      );
     }, 1);
-  }, [src, setWidgetSrc]);
+  }, [src, query, setWidgetSrc]);
 
   return (
     <div className="container">

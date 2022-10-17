@@ -179,29 +179,29 @@ function App(props) {
                 New widget
               </Link>
             </li>
-            {widgetSrc && (
-              <>
-                <li className="nav-item">
-                  <Link
-                    className="btn btn-outline-light m-1"
-                    aria-current="page"
-                    to={`/edit/${widgetSrc}`}
-                  >
-                    {widgetSrc.startsWith(`${signedAccountId}/widget/`)
-                      ? "Edit widget"
-                      : "Fork widget"}
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className="btn btn-outline-light m-1"
-                    aria-current="page"
-                    to={`/${NearConfig.viewSourceWidget}?src=${widgetSrc}`}
-                  >
-                    View source
-                  </Link>
-                </li>
-              </>
+            {widgetSrc?.edit && (
+              <li className="nav-item">
+                <Link
+                  className="btn btn-outline-light m-1"
+                  aria-current="page"
+                  to={`/edit/${widgetSrc.edit}`}
+                >
+                  {widgetSrc.edit.startsWith(`${signedAccountId}/widget/`)
+                    ? "Edit widget"
+                    : "Fork widget"}
+                </Link>
+              </li>
+            )}
+            {widgetSrc?.view && (
+              <li className="nav-item">
+                <Link
+                  className="btn btn-outline-light m-1"
+                  aria-current="page"
+                  to={`/${NearConfig.viewSourceWidget}?src=${widgetSrc?.view}`}
+                >
+                  View source
+                </Link>
+              </li>
             )}
           </ul>
           <form className="d-flex">{header}</form>
