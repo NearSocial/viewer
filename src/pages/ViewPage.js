@@ -10,7 +10,7 @@ export default function ViewPage(props) {
   const [widgetProps, setWidgetProps] = useState({});
 
   const src = widgetSrc || NearConfig.defaultWidget;
-  const setForkSrc = props.setForkSrc;
+  const setWidgetSrc = props.setWidgetSrc;
 
   useEffect(() => {
     setWidgetProps(
@@ -23,9 +23,9 @@ export default function ViewPage(props) {
 
   useEffect(() => {
     setTimeout(() => {
-      setForkSrc(`/edit/${src}`);
+      setWidgetSrc(src);
     }, 1);
-  }, [src, setForkSrc]);
+  }, [src, setWidgetSrc]);
 
   return (
     <div className="container">

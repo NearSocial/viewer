@@ -10,6 +10,7 @@ import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { NearConfig } from "../data/near";
 import { isObject } from "url/util";
+import { Markdown } from "../components/Markdown";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -60,6 +61,8 @@ const ApprovedTags = {
   Widget: false,
   CommitButton: true,
   IpfsImageUpload: false,
+  Markdown: false,
+  Fragment: true,
 };
 
 const assertNotReservedKey = (key) => {
@@ -136,7 +139,10 @@ class VmStack {
   }
 
   renderElement(code) {
-    const element = requireJSXIdentifier(code.openingElement.name);
+    const element =
+      code.type === "JSXFragment"
+        ? "Fragment"
+        : requireJSXIdentifier(code.openingElement.name);
     const attributes = {};
     const status = {};
     if (element === "input") {
@@ -149,17 +155,16 @@ class VmStack {
       attributes.className = "btn btn-outline-primary";
     }
 
-    const attributesMap = code.openingElement.attributes.reduce(
-      (obj, attribute) => {
-        if (attribute.type !== "JSXAttribute") {
-          throw new Error("Non JSXAttribute: " + attribute.type);
-        }
-        const name = requireJSXIdentifier(attribute.name);
-        obj[name] = attribute.value;
-        return obj;
-      },
-      {}
-    );
+    const attributesMap = (
+      code.type === "JSXFragment" ? code.openingFragment : code.openingElement
+    ).attributes.reduce((obj, attribute) => {
+      if (attribute.type !== "JSXAttribute") {
+        throw new Error("Non JSXAttribute: " + attribute.type);
+      }
+      const name = requireJSXIdentifier(attribute.name);
+      obj[name] = attribute.value;
+      return obj;
+    }, {});
 
     Object.entries(attributesMap).forEach(([name, value]) => {
       attributes[name] = this.executeExpression(value);
@@ -223,7 +228,7 @@ class VmStack {
       }
     });
     attributes.key = `${this.vm.gkey}-${this.vm.gIndex++}`;
-    attributes.dangerouslySetInnerHTML = undefined;
+    delete attributes.dangerouslySetInnerHTML;
     if (element === "img") {
       attributes.alt = attributes.alt ?? "not defined";
     } else if (element === "a") {
@@ -246,6 +251,10 @@ class VmStack {
       return <Widget {...attributes} />;
     } else if (element === "CommitButton") {
       return <button {...attributes}>{children}</button>;
+    } else if (element === "Markdown") {
+      return <Markdown {...attributes} />;
+    } else if (element === "Fragment") {
+      return <React.Fragment {...attributes}>{children}</React.Fragment>;
     } else if (element === "IpfsImageUpload") {
       return (
         <div
@@ -512,12 +521,10 @@ class VmStack {
       });
       const args = code.arguments.map((arg) => this.executeExpression(arg));
       return this.callFunction(obj, callee, args);
-    } else if (type === "Literal") {
+    } else if (type === "Literal" || type === "JSXText") {
       return code.value;
-    } else if (type === "JSXElement") {
+    } else if (type === "JSXElement" || type === "JSXFragment") {
       return this.renderElement(code);
-    } else if (type === "JSXText") {
-      return code.value;
     } else if (type === "JSXExpressionContainer") {
       return this.executeExpression(code.expression);
     } else if (type === "BinaryExpression") {

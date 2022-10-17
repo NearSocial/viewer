@@ -30,8 +30,14 @@ const AcornOptions = {
   allowReturnOutsideFunction: true,
 };
 
+const ParsedCodeCache = {};
+const JsxParser = Parser.extend(jsx());
+
 const parseCode = (code) => {
-  return Parser.extend(jsx()).parse(code, AcornOptions);
+  if (code in ParsedCodeCache) {
+    return ParsedCodeCache[code];
+  }
+  return (ParsedCodeCache[code] = JsxParser.parse(code, AcornOptions));
 };
 
 const fetchPreviousData = async (near, data) => {
@@ -215,7 +221,6 @@ export function Widget(props) {
     }
     try {
       const parsedCode = parseCode(code);
-      // console.log(parsedCode);
       setParsedCode(parsedCode);
     } catch (e) {
       setElement(
