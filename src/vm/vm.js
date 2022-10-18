@@ -63,6 +63,11 @@ const ApprovedTags = {
   IpfsImageUpload: false,
   Markdown: false,
   Fragment: true,
+  textarea: true,
+  select: true,
+  options: true,
+  label: true,
+  small: true,
 };
 
 const assertNotReservedKey = (key) => {
