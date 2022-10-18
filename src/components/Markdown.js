@@ -6,36 +6,39 @@ import React from "react";
 
 export const Markdown = (props) => {
   const onAClick = props.onAClick;
-  return <ReactMarkdown
-    {...props}
-    plugins={[gfm]}
-    components={{
-      a: ({node, ...props}) => <a {onAClick && {...{onClick: onAClick}}} {...props} />,
-      img: ({node, ...props}) => <img className="img-fluid" {...props} />,
-      blockquote: ({node, ...props}) => (
-        <blockquote className="blockquote" {...props} />
-      ),
-      table: ({node, ...props}) => (
-        <table className="table table-striped" {...props} />
-      ),
-      code({node, inline, className, children, ...props}) {
-        const match = /language-(\w+)/.exec(className || "");
-        return !inline && match ? (
-          <SyntaxHighlighter
-            children={String(children).replace(/\n$/, "")}
-            style={tomorrow}
-            language={match[1]}
-            PreTag="div"
-            {...props}
-          />
-        ) : (
-          <code className={className} {...props}>
-            {children}
-          </code>
-        );
-      },
-    }}
-  >
-    {props.text}
-  </ReactMarkdown>;
-});
+  return (
+    <ReactMarkdown
+      {...props}
+      plugins={[gfm]}
+      components={{
+        a: ({ node, ...props }) =>
+          onAClick ? <a onClick={onAClick} {...props} /> : <a {...props} />,
+        img: ({ node, ...props }) => <img className="img-fluid" {...props} />,
+        blockquote: ({ node, ...props }) => (
+          <blockquote className="blockquote" {...props} />
+        ),
+        table: ({ node, ...props }) => (
+          <table className="table table-striped" {...props} />
+        ),
+        code({ node, inline, className, children, ...props }) {
+          const match = /language-(\w+)/.exec(className || "");
+          return !inline && match ? (
+            <SyntaxHighlighter
+              children={String(children).replace(/\n$/, "")}
+              style={tomorrow}
+              language={match[1]}
+              PreTag="div"
+              {...props}
+            />
+          ) : (
+            <code className={className} {...props}>
+              {children}
+            </code>
+          );
+        },
+      }}
+    >
+      {props.text}
+    </ReactMarkdown>
+  );
+};
