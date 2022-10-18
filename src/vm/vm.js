@@ -316,26 +316,34 @@ class VmStack {
 
   callFunction(obj, callee, args) {
     const keyword = obj?.[KeywordKey];
-    if (keyword) {
-      callee = `${keyword}.${callee}`;
-    } else {
+    if (!keyword) {
       if (obj?.[callee] instanceof Function) {
         return obj?.[callee](...args);
       }
     }
-
-    if (keyword || obj === this.stack.state) {
-      if (callee === "Social.getr" || callee === "socialGetr") {
+    if (keyword || obj === this.stack.state || obj === this.vm.state) {
+      if (
+        (keyword === "Social" && callee === "getr") ||
+        callee === "socialGetr"
+      ) {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.getr");
         }
         return this.vm.cachedSocialGet(args[0], true, args[1], args[2]);
-      } else if (callee === "Social.get" || callee === "socialGet") {
+      } else if (
+        (keyword === "Social" && callee === "get") ||
+        callee === "socialGet"
+      ) {
         if (args.length < 1) {
           throw new Error("Missing argument 'keys' for Social.get");
         }
         return this.vm.cachedSocialGet(args[0], false, args[1], args[2]);
-      } else if (callee === "Near.view") {
+      } else if (keyword === "Social" && callee === "keys") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'keys' for Social.keys");
+        }
+        return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
+      } else if (keyword === "Near" && callee === "view") {
         if (args.length < 2) {
           throw new Error(
             "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
@@ -355,17 +363,15 @@ class VmStack {
         return parseFloat(...args);
       } else if (callee === "isNaN") {
         return isNaN(...args);
-      } else if (callee === "Social.keys") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for Social.keys");
-        }
-        return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
-      } else if (callee === "JSON.stringify" || callee === "stringify") {
+      } else if (
+        (keyword === "JSON" && callee === "stringify") ||
+        callee === "stringify"
+      ) {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for JSON.stringify");
         }
-        return JSON.stringify(args[0], undefined, 2);
-      } else if (callee === "JSON.parse") {
+        return JSON.stringify(args[0], args[1] ?? undefined, args[2] ?? 2);
+      } else if (keyword === "JSON" && callee === "parse") {
         if (args.length < 1) {
           throw new Error("Missing argument 's' for JSON.parse");
         }
@@ -376,22 +382,43 @@ class VmStack {
         } catch (e) {
           return null;
         }
-      } else if (callee === "Object.keys") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'obj' for Object.keys");
+      } else if (keyword === "Object") {
+        if (callee === "keys") {
+          if (args.length < 1) {
+            throw new Error("Missing argument 'obj' for Object.keys");
+          }
+          return Object.keys(args[0]);
+        } else if (callee === "values") {
+          if (args.length < 1) {
+            throw new Error("Missing argument 'obj' for Object.values");
+          }
+          return Object.values(args[0]);
+        } else if (callee === "entries") {
+          if (args.length < 1) {
+            throw new Error("Missing argument 'obj' for Object.entries");
+          }
+          return Object.entries(args[0]);
+        } else if (callee === "assign") {
+          const obj = Object.assign(...args);
+          assertValidObject(obj);
+          return obj;
+        } else if (callee === "fromEntries") {
+          const obj = Object.fromEntries(args[0]);
+          assertValidObject(obj);
+          return obj;
+        } else {
+          throw new Error(
+            "Unsupported callee method '" +
+              callee +
+              "' on a given object '" +
+              obj +
+              "'"
+          );
         }
-        return Object.keys(args[0]);
-      } else if (callee === "Object.values") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'obj' for Object.values");
-        }
-        return Object.values(args[0]);
-      } else if (callee === "Object.entries") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'obj' for Object.entries");
-        }
-        return Object.entries(args[0]);
-      } else if (callee === "initState" || callee === "State.init") {
+      } else if (
+        (keyword === "State" && callee === "init") ||
+        callee === "initState"
+      ) {
         if (args.length < 1) {
           throw new Error("Missing argument 'initialState' for State.init");
         }
@@ -404,7 +431,7 @@ class VmStack {
         const newState = JSON.parse(JSON.stringify(args[0]));
         this.vm.setReactState(newState);
         this.vm.state.state = newState;
-      } else if (callee === "State.update") {
+      } else if (keyword === "State" && callee === "update") {
         if (isObject(args[0])) {
           this.vm.state.state = this.vm.state.state ?? {};
           Object.assign(
@@ -418,8 +445,26 @@ class VmStack {
         const newState = JSON.parse(JSON.stringify(this.vm.state.state));
         this.vm.setReactState(newState);
         this.vm.state.state = newState;
-      } else if (callee === "console.log") {
+      } else if (keyword === "console" && callee === "log") {
         return console.log(...args);
+      } else if (callee === "Date") {
+        return new Date(...args);
+      } else if (keyword === "Date") {
+        if (callee === "now") {
+          return Date.now();
+        } else if (callee === "parse") {
+          return Date.parse(...args);
+        } else if (callee === "UTC") {
+          return Date.UTC(...args);
+        } else {
+          throw new Error(
+            "Unsupported callee method '" +
+              callee +
+              "' on a given object '" +
+              obj +
+              "'"
+          );
+        }
       } else {
         throw new Error("Unknown callee method '" + callee + "'");
       }
@@ -452,14 +497,8 @@ class VmStack {
       }
       return [obj, code.name];
     } else if (code.type === "MemberExpression") {
-      const [innerObj, key] = this.resolveMemberExpression(
-        code.object,
-        Object.assign({}, options, {
-          left: false,
-        })
-      );
+      const obj = this.executeExpression(code.object);
       const property = this.resolveKey(code.property, code.computed);
-      const obj = innerObj?.[key];
       if (isReactObject(obj)) {
         throw new Error("React objects shouldn't be modified");
       }
@@ -873,6 +912,9 @@ export default class VM {
         },
         Object: {
           [KeywordKey]: "Object",
+        },
+        Date: {
+          [KeywordKey]: "Date",
         },
         Social: {
           [KeywordKey]: "Social",

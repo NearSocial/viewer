@@ -251,9 +251,20 @@ export function Widget(props) {
       return;
     }
     setState(undefined);
-    setVm(
-      new VM(near, gkey, parsedCode, setState, setCache, commitData, depth)
-    );
+    setVm((prev) => {
+      if (prev) {
+        prev.alive = false;
+      }
+      return new VM(
+        near,
+        gkey,
+        parsedCode,
+        setState,
+        setCache,
+        commitData,
+        depth
+      );
+    });
   }, [near, gkey, parsedCode, commitData, depth]);
 
   useEffect(() => {
