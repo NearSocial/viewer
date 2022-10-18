@@ -3,6 +3,7 @@ import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
 import { useNear } from "../../data/near";
+import ConfirmTransaction from "../ConfirmTransaction";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
@@ -75,6 +76,16 @@ export function Widget(props) {
     }
   }, [code]);
 
+  const confirmTransaction = useCallback(
+    (contractName, methodName, args, gas, deposit) => {
+      if (!near) {
+          return null;
+      }
+      setElement(<ConfirmTransaction contractName={contractName} methodName={methodName} args={args} deposit={deposit} gas={gas} />);
+    },
+    [near]
+  );
+
   useEffect(() => {
     if (!near || !parsedCode) {
       return;
@@ -84,7 +95,7 @@ export function Widget(props) {
       if (prev) {
         prev.alive = false;
       }
-      return new VM(near, gkey, parsedCode, setState, setCache, depth);
+      return new VM(near, gkey, parsedCode, setState, setCache, confirmTransaction, depth);
     });
   }, [near, gkey, parsedCode, depth]);
 

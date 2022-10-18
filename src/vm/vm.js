@@ -382,6 +382,14 @@ class VmStack {
       return this.vm.cachedNearView(...args);
     } else if (keyword === "Near" && callee === "block") {
       return this.vm.cachedNearBlock(...args);
+    } else if (callee === "Near.call") {
+      if (args.length < 2 || args.length > 5) {
+        throw new Error(
+          "Method: Near.call. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'gas' (defaults to 300Tg), 'deposit' (defaults to 0)"
+        );
+      }
+      this.confirmTransaction(...args);
+      return;
     } else if (callee === "fetch") {
       if (args.length < 1) {
         throw new Error(
