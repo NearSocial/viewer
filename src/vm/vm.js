@@ -497,14 +497,8 @@ class VmStack {
       }
       return [obj, code.name];
     } else if (code.type === "MemberExpression") {
-      const [innerObj, key] = this.resolveMemberExpression(
-        code.object,
-        Object.assign({}, options, {
-          left: false,
-        })
-      );
+      const obj = this.executeExpression(code.object);
       const property = this.resolveKey(code.property, code.computed);
-      const obj = innerObj?.[key];
       if (isReactObject(obj)) {
         throw new Error("React objects shouldn't be modified");
       }
