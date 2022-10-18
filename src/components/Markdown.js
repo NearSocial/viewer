@@ -9,6 +9,7 @@ export const Markdown = (props) => (
     {...props}
     plugins={[gfm]}
     components={{
+      img: ({ node, ...props }) => <img className="img-fluid" {...props} />,
       blockquote: ({ node, ...props }) => (
         <blockquote className="blockquote" {...props} />
       ),
