@@ -728,7 +728,7 @@ class VmStack {
                 touches: arg?.touches,
               };
             }
-            v = JSON.parse(JSON.stringify(arg));
+            v = deepCopy(arg);
           } catch (e) {
             console.warn(e);
           }
