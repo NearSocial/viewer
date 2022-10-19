@@ -227,27 +227,33 @@ class VmStack {
           left: true,
         });
         status.img = obj[key];
-        attributes.onChange = async (files) => {
-          obj[key] = null;
+        attributes.onChange = (files) => {
           if (files?.length > 0) {
             obj[key] = {
               uploading: true,
               cid: null,
             };
             this.vm.setReactState(this.vm.state.state);
-            const cid = await ipfsUpload(files[0]);
-            const { obj, key } = this.vm.vmStack.resolveMemberExpression(
-              value.expression,
-              {
-                requireState: true,
-                left: true,
+            ipfsUpload(files[0]).then((cid) => {
+              if (!this.vm.alive) {
+                return;
               }
-            );
-            obj[key] = {
-              cid,
-            };
+              const { obj, key } = this.vm.vmStack.resolveMemberExpression(
+                value.expression,
+                {
+                  requireState: true,
+                  left: true,
+                }
+              );
+              obj[key] = {
+                cid,
+              };
+              this.vm.setReactState(this.vm.state.state);
+            });
+          } else {
+            obj[key] = null;
+            this.vm.setReactState(this.vm.state.state);
           }
-          this.vm.setReactState(this.vm.state.state);
         };
       }
     });
