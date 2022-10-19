@@ -17,7 +17,6 @@ import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
-import Icon from "./images/icon.png";
 
 export const refreshAllowanceObj = {};
 
@@ -149,7 +148,7 @@ function App(props) {
       <div className="container-fluid">
         <Link className="navbar-brand" to="/" title="viewer">
           <img
-            src={Icon}
+            src="favicon.png"
             alt="viewer logo"
             height="24"
             className="d-inline-block align-text-top me-2"
