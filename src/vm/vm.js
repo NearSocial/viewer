@@ -440,7 +440,7 @@ class VmStack {
         throw new Error("'initialState' is not an object");
       }
       if (this.vm.state.state === undefined) {
-        const newState = args[0];
+        const newState = deepCopy(args[0]);
         this.vm.setReactState(newState);
         this.vm.state.state = newState;
       }
@@ -448,7 +448,7 @@ class VmStack {
     } else if (keyword === "State" && callee === "update") {
       if (isObject(args[0])) {
         this.vm.state.state = this.vm.state.state ?? {};
-        Object.assign(this.vm.state.state, args[0]);
+        Object.assign(this.vm.state.state, deepCopy(args[0]));
       }
       if (this.vm.state.state === undefined) {
         throw new Error("The error was not initialized");
