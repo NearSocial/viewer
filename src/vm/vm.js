@@ -93,6 +93,23 @@ const assertValidObject = (o) => {
   }
 };
 
+const deepCopy = (o) => {
+  if (Array.isArray(o)) {
+    return o.map((v) => deepCopy(v));
+  } else if (isObject(o)) {
+    if (isReactObject(o)) {
+      return o;
+    }
+    return Object.fromEntries(
+      Object.entries(o).map(([key, value]) => [key, deepCopy(value)])
+    );
+  } else if (o === undefined || typeof o === "function") {
+    return o;
+  } else {
+    return JSON.parse(JSON.stringify(o));
+  }
+};
+
 const requireIdentifier = (id) => {
   if (id.type !== "Identifier") {
     throw new Error("Non identifier: " + id.type);
@@ -409,11 +426,15 @@ class VmStack {
       if (args.length < 1) {
         throw new Error("Missing argument 'initialState' for State.init");
       }
-      if (args[0] === null || typeof args[0] !== "object") {
+      if (
+        args[0] === null ||
+        typeof args[0] !== "object" ||
+        isReactObject(args[0])
+      ) {
         throw new Error("'initialState' is not an object");
       }
       if (this.vm.state.state === undefined) {
-        const newState = JSON.parse(JSON.stringify(args[0]));
+        const newState = args[0];
         this.vm.setReactState(newState);
         this.vm.state.state = newState;
       }
@@ -421,14 +442,12 @@ class VmStack {
     } else if (keyword === "State" && callee === "update") {
       if (isObject(args[0])) {
         this.vm.state.state = this.vm.state.state ?? {};
-        Object.assign(this.vm.state.state, JSON.parse(JSON.stringify(args[0])));
+        Object.assign(this.vm.state.state, args[0]);
       }
       if (this.vm.state.state === undefined) {
         throw new Error("The error was not initialized");
       }
-      const newState = JSON.parse(JSON.stringify(this.vm.state.state));
-      this.vm.setReactState(newState);
-      this.vm.state.state = newState;
+      this.vm.setReactState(this.vm.state.state);
       return this.vm.state.state;
     } else if (keyword === "console" && callee === "log") {
       return console.log(...args);
@@ -909,13 +928,11 @@ export default class VM {
       return "Too deep";
     }
     this.gIndex = 0;
-    this.state = JSON.parse(
-      JSON.stringify({
-        props,
-        context,
-        state,
-      })
-    );
+    this.state = {
+      props: deepCopy(props),
+      context,
+      state: deepCopy(state),
+    };
     this.cache = cache;
     this.loopLimit = LoopLimit;
     this.vmStack = new VmStack(this, undefined, this.state);
