@@ -17,6 +17,7 @@ import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
+import Logo from "./images/NS_Logo_Horizontal.png";
 
 export const refreshAllowanceObj = {};
 
@@ -146,15 +147,14 @@ function App(props) {
   const nav = (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/" title="viewer">
+        <Link className="navbar-brand" to="/" title="Near Social">
           <img
-            src="favicon.png"
-            alt="viewer logo"
-            height="24"
+            src={Logo}
+            alt="Near Social logo horizontal"
+            height="32"
             className="d-inline-block align-text-top me-2"
           />
           {!IsMainnet && "Testnet "}
-          Near Social Browser
         </Link>
         <button
           className="navbar-toggler"
