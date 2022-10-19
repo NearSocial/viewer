@@ -17,11 +17,8 @@ const LoopLimit = 10000;
 const MaxDepth = 32;
 
 const ReactKey = "$$typeof";
-const KeywordKey = "$$keyword";
 const isReactObject = (o) =>
   o !== null && typeof o === "object" && !!o[ReactKey];
-const isKeywordObject = (o) =>
-  o !== null && typeof o === "object" && !!o[KeywordKey];
 const StakeKey = "state";
 
 const ExpressionDebug = false;
@@ -71,15 +68,19 @@ const ApprovedTags = {
   small: true,
 };
 
-const assertNotReservedKey = (key) => {
-  if (key === ReactKey || key === KeywordKey) {
-    throw new Error(`${key} is reserved and can't be used`);
-  }
+const Keywords = {
+  JSON: true,
+  Object: true,
+  Date: true,
+  Social: true,
+  Near: true,
+  State: true,
+  console: true,
 };
 
-const assertNotKeywordObject = (obj) => {
-  if (isKeywordObject(obj)) {
-    throw new Error("Keyword objects shouldn't be modified");
+const assertNotReservedKey = (key) => {
+  if (key === ReactKey) {
+    throw new Error(`${key} is reserved and can't be used`);
   }
 };
 
@@ -183,7 +184,7 @@ class VmStack {
         value.type === "JSXExpressionContainer" &&
         !("onChange" in attributesMap)
       ) {
-        const [obj, key] = this.resolveMemberExpression(value.expression, {
+        const { obj, key } = this.resolveMemberExpression(value.expression, {
           requireState: true,
           left: true,
         });
@@ -204,7 +205,7 @@ class VmStack {
         element === "IpfsImageUpload" &&
         value.type === "JSXExpressionContainer"
       ) {
-        let [obj, key] = this.resolveMemberExpression(value.expression, {
+        const { obj, key } = this.resolveMemberExpression(value.expression, {
           requireState: true,
           left: true,
         });
@@ -218,7 +219,7 @@ class VmStack {
             };
             this.vm.setReactState(this.vm.state.state);
             const cid = await ipfsUpload(files[0]);
-            [obj, key] = this.vm.vmStack.resolveMemberExpression(
+            const { obj, key } = this.vm.vmStack.resolveMemberExpression(
               value.expression,
               {
                 requireState: true,
@@ -315,169 +316,137 @@ class VmStack {
     return key;
   }
 
-  callFunction(obj, callee, args) {
-    const keyword = obj?.[KeywordKey];
-    if (!keyword) {
-      if (obj?.[callee] instanceof Function) {
-        return obj?.[callee](...args);
+  callFunction(keyword, callee, args) {
+    if (
+      (keyword === "Social" && callee === "getr") ||
+      callee === "socialGetr"
+    ) {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'keys' for Social.getr");
       }
-    }
-    if (keyword || obj === this.stack.state || obj === this.vm.state) {
-      if (
-        (keyword === "Social" && callee === "getr") ||
-        callee === "socialGetr"
-      ) {
+      return this.vm.cachedSocialGet(args[0], true, args[1], args[2]);
+    } else if (
+      (keyword === "Social" && callee === "get") ||
+      callee === "socialGet"
+    ) {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'keys' for Social.get");
+      }
+      return this.vm.cachedSocialGet(args[0], false, args[1], args[2]);
+    } else if (keyword === "Social" && callee === "keys") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'keys' for Social.keys");
+      }
+      return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
+    } else if (keyword === "Near" && callee === "view") {
+      if (args.length < 2) {
+        throw new Error(
+          "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
+        );
+      }
+      return this.vm.cachedNearView(...args);
+    } else if (callee === "fetch") {
+      if (args.length < 1) {
+        throw new Error(
+          "Method: fetch. Required arguments: 'url'. Optional: 'options'"
+        );
+      }
+      return this.vm.cachedFetch(...args);
+    } else if (callee === "parseInt") {
+      return parseInt(...args);
+    } else if (callee === "parseFloat") {
+      return parseFloat(...args);
+    } else if (callee === "isNaN") {
+      return isNaN(...args);
+    } else if (
+      (keyword === "JSON" && callee === "stringify") ||
+      callee === "stringify"
+    ) {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'obj' for JSON.stringify");
+      }
+      return JSON.stringify(args[0], args[1] ?? undefined, args[2] ?? 2);
+    } else if (keyword === "JSON" && callee === "parse") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 's' for JSON.parse");
+      }
+      try {
+        const obj = JSON.parse(args[0]);
+        assertValidObject(obj);
+        return obj;
+      } catch (e) {
+        return null;
+      }
+    } else if (keyword === "Object") {
+      if (callee === "keys") {
         if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for Social.getr");
+          throw new Error("Missing argument 'obj' for Object.keys");
         }
-        return this.vm.cachedSocialGet(args[0], true, args[1], args[2]);
-      } else if (
-        (keyword === "Social" && callee === "get") ||
-        callee === "socialGet"
-      ) {
+        return Object.keys(args[0]);
+      } else if (callee === "values") {
         if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for Social.get");
+          throw new Error("Missing argument 'obj' for Object.values");
         }
-        return this.vm.cachedSocialGet(args[0], false, args[1], args[2]);
-      } else if (keyword === "Social" && callee === "keys") {
+        return Object.values(args[0]);
+      } else if (callee === "entries") {
         if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for Social.keys");
+          throw new Error("Missing argument 'obj' for Object.entries");
         }
-        return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
-      } else if (keyword === "Near" && callee === "view") {
-        if (args.length < 2) {
-          throw new Error(
-            "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
-          );
-        }
-        return this.vm.cachedNearView(...args);
-      } else if (callee === "fetch") {
-        if (args.length < 1) {
-          throw new Error(
-            "Method: fetch. Required arguments: 'url'. Optional: 'options'"
-          );
-        }
-        return this.vm.cachedFetch(...args);
-      } else if (callee === "parseInt") {
-        return parseInt(...args);
-      } else if (callee === "parseFloat") {
-        return parseFloat(...args);
-      } else if (callee === "isNaN") {
-        return isNaN(...args);
-      } else if (
-        (keyword === "JSON" && callee === "stringify") ||
-        callee === "stringify"
-      ) {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'obj' for JSON.stringify");
-        }
-        return JSON.stringify(args[0], args[1] ?? undefined, args[2] ?? 2);
-      } else if (keyword === "JSON" && callee === "parse") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 's' for JSON.parse");
-        }
-        try {
-          const obj = JSON.parse(args[0]);
-          assertValidObject(obj);
-          return obj;
-        } catch (e) {
-          return null;
-        }
-      } else if (keyword === "Object") {
-        if (callee === "keys") {
-          if (args.length < 1) {
-            throw new Error("Missing argument 'obj' for Object.keys");
-          }
-          return Object.keys(args[0]);
-        } else if (callee === "values") {
-          if (args.length < 1) {
-            throw new Error("Missing argument 'obj' for Object.values");
-          }
-          return Object.values(args[0]);
-        } else if (callee === "entries") {
-          if (args.length < 1) {
-            throw new Error("Missing argument 'obj' for Object.entries");
-          }
-          return Object.entries(args[0]);
-        } else if (callee === "assign") {
-          const obj = Object.assign(...args);
-          assertValidObject(obj);
-          return obj;
-        } else if (callee === "fromEntries") {
-          const obj = Object.fromEntries(args[0]);
-          assertValidObject(obj);
-          return obj;
-        } else {
-          throw new Error(
-            "Unsupported callee method '" +
-              callee +
-              "' on a given object '" +
-              obj +
-              "'"
-          );
-        }
-      } else if (
-        (keyword === "State" && callee === "init") ||
-        callee === "initState"
-      ) {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'initialState' for State.init");
-        }
-        if (args[0] === null || typeof args[0] !== "object") {
-          throw new Error("'initialState' is not an object");
-        }
-        if (this.vm.state.state !== undefined) {
-          return;
-        }
+        return Object.entries(args[0]);
+      } else if (callee === "assign") {
+        const obj = Object.assign(...args);
+        assertValidObject(obj);
+        return obj;
+      } else if (callee === "fromEntries") {
+        const obj = Object.fromEntries(args[0]);
+        assertValidObject(obj);
+        return obj;
+      }
+    } else if (
+      (keyword === "State" && callee === "init") ||
+      callee === "initState"
+    ) {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'initialState' for State.init");
+      }
+      if (args[0] === null || typeof args[0] !== "object") {
+        throw new Error("'initialState' is not an object");
+      }
+      if (this.vm.state.state === undefined) {
         const newState = JSON.parse(JSON.stringify(args[0]));
         this.vm.setReactState(newState);
         this.vm.state.state = newState;
-      } else if (keyword === "State" && callee === "update") {
-        if (isObject(args[0])) {
-          this.vm.state.state = this.vm.state.state ?? {};
-          Object.assign(
-            this.vm.state.state,
-            JSON.parse(JSON.stringify(args[0]))
-          );
-        }
-        if (this.vm.state.state === undefined) {
-          throw new Error("The error was not initialized");
-        }
-        const newState = JSON.parse(JSON.stringify(this.vm.state.state));
-        this.vm.setReactState(newState);
-        this.vm.state.state = newState;
-      } else if (keyword === "console" && callee === "log") {
-        return console.log(...args);
-      } else if (callee === "Date") {
-        return new Date(...args);
-      } else if (keyword === "Date") {
-        if (callee === "now") {
-          return Date.now();
-        } else if (callee === "parse") {
-          return Date.parse(...args);
-        } else if (callee === "UTC") {
-          return Date.UTC(...args);
-        } else {
-          throw new Error(
-            "Unsupported callee method '" +
-              callee +
-              "' on a given object '" +
-              obj +
-              "'"
-          );
-        }
-      } else {
-        throw new Error("Unknown callee method '" + callee + "'");
       }
-    } else {
-      throw new Error(
-        "Unsupported callee method '" +
-          callee +
-          "' on a given object '" +
-          obj +
-          "'"
-      );
+      return this.vm.state.state;
+    } else if (keyword === "State" && callee === "update") {
+      if (isObject(args[0])) {
+        this.vm.state.state = this.vm.state.state ?? {};
+        Object.assign(this.vm.state.state, JSON.parse(JSON.stringify(args[0])));
+      }
+      if (this.vm.state.state === undefined) {
+        throw new Error("The error was not initialized");
+      }
+      const newState = JSON.parse(JSON.stringify(this.vm.state.state));
+      this.vm.setReactState(newState);
+      this.vm.state.state = newState;
+      return this.vm.state.state;
+    } else if (keyword === "console" && callee === "log") {
+      return console.log(...args);
+    } else if (callee === "Date") {
+      return new Date(...args);
+    } else if (keyword === "Date") {
+      if (callee === "now") {
+        return Date.now();
+      } else if (callee === "parse") {
+        return Date.parse(...args);
+      } else if (callee === "UTC") {
+        return Date.UTC(...args);
+      }
     }
+
+    throw new Error(
+      "Unsupported callee method '" + callee + "' on '" + keyword + "'"
+    );
   }
 
   /// Resolves the underlying object and the key to modify.
@@ -485,28 +454,48 @@ class VmStack {
   /// Options:
   /// - requireState requires the top object key be `state`
   resolveMemberExpression(code, options) {
+    console.log(code);
     if (code.type === "Identifier") {
-      assertNotReservedKey(code.name);
-      if (options?.requireState && code.name !== StakeKey) {
+      const key = code.name;
+      assertNotReservedKey(key);
+      if (options?.requireState && key !== StakeKey) {
         throw new Error(`The top object should be ${StakeKey}`);
       }
-      const obj = this.stack.findObj(code.name) ?? this.stack.state;
+      const obj = this.stack.findObj(key) ?? this.stack.state;
+      if (obj === this.stack.state) {
+        if (key in Keywords) {
+          if (options?.left) {
+            throw new Error("Cannot assign to keyword '" + key + "'");
+          }
+          return { obj, key, keyword: key };
+        }
+      }
       if (options?.left) {
-        if (!obj || !(code.name in obj)) {
+        if (!obj || !(key in obj)) {
           throw new Error(`Accessing undeclared identifier '${code.name}'`);
         }
       }
-      return [obj, code.name];
+      return { obj, key };
     } else if (code.type === "MemberExpression") {
+      if (code.object?.type === "Identifier") {
+        const keyword = code.object.name;
+        if (keyword in Keywords) {
+          if (!options?.callee) {
+            throw new Error("Cannot access keyword '" + keyword + "'");
+          }
+          return {
+            obj: this.stack.state,
+            key: this.resolveKey(code.property, code.computed),
+            keyword,
+          };
+        }
+      }
       const obj = this.executeExpression(code.object);
-      const property = this.resolveKey(code.property, code.computed);
+      const key = this.resolveKey(code.property, code.computed);
       if (isReactObject(obj)) {
-        throw new Error("React objects shouldn't be modified");
+        throw new Error("React objects shouldn't dereferenced");
       }
-      if (!options?.callee) {
-        assertNotKeywordObject(obj);
-      }
-      return [obj, property];
+      return { obj, key };
     } else {
       throw new Error("Unsupported member type: '" + code.type + "'");
     }
@@ -518,10 +507,9 @@ class VmStack {
     }
     const type = code?.type;
     if (type === "AssignmentExpression") {
-      const [obj, key] = this.resolveMemberExpression(code.left, {
+      const { obj, key } = this.resolveMemberExpression(code.left, {
         left: true,
       });
-      assertNotKeywordObject(obj[key]);
       const right = this.executeExpression(code.right);
 
       if (code.operator === "=") {
@@ -534,12 +522,20 @@ class VmStack {
         return (obj[key] *= right);
       } else if (code.operator === "/=") {
         return (obj[key] /= right);
+      } else if (code.operator === "??=") {
+        return (obj[key] ??= right);
       } else {
         throw new Error(
           "Unknown AssignmentExpression operator '" + code.operator + "'"
         );
       }
     } else if (type === "MemberExpression") {
+      if (code.object?.type === "Identifier") {
+        const keyword = code.object.name;
+        if (keyword in Keywords) {
+          throw new Error("Cannot access keyword '" + keyword + "'");
+        }
+      }
       const obj = this.executeExpression(code.object);
       const key = this.resolveKey(code.property, code.computed);
       return obj?.[key];
@@ -561,11 +557,17 @@ class VmStack {
       }
       return quasis.join("");
     } else if (type === "CallExpression") {
-      const [obj, callee] = this.resolveMemberExpression(code.callee, {
+      const { obj, key, keyword } = this.resolveMemberExpression(code.callee, {
         callee: true,
       });
       const args = code.arguments.map((arg) => this.executeExpression(arg));
-      return this.callFunction(obj, callee, args);
+      if (!keyword && obj?.[key] instanceof Function) {
+        return obj?.[key](...args);
+      } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
+        return this.callFunction(keyword ?? "", key, args);
+      } else {
+        throw new Error("Not a function call expression");
+      }
     } else if (type === "Literal" || type === "JSXText") {
       return code.value;
     } else if (type === "JSXElement" || type === "JSXFragment") {
@@ -632,7 +634,7 @@ class VmStack {
         ? this.executeExpression(code.consequent)
         : this.executeExpression(code.alternate);
     } else if (type === "UpdateExpression") {
-      const [obj, key] = this.resolveMemberExpression(code.argument, {
+      const { obj, key } = this.resolveMemberExpression(code.argument, {
         left: true,
       });
       if (code.operator === "++") {
@@ -668,7 +670,9 @@ class VmStack {
     params = params.map((param) => {
       const arg = requireIdentifier(param);
       assertNotReservedKey(arg);
-      assertNotKeywordObject(this.vm.state[arg]);
+      if (arg in Keywords) {
+        throw new Error("Cannot use keyword as argument name: " + arg);
+      }
       return arg;
     });
     return (...args) => {
@@ -721,7 +725,9 @@ class VmStack {
   }
 
   stackDeclare(id, value) {
-    assertNotKeywordObject(this.vm.state[id]);
+    if (id in Keywords) {
+      throw new Error("Cannot use keyword as variable name: " + id);
+    }
     this.stack.state[id] = value;
   }
 
@@ -910,27 +916,6 @@ export default class VM {
         props,
         context,
         state,
-        JSON: {
-          [KeywordKey]: "JSON",
-        },
-        Object: {
-          [KeywordKey]: "Object",
-        },
-        Date: {
-          [KeywordKey]: "Date",
-        },
-        Social: {
-          [KeywordKey]: "Social",
-        },
-        Near: {
-          [KeywordKey]: "Near",
-        },
-        State: {
-          [KeywordKey]: "State",
-        },
-        console: {
-          [KeywordKey]: "console",
-        },
       })
     );
     this.cache = cache;
