@@ -154,7 +154,7 @@ function App(props) {
             height="32"
             className="d-inline-block align-text-top me-2"
           />
-          {!IsMainnet && "Testnet "}
+          {!IsMainnet && "Testnet"}
         </Link>
         <button
           className="navbar-toggler"
