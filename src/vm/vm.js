@@ -445,7 +445,9 @@ class VmStack {
     }
 
     throw new Error(
-      "Unsupported callee method '" + callee + "' on '" + keyword + "'"
+      keyword
+        ? `Unsupported callee method '${keyword}.${callee}'`
+        : `Unsupported callee method '${callee}'`
     );
   }
 
@@ -454,7 +456,6 @@ class VmStack {
   /// Options:
   /// - requireState requires the top object key be `state`
   resolveMemberExpression(code, options) {
-    console.log(code);
     if (code.type === "Identifier") {
       const key = code.name;
       assertNotReservedKey(key);
@@ -481,7 +482,11 @@ class VmStack {
         const keyword = code.object.name;
         if (keyword in Keywords) {
           if (!options?.callee) {
-            throw new Error("Cannot access keyword '" + keyword + "'");
+            throw new Error(
+              "Cannot dereference keyword '" +
+                keyword +
+                "' in non-call expression"
+            );
           }
           return {
             obj: this.stack.state,
@@ -530,14 +535,7 @@ class VmStack {
         );
       }
     } else if (type === "MemberExpression") {
-      if (code.object?.type === "Identifier") {
-        const keyword = code.object.name;
-        if (keyword in Keywords) {
-          throw new Error("Cannot access keyword '" + keyword + "'");
-        }
-      }
-      const obj = this.executeExpression(code.object);
-      const key = this.resolveKey(code.property, code.computed);
+      const { obj, key } = this.resolveMemberExpression(code);
       return obj?.[key];
     } else if (type === "Identifier") {
       return this.stack.get(code.name);
