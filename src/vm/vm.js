@@ -11,6 +11,7 @@ import { sanitizeUrl } from "@braintree/sanitize-url";
 import { NearConfig } from "../data/near";
 import { isObject } from "url/util";
 import { Markdown } from "../components/Markdown";
+import { isAsync } from "@babel/core/lib/gensync-utils/async";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -860,23 +861,25 @@ export default class VM {
     return null;
   }
 
-  cachedSocialGet(key, recursive, blockId, options) {
+  cachedSocialGet(keys, recursive, blockId, options) {
+    keys = Array.isArray(keys) ? keys : [keys];
     return this.cachedPromise(
-      `get:${JSON.stringify({ key, recursive, blockId, options })}`,
-      () => socialGet(this.near, key, recursive, blockId, options)
+      `get:${JSON.stringify({ keys, recursive, blockId, options })}`,
+      () => socialGet(this.near, keys, recursive, blockId, options)
     );
   }
 
-  cachedSocialKeys(key, blockId, options) {
+  cachedSocialKeys(keys, blockId, options) {
+    keys = Array.isArray(keys) ? keys : [keys];
     return this.cachedPromise(
-      `keys:${JSON.stringify({ key, blockId, options })}`,
+      `keys:${JSON.stringify({ keys, blockId, options })}`,
       () =>
         cachedViewCall(
           this.near,
           NearConfig.contractName,
           "keys",
           {
-            keys: [key],
+            keys,
             options,
           },
           blockId

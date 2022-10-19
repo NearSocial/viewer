@@ -156,13 +156,14 @@ export const cachedFetch = async (url, options) =>
     }
   );
 
-export const socialGet = async (near, key, recursive, blockId, options) => {
+export const socialGet = async (near, keys, recursive, blockId, options) => {
   if (!near) {
     return null;
   }
-  key = recursive ? `${key}/**` : `${key}`;
+  keys = Array.isArray(keys) ? keys : [keys];
+  keys = keys.map((key) => (recursive ? `${key}/**` : `${key}`));
   const args = {
-    keys: [key],
+    keys,
     options,
   };
   let data = await cachedViewCall(
@@ -173,13 +174,15 @@ export const socialGet = async (near, key, recursive, blockId, options) => {
     blockId
   );
 
-  const parts = key.split("/");
-  for (let i = 0; i < parts.length; i++) {
-    const part = parts[i];
-    if (part === "*" || part === "**") {
-      break;
+  if (keys.length === 1) {
+    const parts = keys[0].split("/");
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (part === "*" || part === "**") {
+        break;
+      }
+      data = data?.[part];
     }
-    data = data?.[part];
   }
 
   return data;
