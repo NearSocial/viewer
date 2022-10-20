@@ -12,6 +12,7 @@ import { NearConfig } from "../data/near";
 import { isObject } from "url/util";
 import { Markdown } from "../components/Markdown";
 import { isAsync } from "@babel/core/lib/gensync-utils/async";
+import InfiniteScroll from "react-infinite-scroller";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -66,6 +67,7 @@ const ApprovedTags = {
   options: true,
   label: true,
   small: true,
+  InfiniteScroll: true,
 };
 
 const Keywords = {
@@ -257,7 +259,7 @@ class VmStack {
         };
       }
     });
-    attributes.key = `${this.vm.gkey}-${this.vm.gIndex++}`;
+    attributes.key = `${this.vm.gkey}-${attributes.key ?? this.vm.gIndex++}`;
     delete attributes.dangerouslySetInnerHTML;
     if (element === "img") {
       attributes.alt = attributes.alt ?? "not defined";
@@ -281,6 +283,8 @@ class VmStack {
       return <Widget {...attributes} />;
     } else if (element === "CommitButton") {
       return <button {...attributes}>{children}</button>;
+    } else if (element === "InfiniteScroll") {
+      return <InfiniteScroll {...attributes}>{children}</InfiniteScroll>;
     } else if (element === "Markdown") {
       return <Markdown {...attributes} />;
     } else if (element === "Fragment") {
