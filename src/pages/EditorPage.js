@@ -18,6 +18,12 @@ const WidgetPropsKey = LsKey + "widgetProps:";
 
 const DefaultEditorCode = "return <div>Hello World</div>;";
 
+const Tab = {
+  Editor: "editor",
+  Props: "props",
+  Widget: "widget",
+};
+
 export default function EditorPage(props) {
   const { widgetSrc } = useParams();
   const history = useHistory();
@@ -34,6 +40,8 @@ export default function EditorPage(props) {
   const [propsError, setPropsError] = useState(null);
   const near = useNear();
   const accountId = near?.accountId;
+
+  const [tab, setTab] = useState(Tab.Editor);
 
   useEffect(() => {
     setWidgetSrc({
@@ -117,12 +125,55 @@ export default function EditorPage(props) {
     [updateCode]
   );
 
+  const reformatProps = useCallback(
+    (props) => {
+      try {
+        const formattedProps = JSON.stringify(JSON.parse(props), null, 2);
+        setWidgetProps(formattedProps);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [setWidgetProps]
+  );
+
   return (
     <div>
       <div className="container">
-        <div className="row mb-3 min-vh-100">
-          <div className="col-md-6">
-            <h5>Editor</h5>
+        <div className="min-vh-100">
+          <ul className="nav nav-tabs mb-2">
+            <li className="nav-item">
+              <button
+                className={`nav-link ${tab === Tab.Editor ? "active" : ""}`}
+                aria-current="page"
+                onClick={() => setTab(Tab.Editor)}
+              >
+                Editor
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className={`nav-link ${tab === Tab.Props ? "active" : ""}`}
+                aria-current="page"
+                onClick={() => setTab(Tab.Props)}
+              >
+                Props
+              </button>
+            </li>
+            <li className="nav-item">
+              <button
+                className={`nav-link ${tab === Tab.Widget ? "active" : ""}`}
+                aria-current="page"
+                onClick={() => {
+                  setRenderCode(code);
+                  setTab(Tab.Widget);
+                }}
+              >
+                Widget Preview
+              </button>
+            </li>
+          </ul>
+          <div className={`${tab === Tab.Editor ? "" : "visually-hidden"}`}>
             <div className="input-group mb-3">
               <span className="input-group-text" id="widget-path-prefix">
                 {accountId}/widget/
@@ -137,7 +188,7 @@ export default function EditorPage(props) {
                 onChange={(e) => updateWidgetName(e.target.value)}
               />
             </div>
-            <div className="form-control mb-3 code-editor">
+            <div className="form-control mb-3" style={{ height: "70vh" }}>
               <Editor
                 value={code}
                 defaultLanguage="javascript"
@@ -150,7 +201,10 @@ export default function EditorPage(props) {
             <div className="mb-3">
               <button
                 className="btn btn-success"
-                onClick={() => setRenderCode(code)}
+                onClick={() => {
+                  setRenderCode(code);
+                  setTab(Tab.Widget);
+                }}
               >
                 Render preview
               </button>
@@ -182,21 +236,24 @@ export default function EditorPage(props) {
                 </a>
               )}
             </div>
-            <div className="mb-3">
-              Props for debugging (JSON)
-              <textarea
-                className="form-control font-monospace mb-3"
-                value={widgetProps}
-                rows={5}
-                onChange={(e) => setWidgetProps(e.target.value)}
-              />
-              {propsError && (
-                <pre className="alert alert-danger">{propsError}</pre>
-              )}
-            </div>
           </div>
-          <div className="col-md-6 mb-3">
-            <h5>Widget</h5>
+          <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
+            Props for debugging (JSON)
+            <div className="form-control mb-3" style={{ height: "40vh" }}>
+              <Editor
+                value={widgetProps}
+                defaultLanguage="json"
+                onChange={(props) => setWidgetProps(props)}
+                wrapperProps={{
+                  onBlur: () => reformatProps(widgetProps),
+                }}
+              />
+            </div>
+            {propsError && (
+              <pre className="alert alert-danger">{propsError}</pre>
+            )}
+          </div>
+          <div className={`${tab === Tab.Widget ? "" : "visually-hidden"}`}>
             <div className="container">
               <div className="row">
                 <div className="d-inline-block position-relative overflow-hidden">
