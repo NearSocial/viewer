@@ -146,10 +146,7 @@ export default function EditorPage(props) {
               <button
                 className={`nav-link ${tab === Tab.Editor ? "active" : ""}`}
                 aria-current="page"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setTab(Tab.Editor);
-                }}
+                onClick={() => setTab(Tab.Editor)}
               >
                 Editor
               </button>
@@ -158,10 +155,7 @@ export default function EditorPage(props) {
               <button
                 className={`nav-link ${tab === Tab.Props ? "active" : ""}`}
                 aria-current="page"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setTab(Tab.Props);
-                }}
+                onClick={() => setTab(Tab.Props)}
               >
                 Props
               </button>
@@ -170,8 +164,7 @@ export default function EditorPage(props) {
               <button
                 className={`nav-link ${tab === Tab.Widget ? "active" : ""}`}
                 aria-current="page"
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   setRenderCode(code);
                   setTab(Tab.Widget);
                 }}
@@ -208,7 +201,10 @@ export default function EditorPage(props) {
             <div className="mb-3">
               <button
                 className="btn btn-success"
-                onClick={() => setRenderCode(code)}
+                onClick={() => {
+                  setRenderCode(code);
+                  setTab(Tab.Widget);
+                }}
               >
                 Render preview
               </button>
