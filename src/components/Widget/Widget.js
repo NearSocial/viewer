@@ -209,7 +209,9 @@ export function Widget(props) {
     if (!near) {
       return;
     }
+    setVm(null);
     if (src) {
+      setCode(null);
       socialGet(near, src.toString())
         .then(setCode)
         .catch(() => setCode(null));
