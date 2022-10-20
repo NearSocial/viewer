@@ -245,7 +245,7 @@ export default function EditorPage(props) {
                 defaultLanguage="json"
                 onChange={(props) => setWidgetProps(props)}
                 wrapperProps={{
-                  onBlur: () => reformatProps(code),
+                  onBlur: () => reformatProps(widgetProps),
                 }}
               />
             </div>
