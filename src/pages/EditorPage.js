@@ -1,15 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  asyncCommitData,
-  socialGet,
-  Widget,
-} from "../components/Widget/Widget";
+import { Widget } from "../components/Widget/Widget";
 import ls from "local-storage";
 import { LsKey, useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
+import { asyncCommitData } from "../data/commitData";
+import { socialGet } from "../data/cache";
 
 const EditorCodeKey = LsKey + "editorCode:";
 const EditorLayoutKey = LsKey + "editorLayout:";

@@ -1,18 +1,18 @@
 import React from "react";
+import { Widget } from "../components/Widget/Widget";
 import {
+  cachedBlock,
   cachedFetch,
   cachedViewCall,
   socialGet,
-  Widget,
-} from "../components/Widget/Widget";
+} from "../data/cache";
 import { ipfsUpload, ipfsUrl, Loading } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { NearConfig } from "../data/near";
-import { isObject } from "url/util";
 import { Markdown } from "../components/Markdown";
-import { isAsync } from "@babel/core/lib/gensync-utils/async";
 import InfiniteScroll from "react-infinite-scroller";
+import { isObject } from "url/util";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -372,6 +372,8 @@ class VmStack {
         );
       }
       return this.vm.cachedNearView(...args);
+    } else if (keyword === "Near" && callee === "block") {
+      return this.vm.cachedNearBlock(...args);
     } else if (callee === "fetch") {
       if (args.length < 1) {
         throw new Error(
@@ -924,6 +926,12 @@ export default class VM {
     return this.cachedPromise(
       `viewCall:${JSON.stringify({ contractName, methodName, args, blockId })}`,
       () => cachedViewCall(this.near, contractName, methodName, args, blockId)
+    );
+  }
+
+  cachedNearBlock(blockId) {
+    return this.cachedPromise(`block:${JSON.stringify({ blockId })}`, () =>
+      cachedBlock(this.near, blockId)
     );
   }
 

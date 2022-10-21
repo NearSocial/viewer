@@ -261,7 +261,7 @@ async function _initNear() {
       : fastRpcCall();
   };
 
-  _near.header = (blockHeightOrFinality) => {
+  _near.block = (blockHeightOrFinality) => {
     const blockQuery = transformBlockId(blockHeightOrFinality);
     const provider = blockQuery.blockId
       ? _near.nearArchivalConnection.provider
