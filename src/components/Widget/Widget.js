@@ -75,18 +75,6 @@ export function Widget(props) {
     }
   }, [code]);
 
-  const commitData = useCallback(
-    (data) => {
-      if (!near) {
-        return null;
-      }
-      asyncCommitData(near, data)
-        .then(() => {})
-        .catch(() => {});
-    },
-    [near]
-  );
-
   useEffect(() => {
     if (!near || !parsedCode) {
       return;
@@ -96,17 +84,9 @@ export function Widget(props) {
       if (prev) {
         prev.alive = false;
       }
-      return new VM(
-        near,
-        gkey,
-        parsedCode,
-        setState,
-        setCache,
-        commitData,
-        depth
-      );
+      return new VM(near, gkey, parsedCode, setState, setCache, depth);
     });
-  }, [near, gkey, parsedCode, commitData, depth]);
+  }, [near, gkey, parsedCode, depth]);
 
   useEffect(() => {
     if (!near) {
