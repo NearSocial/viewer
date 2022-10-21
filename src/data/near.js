@@ -221,18 +221,24 @@ async function _initNear() {
   }
   _near.accountId = walletState?.accounts?.[0]?.accountId;
 
-  _near.viewCall = (contractId, methodName, args, blockId) => {
-    let finality = "optimistic";
-    if (blockId !== undefined && blockId !== null) {
-      if (blockId === "optimistic" || blockId === "final") {
-        finality = blockId;
-        blockId = undefined;
-      } else {
-        finality = undefined;
-        blockId = parseInt(blockId);
-      }
-    }
+  const transformBlockId = (blockId) =>
+    blockId === "optimistic" || blockId === "final"
+      ? {
+          finality: blockId,
+          blockId: undefined,
+        }
+      : blockId !== undefined && blockId !== null
+      ? {
+          finality: undefined,
+          blockId: parseInt(blockId),
+        }
+      : {
+          finality: "optimistic",
+          blockId: undefined,
+        };
 
+  _near.viewCall = (contractId, methodName, args, blockHeightOrFinality) => {
+    const { blockId, finality } = transformBlockId(blockHeightOrFinality);
     const nearViewCall = () =>
       viewCall(
         blockId
@@ -253,6 +259,14 @@ async function _initNear() {
     return contractId === NearConfig.contractName && finality === "final"
       ? apiCall(methodName, args, blockId, fastRpcCall)
       : fastRpcCall();
+  };
+
+  _near.block = (blockHeightOrFinality) => {
+    const blockQuery = transformBlockId(blockHeightOrFinality);
+    const provider = blockQuery.blockId
+      ? _near.nearArchivalConnection.provider
+      : _near.nearConnection.connection.provider;
+    return provider.block(blockQuery);
   };
 
   _near.contract = setupContract(_near, NearConfig.contractName, {

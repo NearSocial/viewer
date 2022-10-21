@@ -2,28 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
-import { NearConfig, StorageCostPerByte, TGas, useNear } from "../../data/near";
+import { useNear } from "../../data/near";
 import VM from "../../vm/vm";
-import {
-  bigMax,
-  convertToStringLeaves,
-  ErrorFallback,
-  estimateDataSize,
-  extractKeys,
-  Loading,
-  removeDuplicates,
-} from "../../data/utils";
+import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
-import Big from "big.js";
-
-const MinStorageBalance = StorageCostPerByte.mul(2000);
-const InitialAccountStorageBalance = StorageCostPerByte.mul(500);
-const ExtraStorageBalance = StorageCostPerByte.mul(500);
-
-const Action = {
-  ViewCall: "ViewCall",
-  Fetch: "Fetch",
-};
+import { socialGet } from "../../data/cache";
+import { asyncCommitData } from "../../data/commitData";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -38,154 +22,6 @@ const parseCode = (code) => {
     return ParsedCodeCache[code];
   }
   return (ParsedCodeCache[code] = JsxParser.parse(code, AcornOptions));
-};
-
-const fetchPreviousData = async (near, data) => {
-  const keys = extractKeys(data);
-  return await near.contract.get({
-    keys,
-  });
-};
-
-export const asyncCommitData = async (near, data, forceRewrite) => {
-  const accountId = near.accountId;
-  if (!accountId) {
-    alert("You're not logged in, bro");
-    return;
-  }
-  console.log("Committing data", data);
-  const storageBalance = await near.contract.storage_balance_of({
-    account_id: accountId,
-  });
-  const availableStorage = Big(storageBalance?.available || "0");
-  data = {
-    [near.accountId]: convertToStringLeaves(data),
-  };
-  let previousData = {};
-  if (!forceRewrite) {
-    previousData = await fetchPreviousData(near, data);
-    data = removeDuplicates(data, previousData);
-  }
-  // console.log(data, previousData, estimateDataSize(data, previousData));
-  // return;
-  if (!data) {
-    return;
-  }
-  const expectedDataBalance = StorageCostPerByte.mul(
-    estimateDataSize(data, previousData)
-  )
-    .add(storageBalance ? Big(0) : InitialAccountStorageBalance)
-    .add(ExtraStorageBalance);
-  const deposit = bigMax(
-    expectedDataBalance.sub(availableStorage),
-    storageBalance ? Big(1) : MinStorageBalance
-  );
-
-  return await near.contract.set(
-    {
-      data,
-    },
-    TGas.mul(100).toFixed(0),
-    deposit.toFixed(0)
-  );
-};
-
-const globalCache = {};
-
-const cachedPromise = async (key, promise) => {
-  key = JSON.stringify(key);
-  if (key in globalCache) {
-    return await globalCache[key];
-  }
-  return await (globalCache[key] = promise());
-};
-
-export const cachedViewCall = async (
-  near,
-  contractId,
-  methodName,
-  args,
-  blockId
-) =>
-  cachedPromise(
-    {
-      action: Action.ViewCall,
-      contractId,
-      methodName,
-      args,
-      blockId,
-    },
-    () => near.viewCall(contractId, methodName, args, blockId)
-  );
-
-export const cachedFetch = async (url, options) =>
-  cachedPromise(
-    {
-      action: Action.Fetch,
-      url,
-      options,
-    },
-    async () => {
-      options = {
-        method: options?.method,
-        headers: options?.headers,
-        body: options?.body,
-      };
-      try {
-        const response = await fetch(url, options);
-        const status = response.status;
-        const ok = response.ok;
-        const contentType = response.headers.get("content-type");
-        const body = await (ok &&
-        contentType &&
-        contentType.indexOf("application/json") !== -1
-          ? response.json()
-          : response.text());
-        return {
-          ok,
-          status,
-          contentType,
-          body,
-        };
-      } catch (e) {
-        return {
-          ok: false,
-          error: e.message,
-        };
-      }
-    }
-  );
-
-export const socialGet = async (near, keys, recursive, blockId, options) => {
-  if (!near) {
-    return null;
-  }
-  keys = Array.isArray(keys) ? keys : [keys];
-  keys = keys.map((key) => (recursive ? `${key}/**` : `${key}`));
-  const args = {
-    keys,
-    options,
-  };
-  let data = await cachedViewCall(
-    near,
-    NearConfig.contractName,
-    "get",
-    args,
-    blockId
-  );
-
-  if (keys.length === 1) {
-    const parts = keys[0].split("/");
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-      if (part === "*" || part === "**") {
-        break;
-      }
-      data = data?.[part];
-    }
-  }
-
-  return data;
 };
 
 export function Widget(props) {
