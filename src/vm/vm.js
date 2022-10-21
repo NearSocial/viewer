@@ -13,7 +13,7 @@ import { NearConfig } from "../data/near";
 import { Markdown } from "../components/Markdown";
 import InfiniteScroll from "react-infinite-scroller";
 import { isObject } from "url/util";
-import { CommitButton } from "../components/CommitModal";
+import { CommitButton } from "../components/Commit";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -278,15 +278,6 @@ class VmStack {
       this.executeExpression(child)
     );
 
-    /*
-    else if (name === "data" && element === "CommitButton") {
-        const data = this.executeExpression(value);
-        attributes.onClick = (e) => {
-          e.preventDefault();
-          this.vm.commitData(data);
-        };
-      }
-     */
     if (element === "Widget") {
       return <Widget {...attributes} />;
     } else if (element === "CommitButton") {

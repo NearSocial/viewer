@@ -7,7 +7,7 @@ import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { socialGet } from "../data/cache";
-import { CommitButton } from "../components/CommitModal";
+import { CommitButton } from "../components/Commit";
 
 const EditorCodeKey = LsKey + "editorCode:";
 const EditorLayoutKey = LsKey + "editorLayout:";
