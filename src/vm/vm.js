@@ -618,6 +618,10 @@ class VmStack {
         return left / right;
       } else if (code.operator === "<") {
         return left < right;
+      } else if (code.operator === "|") {
+        return left | right;
+      } else if (code.operator === "&") {
+        return left & right;
       } else if (code.operator === ">") {
         return left > right;
       } else if (code.operator === "<=") {
