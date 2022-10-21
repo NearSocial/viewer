@@ -615,7 +615,7 @@ class VmStack {
       } else if (code.operator === "*") {
         return left * right;
       } else if (code.operator === "/") {
-        return left * right;
+        return left / right;
       } else if (code.operator === "<") {
         return left < right;
       } else if (code.operator === ">") {
