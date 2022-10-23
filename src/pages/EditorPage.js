@@ -6,8 +6,8 @@ import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
-import { asyncCommitData } from "../data/commitData";
 import { socialGet } from "../data/cache";
+import { CommitButton } from "../components/Commit";
 
 const EditorCodeKey = LsKey + "editorCode:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -282,23 +282,21 @@ export default function EditorPage(props) {
                   >
                     Render preview
                   </button>
-                  <button
+                  <CommitButton
                     className="btn btn-primary ms-2"
-                    onClick={(e) => {
-                      e.preventDefault();
+                    disabled={!widgetName}
+                    onClick={() => {
                       updateWidgetName(widgetName);
-                      asyncCommitData(near, {
-                        widget: {
-                          [widgetName]: code,
-                        },
-                      })
-                        .then(console.log)
-                        .catch(console.error);
-                      return false;
+                    }}
+                    near={near}
+                    data={{
+                      widget: {
+                        [widgetName]: code,
+                      },
                     }}
                   >
                     Save Widget
-                  </button>
+                  </CommitButton>
                   {widgetPath && (
                     <a
                       className="ms-2 btn btn-outline-primary"

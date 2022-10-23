@@ -13,6 +13,7 @@ import { NearConfig } from "../data/near";
 import { Markdown } from "../components/Markdown";
 import InfiniteScroll from "react-infinite-scroller";
 import { isObject } from "url/util";
+import { CommitButton } from "../components/Commit";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -213,12 +214,6 @@ class VmStack {
           obj[key] = e.target.value;
           this.vm.setReactState(this.vm.state.state);
         };
-      } else if (name === "data" && element === "CommitButton") {
-        attributes.onClick = (e) => {
-          e.preventDefault();
-          const data = this.executeExpression(value);
-          this.vm.commitData(data);
-        };
       } else if (
         name === "image" &&
         element === "IpfsImageUpload" &&
@@ -269,6 +264,9 @@ class VmStack {
       }
     } else if (element === "Widget") {
       attributes.depth = this.vm.depth + 1;
+    } else if (element === "CommitButton") {
+      attributes.vmStack = this;
+      attributes.near = this.vm.near;
     }
     const withChildren = ApprovedTags[element];
     if (withChildren === false && code.children.length) {
@@ -279,10 +277,11 @@ class VmStack {
     const children = code.children.map((child) =>
       this.executeExpression(child)
     );
+
     if (element === "Widget") {
       return <Widget {...attributes} />;
     } else if (element === "CommitButton") {
-      return <button {...attributes}>{children}</button>;
+      return <CommitButton {...attributes}>{children}</CommitButton>;
     } else if (element === "InfiniteScroll") {
       return <InfiniteScroll {...attributes}>{children}</InfiniteScroll>;
     } else if (element === "Markdown") {
@@ -864,7 +863,7 @@ class VmStack {
 }
 
 export default class VM {
-  constructor(near, gkey, code, setReactState, setCache, commitData, depth) {
+  constructor(near, gkey, code, setReactState, setCache, depth) {
     if (!code) {
       throw new Error("Not a program");
     }
@@ -873,7 +872,6 @@ export default class VM {
     this.code = code;
     this.setReactState = setReactState;
     this.setCache = setCache;
-    this.commitData = commitData;
     this.fetchingCache = {};
     this.alive = true;
     this.depth = depth;

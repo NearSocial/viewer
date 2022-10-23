@@ -8,6 +8,7 @@ import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+import ls from "local-storage";
 
 export const TGas = Big(10).pow(12);
 export const MaxGasPerTransaction = TGas.mul(300);
@@ -106,7 +107,7 @@ function setupContract(near, contractId, options) {
       try {
         const wallet = await near.selector.wallet();
         return await wallet.signAndSendTransaction({
-          signerId: near.accountId,
+          receiverId: NearConfig.contractName,
           actions: [
             {
               type: "FunctionCall",
@@ -220,6 +221,11 @@ async function _initNear() {
     walletState = selector.store.getState();
   }
   _near.accountId = walletState?.accounts?.[0]?.accountId;
+  if (_near.accountId) {
+    _near.publicKey = nearAPI.KeyPair.fromString(
+      ls.get(`near-api-js:keystore:${_near.accountId}:${NearConfig.networkId}`)
+    ).getPublicKey();
+  }
 
   const transformBlockId = (blockId) =>
     blockId === "optimistic" || blockId === "final"
