@@ -127,6 +127,7 @@ export const CommitButton = (props) => {
   const children = props.children;
   const originalOnClick = props.onClick;
   const onCommit = props.onCommit;
+  const disabled = props.disabled;
   const filteredProps = Object.assign({}, props);
   delete filteredProps.vmStack;
   delete filteredProps.data;
@@ -134,6 +135,7 @@ export const CommitButton = (props) => {
   delete filteredProps.onClick;
   delete filteredProps.children;
   delete filteredProps.onCommit;
+  delete filteredProps.disabled;
 
   const [loading, setLoading] = useState(false);
 
@@ -162,7 +164,7 @@ export const CommitButton = (props) => {
     <>
       <button
         {...filteredProps}
-        disabled={loading || !near?.accountId}
+        disabled={disabled || loading || !near?.accountId}
         onClick={(e) => {
           e.preventDefault();
           setLoading(true);
@@ -189,7 +191,7 @@ export const CommitButton = (props) => {
           }
           setLoading(false);
           if (onCommit) {
-            onCommit();
+            onCommit(commit.data);
           }
         }}
       />

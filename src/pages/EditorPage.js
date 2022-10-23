@@ -284,6 +284,7 @@ export default function EditorPage(props) {
                   </button>
                   <CommitButton
                     className="btn btn-primary ms-2"
+                    disabled={!widgetName}
                     onClick={() => {
                       updateWidgetName(widgetName);
                     }}
