@@ -642,6 +642,8 @@ class VmStack {
         return -argument;
       } else if (code.operator === "!") {
         return !argument;
+      } else if (code.operator === "typeof") {
+        return typeof argument;
       } else {
         throw new Error(
           "Unknown UnaryExpression operator '" + code.operator + "'"
