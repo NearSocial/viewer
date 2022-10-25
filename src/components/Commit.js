@@ -19,6 +19,7 @@ ${json}
 
 export const Commit = (props) => {
   const [extraStorage, setExtraStorage] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const show = props.show;
   const onHide = props.onHide;
@@ -63,6 +64,7 @@ export const Commit = (props) => {
                     name="storageDeposit"
                     value={extraStorage}
                     onChange={setExtraStorage}
+                    disabled={loading}
                   >
                     <ToggleButton
                       id="esd-0"
@@ -83,7 +85,7 @@ export const Commit = (props) => {
                       variant="outline-success"
                       value={20000}
                     >
-                      0.2 NEAR (10Kb)
+                      0.2 NEAR (20Kb)
                     </ToggleButton>
                     <ToggleButton
                       id="esd-100000"
@@ -104,15 +106,20 @@ export const Commit = (props) => {
       <Modal.Footer>
         <button
           className="btn btn-success"
-          disabled={!commit?.data}
+          disabled={!commit?.data || loading}
           onClick={(e) => {
             e.preventDefault();
+            setLoading(true);
             props.onCommit(extraStorage);
           }}
         >
-          Save Data
+          {loading && Loading} Save Data
         </button>
-        <button className="btn btn-secondary" onClick={onHide}>
+        <button
+          className="btn btn-secondary"
+          onClick={onHide}
+          disabled={loading}
+        >
           Close
         </button>
       </Modal.Footer>
