@@ -220,7 +220,8 @@ export const removeDuplicates = (data, prevData) => {
   return Object.keys(obj).length ? obj : undefined;
 };
 
-const stringify = (s) => (typeof s === "string" ? s : JSON.stringify(s));
+const stringify = (s) =>
+  typeof s === "string" || s === null ? s : JSON.stringify(s);
 
 export const convertToStringLeaves = (data) => {
   return isObject(data)
