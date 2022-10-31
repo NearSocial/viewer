@@ -45,7 +45,7 @@ const isArray = function (a) {
   return Array.isArray(a);
 };
 
-const isObject = function (o) {
+export const isObject = function (o) {
   return o === Object(o) && !isArray(o) && typeof o !== "function";
 };
 
