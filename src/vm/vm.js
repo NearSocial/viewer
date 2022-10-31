@@ -6,14 +6,16 @@ import {
   cachedViewCall,
   socialGet,
 } from "../data/cache";
-import { ipfsUpload, ipfsUrl, Loading } from "../data/utils";
+import { ipfsUpload, ipfsUrl, isObject, Loading } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { NearConfig } from "../data/near";
 import { Markdown } from "../components/Markdown";
 import InfiniteScroll from "react-infinite-scroller";
-import { isObject } from "url/util";
 import { CommitButton } from "../components/Commit";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -69,6 +71,7 @@ const ApprovedTags = {
   label: true,
   small: true,
   InfiniteScroll: true,
+  Typeahead: false,
 };
 
 const Keywords = {
@@ -194,7 +197,11 @@ class VmStack {
     }, {});
 
     Object.entries(attributesMap).forEach(([name, value]) => {
-      attributes[name] = this.executeExpression(value);
+      if (value === null) {
+        attributes[name] = true;
+      } else {
+        attributes[name] = this.executeExpression(value);
+      }
     });
 
     Object.entries(attributesMap).forEach(([name, value]) => {
@@ -284,6 +291,8 @@ class VmStack {
       return <CommitButton {...attributes}>{children}</CommitButton>;
     } else if (element === "InfiniteScroll") {
       return <InfiniteScroll {...attributes}>{children}</InfiniteScroll>;
+    } else if (element === "Typeahead") {
+      return <Typeahead {...attributes} />;
     } else if (element === "Markdown") {
       return <Markdown {...attributes} />;
     } else if (element === "Fragment") {
