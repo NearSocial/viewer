@@ -388,7 +388,13 @@ class VmStack {
           "Method: Near.call. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'gas' (defaults to 300Tg), 'deposit' (defaults to 0)"
         );
       }
-      this.vm.confirmTransaction(...args);
+      this.vm.confirmTransaction({
+        contractName: args[0],
+        methodName: args[1],
+        args: args[2] ?? {},
+        gas: args[3],
+        deposit: args[4],
+      });
       return;
     } else if (callee === "fetch") {
       if (args.length < 1) {
@@ -882,7 +888,15 @@ class VmStack {
 }
 
 export default class VM {
-  constructor(near, gkey, code, setReactState, setCache, confirmTransaction, depth) {
+  constructor(
+    near,
+    gkey,
+    code,
+    setReactState,
+    setCache,
+    confirmTransaction,
+    depth
+  ) {
     if (!code) {
       throw new Error("Not a program");
     }

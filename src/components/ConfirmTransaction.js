@@ -1,50 +1,79 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import { useNear } from "../data/near";
 import { Markdown } from "./Markdown";
+import { Loading } from "../data/utils";
 
 const jsonMarkdown = (data) => {
-    const json = JSON.stringify(data, null, 2);
-    return `\`\`\`json
+  const json = JSON.stringify(data, null, 2);
+  return `\`\`\`json
 ${json}
 \`\`\``;
 };
 
 export default function ConfirmTransaction(props) {
-    const near = useNear();
-    const [show, setShow] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-    const handleCancel = () => props.onCancel();
+  const onHide = props.onHide;
+  const transaction = props.transaction;
+  const show = !!transaction;
+  const near = props.near;
 
-    const handleConfirm = async () => {
-        const res = await near.functionCall(
-            props.contractName,
-            props.methodName,
-            props.args,
-            props.gas,
-            props.deposit
-        );
-        console.log(res);
-        return res;
-    }
+  const onConfirm = useCallback(async () => {
+    const res = await near.functionCall(
+      transaction.contractName,
+      transaction.methodName,
+      transaction.args,
+      transaction.gas,
+      transaction.deposit
+    );
+    console.log(res);
+    return res;
+  }, [near, transaction]);
 
-    return <Modal show={show} onHide={handleCancel}>
-        <Modal.Header closeButton>
-            <Modal.Title>Confirm Transaction</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+  return (
+    <Modal size="xl" centered scrollable show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>Confirm Transaction</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {transaction && (
+          <div>
             <div>
-                {props.contractName}.{props.methodName}
-                <Markdown text={jsonMarkdown(props.args)} />
+              <span className="text-secondary">Contract ID: </span>
+              <span className="font-monospace">{transaction.contractName}</span>
             </div>
-        </Modal.Body>
-        <Modal.Footer>
-            <button variant="secondary" onClick={handleCancel}>
-                Close
-            </button>
-            <button variant="primary" onClick={handleConfirm}>
-                Confirm
-            </button>
-        </Modal.Footer>
+            <div>
+              <span className="text-secondary">Method name: </span>
+              <span className="font-monospace">{transaction.methodName}</span>
+            </div>
+            <Markdown text={jsonMarkdown(transaction.args)} />
+          </div>
+        )}
+      </Modal.Body>
+      <Modal.Footer>
+        <button
+          className="btn btn-success"
+          disabled={loading}
+          onClick={(e) => {
+            e.preventDefault();
+            setLoading(true);
+            onConfirm().then(() => {
+              setLoading(false);
+              onHide();
+            });
+          }}
+        >
+          {loading && Loading} Confirm
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={onHide}
+          disabled={loading}
+        >
+          Close
+        </button>
+      </Modal.Footer>
     </Modal>
+  );
 }

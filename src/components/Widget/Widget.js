@@ -38,6 +38,7 @@ export function Widget(props) {
   const [parsedCode, setParsedCode] = useState(null);
   const [context, setContext] = useState({});
   const [vm, setVm] = useState(null);
+  const [transaction, setTransaction] = useState(null);
 
   const near = useNear();
   const [element, setElement] = useState(null);
@@ -78,15 +79,12 @@ export function Widget(props) {
   }, [code]);
 
   const confirmTransaction = useCallback(
-    (contractName, methodName, args, gas, deposit) => {
+    (transaction) => {
       if (!near) {
-          return null;
+        return null;
       }
       console.log("confirm");
-      const onCancel = () => {
-        setConfirmElement(null);  
-      }
-      setConfirmElement(<ConfirmTransaction onCancel={onCancel} contractName={contractName} methodName={methodName} args={args} deposit={deposit} gas={gas} />);
+      setTransaction(transaction);
     },
     [near]
   );
@@ -100,7 +98,15 @@ export function Widget(props) {
       if (prev) {
         prev.alive = false;
       }
-      return new VM(near, gkey, parsedCode, setState, setCache, confirmTransaction, depth);
+      return new VM(
+        near,
+        gkey,
+        parsedCode,
+        setState,
+        setCache,
+        confirmTransaction,
+        depth
+      );
     });
   }, [near, gkey, parsedCode, depth]);
 
@@ -139,18 +145,24 @@ export function Widget(props) {
   }, [vm, codeProps, context, state, cache]);
 
   return element !== null && element !== undefined ? (
-    <div>
-      <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onReset={() => {
-          setElement(null);
-        }}
-        resetKeys={[element]}
-      >
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => {
+        setElement(null);
+      }}
+      resetKeys={[element]}
+    >
+      <>
         {element}
-      </ErrorBoundary>
-      {confirmElement ?? ""}
-    </div>
+        {
+          <ConfirmTransaction
+            near={near}
+            transaction={transaction}
+            onHide={() => setTransaction(null)}
+          />
+        }
+      </>
+    </ErrorBoundary>
   ) : (
     Loading
   );
