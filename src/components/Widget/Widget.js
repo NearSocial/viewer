@@ -41,6 +41,7 @@ export function Widget(props) {
 
   const near = useNear();
   const [element, setElement] = useState(null);
+  const [confirmElement, setConfirmElement] = useState(null);
 
   useEffect(() => {
     if (!near) {
@@ -81,7 +82,11 @@ export function Widget(props) {
       if (!near) {
           return null;
       }
-      setElement(<ConfirmTransaction contractName={contractName} methodName={methodName} args={args} deposit={deposit} gas={gas} />);
+      console.log("confirm");
+      const onCancel = () => {
+        setConfirmElement(null);  
+      }
+      setConfirmElement(<ConfirmTransaction onCancel={onCancel} contractName={contractName} methodName={methodName} args={args} deposit={deposit} gas={gas} />);
     },
     [near]
   );
@@ -134,15 +139,18 @@ export function Widget(props) {
   }, [vm, codeProps, context, state, cache]);
 
   return element !== null && element !== undefined ? (
-    <ErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onReset={() => {
-        setElement(null);
-      }}
-      resetKeys={[element]}
-    >
-      {element}
-    </ErrorBoundary>
+    <div>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => {
+          setElement(null);
+        }}
+        resetKeys={[element]}
+      >
+        {element}
+      </ErrorBoundary>
+      {confirmElement ?? ""}
+    </div>
   ) : (
     Loading
   );

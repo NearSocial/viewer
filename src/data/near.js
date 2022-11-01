@@ -97,7 +97,7 @@ async function functionCall(near, contractName, methodName, args, gas, deposit) 
   try {
     const wallet = await near.selector.wallet();
     return await wallet.signAndSendTransaction({
-      receiverId: NearConfig.contractName,
+      receiverId: contractName,
       actions: [
         {
           type: "FunctionCall",
