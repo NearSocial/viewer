@@ -17,7 +17,7 @@ import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
-import Logo from "./images/NS_Logo_Horizontal.png";
+import Logo from "./images/near_social_combo.svg";
 
 export const refreshAllowanceObj = {};
 
@@ -124,20 +124,20 @@ function App(props) {
   ) : signedIn ? (
     <div>
       <button
-        className="btn btn-outline-light m-1 border-0"
+        className="btn btn-outline-dark m-1 border-0"
         onClick={(e) => withdrawStorage(e)}
         title={`Withdraw all available storage`}
       >
         Available {availableStorage && availableStorage.div(1000).toFixed(2)}kb
       </button>
-      <button className="btn btn-outline-light m-1" onClick={(e) => logOut(e)}>
+      <button className="btn btn-outline-dark m-1" onClick={(e) => logOut(e)}>
         Sign out {signedAccountId}
       </button>
     </div>
   ) : (
     <div>
       <button
-        className="btn btn-outline-light m-1"
+        className="btn btn-outline-dark m-1"
         onClick={(e) => requestSignIn(e)}
       >
         Sign in with NEAR Wallet
@@ -145,13 +145,13 @@ function App(props) {
     </div>
   );
   const nav = (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
+    <nav className="navbar navbar-expand-lg bg-light mb-3">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/" title="Near Social">
           <img
             src={Logo}
             alt="Near Social logo horizontal"
-            height="32"
+            height="24"
             className="d-inline-block align-text-top me-2"
           />
           {!IsMainnet && "Testnet"}
@@ -171,7 +171,7 @@ function App(props) {
           <ul className="navbar-nav me-auto mb-lg-0">
             <li className="nav-item">
               <Link
-                className="btn btn-outline-light m-1"
+                className="btn btn-outline-dark border-0 m-1"
                 aria-current="page"
                 to="/edit/new"
               >
@@ -181,7 +181,7 @@ function App(props) {
             {widgetSrc?.edit && (
               <li className="nav-item">
                 <Link
-                  className="btn btn-outline-light m-1"
+                  className="btn btn-outline-dark border-0 m-1"
                   aria-current="page"
                   to={`/edit/${widgetSrc.edit}`}
                 >
@@ -194,7 +194,7 @@ function App(props) {
             {widgetSrc?.view && (
               <li className="nav-item">
                 <Link
-                  className="btn btn-outline-light m-1"
+                  className="btn btn-outline-dark border-0 m-1"
                   aria-current="page"
                   to={`/${NearConfig.viewSourceWidget}?src=${widgetSrc?.view}`}
                 >
