@@ -1,22 +1,32 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  asyncCommitData,
-  socialGet,
-  Widget,
-} from "../components/Widget/Widget";
+import { Widget } from "../components/Widget/Widget";
 import ls from "local-storage";
 import { LsKey, useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
+import { socialGet } from "../data/cache";
+import { CommitButton } from "../components/Commit";
 
 const EditorCodeKey = LsKey + "editorCode:";
+const EditorLayoutKey = LsKey + "editorLayout:";
 const WidgetNameKey = LsKey + "widgetName:";
 const LastWidgetPathKey = LsKey + "widgetPath:";
 const WidgetPropsKey = LsKey + "widgetProps:";
 
 const DefaultEditorCode = "return <div>Hello World</div>;";
+
+const Tab = {
+  Editor: "Editor",
+  Props: "Props",
+  Widget: "Widget",
+};
+
+const Layout = {
+  Tabs: "Tabs",
+  Split: "Split",
+};
 
 export default function EditorPage(props) {
   const { widgetSrc } = useParams();
@@ -34,6 +44,19 @@ export default function EditorPage(props) {
   const [propsError, setPropsError] = useState(null);
   const near = useNear();
   const accountId = near?.accountId;
+
+  const [tab, setTab] = useState(Tab.Editor);
+  const [layout, setLayoutState] = useState(
+    ls.get(EditorLayoutKey) || Layout.Tabs
+  );
+
+  const setLayout = useCallback(
+    (layout) => {
+      ls.set(EditorLayoutKey, layout);
+      setLayoutState(layout);
+    },
+    [setLayoutState]
+  );
 
   useEffect(() => {
     setWidgetSrc({
@@ -117,90 +140,204 @@ export default function EditorPage(props) {
     [updateCode]
   );
 
+  const reformatProps = useCallback(
+    (props) => {
+      try {
+        const formattedProps = JSON.stringify(JSON.parse(props), null, 2);
+        setWidgetProps(formattedProps);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [setWidgetProps]
+  );
+
+  const layoutClass = layout === Layout.Split ? "col-lg-6" : "";
+
+  const onLayoutChange = useCallback(
+    (e) => {
+      const layout = e.target.value;
+      if (layout === Layout.Split && tab === Tab.Widget) {
+        setTab(Tab.Editor);
+      }
+      setLayout(layout);
+    },
+    [setLayout, tab, setTab]
+  );
+
   return (
-    <div>
-      <div className="container">
-        <div className="row mb-3 min-vh-100">
-          <div className="col-md-6">
-            <h5>Editor</h5>
-            <div className="input-group mb-3">
-              <span className="input-group-text" id="widget-path-prefix">
-                {accountId}/widget/
-              </span>
-              <input
-                type="text"
-                className="form-control"
-                id="widget-name"
-                placeholder="MyWidget"
-                aria-describedby="widget-path-prefix"
-                value={widgetName}
-                onChange={(e) => updateWidgetName(e.target.value)}
-              />
-            </div>
-            <div className="form-control mb-3 code-editor">
-              <Editor
-                value={code}
-                defaultLanguage="javascript"
-                onChange={(code) => updateCode(code)}
-                wrapperProps={{
-                  onBlur: () => reformat(code),
-                }}
-              />
-            </div>
-            <div className="mb-3">
-              <button
-                className="btn btn-success"
-                onClick={() => setRenderCode(code)}
-              >
-                Render preview
-              </button>
-              <button
-                className="btn btn-primary ms-2"
-                onClick={(e) => {
-                  e.preventDefault();
-                  updateWidgetName(widgetName);
-                  asyncCommitData(near, {
-                    widget: {
-                      [widgetName]: code,
-                    },
-                  })
-                    .then(console.log)
-                    .catch(console.error);
-                  return false;
-                }}
-              >
-                Save Widget
-              </button>
-              {widgetPath && (
-                <a
-                  className="ms-2 btn btn-outline-primary"
-                  href={`#/${widgetPath}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Open Widget in a new tab
-                </a>
-              )}
-            </div>
-            <div className="mb-3">
-              Props for debugging (JSON)
-              <textarea
-                className="form-control font-monospace mb-3"
-                value={widgetProps}
-                rows={5}
-                onChange={(e) => setWidgetProps(e.target.value)}
-              />
-              {propsError && (
-                <pre className="alert alert-danger">{propsError}</pre>
-              )}
-            </div>
+    <div className="container">
+      <div className="min-vh-100 d-flex align-content-start">
+        <div className="me-2">
+          <div
+            className="btn-group-vertical"
+            role="group"
+            aria-label="Layout selection"
+          >
+            <input
+              type="radio"
+              className="btn-check"
+              name="layout-radio"
+              id="layout-tabs"
+              autoComplete="off"
+              checked={layout === Layout.Tabs}
+              onChange={onLayoutChange}
+              value={Layout.Tabs}
+              title={"Set layout to Tabs mode"}
+            />
+            <label className="btn btn-outline-secondary" htmlFor="layout-tabs">
+              <i className="bi bi-square" />
+            </label>
+
+            <input
+              type="radio"
+              className="btn-check"
+              name="layout-radio"
+              id="layout-split"
+              autoComplete="off"
+              checked={layout === Layout.Split}
+              value={Layout.Split}
+              title={"Set layout to Split mode"}
+              onChange={onLayoutChange}
+            />
+            <label className="btn btn-outline-secondary" htmlFor="layout-split">
+              <i className="bi bi-layout-split" />
+            </label>
           </div>
-          <div className="col-md-6 mb-3">
-            <h5>Widget</h5>
-            <div className="container">
-              <div className="row">
-                <div className="d-inline-block position-relative overflow-hidden">
-                  <Widget code={renderCode} props={parsedWidgetProps} />
+        </div>
+        <div className="flex-grow-1">
+          <div className="row">
+            <div className={layoutClass}>
+              <ul className={`nav nav-tabs mb-2`}>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${tab === Tab.Editor ? "active" : ""}`}
+                    aria-current="page"
+                    onClick={() => setTab(Tab.Editor)}
+                  >
+                    Editor
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${tab === Tab.Props ? "active" : ""}`}
+                    aria-current="page"
+                    onClick={() => setTab(Tab.Props)}
+                  >
+                    Props
+                  </button>
+                </li>
+                {layout === Layout.Tabs && (
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link ${
+                        tab === Tab.Widget ? "active" : ""
+                      }`}
+                      aria-current="page"
+                      onClick={() => {
+                        setRenderCode(code);
+                        setTab(Tab.Widget);
+                      }}
+                    >
+                      Widget Preview
+                    </button>
+                  </li>
+                )}
+              </ul>
+
+              <div className={`${tab === Tab.Editor ? "" : "visually-hidden"}`}>
+                <div className="input-group mb-3">
+                  <span className="input-group-text" id="widget-path-prefix">
+                    {accountId}/widget/
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="widget-name"
+                    placeholder="MyWidget"
+                    aria-describedby="widget-path-prefix"
+                    value={widgetName}
+                    onChange={(e) => updateWidgetName(e.target.value)}
+                  />
+                </div>
+                <div className="form-control mb-3" style={{ height: "70vh" }}>
+                  <Editor
+                    value={code}
+                    defaultLanguage="javascript"
+                    onChange={(code) => updateCode(code)}
+                    wrapperProps={{
+                      onBlur: () => reformat(code),
+                    }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <button
+                    className="btn btn-success"
+                    onClick={() => {
+                      setRenderCode(code);
+                      if (layout === Layout.Tabs) {
+                        setTab(Tab.Widget);
+                      }
+                    }}
+                  >
+                    Render preview
+                  </button>
+                  <CommitButton
+                    className="btn btn-primary ms-2"
+                    disabled={!widgetName}
+                    onClick={() => {
+                      updateWidgetName(widgetName);
+                    }}
+                    near={near}
+                    data={{
+                      widget: {
+                        [widgetName]: code,
+                      },
+                    }}
+                  >
+                    Save Widget
+                  </CommitButton>
+                  {widgetPath && (
+                    <a
+                      className="ms-2 btn btn-outline-primary"
+                      href={`#/${widgetPath}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open Widget in a new tab
+                    </a>
+                  )}
+                </div>
+              </div>
+              <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
+                Props for debugging (JSON)
+                <div className="form-control mb-3" style={{ height: "40vh" }}>
+                  <Editor
+                    value={widgetProps}
+                    defaultLanguage="json"
+                    onChange={(props) => setWidgetProps(props)}
+                    wrapperProps={{
+                      onBlur: () => reformatProps(widgetProps),
+                    }}
+                  />
+                </div>
+                {propsError && (
+                  <pre className="alert alert-danger">{propsError}</pre>
+                )}
+              </div>
+            </div>
+            <div
+              className={`${
+                tab === Tab.Widget || layout === Layout.Split
+                  ? layoutClass
+                  : "visually-hidden"
+              }`}
+            >
+              <div className="container">
+                <div className="row">
+                  <div className="d-inline-block position-relative overflow-hidden">
+                    <Widget code={renderCode} props={parsedWidgetProps} />
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,26 +1,28 @@
 import React from "react";
+import { Widget } from "../components/Widget/Widget";
 import {
+  cachedBlock,
   cachedFetch,
   cachedViewCall,
   socialGet,
-  Widget,
-} from "../components/Widget/Widget";
-import { ipfsUpload, ipfsUrl, Loading } from "../data/utils";
+} from "../data/cache";
+import { ipfsUpload, ipfsUrl, isObject, Loading } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { NearConfig } from "../data/near";
-import { isObject } from "url/util";
 import { Markdown } from "../components/Markdown";
+import InfiniteScroll from "react-infinite-scroller";
+import { CommitButton } from "../components/Commit";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
 
 const ReactKey = "$$typeof";
-const KeywordKey = "$$keyword";
 const isReactObject = (o) =>
   o !== null && typeof o === "object" && !!o[ReactKey];
-const isKeywordObject = (o) =>
-  o !== null && typeof o === "object" && !!o[KeywordKey];
 const StakeKey = "state";
 
 const ExpressionDebug = false;
@@ -68,17 +70,23 @@ const ApprovedTags = {
   options: true,
   label: true,
   small: true,
+  InfiniteScroll: true,
+  Typeahead: false,
+};
+
+const Keywords = {
+  JSON: true,
+  Object: true,
+  Date: true,
+  Social: true,
+  Near: true,
+  State: true,
+  console: true,
 };
 
 const assertNotReservedKey = (key) => {
-  if (key === ReactKey || key === KeywordKey) {
+  if (key === ReactKey) {
     throw new Error(`${key} is reserved and can't be used`);
-  }
-};
-
-const assertNotKeywordObject = (obj) => {
-  if (isKeywordObject(obj)) {
-    throw new Error("Keyword objects shouldn't be modified");
   }
 };
 
@@ -88,6 +96,23 @@ const assertValidObject = (o) => {
       assertNotReservedKey(key);
       assertValidObject(value);
     });
+  }
+};
+
+const deepCopy = (o) => {
+  if (Array.isArray(o)) {
+    return o.map((v) => deepCopy(v));
+  } else if (isObject(o)) {
+    if (isReactObject(o)) {
+      return o;
+    }
+    return Object.fromEntries(
+      Object.entries(o).map(([key, value]) => [key, deepCopy(value)])
+    );
+  } else if (o === undefined || typeof o === "function") {
+    return o;
+  } else {
+    return JSON.parse(JSON.stringify(o));
   }
 };
 
@@ -172,7 +197,11 @@ class VmStack {
     }, {});
 
     Object.entries(attributesMap).forEach(([name, value]) => {
-      attributes[name] = this.executeExpression(value);
+      if (value === null) {
+        attributes[name] = true;
+      } else {
+        attributes[name] = this.executeExpression(value);
+      }
     });
 
     Object.entries(attributesMap).forEach(([name, value]) => {
@@ -182,7 +211,7 @@ class VmStack {
         value.type === "JSXExpressionContainer" &&
         !("onChange" in attributesMap)
       ) {
-        const [obj, key] = this.resolveMemberExpression(value.expression, {
+        const { obj, key } = this.resolveMemberExpression(value.expression, {
           requireState: true,
           left: true,
         });
@@ -192,47 +221,47 @@ class VmStack {
           obj[key] = e.target.value;
           this.vm.setReactState(this.vm.state.state);
         };
-      } else if (name === "data" && element === "CommitButton") {
-        attributes.onClick = (e) => {
-          e.preventDefault();
-          const data = this.executeExpression(value);
-          this.vm.commitData(data);
-        };
       } else if (
         name === "image" &&
         element === "IpfsImageUpload" &&
         value.type === "JSXExpressionContainer"
       ) {
-        let [obj, key] = this.resolveMemberExpression(value.expression, {
+        const { obj, key } = this.resolveMemberExpression(value.expression, {
           requireState: true,
           left: true,
         });
         status.img = obj[key];
-        attributes.onChange = async (files) => {
-          obj[key] = null;
+        attributes.onChange = (files) => {
           if (files?.length > 0) {
             obj[key] = {
               uploading: true,
               cid: null,
             };
             this.vm.setReactState(this.vm.state.state);
-            const cid = await ipfsUpload(files[0]);
-            [obj, key] = this.vm.vmStack.resolveMemberExpression(
-              value.expression,
-              {
-                requireState: true,
-                left: true,
+            ipfsUpload(files[0]).then((cid) => {
+              if (!this.vm.alive) {
+                return;
               }
-            );
-            obj[key] = {
-              cid,
-            };
+              const { obj, key } = this.vm.vmStack.resolveMemberExpression(
+                value.expression,
+                {
+                  requireState: true,
+                  left: true,
+                }
+              );
+              obj[key] = {
+                cid,
+              };
+              this.vm.setReactState(this.vm.state.state);
+            });
+          } else {
+            obj[key] = null;
+            this.vm.setReactState(this.vm.state.state);
           }
-          this.vm.setReactState(this.vm.state.state);
         };
       }
     });
-    attributes.key = `${this.vm.gkey}-${this.vm.gIndex++}`;
+    attributes.key = `${this.vm.gkey}-${attributes.key ?? this.vm.gIndex++}`;
     delete attributes.dangerouslySetInnerHTML;
     if (element === "img") {
       attributes.alt = attributes.alt ?? "not defined";
@@ -242,6 +271,9 @@ class VmStack {
       }
     } else if (element === "Widget") {
       attributes.depth = this.vm.depth + 1;
+    } else if (element === "CommitButton") {
+      attributes.vmStack = this;
+      attributes.near = this.vm.near;
     }
     const withChildren = ApprovedTags[element];
     if (withChildren === false && code.children.length) {
@@ -252,10 +284,15 @@ class VmStack {
     const children = code.children.map((child) =>
       this.executeExpression(child)
     );
+
     if (element === "Widget") {
       return <Widget {...attributes} />;
     } else if (element === "CommitButton") {
-      return <button {...attributes}>{children}</button>;
+      return <CommitButton {...attributes}>{children}</CommitButton>;
+    } else if (element === "InfiniteScroll") {
+      return <InfiniteScroll {...attributes}>{children}</InfiniteScroll>;
+    } else if (element === "Typeahead") {
+      return <Typeahead {...attributes} />;
     } else if (element === "Markdown") {
       return <Markdown {...attributes} />;
     } else if (element === "Fragment") {
@@ -314,124 +351,143 @@ class VmStack {
     return key;
   }
 
-  callFunction(obj, callee, args) {
-    const keyword = obj?.[KeywordKey];
-    if (keyword) {
-      callee = `${keyword}.${callee}`;
-    } else {
-      if (obj?.[callee] instanceof Function) {
-        return obj?.[callee](...args);
+  callFunction(keyword, callee, args) {
+    if (
+      (keyword === "Social" && callee === "getr") ||
+      callee === "socialGetr"
+    ) {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'keys' for Social.getr");
       }
-    }
-
-    if (keyword || obj === this.stack.state) {
-      if (callee === "Social.getr" || callee === "socialGetr") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for Social.getr");
-        }
-        return this.vm.cachedSocialGet(args[0], true, args[1], args[2]);
-      } else if (callee === "Social.get" || callee === "socialGet") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for Social.get");
-        }
-        return this.vm.cachedSocialGet(args[0], false, args[1], args[2]);
-      } else if (callee === "Near.view") {
-        if (args.length < 2) {
-          throw new Error(
-            "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
-          );
-        }
-        return this.vm.cachedNearView(...args);
-      } else if (callee === "fetch") {
-        if (args.length < 1) {
-          throw new Error(
-            "Method: fetch. Required arguments: 'url'. Optional: 'options'"
-          );
-        }
-        return this.vm.cachedFetch(...args);
-      } else if (callee === "parseInt") {
-        return parseInt(...args);
-      } else if (callee === "parseFloat") {
-        return parseFloat(...args);
-      } else if (callee === "isNaN") {
-        return isNaN(...args);
-      } else if (callee === "Social.keys") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'keys' for Social.keys");
-        }
-        return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
-      } else if (callee === "JSON.stringify" || callee === "stringify") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'obj' for JSON.stringify");
-        }
-        return JSON.stringify(args[0], undefined, 2);
-      } else if (callee === "JSON.parse") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 's' for JSON.parse");
-        }
-        try {
-          const obj = JSON.parse(args[0]);
-          assertValidObject(obj);
-          return obj;
-        } catch (e) {
-          return null;
-        }
-      } else if (callee === "Object.keys") {
+      return this.vm.cachedSocialGet(args[0], true, args[1], args[2]);
+    } else if (
+      (keyword === "Social" && callee === "get") ||
+      callee === "socialGet"
+    ) {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'keys' for Social.get");
+      }
+      return this.vm.cachedSocialGet(args[0], false, args[1], args[2]);
+    } else if (keyword === "Social" && callee === "keys") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'keys' for Social.keys");
+      }
+      return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
+    } else if (keyword === "Near" && callee === "view") {
+      if (args.length < 2) {
+        throw new Error(
+          "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
+        );
+      }
+      return this.vm.cachedNearView(...args);
+    } else if (keyword === "Near" && callee === "block") {
+      return this.vm.cachedNearBlock(...args);
+    } else if (callee === "fetch") {
+      if (args.length < 1) {
+        throw new Error(
+          "Method: fetch. Required arguments: 'url'. Optional: 'options'"
+        );
+      }
+      return this.vm.cachedFetch(...args);
+    } else if (callee === "parseInt") {
+      return parseInt(...args);
+    } else if (callee === "parseFloat") {
+      return parseFloat(...args);
+    } else if (callee === "isNaN") {
+      return isNaN(...args);
+    } else if (
+      (keyword === "JSON" && callee === "stringify") ||
+      callee === "stringify"
+    ) {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'obj' for JSON.stringify");
+      }
+      return JSON.stringify(args[0], args[1] ?? undefined, args[2] ?? 2);
+    } else if (keyword === "JSON" && callee === "parse") {
+      if (args.length < 1) {
+        throw new Error("Missing argument 's' for JSON.parse");
+      }
+      try {
+        const obj = JSON.parse(args[0]);
+        assertValidObject(obj);
+        return obj;
+      } catch (e) {
+        return null;
+      }
+    } else if (keyword === "Object") {
+      if (callee === "keys") {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for Object.keys");
         }
         return Object.keys(args[0]);
-      } else if (callee === "Object.values") {
+      } else if (callee === "values") {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for Object.values");
         }
         return Object.values(args[0]);
-      } else if (callee === "Object.entries") {
+      } else if (callee === "entries") {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for Object.entries");
         }
         return Object.entries(args[0]);
-      } else if (callee === "initState" || callee === "State.init") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'initialState' for State.init");
-        }
-        if (args[0] === null || typeof args[0] !== "object") {
-          throw new Error("'initialState' is not an object");
-        }
-        if (this.vm.state.state !== undefined) {
-          return;
-        }
-        const newState = JSON.parse(JSON.stringify(args[0]));
-        this.vm.setReactState(newState);
-        this.vm.state.state = newState;
-      } else if (callee === "State.update") {
-        if (isObject(args[0])) {
-          this.vm.state.state = this.vm.state.state ?? {};
-          Object.assign(
-            this.vm.state.state,
-            JSON.parse(JSON.stringify(args[0]))
-          );
-        }
-        if (this.vm.state.state === undefined) {
-          throw new Error("The error was not initialized");
-        }
-        const newState = JSON.parse(JSON.stringify(this.vm.state.state));
-        this.vm.setReactState(newState);
-        this.vm.state.state = newState;
-      } else if (callee === "console.log") {
-        return console.log(...args);
-      } else {
-        throw new Error("Unknown callee method '" + callee + "'");
+      } else if (callee === "assign") {
+        const obj = Object.assign(...args);
+        assertValidObject(obj);
+        return obj;
+      } else if (callee === "fromEntries") {
+        const obj = Object.fromEntries(args[0]);
+        assertValidObject(obj);
+        return obj;
       }
-    } else {
-      throw new Error(
-        "Unsupported callee method '" +
-          callee +
-          "' on a given object '" +
-          obj +
-          "'"
-      );
+    } else if (
+      (keyword === "State" && callee === "init") ||
+      callee === "initState"
+    ) {
+      if (args.length < 1) {
+        throw new Error("Missing argument 'initialState' for State.init");
+      }
+      if (
+        args[0] === null ||
+        typeof args[0] !== "object" ||
+        isReactObject(args[0])
+      ) {
+        throw new Error("'initialState' is not an object");
+      }
+      if (this.vm.state.state === undefined) {
+        const newState = deepCopy(args[0]);
+        this.vm.setReactState(newState);
+        this.vm.state.state = newState;
+      }
+      return this.vm.state.state;
+    } else if (keyword === "State" && callee === "update") {
+      if (isObject(args[0])) {
+        this.vm.state.state = this.vm.state.state ?? {};
+        Object.assign(this.vm.state.state, deepCopy(args[0]));
+      }
+      if (this.vm.state.state === undefined) {
+        throw new Error("The error was not initialized");
+      }
+      this.vm.setReactState(this.vm.state.state);
+      return this.vm.state.state;
+    } else if (keyword === "console" && callee === "log") {
+      return console.log(...args);
+    } else if (callee === "Date") {
+      return new Date(...args);
+    } else if (keyword === "Date") {
+      if (callee === "now") {
+        return Date.now();
+      } else if (callee === "parse") {
+        return Date.parse(...args);
+      } else if (callee === "UTC") {
+        return Date.UTC(...args);
+      }
     }
+
+    throw new Error(
+      keyword
+        ? `Unsupported callee method '${keyword}.${callee}'`
+        : `Unsupported callee method '${callee}'`
+    );
   }
 
   /// Resolves the underlying object and the key to modify.
@@ -440,33 +496,50 @@ class VmStack {
   /// - requireState requires the top object key be `state`
   resolveMemberExpression(code, options) {
     if (code.type === "Identifier") {
-      assertNotReservedKey(code.name);
-      if (options?.requireState && code.name !== StakeKey) {
+      const key = code.name;
+      assertNotReservedKey(key);
+      if (options?.requireState && key !== StakeKey) {
         throw new Error(`The top object should be ${StakeKey}`);
       }
-      const obj = this.stack.findObj(code.name) ?? this.stack.state;
+      const obj = this.stack.findObj(key) ?? this.stack.state;
+      if (obj === this.stack.state) {
+        if (key in Keywords) {
+          if (options?.left) {
+            throw new Error("Cannot assign to keyword '" + key + "'");
+          }
+          return { obj, key, keyword: key };
+        }
+      }
       if (options?.left) {
-        if (!obj || !(code.name in obj)) {
+        if (!obj || !(key in obj)) {
           throw new Error(`Accessing undeclared identifier '${code.name}'`);
         }
       }
-      return [obj, code.name];
+      return { obj, key };
     } else if (code.type === "MemberExpression") {
-      const [innerObj, key] = this.resolveMemberExpression(
-        code.object,
-        Object.assign({}, options, {
-          left: false,
-        })
-      );
-      const property = this.resolveKey(code.property, code.computed);
-      const obj = innerObj?.[key];
+      if (code.object?.type === "Identifier") {
+        const keyword = code.object.name;
+        if (keyword in Keywords) {
+          if (!options?.callee) {
+            throw new Error(
+              "Cannot dereference keyword '" +
+                keyword +
+                "' in non-call expression"
+            );
+          }
+          return {
+            obj: this.stack.state,
+            key: this.resolveKey(code.property, code.computed),
+            keyword,
+          };
+        }
+      }
+      const obj = this.executeExpression(code.object);
+      const key = this.resolveKey(code.property, code.computed);
       if (isReactObject(obj)) {
-        throw new Error("React objects shouldn't be modified");
+        throw new Error("React objects shouldn't dereferenced");
       }
-      if (!options?.callee) {
-        assertNotKeywordObject(obj);
-      }
-      return [obj, property];
+      return { obj, key };
     } else {
       throw new Error("Unsupported member type: '" + code.type + "'");
     }
@@ -478,10 +551,9 @@ class VmStack {
     }
     const type = code?.type;
     if (type === "AssignmentExpression") {
-      const [obj, key] = this.resolveMemberExpression(code.left, {
+      const { obj, key } = this.resolveMemberExpression(code.left, {
         left: true,
       });
-      assertNotKeywordObject(obj[key]);
       const right = this.executeExpression(code.right);
 
       if (code.operator === "=") {
@@ -494,14 +566,15 @@ class VmStack {
         return (obj[key] *= right);
       } else if (code.operator === "/=") {
         return (obj[key] /= right);
+      } else if (code.operator === "??=") {
+        return (obj[key] ??= right);
       } else {
         throw new Error(
           "Unknown AssignmentExpression operator '" + code.operator + "'"
         );
       }
     } else if (type === "MemberExpression") {
-      const obj = this.executeExpression(code.object);
-      const key = this.resolveKey(code.property, code.computed);
+      const { obj, key } = this.resolveMemberExpression(code);
       return obj?.[key];
     } else if (type === "Identifier") {
       return this.stack.get(code.name);
@@ -521,11 +594,17 @@ class VmStack {
       }
       return quasis.join("");
     } else if (type === "CallExpression") {
-      const [obj, callee] = this.resolveMemberExpression(code.callee, {
+      const { obj, key, keyword } = this.resolveMemberExpression(code.callee, {
         callee: true,
       });
       const args = code.arguments.map((arg) => this.executeExpression(arg));
-      return this.callFunction(obj, callee, args);
+      if (!keyword && obj?.[key] instanceof Function) {
+        return obj?.[key](...args);
+      } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
+        return this.callFunction(keyword ?? "", key, args);
+      } else {
+        throw new Error("Not a function call expression");
+      }
     } else if (type === "Literal" || type === "JSXText") {
       return code.value;
     } else if (type === "JSXElement" || type === "JSXFragment") {
@@ -544,9 +623,13 @@ class VmStack {
       } else if (code.operator === "*") {
         return left * right;
       } else if (code.operator === "/") {
-        return left * right;
+        return left / right;
       } else if (code.operator === "<") {
         return left < right;
+      } else if (code.operator === "|") {
+        return left | right;
+      } else if (code.operator === "&") {
+        return left & right;
       } else if (code.operator === ">") {
         return left > right;
       } else if (code.operator === "<=") {
@@ -568,6 +651,8 @@ class VmStack {
         return -argument;
       } else if (code.operator === "!") {
         return !argument;
+      } else if (code.operator === "typeof") {
+        return typeof argument;
       } else {
         throw new Error(
           "Unknown UnaryExpression operator '" + code.operator + "'"
@@ -592,7 +677,7 @@ class VmStack {
         ? this.executeExpression(code.consequent)
         : this.executeExpression(code.alternate);
     } else if (type === "UpdateExpression") {
-      const [obj, key] = this.resolveMemberExpression(code.argument, {
+      const { obj, key } = this.resolveMemberExpression(code.argument, {
         left: true,
       });
       if (code.operator === "++") {
@@ -628,7 +713,9 @@ class VmStack {
     params = params.map((param) => {
       const arg = requireIdentifier(param);
       assertNotReservedKey(arg);
-      assertNotKeywordObject(this.vm.state[arg]);
+      if (arg in Keywords) {
+        throw new Error("Cannot use keyword as argument name: " + arg);
+      }
       return arg;
     });
     return (...args) => {
@@ -668,7 +755,7 @@ class VmStack {
                 touches: arg?.touches,
               };
             }
-            v = JSON.parse(JSON.stringify(arg));
+            v = deepCopy(arg);
           } catch (e) {
             console.warn(e);
           }
@@ -682,7 +769,9 @@ class VmStack {
   }
 
   stackDeclare(id, value) {
-    assertNotKeywordObject(this.vm.state[id]);
+    if (id in Keywords) {
+      throw new Error("Cannot use keyword as variable name: " + id);
+    }
     this.stack.state[id] = value;
   }
 
@@ -786,7 +875,7 @@ class VmStack {
 }
 
 export default class VM {
-  constructor(near, gkey, code, setReactState, setCache, commitData, depth) {
+  constructor(near, gkey, code, setReactState, setCache, depth) {
     if (!code) {
       throw new Error("Not a program");
     }
@@ -795,7 +884,6 @@ export default class VM {
     this.code = code;
     this.setReactState = setReactState;
     this.setCache = setCache;
-    this.commitData = commitData;
     this.fetchingCache = {};
     this.alive = true;
     this.depth = depth;
@@ -822,23 +910,25 @@ export default class VM {
     return null;
   }
 
-  cachedSocialGet(key, recursive, blockId, options) {
+  cachedSocialGet(keys, recursive, blockId, options) {
+    keys = Array.isArray(keys) ? keys : [keys];
     return this.cachedPromise(
-      `get:${JSON.stringify({ key, recursive, blockId, options })}`,
-      () => socialGet(this.near, key, recursive, blockId, options)
+      `get:${JSON.stringify({ keys, recursive, blockId, options })}`,
+      () => socialGet(this.near, keys, recursive, blockId, options)
     );
   }
 
-  cachedSocialKeys(key, blockId, options) {
+  cachedSocialKeys(keys, blockId, options) {
+    keys = Array.isArray(keys) ? keys : [keys];
     return this.cachedPromise(
-      `keys:${JSON.stringify({ key, blockId, options })}`,
+      `keys:${JSON.stringify({ keys, blockId, options })}`,
       () =>
         cachedViewCall(
           this.near,
           NearConfig.contractName,
           "keys",
           {
-            keys: [key],
+            keys,
             options,
           },
           blockId
@@ -853,6 +943,12 @@ export default class VM {
     );
   }
 
+  cachedNearBlock(blockId) {
+    return this.cachedPromise(`block:${JSON.stringify({ blockId })}`, () =>
+      cachedBlock(this.near, blockId)
+    );
+  }
+
   cachedFetch(url, options) {
     return this.cachedPromise(`fetch:${JSON.stringify({ url, options })}`, () =>
       cachedFetch(url, options)
@@ -864,31 +960,11 @@ export default class VM {
       return "Too deep";
     }
     this.gIndex = 0;
-    this.state = JSON.parse(
-      JSON.stringify({
-        props,
-        context,
-        state,
-        JSON: {
-          [KeywordKey]: "JSON",
-        },
-        Object: {
-          [KeywordKey]: "Object",
-        },
-        Social: {
-          [KeywordKey]: "Social",
-        },
-        Near: {
-          [KeywordKey]: "Near",
-        },
-        State: {
-          [KeywordKey]: "State",
-        },
-        console: {
-          [KeywordKey]: "console",
-        },
-      })
-    );
+    this.state = {
+      props: deepCopy(props),
+      context,
+      state: deepCopy(state),
+    };
     this.cache = cache;
     this.loopLimit = LoopLimit;
     this.vmStack = new VmStack(this, undefined, this.state);
