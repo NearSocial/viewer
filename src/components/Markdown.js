@@ -5,14 +5,18 @@ import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 import React from "react";
 
 export const Markdown = (props) => {
-  const onAClick = props.onAClick;
+  const onLinkClick = props.onLinkClick;
   return (
     <ReactMarkdown
       {...props}
       plugins={[gfm]}
       components={{
         a: ({ node, ...props }) =>
-          onAClick ? <a onClick={onAClick} {...props} /> : <a {...props} />,
+          onLinkClick ? (
+            <a onClick={onLinkClick} {...props} />
+          ) : (
+            <a {...props} />
+          ),
         img: ({ node, ...props }) => <img className="img-fluid" {...props} />,
         blockquote: ({ node, ...props }) => (
           <blockquote className="blockquote" {...props} />
