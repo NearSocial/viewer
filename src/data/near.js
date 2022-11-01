@@ -52,7 +52,6 @@ export const MainNearConfig = {
   wrapNearAccountId: "wrap.near",
   defaultWidget: "mob.near/widget/Homepage",
   viewSourceWidget: "mob.near/widget/WidgetSource",
-  defaultConfirmTransactionWidget: "root.near/widget/ConfirmTx",
   apiUrl: "https://api.near.social",
 };
 
@@ -93,7 +92,14 @@ const apiCall = async (methodName, args, blockId, fallback) => {
   }
 };
 
-async function functionCall(near, contractName, methodName, args, gas, deposit) {
+async function functionCall(
+  near,
+  contractName,
+  methodName,
+  args,
+  gas,
+  deposit
+) {
   try {
     const wallet = await near.selector.wallet();
     return await wallet.signAndSendTransaction({
@@ -130,9 +136,8 @@ function setupContract(near, contractId, options) {
       near.viewCall(contractId, methodName, args);
   });
   changeMethods.forEach((methodName) => {
-    contract[methodName] = async (args, gas, deposit) => {
-      return await functionCall(near, contractId, methodName, args, gas, deposit);
-    };
+    contract[methodName] = (args, gas, deposit) =>
+      near.functionCall(contractId, methodName, args, gas, deposit);
   });
   return contract;
 }
@@ -279,7 +284,8 @@ async function _initNear() {
       : _near.nearConnection.connection.provider;
     return provider.block(blockQuery);
   };
-  _near.functionCall = (contractName, methodName, args, gas, deposit) => functionCall(_near, contractName, methodName, args, gas, deposit);
+  _near.functionCall = (contractName, methodName, args, gas, deposit) =>
+    functionCall(_near, contractName, methodName, args, gas, deposit);
 
   _near.contract = setupContract(_near, NearConfig.contractName, {
     viewMethods: [
