@@ -3,6 +3,7 @@ import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
 import { useNear } from "../../data/near";
+import ConfirmTransaction from "../ConfirmTransaction";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
@@ -37,9 +38,11 @@ export function Widget(props) {
   const [parsedCode, setParsedCode] = useState(null);
   const [context, setContext] = useState({});
   const [vm, setVm] = useState(null);
+  const [transaction, setTransaction] = useState(null);
 
   const near = useNear();
   const [element, setElement] = useState(null);
+  const [confirmElement, setConfirmElement] = useState(null);
 
   useEffect(() => {
     if (!near) {
@@ -75,6 +78,17 @@ export function Widget(props) {
     }
   }, [code]);
 
+  const confirmTransaction = useCallback(
+    (transaction) => {
+      if (!near) {
+        return null;
+      }
+      console.log("confirm");
+      setTransaction(transaction);
+    },
+    [near]
+  );
+
   useEffect(() => {
     if (!near || !parsedCode) {
       return;
@@ -84,7 +98,15 @@ export function Widget(props) {
       if (prev) {
         prev.alive = false;
       }
-      return new VM(near, gkey, parsedCode, setState, setCache, depth);
+      return new VM(
+        near,
+        gkey,
+        parsedCode,
+        setState,
+        setCache,
+        confirmTransaction,
+        depth
+      );
     });
   }, [near, gkey, parsedCode, depth]);
 
@@ -130,7 +152,16 @@ export function Widget(props) {
       }}
       resetKeys={[element]}
     >
-      {element}
+      <>
+        {element}
+        {
+          <ConfirmTransaction
+            near={near}
+            transaction={transaction}
+            onHide={() => setTransaction(null)}
+          />
+        }
+      </>
     </ErrorBoundary>
   ) : (
     Loading

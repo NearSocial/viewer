@@ -382,6 +382,20 @@ class VmStack {
       return this.vm.cachedNearView(...args);
     } else if (keyword === "Near" && callee === "block") {
       return this.vm.cachedNearBlock(...args);
+    } else if (keyword === "Near" && callee === "call") {
+      if (args.length < 2 || args.length > 5) {
+        throw new Error(
+          "Method: Near.call. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'gas' (defaults to 300Tg), 'deposit' (defaults to 0)"
+        );
+      }
+      this.vm.confirmTransaction({
+        contractName: args[0],
+        methodName: args[1],
+        args: args[2] ?? {},
+        gas: args[3],
+        deposit: args[4],
+      });
+      return;
     } else if (callee === "fetch") {
       if (args.length < 1) {
         throw new Error(
@@ -875,7 +889,15 @@ class VmStack {
 }
 
 export default class VM {
-  constructor(near, gkey, code, setReactState, setCache, depth) {
+  constructor(
+    near,
+    gkey,
+    code,
+    setReactState,
+    setCache,
+    confirmTransaction,
+    depth
+  ) {
     if (!code) {
       throw new Error("Not a program");
     }
@@ -884,6 +906,7 @@ export default class VM {
     this.code = code;
     this.setReactState = setReactState;
     this.setCache = setCache;
+    this.confirmTransaction = confirmTransaction;
     this.fetchingCache = {};
     this.alive = true;
     this.depth = depth;

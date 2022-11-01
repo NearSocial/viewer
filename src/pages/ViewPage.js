@@ -3,6 +3,7 @@ import { Widget } from "../components/Widget/Widget";
 import { useParams } from "react-router-dom";
 import { useQuery } from "../data/utils";
 import { NearConfig } from "../data/near";
+import ConfirmTransaction from "../components/ConfirmTransaction";
 
 export default function ViewPage(props) {
   const { widgetSrc } = useParams();

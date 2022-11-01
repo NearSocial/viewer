@@ -92,6 +92,39 @@ const apiCall = async (methodName, args, blockId, fallback) => {
   }
 };
 
+async function functionCall(
+  near,
+  contractName,
+  methodName,
+  args,
+  gas,
+  deposit
+) {
+  try {
+    const wallet = await near.selector.wallet();
+    return await wallet.signAndSendTransaction({
+      receiverId: contractName,
+      actions: [
+        {
+          type: "FunctionCall",
+          params: {
+            methodName,
+            args,
+            gas: gas ?? TGas.mul(30).toFixed(0),
+            deposit: deposit ?? "0",
+          },
+        },
+      ],
+    });
+  } catch (e) {
+    const msg = e.toString();
+    if (msg.indexOf("does not have enough balance") !== -1) {
+      return await refreshAllowanceObj.refreshAllowance();
+    }
+    throw e;
+  }
+}
+
 function setupContract(near, contractId, options) {
   const { viewMethods = [], changeMethods = [] } = options;
   const contract = {
@@ -103,31 +136,8 @@ function setupContract(near, contractId, options) {
       near.viewCall(contractId, methodName, args);
   });
   changeMethods.forEach((methodName) => {
-    contract[methodName] = async (args, gas, deposit) => {
-      try {
-        const wallet = await near.selector.wallet();
-        return await wallet.signAndSendTransaction({
-          receiverId: NearConfig.contractName,
-          actions: [
-            {
-              type: "FunctionCall",
-              params: {
-                methodName,
-                args,
-                gas: gas ?? TGas.mul(30).toFixed(0),
-                deposit: deposit ?? "0",
-              },
-            },
-          ],
-        });
-      } catch (e) {
-        const msg = e.toString();
-        if (msg.indexOf("does not have enough balance") !== -1) {
-          return await refreshAllowanceObj.refreshAllowance();
-        }
-        throw e;
-      }
-    };
+    contract[methodName] = (args, gas, deposit) =>
+      near.functionCall(contractId, methodName, args, gas, deposit);
   });
   return contract;
 }
@@ -274,6 +284,8 @@ async function _initNear() {
       : _near.nearConnection.connection.provider;
     return provider.block(blockQuery);
   };
+  _near.functionCall = (contractName, methodName, args, gas, deposit) =>
+    functionCall(_near, contractName, methodName, args, gas, deposit);
 
   _near.contract = setupContract(_near, NearConfig.contractName, {
     viewMethods: [
