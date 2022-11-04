@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
-import { useNear } from "../../data/near";
+import { useAccountId, useNear } from "../../data/near";
 import ConfirmTransaction from "../ConfirmTransaction";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
@@ -41,8 +41,8 @@ export function Widget(props) {
   const [transaction, setTransaction] = useState(null);
 
   const near = useNear();
+  const accountId = useAccountId();
   const [element, setElement] = useState(null);
-  const [confirmElement, setConfirmElement] = useState(null);
 
   useEffect(() => {
     if (!near) {
@@ -115,9 +115,9 @@ export function Widget(props) {
       return;
     }
     setContext({
-      accountId: near.accountId,
+      accountId,
     });
-  }, [near]);
+  }, [near, accountId]);
 
   useEffect(() => {
     if (!vm) {
