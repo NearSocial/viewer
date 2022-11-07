@@ -39,6 +39,8 @@ const TestNearConfig = {
   wrapNearAccountId: "wrap.testnet",
   defaultWidget: "eugenethedream/widget/Welcome",
   viewSourceWidget: "eugenethedream/widget/WidgetSource",
+  widgetMetadataEditor: "eugenethedream/widget/WidgetMetadataEditor",
+  widgetMetadata: "eugenethedream/widget/WidgetMetadata",
   apiUrl: null,
 };
 const MainnetContract = "social.near";
@@ -52,6 +54,8 @@ export const MainNearConfig = {
   wrapNearAccountId: "wrap.near",
   defaultWidget: "mob.near/widget/Homepage",
   viewSourceWidget: "mob.near/widget/WidgetSource",
+  widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
+  widgetMetadata: "mob.near/widget/WidgetMetadata",
   apiUrl: "https://api.near.social",
 };
 

@@ -272,7 +272,6 @@ class VmStack {
     } else if (element === "Widget") {
       attributes.depth = this.vm.depth + 1;
     } else if (element === "CommitButton") {
-      attributes.vmStack = this;
       attributes.near = this.vm.near;
     }
     const withChildren = ApprovedTags[element];
