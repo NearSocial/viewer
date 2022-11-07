@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Widget } from "../components/Widget/Widget";
 import ls from "local-storage";
-import { LsKey, useNear } from "../data/near";
+import { LsKey, NearConfig, useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
@@ -20,6 +20,7 @@ const DefaultEditorCode = "return <div>Hello World</div>;";
 const Tab = {
   Editor: "Editor",
   Props: "Props",
+  Metadata: "Metadata",
   Widget: "Widget",
 };
 
@@ -42,6 +43,7 @@ export default function EditorPage(props) {
   );
   const [parsedWidgetProps, setParsedWidgetProps] = useState({});
   const [propsError, setPropsError] = useState(null);
+  const [metadata, setMetadata] = useState(undefined);
   const near = useNear();
   const accountId = near?.accountId;
 
@@ -165,6 +167,27 @@ export default function EditorPage(props) {
     [setLayout, tab, setTab]
   );
 
+  const commitButton = (
+    <CommitButton
+      className="btn btn-primary"
+      disabled={!widgetName}
+      onClick={() => {
+        updateWidgetName(widgetName);
+      }}
+      near={near}
+      data={{
+        widget: {
+          [widgetName]: {
+            "": code,
+            metadata,
+          },
+        },
+      }}
+    >
+      Save Widget
+    </CommitButton>
+  );
+
   return (
     <div className="container">
       <div className="min-vh-100 d-flex align-content-start">
@@ -227,6 +250,19 @@ export default function EditorPage(props) {
                     Props
                   </button>
                 </li>
+                {NearConfig.widgetMetadataEditor && (
+                  <li className="nav-item">
+                    <button
+                      className={`nav-link ${
+                        tab === Tab.Metadata ? "active" : ""
+                      }`}
+                      aria-current="page"
+                      onClick={() => setTab(Tab.Metadata)}
+                    >
+                      Metadata
+                    </button>
+                  </li>
+                )}
                 {layout === Layout.Tabs && (
                   <li className="nav-item">
                     <button
@@ -270,7 +306,7 @@ export default function EditorPage(props) {
                     }}
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-3 d-flex gap-2 flex-wrap">
                   <button
                     className="btn btn-success"
                     onClick={() => {
@@ -282,24 +318,10 @@ export default function EditorPage(props) {
                   >
                     Render preview
                   </button>
-                  <CommitButton
-                    className="btn btn-primary ms-2"
-                    disabled={!widgetName}
-                    onClick={() => {
-                      updateWidgetName(widgetName);
-                    }}
-                    near={near}
-                    data={{
-                      widget: {
-                        [widgetName]: code,
-                      },
-                    }}
-                  >
-                    Save Widget
-                  </CommitButton>
+                  {commitButton}
                   {widgetPath && (
                     <a
-                      className="ms-2 btn btn-outline-primary"
+                      className="btn btn-outline-primary"
                       href={`#/${widgetPath}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -325,10 +347,29 @@ export default function EditorPage(props) {
                   <pre className="alert alert-danger">{propsError}</pre>
                 )}
               </div>
+              <div
+                className={`${
+                  tab === Tab.Metadata && NearConfig.widgetMetadataEditor
+                    ? ""
+                    : "visually-hidden"
+                }`}
+              >
+                <div className="mb-3">
+                  <Widget
+                    src={NearConfig.widgetMetadataEditor}
+                    props={{
+                      widgetPath,
+                      onChange: setMetadata,
+                    }}
+                  />
+                </div>
+                <div className="mb-3">{commitButton}</div>
+              </div>
             </div>
             <div
               className={`${
-                tab === Tab.Widget || layout === Layout.Split
+                tab === Tab.Widget ||
+                (layout === Layout.Split && tab !== Tab.Metadata)
                   ? layoutClass
                   : "visually-hidden"
               }`}
@@ -337,6 +378,22 @@ export default function EditorPage(props) {
                 <div className="row">
                   <div className="d-inline-block position-relative overflow-hidden">
                     <Widget code={renderCode} props={parsedWidgetProps} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              className={`${
+                tab === Tab.Metadata ? layoutClass : "visually-hidden"
+              }`}
+            >
+              <div className="container">
+                <div className="row">
+                  <div className="d-inline-block position-relative overflow-hidden">
+                    <Widget
+                      src={NearConfig.widgetMetadata}
+                      props={{ metadata, accountId, widgetName }}
+                    />
                   </div>
                 </div>
               </div>

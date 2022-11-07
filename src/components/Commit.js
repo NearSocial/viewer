@@ -110,7 +110,7 @@ export const Commit = (props) => {
           onClick={(e) => {
             e.preventDefault();
             setLoading(true);
-            props.onCommit(extraStorage);
+            props.onCommit(extraStorage).then(() => setLoading(false));
           }}
         >
           {loading && Loading} Save Data
@@ -128,7 +128,6 @@ export const Commit = (props) => {
 };
 
 export const CommitButton = (props) => {
-  const vmStack = props.vmStack;
   const data = props.data;
   const near = props.near;
   const children = props.children;
@@ -136,7 +135,6 @@ export const CommitButton = (props) => {
   const onCommit = props.onCommit;
   const disabled = props.disabled;
   const filteredProps = Object.assign({}, props);
-  delete filteredProps.vmStack;
   delete filteredProps.data;
   delete filteredProps.near;
   delete filteredProps.onClick;
