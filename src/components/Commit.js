@@ -9,6 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import { Markdown } from "./Markdown";
 import { StorageCostPerByte } from "../data/near";
 import { ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { invalidateCache } from "../data/cache";
 
 const jsonMarkdown = (data) => {
   const json = JSON.stringify(data, null, 2);
@@ -196,8 +197,13 @@ export const CommitButton = (props) => {
           }
           setLoading(false);
           if (onCommit) {
-            onCommit(commit.data);
+            try {
+              onCommit(commit.data);
+            } catch (e) {
+              console.error(e);
+            }
           }
+          invalidateCache(commit.data);
         }}
       />
     </>

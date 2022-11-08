@@ -918,7 +918,14 @@ export default class VM {
     }
     if (!(key in this.fetchingCache)) {
       this.fetchingCache[key] = true;
-      promise()
+      promise(() => {
+        // onInvalidate
+        if (this.alive) {
+          delete this.localCache[key];
+          delete this.fetchingCache[key];
+          this.setCache(Object.assign({}, this.localCache));
+        }
+      })
         .then((data) => {
           if (this.alive) {
             this.localCache[key] = data;
@@ -927,8 +934,12 @@ export default class VM {
         })
         .catch((e) => {
           console.error(e);
+        })
+        .finally(() => {
+          delete this.fetchingCache[key];
         });
     }
+
     return null;
   }
 
@@ -936,7 +947,8 @@ export default class VM {
     keys = Array.isArray(keys) ? keys : [keys];
     return this.cachedPromise(
       `get:${JSON.stringify({ keys, recursive, blockId, options })}`,
-      () => socialGet(this.near, keys, recursive, blockId, options)
+      (onInvalidate) =>
+        socialGet(this.near, keys, recursive, blockId, options, onInvalidate)
     );
   }
 
@@ -944,7 +956,7 @@ export default class VM {
     keys = Array.isArray(keys) ? keys : [keys];
     return this.cachedPromise(
       `keys:${JSON.stringify({ keys, blockId, options })}`,
-      () =>
+      (onInvalidate) =>
         cachedViewCall(
           this.near,
           NearConfig.contractName,
@@ -953,7 +965,8 @@ export default class VM {
             keys,
             options,
           },
-          blockId
+          blockId,
+          onInvalidate
         )
     );
   }
@@ -961,19 +974,29 @@ export default class VM {
   cachedNearView(contractName, methodName, args, blockId) {
     return this.cachedPromise(
       `viewCall:${JSON.stringify({ contractName, methodName, args, blockId })}`,
-      () => cachedViewCall(this.near, contractName, methodName, args, blockId)
+      (onInvalidate) =>
+        cachedViewCall(
+          this.near,
+          contractName,
+          methodName,
+          args,
+          blockId,
+          onInvalidate
+        )
     );
   }
 
   cachedNearBlock(blockId) {
-    return this.cachedPromise(`block:${JSON.stringify({ blockId })}`, () =>
-      cachedBlock(this.near, blockId)
+    return this.cachedPromise(
+      `block:${JSON.stringify({ blockId })}`,
+      (onInvalidate) => cachedBlock(this.near, blockId, onInvalidate)
     );
   }
 
   cachedFetch(url, options) {
-    return this.cachedPromise(`fetch:${JSON.stringify({ url, options })}`, () =>
-      cachedFetch(url, options)
+    return this.cachedPromise(
+      `fetch:${JSON.stringify({ url, options })}`,
+      (onInvalidate) => cachedFetch(url, options, onInvalidate)
     );
   }
 

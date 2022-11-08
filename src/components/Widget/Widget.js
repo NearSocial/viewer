@@ -94,20 +94,19 @@ export function Widget(props) {
       return;
     }
     setState(undefined);
-    setVm((prev) => {
-      if (prev) {
-        prev.alive = false;
-      }
-      return new VM(
-        near,
-        gkey,
-        parsedCode,
-        setState,
-        setCache,
-        confirmTransaction,
-        depth
-      );
-    });
+    const vm = new VM(
+      near,
+      gkey,
+      parsedCode,
+      setState,
+      setCache,
+      confirmTransaction,
+      depth
+    );
+    setVm(vm);
+    return () => {
+      vm.alive = false;
+    };
   }, [near, gkey, parsedCode, depth]);
 
   useEffect(() => {
