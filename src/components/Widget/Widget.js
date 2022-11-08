@@ -8,7 +8,6 @@ import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import { socialGet } from "../../data/cache";
-import { asyncCommitData } from "../../data/commitData";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -32,6 +31,7 @@ export function Widget(props) {
   const codeProps = props.props;
   const depth = props.depth || 0;
 
+  const [nonce, setNonce] = useState(0);
   const [code, setCode] = useState(null);
   const [state, setState] = useState(undefined);
   const [cache, setCache] = useState({});
@@ -42,7 +42,6 @@ export function Widget(props) {
 
   const near = useNear();
   const [element, setElement] = useState(null);
-  const [confirmElement, setConfirmElement] = useState(null);
 
   useEffect(() => {
     if (!near) {
@@ -51,13 +50,15 @@ export function Widget(props) {
     setVm(null);
     if (src) {
       setCode(null);
-      socialGet(near, src.toString())
+      socialGet(near, src.toString(), false, undefined, undefined, () => {
+        setNonce(nonce + 1);
+      })
         .then(setCode)
         .catch(() => setCode(null));
     } else {
       setCode(rawCode);
     }
-  }, [near, src, rawCode]);
+  }, [near, src, nonce, rawCode]);
 
   useEffect(() => {
     if (!code) {

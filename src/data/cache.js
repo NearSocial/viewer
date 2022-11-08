@@ -65,7 +65,7 @@ export const invalidateCache = (data) => {
             }
           });
         },
-        isFinal ? 1550 : 50
+        isFinal ? 2550 : 50
       );
     }
   });

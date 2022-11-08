@@ -918,26 +918,28 @@ export default class VM {
     }
     if (!(key in this.fetchingCache)) {
       this.fetchingCache[key] = true;
-      promise(() => {
-        // onInvalidate
+      const callThenCache = (onInvalidate) => {
+        promise(onInvalidate)
+          .then((data) => {
+            if (this.alive) {
+              this.localCache[key] = data;
+              this.setCache(Object.assign({}, this.localCache));
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+          })
+          .finally(() => {
+            delete this.fetchingCache[key];
+          });
+      };
+      const onInvalidate = () => {
         if (this.alive) {
-          delete this.localCache[key];
           delete this.fetchingCache[key];
-          this.setCache(Object.assign({}, this.localCache));
+          callThenCache(onInvalidate);
         }
-      })
-        .then((data) => {
-          if (this.alive) {
-            this.localCache[key] = data;
-            this.setCache(Object.assign({}, this.localCache));
-          }
-        })
-        .catch((e) => {
-          console.error(e);
-        })
-        .finally(() => {
-          delete this.fetchingCache[key];
-        });
+      };
+      callThenCache(onInvalidate);
     }
 
     return null;
