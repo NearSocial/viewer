@@ -10,6 +10,7 @@ import {
   NearConfig,
   StorageCostPerByte,
   TGas,
+  useAccountId,
   useNear,
 } from "./data/near";
 import EditorPage from "./pages/EditorPage";
@@ -30,6 +31,7 @@ function App(props) {
   const [walletModal, setWalletModal] = useState(null);
 
   const near = useNear();
+  const accountId = useAccountId();
 
   const location = window.location;
 
@@ -94,15 +96,15 @@ function App(props) {
     if (!near) {
       return;
     }
-    setSignedIn(!!near.accountId);
-    setSignedAccountId(near.accountId);
+    setSignedIn(!!accountId);
+    setSignedAccountId(accountId);
     setAvailableStorage(
       near.storageBalance
         ? Big(near.storageBalance.available).div(StorageCostPerByte)
         : Big(0)
     );
     setConnected(true);
-  }, [near]);
+  }, [near, accountId]);
 
   const passProps = {
     refreshAllowance: () => refreshAllowance(),

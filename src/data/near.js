@@ -9,6 +9,7 @@ import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import ls from "local-storage";
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 
 export const TGas = Big(10).pow(12);
 export const MaxGasPerTransaction = TGas.mul(300);
@@ -193,6 +194,35 @@ async function web4ViewCall(contractId, methodName, args, fallback) {
   }
 }
 
+async function updateAccount(near, walletState) {
+  near.connectedContractId = walletState?.contract?.contractId;
+  if (
+    near.connectedContractId &&
+    near.connectedContractId !== NearConfig.contractName
+  ) {
+    const wallet = await selector.wallet();
+    await wallet.signOut();
+    near.connectedContractId = null;
+    walletState = selector.store.getState();
+  }
+  near.accountId = walletState?.accounts?.[0]?.accountId;
+  if (near.accountId) {
+    near.publicKey = nearAPI.KeyPair.fromString(
+      ls.get(
+        walletState?.selectedWalletId === "meteor-wallet"
+          ? `_meteor_wallet${near.accountId}:${NearConfig.networkId}`
+          : `near-api-js:keystore:${near.accountId}:${NearConfig.networkId}`
+      )
+    ).getPublicKey();
+  }
+
+  near.storageBalance = near.accountId
+    ? await near.contract.storage_balance_of({
+        account_id: near.accountId,
+      })
+    : null;
+}
+
 async function _initNear() {
   const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
   const selector = await setupWalletSelector({
@@ -202,6 +232,7 @@ async function _initNear() {
       setupMyNearWallet(),
       setupSender(),
       setupHereWallet(),
+      setupMeteorWallet(),
     ],
   });
 
@@ -222,24 +253,6 @@ async function _initNear() {
 
   _near.keyStore = keyStore;
   _near.nearConnection = nearConnection;
-
-  let walletState = selector.store.getState();
-  _near.connectedContractId = walletState?.contract?.contractId;
-  if (
-    _near.connectedContractId &&
-    _near.connectedContractId !== NearConfig.contractName
-  ) {
-    const wallet = await selector.wallet();
-    await wallet.signOut();
-    _near.connectedContractId = null;
-    walletState = selector.store.getState();
-  }
-  _near.accountId = walletState?.accounts?.[0]?.accountId;
-  if (_near.accountId) {
-    _near.publicKey = nearAPI.KeyPair.fromString(
-      ls.get(`near-api-js:keystore:${_near.accountId}:${NearConfig.networkId}`)
-    ).getPublicKey();
-  }
 
   const transformBlockId = (blockId) =>
     blockId === "optimistic" || blockId === "final"
@@ -308,11 +321,7 @@ async function _initNear() {
     ],
   });
 
-  _near.storageBalance = _near.accountId
-    ? await _near.contract.storage_balance_of({
-        account_id: _near.accountId,
-      })
-    : null;
+  await updateAccount(_near, selector.store.getState());
 
   return _near;
 }
@@ -332,4 +341,24 @@ export const useNear = singletonHook(defaultNear, () => {
   }, [_near]);
 
   return near;
+});
+
+const defaultAccountId = null;
+export const useAccountId = singletonHook(defaultAccountId, () => {
+  const [accountId, setAccountId] = useState(defaultAccountId);
+  const near = useNear();
+
+  useEffect(() => {
+    if (!near) {
+      return;
+    }
+    near.selector.store.observable.subscribe(async (walletState) => {
+      console.log("walletState", walletState);
+      await updateAccount(near, walletState);
+
+      setAccountId(near.accountId);
+    });
+  }, [near]);
+
+  return accountId;
 });
