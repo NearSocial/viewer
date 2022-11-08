@@ -1,10 +1,10 @@
 {
-  "short_name": "Near Social Browser",
-  "name": "Near Social Browser for SocialDB",
+  "short_name": "Near Social",
+  "name": "Near Social",
   "icons": [
     {
       "src": "favicon.png",
-      "sizes": "256x256",
+      "sizes": "1024x1024",
       "type": "image/png"
     }
   ],
