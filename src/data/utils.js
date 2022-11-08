@@ -231,3 +231,47 @@ export const convertToStringLeaves = (data) => {
       }, {})
     : stringify(data);
 };
+
+const matchGet = (obj, keys) => {
+  const matchKey = keys[0];
+  let isRecursiveMatch = matchKey === "**";
+  if (isRecursiveMatch) {
+    return keys.length === 1;
+  }
+  const values =
+    matchKey === "*" || isRecursiveMatch
+      ? Object.values(obj)
+      : matchKey in obj
+      ? [obj[matchKey]]
+      : [];
+
+  return values.some((value) =>
+    isObject(value)
+      ? keys.length > 1
+        ? matchGet(value, keys.slice(1))
+        : value[""] !== undefined
+      : keys.length === 1
+  );
+};
+
+const matchKeys = (obj, keys) => {
+  const matchKey = keys[0];
+  const values =
+    matchKey === "*"
+      ? Object.values(obj)
+      : matchKey in obj
+      ? [obj[matchKey]]
+      : [];
+
+  return values.some(
+    (value) =>
+      keys.length === 1 || (isObject(value) && matchKeys(value, keys.slice(1)))
+  );
+};
+
+export const patternMatch = (method, pattern, data) => {
+  const path = pattern.split("/");
+  return method === "get"
+    ? matchGet(data, path)
+    : method === "keys" && matchKeys(data, path);
+};
