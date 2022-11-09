@@ -14,12 +14,7 @@ export default function ViewPage(props) {
   const setWidgetSrc = props.setWidgetSrc;
 
   useEffect(() => {
-    setWidgetProps(
-      [...query.entries()].reduce((props, [key, value]) => {
-        props[key] = value;
-        return props;
-      }, {})
-    );
+    setWidgetProps(Object.fromEntries([...query.entries()]));
   }, [query]);
 
   useEffect(() => {
