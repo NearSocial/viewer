@@ -43,6 +43,7 @@ const TestNearConfig = {
   widgetMetadataEditor: "eugenethedream/widget/WidgetMetadataEditor",
   widgetMetadata: "eugenethedream/widget/WidgetMetadata",
   apiUrl: null,
+  finalSynchronizationDelayMs: 3000,
 };
 const MainnetContract = "social.near";
 export const MainNearConfig = {
@@ -58,6 +59,7 @@ export const MainNearConfig = {
   widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
   widgetMetadata: "mob.near/widget/WidgetMetadata",
   apiUrl: "https://api.near.social",
+  finalSynchronizationDelayMs: 3000,
 };
 
 export const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;
@@ -353,7 +355,6 @@ export const useAccountId = singletonHook(defaultAccountId, () => {
       return;
     }
     near.selector.store.observable.subscribe(async (walletState) => {
-      console.log("walletState", walletState);
       await updateAccount(near, walletState);
 
       setAccountId(near.accountId);

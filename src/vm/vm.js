@@ -914,7 +914,7 @@ export default class VM {
 
   cachedPromise(key, promise) {
     if (key in this.localCache) {
-      return this.localCache[key];
+      return deepCopy(this.localCache[key]);
     }
     if (!(key in this.fetchingCache)) {
       this.fetchingCache[key] = true;
@@ -928,6 +928,10 @@ export default class VM {
           })
           .catch((e) => {
             console.error(e);
+            if (this.alive) {
+              this.localCache[key] = undefined;
+              this.setCache(Object.assign({}, this.localCache));
+            }
           })
           .finally(() => {
             delete this.fetchingCache[key];

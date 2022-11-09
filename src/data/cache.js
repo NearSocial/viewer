@@ -65,7 +65,7 @@ export const invalidateCache = (data) => {
             }
           });
         },
-        isFinal ? 2550 : 50
+        isFinal ? NearConfig.finalSynchronizationDelayMs + 50 : 50
       );
     }
   });
