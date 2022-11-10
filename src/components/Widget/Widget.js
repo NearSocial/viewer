@@ -2,13 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
-import { useNear } from "../../data/near";
+import { useAccountId, useNear } from "../../data/near";
 import ConfirmTransaction from "../ConfirmTransaction";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import { socialGet } from "../../data/cache";
-import { asyncCommitData } from "../../data/commitData";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -32,6 +31,7 @@ export function Widget(props) {
   const codeProps = props.props;
   const depth = props.depth || 0;
 
+  const [nonce, setNonce] = useState(0);
   const [code, setCode] = useState(null);
   const [state, setState] = useState(undefined);
   const [cache, setCache] = useState({});
@@ -41,8 +41,8 @@ export function Widget(props) {
   const [transaction, setTransaction] = useState(null);
 
   const near = useNear();
+  const accountId = useAccountId();
   const [element, setElement] = useState(null);
-  const [confirmElement, setConfirmElement] = useState(null);
 
   useEffect(() => {
     if (!near) {
@@ -51,13 +51,15 @@ export function Widget(props) {
     setVm(null);
     if (src) {
       setCode(null);
-      socialGet(near, src.toString())
+      socialGet(near, src.toString(), false, undefined, undefined, () => {
+        setNonce(nonce + 1);
+      })
         .then(setCode)
         .catch(() => setCode(null));
     } else {
       setCode(rawCode);
     }
-  }, [near, src, rawCode]);
+  }, [near, src, nonce, rawCode]);
 
   useEffect(() => {
     if (!code) {
@@ -94,20 +96,19 @@ export function Widget(props) {
       return;
     }
     setState(undefined);
-    setVm((prev) => {
-      if (prev) {
-        prev.alive = false;
-      }
-      return new VM(
-        near,
-        gkey,
-        parsedCode,
-        setState,
-        setCache,
-        confirmTransaction,
-        depth
-      );
-    });
+    const vm = new VM(
+      near,
+      gkey,
+      parsedCode,
+      setState,
+      setCache,
+      confirmTransaction,
+      depth
+    );
+    setVm(vm);
+    return () => {
+      vm.alive = false;
+    };
   }, [near, gkey, parsedCode, depth]);
 
   useEffect(() => {
@@ -115,9 +116,9 @@ export function Widget(props) {
       return;
     }
     setContext({
-      accountId: near.accountId,
+      accountId,
     });
-  }, [near]);
+  }, [near, accountId]);
 
   useEffect(() => {
     if (!vm) {

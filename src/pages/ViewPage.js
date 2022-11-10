@@ -3,8 +3,6 @@ import { Widget } from "../components/Widget/Widget";
 import { useParams } from "react-router-dom";
 import { useQuery } from "../data/utils";
 import { NearConfig } from "../data/near";
-import ConfirmTransaction from "../components/ConfirmTransaction";
-import { Sidebar } from "../components/Sidebar";
 
 export default function ViewPage(props) {
   const { widgetSrc } = useParams();
@@ -15,12 +13,7 @@ export default function ViewPage(props) {
   const setWidgetSrc = props.setWidgetSrc;
 
   useEffect(() => {
-    setWidgetProps(
-      [...query.entries()].reduce((props, [key, value]) => {
-        props[key] = value;
-        return props;
-      }, {})
-    );
+    setWidgetProps(Object.fromEntries([...query.entries()]));
   }, [query]);
 
   useEffect(() => {

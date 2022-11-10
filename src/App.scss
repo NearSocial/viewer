@@ -8,17 +8,8 @@ body, html {
   cursor: pointer;
 }
 
-.flex-buttons {
-  display: flex;
-  flex-flow: row wrap;
-
-  .btn {
-    flex: 1 1;
-  }
-}
-
-.btn-success {
-  .text-secondary {
+.btn-success, .btn-primary {
+  .text-muted {
     color: #fff !important;
   };
 }
@@ -29,4 +20,14 @@ body, html {
 
 .outline-none {
   outline: 0 !important;
+}
+
+a {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+  &.btn {
+    text-decoration: none;
+  }
 }
