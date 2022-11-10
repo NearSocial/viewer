@@ -18,6 +18,7 @@ import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
 import Logo from "./images/near_social_combo.svg";
+import { Sidebar } from "./components/Sidebar";
 
 export const refreshAllowanceObj = {};
 
@@ -144,8 +145,9 @@ function App(props) {
       </button>
     </div>
   );
+
   const nav = (
-    <nav className="navbar navbar-expand-lg bg-light mb-3">
+    <nav className="navbar navbar-expand-lg bg-light">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/" title="Near Social">
           <img
@@ -225,6 +227,7 @@ function App(props) {
           <Route path={"/:widgetSrc*"}>
             <>
               {nav}
+              {<Sidebar />}
               <ViewPage {...passProps} />
             </>
           </Route>
