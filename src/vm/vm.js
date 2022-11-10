@@ -716,10 +716,9 @@ class VmStack {
         ? this.executeExpression(code.consequent)
         : this.executeExpression(code.alternate);
     } else if (type === "UpdateExpression") {
-      const { obj, key } = this.resolveMemberExpression(
-        code.argument,
-        Object.assign({}, options, { left: true })
-      );
+      const { obj, key } = this.resolveMemberExpression(code.argument, {
+        left: true,
+      });
       if (code.operator === "++") {
         return code.prefix ? ++obj[key] : obj[key]++;
       } else if (code.operator === "--") {
