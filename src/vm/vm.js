@@ -16,6 +16,7 @@ import { CommitButton } from "../components/Commit";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import { Typeahead } from "react-bootstrap-typeahead";
+import styled, { isStyledComponent } from "styled-components";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -23,6 +24,7 @@ const MaxDepth = 32;
 const ReactKey = "$$typeof";
 const isReactObject = (o) =>
   o !== null && typeof o === "object" && !!o[ReactKey];
+
 const StakeKey = "state";
 
 const ExpressionDebug = false;
@@ -82,6 +84,7 @@ const Keywords = {
   Near: true,
   State: true,
   console: true,
+  styled: true,
 };
 
 const assertNotReservedKey = (key) => {
@@ -169,10 +172,23 @@ class VmStack {
   }
 
   renderElement(code) {
-    const element =
+    let element =
       code.type === "JSXFragment"
         ? "Fragment"
         : requireJSXIdentifier(code.openingElement.name);
+
+    let withChildren = ApprovedTags[element];
+    const styledComponent =
+      withChildren === undefined && this.stack.get(element);
+    if (withChildren === undefined) {
+      if (styledComponent === undefined) {
+        throw new Error("Unknown element: " + element);
+      }
+      if (!isStyledComponent(styledComponent)) {
+        throw new Error("Not a styled component: " + element);
+      }
+    }
+
     const attributes = {};
     const status = {};
     if (element === "input") {
@@ -263,6 +279,10 @@ class VmStack {
     });
     attributes.key = `${this.vm.gkey}-${attributes.key ?? this.vm.gIndex++}`;
     delete attributes.dangerouslySetInnerHTML;
+    if (styledComponent) {
+      delete attributes.as;
+      delete attributes.forwardedAs;
+    }
     if (element === "img") {
       attributes.alt = attributes.alt ?? "not defined";
     } else if (element === "a") {
@@ -274,7 +294,7 @@ class VmStack {
     } else if (element === "CommitButton") {
       attributes.near = this.vm.near;
     }
-    const withChildren = ApprovedTags[element];
+
     if (withChildren === false && code.children.length) {
       throw new Error(
         "And element '" + element + "' contains children, but shouldn't"
@@ -331,6 +351,12 @@ class VmStack {
             )}
           </Files>
         </div>
+      );
+    } else if (styledComponent) {
+      return React.createElement(
+        styledComponent,
+        { ...attributes },
+        ...children
       );
     } else if (withChildren === true) {
       return React.createElement(element, { ...attributes }, ...children);
@@ -497,7 +523,7 @@ class VmStack {
     }
 
     throw new Error(
-      keyword
+      keyword && keyword !== callee
         ? `Unsupported callee method '${keyword}.${callee}'`
         : `Unsupported callee method '${callee}'`
     );
@@ -717,6 +743,67 @@ class VmStack {
       return null;
     } else if (type === "ArrowFunctionExpression") {
       return this.createFunction(code.params, code.body, code.expression);
+    } else if (type === "TaggedTemplateExpression") {
+      // Currently on `styled` component is supported.
+
+      let styledTemplate;
+
+      if (
+        code.tag.type === "MemberExpression" ||
+        code.tag.type === "CallExpression"
+      ) {
+        const { key, keyword } = this.resolveMemberExpression(
+          code.tag.type === "MemberExpression" ? code.tag : code.tag.callee,
+          {
+            callee: true,
+          }
+        );
+        if (keyword !== "styled") {
+          throw new Error(
+            "TaggedTemplateExpression is only supported for `styled` components"
+          );
+        }
+
+        if (code.tag.type === "CallExpression") {
+          const args = code.tag.arguments.map((arg) =>
+            this.executeExpression(arg)
+          );
+          const arg = args?.[0];
+          if (!isStyledComponent(arg)) {
+            throw new Error("styled() can only take `styled` components");
+          }
+          styledTemplate = styled(arg);
+        } else {
+          if (key in ApprovedTags) {
+            styledTemplate = styled(key);
+          } else {
+            throw new Error("Unsupported styled tag: " + key);
+          }
+        }
+      } else {
+        throw new Error(
+          "TaggedTemplateExpression is only supported for `styled` components"
+        );
+      }
+
+      if (code.quasi.type !== "TemplateLiteral") {
+        throw new Error("Unknown quasi type: " + code.quasi.type);
+      }
+      const quasis = code.quasi.quasis.map((element) => {
+        if (element.type !== "TemplateElement") {
+          throw new Error("Unknown quasis type: " + element.type);
+        }
+        return element.value.cooked;
+      });
+      const expressions = code.quasi.expressions.map((expression) =>
+        this.executeExpression(expression)
+      );
+
+      if (styledTemplate instanceof Function) {
+        return styledTemplate(quasis, ...expressions);
+      } else {
+        throw new Error("styled error");
+      }
     } else {
       throw new Error("Unknown expression type '" + type + "'");
     }
