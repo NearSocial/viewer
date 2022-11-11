@@ -123,7 +123,15 @@ const requireIdentifier = (id) => {
   if (id.type !== "Identifier") {
     throw new Error("Non identifier: " + id.type);
   }
-  return id.name;
+  const name = id.name;
+  assertNotReservedKey(name);
+  if (name in Keywords) {
+    throw new Error("Cannot use keyword: " + name);
+  }
+  return {
+    type: "Identifier",
+    name,
+  };
 };
 
 const requireJSXIdentifier = (id) => {
@@ -131,6 +139,43 @@ const requireJSXIdentifier = (id) => {
     throw new Error("Non JSXIdentifier: " + id.type);
   }
   return id.name;
+};
+
+const requirePattern = (id) => {
+  if (id.type === "Identifier") {
+    return requireIdentifier(id);
+  } else if (id.type === "ArrayPattern") {
+    return {
+      type: "ArrayPattern",
+      elements: id.elements.map(requirePattern),
+    };
+  } else if (id.type === "ObjectPattern") {
+    return {
+      type: "ObjectPattern",
+      properties: id.properties.map((p) => {
+        if (p.type === "Property") {
+          return {
+            key: requireIdentifier(p.key),
+            value: requirePattern(p.value),
+          };
+        } else if (p.type === "RestElement") {
+          return {
+            type: "RestElement",
+            argument: requireIdentifier(p.argument),
+          };
+        } else {
+          throw new Error("Unknown property type: " + p.type);
+        }
+      }),
+    };
+  } else if (id.type === "RestElement") {
+    return {
+      type: "RestElement",
+      argument: requireIdentifier(id.argument),
+    };
+  } else {
+    throw new Error("Unknown pattern: " + id.type);
+  }
 };
 
 class Stack {
@@ -730,15 +775,27 @@ class VmStack {
       }
     } else if (type === "ObjectExpression") {
       return code.properties.reduce((object, property) => {
-        if (property.type !== "Property") {
+        if (property.type === "Property") {
+          const key = this.resolveKey(property.key, property.computed);
+          object[key] = this.executeExpression(property.value);
+        } else if (property.type === "SpreadElement") {
+          const value = this.executeExpression(property.argument);
+          Object.assign(object, value);
+        } else {
           throw new Error("Unknown property type: " + property.type);
         }
-        const key = this.resolveKey(property.key, property.computed);
-        object[key] = this.executeExpression(property.value);
         return object;
       }, {});
     } else if (type === "ArrayExpression") {
-      return code.elements.map((element) => this.executeExpression(element));
+      const result = [];
+      code.elements.forEach((element) => {
+        if (element.type === "SpreadElement") {
+          result.push(...this.executeExpression(element.argument));
+        } else {
+          result.push(this.executeExpression(element));
+        }
+      });
+      return result;
     } else if (type === "JSXEmptyExpression") {
       return null;
     } else if (type === "ArrowFunctionExpression") {
@@ -810,14 +867,7 @@ class VmStack {
   }
 
   createFunction(params, body, isExpression) {
-    params = params.map((param) => {
-      const arg = requireIdentifier(param);
-      assertNotReservedKey(arg);
-      if (arg in Keywords) {
-        throw new Error("Cannot use keyword as argument name: " + arg);
-      }
-      return arg;
-    });
+    params = params.map(requirePattern);
     return (...args) => {
       if (!this.vm.alive) {
         return;
@@ -831,7 +881,6 @@ class VmStack {
             if (arg.nativeEvent instanceof Event) {
               arg.preventDefault();
               arg = arg.nativeEvent;
-              // console.log(arg.target);
               arg = {
                 target: {
                   value: arg?.target?.value,
@@ -868,11 +917,29 @@ class VmStack {
     };
   }
 
-  stackDeclare(id, value) {
-    if (id in Keywords) {
-      throw new Error("Cannot use keyword as variable name: " + id);
+  stackDeclare(pattern, value) {
+    if (pattern.type === "Identifier") {
+      this.stack.state[pattern.name] = value;
+    } else if (pattern.type === "ArrayPattern") {
+      pattern.elements.forEach((element, i) => {
+        if (element.type === "RestElement") {
+          this.stackDeclare(element.argument, value.slice(i));
+        } else {
+          this.stackDeclare(element, value?.[i]);
+        }
+      });
+    } else if (pattern.type === "ObjectPattern") {
+      pattern.properties.forEach((property) => {
+        if (property.type === "RestElement") {
+          this.stackDeclare(property.argument, isObject(value) ? value : {});
+        } else {
+          this.stackDeclare(property.value, value?.[property.key.name]);
+          delete value?.[property.key.name];
+        }
+      });
+    } else {
+      throw new Error("Unknown pattern type: " + pattern.type);
     }
-    this.stack.state[id] = value;
   }
 
   executeStatement(token) {
@@ -883,7 +950,7 @@ class VmStack {
       token.declarations.forEach((declaration) => {
         if (declaration.type === "VariableDeclarator") {
           this.stackDeclare(
-            requireIdentifier(declaration.id),
+            requirePattern(declaration.id),
             this.executeExpression(declaration.init)
           );
         } else {
