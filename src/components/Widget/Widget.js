@@ -67,7 +67,7 @@ export function Widget(props) {
     }
     try {
       const parsedCode = parseCode(code);
-      setParsedCode(parsedCode);
+      setParsedCode({ parsedCode });
     } catch (e) {
       setElement(
         <div className="alert alert-danger">
@@ -99,7 +99,7 @@ export function Widget(props) {
     const vm = new VM(
       near,
       gkey,
-      parsedCode,
+      parsedCode.parsedCode,
       setState,
       setCache,
       confirmTransaction,

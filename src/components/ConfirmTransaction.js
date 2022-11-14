@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import { useNear } from "../data/near";
 import { Markdown } from "./Markdown";
 import { Loading } from "../data/utils";
 

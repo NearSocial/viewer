@@ -16,6 +16,7 @@ import { CommitButton } from "../components/Commit";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import { Typeahead } from "react-bootstrap-typeahead";
+import styled, { isStyledComponent } from "styled-components";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -23,6 +24,7 @@ const MaxDepth = 32;
 const ReactKey = "$$typeof";
 const isReactObject = (o) =>
   o !== null && typeof o === "object" && !!o[ReactKey];
+
 const StakeKey = "state";
 
 const ExpressionDebug = false;
@@ -82,6 +84,7 @@ const Keywords = {
   Near: true,
   State: true,
   console: true,
+  styled: true,
 };
 
 const assertNotReservedKey = (key) => {
@@ -120,7 +123,15 @@ const requireIdentifier = (id) => {
   if (id.type !== "Identifier") {
     throw new Error("Non identifier: " + id.type);
   }
-  return id.name;
+  const name = id.name;
+  assertNotReservedKey(name);
+  if (name in Keywords) {
+    throw new Error("Cannot use keyword: " + name);
+  }
+  return {
+    type: "Identifier",
+    name,
+  };
 };
 
 const requireJSXIdentifier = (id) => {
@@ -128,6 +139,43 @@ const requireJSXIdentifier = (id) => {
     throw new Error("Non JSXIdentifier: " + id.type);
   }
   return id.name;
+};
+
+const requirePattern = (id) => {
+  if (id.type === "Identifier") {
+    return requireIdentifier(id);
+  } else if (id.type === "ArrayPattern") {
+    return {
+      type: "ArrayPattern",
+      elements: id.elements.map(requirePattern),
+    };
+  } else if (id.type === "ObjectPattern") {
+    return {
+      type: "ObjectPattern",
+      properties: id.properties.map((p) => {
+        if (p.type === "Property") {
+          return {
+            key: requireIdentifier(p.key),
+            value: requirePattern(p.value),
+          };
+        } else if (p.type === "RestElement") {
+          return {
+            type: "RestElement",
+            argument: requireIdentifier(p.argument),
+          };
+        } else {
+          throw new Error("Unknown property type: " + p.type);
+        }
+      }),
+    };
+  } else if (id.type === "RestElement") {
+    return {
+      type: "RestElement",
+      argument: requireIdentifier(id.argument),
+    };
+  } else {
+    throw new Error("Unknown pattern: " + id.type);
+  }
 };
 
 class Stack {
@@ -169,10 +217,23 @@ class VmStack {
   }
 
   renderElement(code) {
-    const element =
+    let element =
       code.type === "JSXFragment"
         ? "Fragment"
         : requireJSXIdentifier(code.openingElement.name);
+
+    let withChildren = ApprovedTags[element];
+    const styledComponent =
+      withChildren === undefined && this.stack.get(element);
+    if (withChildren === undefined) {
+      if (styledComponent === undefined) {
+        throw new Error("Unknown element: " + element);
+      }
+      if (!isStyledComponent(styledComponent)) {
+        throw new Error("Not a styled component: " + element);
+      }
+    }
+
     const attributes = {};
     const status = {};
     if (element === "input") {
@@ -263,6 +324,10 @@ class VmStack {
     });
     attributes.key = `${this.vm.gkey}-${attributes.key ?? this.vm.gIndex++}`;
     delete attributes.dangerouslySetInnerHTML;
+    if (styledComponent) {
+      delete attributes.as;
+      delete attributes.forwardedAs;
+    }
     if (element === "img") {
       attributes.alt = attributes.alt ?? "not defined";
     } else if (element === "a") {
@@ -274,7 +339,7 @@ class VmStack {
     } else if (element === "CommitButton") {
       attributes.near = this.vm.near;
     }
-    const withChildren = ApprovedTags[element];
+
     if (withChildren === false && code.children.length) {
       throw new Error(
         "And element '" + element + "' contains children, but shouldn't"
@@ -331,6 +396,12 @@ class VmStack {
             )}
           </Files>
         </div>
+      );
+    } else if (styledComponent) {
+      return React.createElement(
+        styledComponent,
+        { ...attributes },
+        ...children
       );
     } else if (withChildren === true) {
       return React.createElement(element, { ...attributes }, ...children);
@@ -497,7 +568,7 @@ class VmStack {
     }
 
     throw new Error(
-      keyword
+      keyword && keyword !== callee
         ? `Unsupported callee method '${keyword}.${callee}'`
         : `Unsupported callee method '${callee}'`
     );
@@ -704,33 +775,99 @@ class VmStack {
       }
     } else if (type === "ObjectExpression") {
       return code.properties.reduce((object, property) => {
-        if (property.type !== "Property") {
+        if (property.type === "Property") {
+          const key = this.resolveKey(property.key, property.computed);
+          object[key] = this.executeExpression(property.value);
+        } else if (property.type === "SpreadElement") {
+          const value = this.executeExpression(property.argument);
+          Object.assign(object, value);
+        } else {
           throw new Error("Unknown property type: " + property.type);
         }
-        const key = this.resolveKey(property.key, property.computed);
-        object[key] = this.executeExpression(property.value);
         return object;
       }, {});
     } else if (type === "ArrayExpression") {
-      return code.elements.map((element) => this.executeExpression(element));
+      const result = [];
+      code.elements.forEach((element) => {
+        if (element.type === "SpreadElement") {
+          result.push(...this.executeExpression(element.argument));
+        } else {
+          result.push(this.executeExpression(element));
+        }
+      });
+      return result;
     } else if (type === "JSXEmptyExpression") {
       return null;
     } else if (type === "ArrowFunctionExpression") {
       return this.createFunction(code.params, code.body, code.expression);
+    } else if (type === "TaggedTemplateExpression") {
+      // Currently on `styled` component is supported.
+
+      let styledTemplate;
+
+      if (
+        code.tag.type === "MemberExpression" ||
+        code.tag.type === "CallExpression"
+      ) {
+        const { key, keyword } = this.resolveMemberExpression(
+          code.tag.type === "MemberExpression" ? code.tag : code.tag.callee,
+          {
+            callee: true,
+          }
+        );
+        if (keyword !== "styled") {
+          throw new Error(
+            "TaggedTemplateExpression is only supported for `styled` components"
+          );
+        }
+
+        if (code.tag.type === "CallExpression") {
+          const args = code.tag.arguments.map((arg) =>
+            this.executeExpression(arg)
+          );
+          const arg = args?.[0];
+          if (!isStyledComponent(arg)) {
+            throw new Error("styled() can only take `styled` components");
+          }
+          styledTemplate = styled(arg);
+        } else {
+          if (key in ApprovedTags) {
+            styledTemplate = styled(key);
+          } else {
+            throw new Error("Unsupported styled tag: " + key);
+          }
+        }
+      } else {
+        throw new Error(
+          "TaggedTemplateExpression is only supported for `styled` components"
+        );
+      }
+
+      if (code.quasi.type !== "TemplateLiteral") {
+        throw new Error("Unknown quasi type: " + code.quasi.type);
+      }
+      const quasis = code.quasi.quasis.map((element) => {
+        if (element.type !== "TemplateElement") {
+          throw new Error("Unknown quasis type: " + element.type);
+        }
+        return element.value.cooked;
+      });
+      const expressions = code.quasi.expressions.map((expression) =>
+        this.executeExpression(expression)
+      );
+
+      if (styledTemplate instanceof Function) {
+        return styledTemplate(quasis, ...expressions);
+      } else {
+        throw new Error("styled error");
+      }
     } else {
       throw new Error("Unknown expression type '" + type + "'");
     }
   }
 
   createFunction(params, body, isExpression) {
-    params = params.map((param) => {
-      const arg = requireIdentifier(param);
-      assertNotReservedKey(arg);
-      if (arg in Keywords) {
-        throw new Error("Cannot use keyword as argument name: " + arg);
-      }
-      return arg;
-    });
+    params = params.map(requirePattern);
     return (...args) => {
       if (!this.vm.alive) {
         return;
@@ -744,7 +881,6 @@ class VmStack {
             if (arg.nativeEvent instanceof Event) {
               arg.preventDefault();
               arg = arg.nativeEvent;
-              // console.log(arg.target);
               arg = {
                 target: {
                   value: arg?.target?.value,
@@ -781,11 +917,29 @@ class VmStack {
     };
   }
 
-  stackDeclare(id, value) {
-    if (id in Keywords) {
-      throw new Error("Cannot use keyword as variable name: " + id);
+  stackDeclare(pattern, value) {
+    if (pattern.type === "Identifier") {
+      this.stack.state[pattern.name] = value;
+    } else if (pattern.type === "ArrayPattern") {
+      pattern.elements.forEach((element, i) => {
+        if (element.type === "RestElement") {
+          this.stackDeclare(element.argument, value.slice(i));
+        } else {
+          this.stackDeclare(element, value?.[i]);
+        }
+      });
+    } else if (pattern.type === "ObjectPattern") {
+      pattern.properties.forEach((property) => {
+        if (property.type === "RestElement") {
+          this.stackDeclare(property.argument, isObject(value) ? value : {});
+        } else {
+          this.stackDeclare(property.value, value?.[property.key.name]);
+          delete value?.[property.key.name];
+        }
+      });
+    } else {
+      throw new Error("Unknown pattern type: " + pattern.type);
     }
-    this.stack.state[id] = value;
   }
 
   executeStatement(token) {
@@ -796,7 +950,7 @@ class VmStack {
       token.declarations.forEach((declaration) => {
         if (declaration.type === "VariableDeclarator") {
           this.stackDeclare(
-            requireIdentifier(declaration.id),
+            requirePattern(declaration.id),
             this.executeExpression(declaration.init)
           );
         } else {

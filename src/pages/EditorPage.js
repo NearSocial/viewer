@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Widget } from "../components/Widget/Widget";
 import ls from "local-storage";
 import { LsKey, NearConfig, useNear } from "../data/near";
@@ -357,10 +357,13 @@ export default function EditorPage(props) {
                 <div className="mb-3">
                   <Widget
                     src={NearConfig.widgetMetadataEditor}
-                    props={{
-                      widgetPath,
-                      onChange: setMetadata,
-                    }}
+                    props={useMemo(
+                      () => ({
+                        widgetPath,
+                        onChange: setMetadata,
+                      }),
+                      [widgetPath]
+                    )}
                   />
                 </div>
                 <div className="mb-3">{commitButton}</div>
@@ -392,7 +395,10 @@ export default function EditorPage(props) {
                   <div className="d-inline-block position-relative overflow-hidden">
                     <Widget
                       src={NearConfig.widgetMetadata}
-                      props={{ metadata, accountId, widgetName }}
+                      props={useMemo(
+                        () => ({ metadata, accountId, widgetName }),
+                        [metadata, accountId, widgetName]
+                      )}
                     />
                   </div>
                 </div>
