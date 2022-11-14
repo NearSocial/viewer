@@ -17,6 +17,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import { Typeahead } from "react-bootstrap-typeahead";
 import styled, { isStyledComponent } from "styled-components";
+import DiffViewer, { DiffMethod } from "react-diff-viewer-continued";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -74,6 +75,7 @@ const ApprovedTags = {
   small: true,
   InfiniteScroll: true,
   Typeahead: false,
+  Diff: false,
 };
 
 const Keywords = {
@@ -85,6 +87,17 @@ const Keywords = {
   State: true,
   console: true,
   styled: true,
+};
+
+const DiffMethodMap = {
+  CHARS: DiffMethod.CHARS,
+  WORDS: DiffMethod.WORDS,
+  WORDS_WITH_SPACE: DiffMethod.WORDS_WITH_SPACE,
+  LINES: DiffMethod.LINES,
+  TRIMMED_LINES: DiffMethod.TRIMMED_LINES,
+  SENTENCES: DiffMethod.SENTENCES,
+  CSS: DiffMethod.CSS,
+  JSON: DiffMethod.JSON,
 };
 
 const assertNotReservedKey = (key) => {
@@ -357,6 +370,9 @@ class VmStack {
       return <InfiniteScroll {...attributes}>{children}</InfiniteScroll>;
     } else if (element === "Typeahead") {
       return <Typeahead {...attributes} />;
+    } else if (element === "Diff") {
+      attributes.compareMethod = DiffMethodMap?.[attributes.compareMethod];
+      return <DiffViewer {...attributes} />;
     } else if (element === "Markdown") {
       return <Markdown {...attributes} />;
     } else if (element === "Fragment") {
