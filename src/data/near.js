@@ -55,7 +55,7 @@ export const MainNearConfig = {
   storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.near",
   defaultWidget: "mob.near/widget/Homepage",
-  viewSourceWidget: "mob.near/widget/WidgetSource",
+  viewSourceWidget: "mob.near/widget/WidgetHistory",
   widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
   widgetMetadata: "mob.near/widget/WidgetMetadata",
   apiUrl: "https://api.near.social",

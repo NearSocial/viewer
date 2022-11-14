@@ -97,7 +97,6 @@ const DiffMethodMap = {
   TRIMMED_LINES: DiffMethod.TRIMMED_LINES,
   SENTENCES: DiffMethod.SENTENCES,
   CSS: DiffMethod.CSS,
-  JSON: DiffMethod.JSON,
 };
 
 const assertNotReservedKey = (key) => {
