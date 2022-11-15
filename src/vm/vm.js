@@ -87,8 +87,17 @@ const Keywords = {
   styled: true,
 };
 
+const ReservedKeys = {
+  [ReactKey]: true,
+  constructor: true,
+  prototype: true,
+  __proto__: true,
+  __defineGetter__: true,
+  __defineSetter__: true,
+};
+
 const assertNotReservedKey = (key) => {
-  if (key === ReactKey) {
+  if (key in ReservedKeys) {
     throw new Error(`${key} is reserved and can't be used`);
   }
 };
