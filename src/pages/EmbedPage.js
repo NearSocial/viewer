@@ -9,7 +9,7 @@ export default function EmbedPage(props) {
   const query = useQuery();
   const [widgetProps, setWidgetProps] = useState({});
 
-  const src = widgetSrc || NearConfig.defaultWidget;
+  const src = widgetSrc || NearConfig.widgets.default;
 
   useEffect(() => {
     setWidgetProps(
