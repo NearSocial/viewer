@@ -7,9 +7,9 @@ import {
 import { displayNear, Loading } from "../data/utils";
 import Modal from "react-bootstrap/Modal";
 import { Markdown } from "./Markdown";
-import { StorageCostPerByte } from "../data/near";
+import { StorageCostPerByte, useAccountId, useNear } from "../data/near";
 import { ToggleButton, ToggleButtonGroup } from "react-bootstrap";
-import { invalidateCache } from "../data/cache";
+import { useCache } from "../data/cache";
 
 const jsonMarkdown = (data) => {
   const json = JSON.stringify(data, null, 2);
@@ -129,15 +129,17 @@ export const Commit = (props) => {
 };
 
 export const CommitButton = (props) => {
+  const near = useNear();
+  const accountId = useAccountId();
+  const cache = useCache();
+
   const data = props.data;
-  const near = props.near;
   const children = props.children;
   const originalOnClick = props.onClick;
   const onCommit = props.onCommit;
   const disabled = props.disabled;
   const filteredProps = Object.assign({}, props);
   delete filteredProps.data;
-  delete filteredProps.near;
   delete filteredProps.onClick;
   delete filteredProps.children;
   delete filteredProps.onCommit;
@@ -153,7 +155,7 @@ export const CommitButton = (props) => {
     if (!loading) {
       return;
     }
-    if (!near.accountId) {
+    if (!accountId) {
       return;
     }
     if (JSON.stringify(data ?? null) === JSON.stringify(lastData ?? null)) {
@@ -164,7 +166,7 @@ export const CommitButton = (props) => {
     prepareCommit(near, data, forceRewrite).then((newCommit) => {
       setCommit(newCommit);
     });
-  }, [loading, data, lastData, forceRewrite, near]);
+  }, [loading, data, lastData, forceRewrite, near, accountId]);
 
   return (
     <>
@@ -203,7 +205,7 @@ export const CommitButton = (props) => {
               console.error(e);
             }
           }
-          invalidateCache(commit.data);
+          cache.invalidateCache(commit.data);
         }}
       />
     </>

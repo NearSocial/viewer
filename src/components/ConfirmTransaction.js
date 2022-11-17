@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { Markdown } from "./Markdown";
 import { Loading } from "../data/utils";
+import { useNear } from "../data/near";
 
 const jsonMarkdown = (data) => {
   const json = JSON.stringify(data, null, 2);
@@ -11,12 +12,12 @@ ${json}
 };
 
 export default function ConfirmTransaction(props) {
+  const near = useNear();
   const [loading, setLoading] = useState(false);
 
   const onHide = props.onHide;
   const transaction = props.transaction;
   const show = !!transaction;
-  const near = props.near;
 
   const onConfirm = useCallback(async () => {
     const res = await near.functionCall(
