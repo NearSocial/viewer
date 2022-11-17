@@ -7,6 +7,7 @@ const Action = {
   ViewCall: "ViewCall",
   Fetch: "Fetch",
   Block: "Block",
+  Index: "Index",
 };
 
 const CacheStatus = {
@@ -229,6 +230,26 @@ class Cache {
     }
 
     return data;
+  }
+
+  socialIndex(action, key, options, onInvalidate) {
+    const res = this.cachedFetch(
+      `${NearConfig.apiUrl}/index`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action,
+          key,
+          options,
+        }),
+      },
+      onInvalidate
+    );
+
+    return res?.ok ? res.body : null;
   }
 }
 
