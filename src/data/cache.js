@@ -1,5 +1,5 @@
 import { NearConfig } from "./near";
-import { patternMatch } from "./utils";
+import { indexMatch, patternMatch } from "./utils";
 import { openDB } from "idb";
 import { singletonHook } from "react-singleton-hook";
 
@@ -7,7 +7,6 @@ const Action = {
   ViewCall: "ViewCall",
   Fetch: "Fetch",
   Block: "Block",
-  Index: "Index",
 };
 
 const CacheStatus = {
@@ -96,6 +95,7 @@ class Cache {
 
   invalidateCache(data) {
     const affectedKeys = [];
+    const indexUrl = `${NearConfig.apiUrl}/index`;
     Object.keys(this.cache).forEach((stringKey) => {
       let key;
       try {
@@ -117,6 +117,18 @@ class Cache {
             keys.some((pattern) => patternMatch(key.methodName, pattern, data))
           ) {
             affectedKeys.push([stringKey, key.blockId === "final"]);
+          }
+        } catch {
+          // ignore
+        }
+      }
+      // Trying to parse index
+      if (key.action === Action.Fetch && key.url === indexUrl) {
+        try {
+          const { action, key: indexKey } = JSON.parse(key.options?.body);
+          if (action && indexKey && indexMatch(action, indexKey, data)) {
+            // console.log("Invalidating index", action, indexKey);
+            affectedKeys.push([stringKey, true]);
           }
         } catch {
           // ignore
