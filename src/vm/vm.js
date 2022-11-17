@@ -1,11 +1,5 @@
 import React from "react";
 import { Widget } from "../components/Widget/Widget";
-import {
-  cachedBlock,
-  cachedFetch,
-  cachedViewCall,
-  socialGet,
-} from "../data/cache";
 import { ipfsUpload, ipfsUrl, isObject, Loading } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
@@ -345,8 +339,6 @@ class VmStack {
       }
     } else if (element === "Widget") {
       attributes.depth = this.vm.depth + 1;
-    } else if (element === "CommitButton") {
-      attributes.near = this.vm.near;
     }
 
     if (withChildren === false && code.children.length) {
@@ -1056,7 +1048,8 @@ export default class VM {
     gkey,
     code,
     setReactState,
-    setCache,
+    cache,
+    refreshCache,
     confirmTransaction,
     depth
   ) {
@@ -1067,49 +1060,20 @@ export default class VM {
     this.gkey = gkey;
     this.code = code;
     this.setReactState = setReactState;
-    this.setCache = setCache;
+    this.cache = cache;
+    this.refreshCache = refreshCache;
     this.confirmTransaction = confirmTransaction;
-    this.fetchingCache = {};
     this.alive = true;
     this.depth = depth;
-    this.localCache = {};
   }
 
   cachedPromise(key, promise) {
-    if (key in this.localCache) {
-      return deepCopy(this.localCache[key]);
-    }
-    if (!(key in this.fetchingCache)) {
-      this.fetchingCache[key] = true;
-      const callThenCache = (onInvalidate) => {
-        promise(onInvalidate)
-          .then((data) => {
-            if (this.alive) {
-              this.localCache[key] = data;
-              this.setCache(Object.assign({}, this.localCache));
-            }
-          })
-          .catch((e) => {
-            console.error(e);
-            if (this.alive) {
-              this.localCache[key] = undefined;
-              this.setCache(Object.assign({}, this.localCache));
-            }
-          })
-          .finally(() => {
-            delete this.fetchingCache[key];
-          });
-      };
-      const onInvalidate = () => {
-        if (this.alive) {
-          delete this.fetchingCache[key];
-          callThenCache(onInvalidate);
-        }
-      };
-      callThenCache(onInvalidate);
-    }
-
-    return null;
+    const onInvalidate = () => {
+      if (this.alive) {
+        this.refreshCache();
+      }
+    };
+    return deepCopy(promise(onInvalidate));
   }
 
   cachedSocialGet(keys, recursive, blockId, options) {
@@ -1117,7 +1081,14 @@ export default class VM {
     return this.cachedPromise(
       `get:${JSON.stringify({ keys, recursive, blockId, options })}`,
       (onInvalidate) =>
-        socialGet(this.near, keys, recursive, blockId, options, onInvalidate)
+        this.cache.socialGet(
+          this.near,
+          keys,
+          recursive,
+          blockId,
+          options,
+          onInvalidate
+        )
     );
   }
 
@@ -1126,7 +1097,7 @@ export default class VM {
     return this.cachedPromise(
       `keys:${JSON.stringify({ keys, blockId, options })}`,
       (onInvalidate) =>
-        cachedViewCall(
+        this.cache.cachedViewCall(
           this.near,
           NearConfig.contractName,
           "keys",
@@ -1144,7 +1115,7 @@ export default class VM {
     return this.cachedPromise(
       `viewCall:${JSON.stringify({ contractName, methodName, args, blockId })}`,
       (onInvalidate) =>
-        cachedViewCall(
+        this.cache.cachedViewCall(
           this.near,
           contractName,
           methodName,
@@ -1158,18 +1129,18 @@ export default class VM {
   cachedNearBlock(blockId) {
     return this.cachedPromise(
       `block:${JSON.stringify({ blockId })}`,
-      (onInvalidate) => cachedBlock(this.near, blockId, onInvalidate)
+      (onInvalidate) => this.cache.cachedBlock(this.near, blockId, onInvalidate)
     );
   }
 
   cachedFetch(url, options) {
     return this.cachedPromise(
       `fetch:${JSON.stringify({ url, options })}`,
-      (onInvalidate) => cachedFetch(url, options, onInvalidate)
+      (onInvalidate) => this.cache.cachedFetch(url, options, onInvalidate)
     );
   }
 
-  renderCode({ props, context, state, cache }) {
+  renderCode({ props, context, state }) {
     if (this.depth >= MaxDepth) {
       return "Too deep";
     }
@@ -1179,7 +1150,6 @@ export default class VM {
       context,
       state: deepCopy(state),
     };
-    this.cache = cache;
     this.loopLimit = LoopLimit;
     this.vmStack = new VmStack(this, undefined, this.state);
     const executionResult = this.vmStack.executeStatement(this.code);

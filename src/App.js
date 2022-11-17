@@ -49,9 +49,11 @@ function App(props) {
     if (!near) {
       return;
     }
-    setWalletModal(
-      setupModal(near.selector, { contractId: NearConfig.contractName })
-    );
+    near.selector.then((selector) => {
+      setWalletModal(
+        setupModal(selector, { contractId: NearConfig.contractName })
+      );
+    });
   }, [near]);
 
   const requestSignIn = useCallback(

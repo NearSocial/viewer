@@ -108,7 +108,7 @@ async function functionCall(
   deposit
 ) {
   try {
-    const wallet = await near.selector.wallet();
+    const wallet = await (await near.selector).wallet();
     return await wallet.signAndSendTransaction({
       receiverId: contractName,
       actions: [
@@ -227,7 +227,7 @@ async function updateAccount(near, walletState) {
 
 async function _initNear() {
   const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
-  const selector = await setupWalletSelector({
+  const selector = setupWalletSelector({
     network: IsMainnet ? "mainnet" : "testnet",
     modules: [
       setupNearWallet(),
@@ -241,6 +241,7 @@ async function _initNear() {
   const nearConnection = await nearAPI.connect(
     Object.assign({ deps: { keyStore } }, NearConfig)
   );
+
   const _near = {};
   _near.selector = selector;
 
@@ -323,8 +324,7 @@ async function _initNear() {
     ],
   });
 
-  await updateAccount(_near, selector.store.getState());
-
+  // updateAccount(_near, selector.store.getState());
   return _near;
 }
 
@@ -354,10 +354,12 @@ export const useAccountId = singletonHook(defaultAccountId, () => {
     if (!near) {
       return;
     }
-    near.selector.store.observable.subscribe(async (walletState) => {
-      await updateAccount(near, walletState);
+    near.selector.then((selector) => {
+      selector.store.observable.subscribe(async (walletState) => {
+        await updateAccount(near, walletState);
 
-      setAccountId(near.accountId);
+        setAccountId(near.accountId);
+      });
     });
   }, [near]);
 
