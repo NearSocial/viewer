@@ -213,6 +213,9 @@ class Cache {
       blockId,
       onInvalidate
     );
+    if (data === null) {
+      return null;
+    }
 
     if (keys.length === 1) {
       const parts = keys[0].split("/");
