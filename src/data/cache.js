@@ -13,6 +13,7 @@ const CacheStatus = {
   NotStarted: "NotStarted",
   InProgress: "InProgress",
   Done: "Done",
+  Invalidated: "Invalidated",
 };
 
 const CacheDebug = false;
@@ -67,18 +68,22 @@ class Cache {
     if (onInvalidate) {
       cached.invalidationCallbacks.push(onInvalidate);
     }
-    if (cached.status !== CacheStatus.NotStarted) {
+    if (
+      cached.status === CacheStatus.InProgress ||
+      cached.status === CacheStatus.Done
+    ) {
       return cached.result;
     }
+    if (cached.status === CacheStatus.NotStarted) {
+      this.innerGet(key).then((cachedResult) => {
+        if (cachedResult && cached.status === CacheStatus.InProgress) {
+          CacheDebug && console.log("Cached value", key, cachedResult);
+          cached.result = cachedResult;
+          invalidateCallbacks(cached, false);
+        }
+      });
+    }
     cached.status = CacheStatus.InProgress;
-    this.innerGet(key).then((cachedResult) => {
-      if (cachedResult && cached.status === CacheStatus.InProgress) {
-        CacheDebug && console.log("Cached value", key, cachedResult);
-        cached.result = cachedResult;
-        cached.status = CacheStatus.InProgress;
-        invalidateCallbacks(cached, false);
-      }
-    });
     promise().then((result) => {
       CacheDebug && console.log("Fetched result", key);
       cached.status = CacheStatus.Done;
@@ -90,7 +95,7 @@ class Cache {
       }
     });
     CacheDebug && console.log("New cache request", key);
-    return null;
+    return cached.result;
   }
 
   invalidateCache(data) {
@@ -138,7 +143,7 @@ class Cache {
     console.log("Cache invalidation", affectedKeys);
     affectedKeys.forEach(([stringKey, isFinal]) => {
       const cached = this.cache[stringKey];
-      cached.status = CacheStatus.NotStarted;
+      cached.status = CacheStatus.Invalidated;
       invalidateCallbacks(cached, isFinal);
     });
   }
