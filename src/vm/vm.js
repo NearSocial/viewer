@@ -444,6 +444,11 @@ class VmStack {
         throw new Error("Missing argument 'keys' for Social.keys");
       }
       return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
+    } else if (keyword === "Social" && callee === "index") {
+      if (args.length < 2) {
+        throw new Error("Missing argument 'action' and 'key` for Social.index");
+      }
+      return this.vm.cachedIndex(args[0], args[1], args[2]);
     } else if (keyword === "Near" && callee === "view") {
       if (args.length < 2) {
         throw new Error(
@@ -1067,7 +1072,7 @@ export default class VM {
     this.depth = depth;
   }
 
-  cachedPromise(key, promise) {
+  cachedPromise(promise) {
     const onInvalidate = () => {
       if (this.alive) {
         this.refreshCache();
@@ -1078,65 +1083,63 @@ export default class VM {
 
   cachedSocialGet(keys, recursive, blockId, options) {
     keys = Array.isArray(keys) ? keys : [keys];
-    return this.cachedPromise(
-      `get:${JSON.stringify({ keys, recursive, blockId, options })}`,
-      (onInvalidate) =>
-        this.cache.socialGet(
-          this.near,
-          keys,
-          recursive,
-          blockId,
-          options,
-          onInvalidate
-        )
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.socialGet(
+        this.near,
+        keys,
+        recursive,
+        blockId,
+        options,
+        onInvalidate
+      )
     );
   }
 
   cachedSocialKeys(keys, blockId, options) {
     keys = Array.isArray(keys) ? keys : [keys];
-    return this.cachedPromise(
-      `keys:${JSON.stringify({ keys, blockId, options })}`,
-      (onInvalidate) =>
-        this.cache.cachedViewCall(
-          this.near,
-          NearConfig.contractName,
-          "keys",
-          {
-            keys,
-            options,
-          },
-          blockId,
-          onInvalidate
-        )
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.cachedViewCall(
+        this.near,
+        NearConfig.contractName,
+        "keys",
+        {
+          keys,
+          options,
+        },
+        blockId,
+        onInvalidate
+      )
     );
   }
 
   cachedNearView(contractName, methodName, args, blockId) {
-    return this.cachedPromise(
-      `viewCall:${JSON.stringify({ contractName, methodName, args, blockId })}`,
-      (onInvalidate) =>
-        this.cache.cachedViewCall(
-          this.near,
-          contractName,
-          methodName,
-          args,
-          blockId,
-          onInvalidate
-        )
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.cachedViewCall(
+        this.near,
+        contractName,
+        methodName,
+        args,
+        blockId,
+        onInvalidate
+      )
     );
   }
 
   cachedNearBlock(blockId) {
-    return this.cachedPromise(
-      `block:${JSON.stringify({ blockId })}`,
-      (onInvalidate) => this.cache.cachedBlock(this.near, blockId, onInvalidate)
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.cachedBlock(this.near, blockId, onInvalidate)
     );
   }
 
   cachedFetch(url, options) {
-    return this.cachedPromise(
-      `fetch:${JSON.stringify({ url, options })}`,
-      (onInvalidate) => this.cache.cachedFetch(url, options, onInvalidate)
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.cachedFetch(url, options, onInvalidate)
+    );
+  }
+
+  cachedIndex(action, key, options) {
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.socialIndex(action, key, options, onInvalidate)
     );
   }
 
