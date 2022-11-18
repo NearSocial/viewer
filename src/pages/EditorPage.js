@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Widget } from "../components/Widget/Widget";
 import ls from "local-storage";
-import { LsKey, NearConfig, useNear } from "../data/near";
+import { LsKey, NearConfig, useAccountId, useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
-import { socialGet } from "../data/cache";
+import { useCache } from "../data/cache";
 import { CommitButton } from "../components/Commit";
 
 const EditorCodeKey = LsKey + "editorCode:";
@@ -45,7 +45,8 @@ export default function EditorPage(props) {
   const [propsError, setPropsError] = useState(null);
   const [metadata, setMetadata] = useState(undefined);
   const near = useNear();
-  const accountId = near?.accountId;
+  const cache = useCache();
+  const accountId = useAccountId();
 
   const [tab, setTab] = useState(Tab.Editor);
   const [layout, setLayoutState] = useState(
@@ -112,7 +113,15 @@ export default function EditorPage(props) {
           updateCode(DefaultEditorCode);
           setRenderCode(DefaultEditorCode);
         } else {
-          socialGet(near, widgetSrc).then((code) => {
+          const c = () => {
+            const code = cache.socialGet(
+              near,
+              widgetSrc,
+              false,
+              undefined,
+              undefined,
+              c
+            );
             if (code) {
               const widgetName = widgetSrc.split("/").slice(2).join("/");
               ls.set(WidgetNameKey, widgetName);
@@ -120,12 +129,14 @@ export default function EditorPage(props) {
               updateCode(code);
               setRenderCode(code);
             }
-          });
+          };
+
+          c();
         }
       }
       setWidgetPath(widgetSrc);
     }
-  }, [near, widgetSrc, updateCode]);
+  }, [near, cache, widgetSrc, updateCode]);
 
   const reformat = useCallback(
     (code) => {

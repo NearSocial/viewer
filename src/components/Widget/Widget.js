@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
@@ -7,7 +12,7 @@ import ConfirmTransaction from "../ConfirmTransaction";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
-import { socialGet } from "../../data/cache";
+import { socialGet, useCache } from "../../data/cache";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -34,12 +39,13 @@ export function Widget(props) {
   const [nonce, setNonce] = useState(0);
   const [code, setCode] = useState(null);
   const [state, setState] = useState(undefined);
-  const [cache, setCache] = useState({});
+  const [cacheNonce, setCacheNonce] = useState(0);
   const [parsedCode, setParsedCode] = useState(null);
   const [context, setContext] = useState({});
   const [vm, setVm] = useState(null);
   const [transaction, setTransaction] = useState(null);
 
+  const cache = useCache();
   const near = useNear();
   const accountId = useAccountId();
   const [element, setElement] = useState(null);
@@ -51,11 +57,18 @@ export function Widget(props) {
     setVm(null);
     if (src) {
       setCode(null);
-      socialGet(near, src.toString(), false, undefined, undefined, () => {
-        setNonce(nonce + 1);
-      })
-        .then(setCode)
-        .catch(() => setCode(null));
+      setCode(
+        cache.socialGet(
+          near,
+          src.toString(),
+          false,
+          undefined,
+          undefined,
+          () => {
+            setNonce(nonce + 1);
+          }
+        )
+      );
     } else {
       setCode(rawCode);
     }
@@ -101,7 +114,10 @@ export function Widget(props) {
       gkey,
       parsedCode.parsedCode,
       setState,
-      setCache,
+      cache,
+      () => {
+        setCacheNonce((cacheNonce) => cacheNonce + 1);
+      },
       confirmTransaction,
       depth
     );
@@ -120,7 +136,7 @@ export function Widget(props) {
     });
   }, [near, accountId]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!vm) {
       return;
     }
@@ -130,7 +146,6 @@ export function Widget(props) {
           props: codeProps || {},
           context,
           state,
-          cache,
         }) ?? "Execution failed"
       );
     } catch (e) {
@@ -143,7 +158,7 @@ export function Widget(props) {
       );
       console.error(e);
     }
-  }, [vm, codeProps, context, state, cache]);
+  }, [vm, codeProps, context, state, cacheNonce]);
 
   return element !== null && element !== undefined ? (
     <ErrorBoundary
@@ -157,7 +172,6 @@ export function Widget(props) {
         {element}
         {
           <ConfirmTransaction
-            near={near}
             transaction={transaction}
             onHide={() => setTransaction(null)}
           />

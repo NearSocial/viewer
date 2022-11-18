@@ -1,11 +1,5 @@
 import React from "react";
 import { Widget } from "../components/Widget/Widget";
-import {
-  cachedBlock,
-  cachedFetch,
-  cachedViewCall,
-  socialGet,
-} from "../data/cache";
 import { ipfsUpload, ipfsUrl, isObject, Loading } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
@@ -87,8 +81,17 @@ const Keywords = {
   styled: true,
 };
 
+const ReservedKeys = {
+  [ReactKey]: true,
+  constructor: true,
+  prototype: true,
+  __proto__: true,
+  __defineGetter__: true,
+  __defineSetter__: true,
+};
+
 const assertNotReservedKey = (key) => {
-  if (key === ReactKey) {
+  if (key in ReservedKeys) {
     throw new Error(`${key} is reserved and can't be used`);
   }
 };
@@ -336,8 +339,6 @@ class VmStack {
       }
     } else if (element === "Widget") {
       attributes.depth = this.vm.depth + 1;
-    } else if (element === "CommitButton") {
-      attributes.near = this.vm.near;
     }
 
     if (withChildren === false && code.children.length) {
@@ -443,6 +444,11 @@ class VmStack {
         throw new Error("Missing argument 'keys' for Social.keys");
       }
       return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
+    } else if (keyword === "Social" && callee === "index") {
+      if (args.length < 2) {
+        throw new Error("Missing argument 'action' and 'key` for Social.index");
+      }
+      return this.vm.cachedIndex(args[0], args[1], args[2]);
     } else if (keyword === "Near" && callee === "view") {
       if (args.length < 2) {
         throw new Error(
@@ -486,7 +492,7 @@ class VmStack {
       if (args.length < 1) {
         throw new Error("Missing argument 'obj' for JSON.stringify");
       }
-      return JSON.stringify(args[0], args[1] ?? undefined, args[2] ?? 2);
+      return JSON.stringify(args[0], args[1], args[2]);
     } else if (keyword === "JSON" && callee === "parse") {
       if (args.length < 1) {
         throw new Error("Missing argument 's' for JSON.parse");
@@ -724,6 +730,8 @@ class VmStack {
         return left === right;
       } else if (code.operator === "!==" || code.operator === "!=") {
         return left !== right;
+      } else if (code.operator === "in") {
+        return left in right;
       } else {
         throw new Error(
           "Unknown BinaryExpression operator '" + code.operator + "'"
@@ -1047,7 +1055,8 @@ export default class VM {
     gkey,
     code,
     setReactState,
-    setCache,
+    cache,
+    refreshCache,
     confirmTransaction,
     depth
   ) {
@@ -1058,109 +1067,85 @@ export default class VM {
     this.gkey = gkey;
     this.code = code;
     this.setReactState = setReactState;
-    this.setCache = setCache;
+    this.cache = cache;
+    this.refreshCache = refreshCache;
     this.confirmTransaction = confirmTransaction;
-    this.fetchingCache = {};
     this.alive = true;
     this.depth = depth;
-    this.localCache = {};
   }
 
-  cachedPromise(key, promise) {
-    if (key in this.localCache) {
-      return deepCopy(this.localCache[key]);
-    }
-    if (!(key in this.fetchingCache)) {
-      this.fetchingCache[key] = true;
-      const callThenCache = (onInvalidate) => {
-        promise(onInvalidate)
-          .then((data) => {
-            if (this.alive) {
-              this.localCache[key] = data;
-              this.setCache(Object.assign({}, this.localCache));
-            }
-          })
-          .catch((e) => {
-            console.error(e);
-            if (this.alive) {
-              this.localCache[key] = undefined;
-              this.setCache(Object.assign({}, this.localCache));
-            }
-          })
-          .finally(() => {
-            delete this.fetchingCache[key];
-          });
-      };
-      const onInvalidate = () => {
-        if (this.alive) {
-          delete this.fetchingCache[key];
-          callThenCache(onInvalidate);
-        }
-      };
-      callThenCache(onInvalidate);
-    }
-
-    return null;
+  cachedPromise(promise) {
+    const onInvalidate = () => {
+      if (this.alive) {
+        this.refreshCache();
+      }
+    };
+    return deepCopy(promise(onInvalidate));
   }
 
   cachedSocialGet(keys, recursive, blockId, options) {
     keys = Array.isArray(keys) ? keys : [keys];
-    return this.cachedPromise(
-      `get:${JSON.stringify({ keys, recursive, blockId, options })}`,
-      (onInvalidate) =>
-        socialGet(this.near, keys, recursive, blockId, options, onInvalidate)
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.socialGet(
+        this.near,
+        keys,
+        recursive,
+        blockId,
+        options,
+        onInvalidate
+      )
     );
   }
 
   cachedSocialKeys(keys, blockId, options) {
     keys = Array.isArray(keys) ? keys : [keys];
-    return this.cachedPromise(
-      `keys:${JSON.stringify({ keys, blockId, options })}`,
-      (onInvalidate) =>
-        cachedViewCall(
-          this.near,
-          NearConfig.contractName,
-          "keys",
-          {
-            keys,
-            options,
-          },
-          blockId,
-          onInvalidate
-        )
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.cachedViewCall(
+        this.near,
+        NearConfig.contractName,
+        "keys",
+        {
+          keys,
+          options,
+        },
+        blockId,
+        onInvalidate
+      )
     );
   }
 
   cachedNearView(contractName, methodName, args, blockId) {
-    return this.cachedPromise(
-      `viewCall:${JSON.stringify({ contractName, methodName, args, blockId })}`,
-      (onInvalidate) =>
-        cachedViewCall(
-          this.near,
-          contractName,
-          methodName,
-          args,
-          blockId,
-          onInvalidate
-        )
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.cachedViewCall(
+        this.near,
+        contractName,
+        methodName,
+        args,
+        blockId,
+        onInvalidate
+      )
     );
   }
 
   cachedNearBlock(blockId) {
-    return this.cachedPromise(
-      `block:${JSON.stringify({ blockId })}`,
-      (onInvalidate) => cachedBlock(this.near, blockId, onInvalidate)
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.cachedBlock(this.near, blockId, onInvalidate)
     );
   }
 
   cachedFetch(url, options) {
-    return this.cachedPromise(
-      `fetch:${JSON.stringify({ url, options })}`,
-      (onInvalidate) => cachedFetch(url, options, onInvalidate)
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.cachedFetch(url, options, onInvalidate)
     );
   }
 
-  renderCode({ props, context, state, cache }) {
+  cachedIndex(action, key, options) {
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.socialIndex(action, key, options, onInvalidate)
+    );
+  }
+
+  renderCode({ props, context, state }) {
     if (this.depth >= MaxDepth) {
       return "Too deep";
     }
@@ -1170,7 +1155,6 @@ export default class VM {
       context,
       state: deepCopy(state),
     };
-    this.cache = cache;
     this.loopLimit = LoopLimit;
     this.vmStack = new VmStack(this, undefined, this.state);
     const executionResult = this.vmStack.executeStatement(this.code);

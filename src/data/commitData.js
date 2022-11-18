@@ -89,7 +89,7 @@ export const asyncCommitData = async (near, originalData, forceRewrite) => {
 };
 
 export const requestPermissionAndCommit = async (near, data, deposit) => {
-  const wallet = await near.selector.wallet();
+  const wallet = await (await near.selector).wallet();
   return await wallet.signAndSendTransaction({
     receiverId: NearConfig.contractName,
     actions: [
