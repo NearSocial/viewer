@@ -11,6 +11,8 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import { Typeahead } from "react-bootstrap-typeahead";
 import styled, { isStyledComponent } from "styled-components";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { isString } from "url/util";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -68,6 +70,8 @@ const ApprovedTags = {
   small: true,
   InfiniteScroll: true,
   Typeahead: false,
+  Tooltip: true,
+  OverlayTrigger: true,
 };
 
 const Keywords = {
@@ -356,6 +360,14 @@ class VmStack {
       return <CommitButton {...attributes}>{children}</CommitButton>;
     } else if (element === "InfiniteScroll") {
       return <InfiniteScroll {...attributes}>{children}</InfiniteScroll>;
+    } else if (element === "Tooltip") {
+      return <Tooltip {...attributes}>{children}</Tooltip>;
+    } else if (element === "OverlayTrigger") {
+      return (
+        <OverlayTrigger {...attributes}>
+          {children.filter((c) => !isString(c) || !!c.trim())[0]}
+        </OverlayTrigger>
+      );
     } else if (element === "Typeahead") {
       return <Typeahead {...attributes} />;
     } else if (element === "Markdown") {
