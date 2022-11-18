@@ -730,6 +730,8 @@ class VmStack {
         return left === right;
       } else if (code.operator === "!==" || code.operator === "!=") {
         return left !== right;
+      } else if (code.operator === "in") {
+        return left in right;
       } else {
         throw new Error(
           "Unknown BinaryExpression operator '" + code.operator + "'"
