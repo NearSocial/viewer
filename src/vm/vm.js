@@ -492,7 +492,7 @@ class VmStack {
       if (args.length < 1) {
         throw new Error("Missing argument 'obj' for JSON.stringify");
       }
-      return JSON.stringify(args[0], args[1] ?? undefined, args[2] ?? 2);
+      return JSON.stringify(args[0], args[1], args[2]);
     } else if (keyword === "JSON" && callee === "parse") {
       if (args.length < 1) {
         throw new Error("Missing argument 's' for JSON.parse");
