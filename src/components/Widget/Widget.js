@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
@@ -131,7 +136,7 @@ export function Widget(props) {
     });
   }, [near, accountId]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!vm) {
       return;
     }
