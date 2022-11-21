@@ -588,13 +588,9 @@ class VmStack {
         return console.log(...args);
       }
     } else {
-      if (callee === keyword) {
-        return keywordType(...args);
-      } else {
-        const f = keywordType[callee];
-        if (typeof f === "function") {
-          return f(...args);
-        }
+      const f = callee === keyword ? keywordType : keywordType[callee];
+      if (typeof f === "function") {
+        return f(...args);
       }
     }
 
@@ -714,7 +710,7 @@ class VmStack {
         }
       }
       return quasis.join("");
-    } else if (type === "CallExpression") {
+    } else if (type === "CallExpression" || type === "NewExpression") {
       const { obj, key, keyword } = this.resolveMemberExpression(code.callee, {
         callee: true,
       });
