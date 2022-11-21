@@ -768,6 +768,12 @@ class VmStack {
         );
       }
     } else if (type === "UnaryExpression") {
+      if (code.operator === "delete") {
+        const { obj, key } = this.resolveMemberExpression(code.argument, {
+          left: true,
+        });
+        return delete obj?.[key];
+      }
       const argument = this.executeExpression(code.argument);
       if (code.operator === "-") {
         return -argument;
