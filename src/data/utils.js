@@ -41,13 +41,12 @@ const toCamel = (s) => {
   });
 };
 
-const isArray = function (a) {
-  return Array.isArray(a);
-};
+export const isArray = (a) => Array.isArray(a);
 
-export const isObject = function (o) {
-  return o === Object(o) && !isArray(o) && typeof o !== "function";
-};
+export const isObject = (o) =>
+  o === Object(o) && !isArray(o) && typeof o !== "function";
+
+export const isString = (s) => typeof s === "string";
 
 export const keysToCamel = function (o) {
   if (isObject(o)) {
@@ -189,8 +188,7 @@ export const estimateDataSize = (data, prevData) =>
         },
         isObject(prevData) ? 0 : EstimatedNodeSize
       )
-    : (data?.length || 8) -
-      (typeof prevData === "string" ? prevData.length : 0);
+    : (data?.length || 8) - (isString(prevData) ? prevData.length : 0);
 
 export const extractKeys = (data, prefix = "") =>
   Object.entries(data)
@@ -220,8 +218,7 @@ export const removeDuplicates = (data, prevData) => {
   return Object.keys(obj).length ? obj : undefined;
 };
 
-const stringify = (s) =>
-  typeof s === "string" || s === null ? s : JSON.stringify(s);
+const stringify = (s) => (isString(s) || s === null ? s : JSON.stringify(s));
 
 export const convertToStringLeaves = (data) => {
   return isObject(data)
