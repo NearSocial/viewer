@@ -1,6 +1,12 @@
 import React from "react";
 import { Widget } from "../components/Widget/Widget";
-import { ipfsUpload, ipfsUrl, isObject, Loading } from "../data/utils";
+import {
+  ipfsUpload,
+  ipfsUrl,
+  isObject,
+  isString,
+  Loading,
+} from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { NearConfig } from "../data/near";
@@ -12,7 +18,7 @@ import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import { Typeahead } from "react-bootstrap-typeahead";
 import styled, { isStyledComponent } from "styled-components";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { isString } from "url/util";
+import Big from "big.js";
 
 const LoopLimit = 10000;
 const MaxDepth = 32;
@@ -76,13 +82,16 @@ const ApprovedTags = {
 
 const Keywords = {
   JSON: true,
-  Object: true,
-  Date: true,
   Social: true,
   Near: true,
   State: true,
   console: true,
   styled: true,
+  Object: true,
+  Date: Date,
+  Number: Number,
+  Big: Big,
+  Math: Math,
 };
 
 const ReservedKeys = {
@@ -377,7 +386,7 @@ class VmStack {
     } else if (element === "IpfsImageUpload") {
       return (
         <div
-          className="image-upload"
+          className="d-inline-block"
           key={`${this.vm.gkey}-${this.vm.gIndex++}`}
         >
           {status.img?.cid && (
@@ -434,155 +443,159 @@ class VmStack {
     return key;
   }
 
-  callFunction(keyword, callee, args) {
-    if (
-      (keyword === "Social" && callee === "getr") ||
-      callee === "socialGetr"
-    ) {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'keys' for Social.getr");
-      }
-      return this.vm.cachedSocialGet(args[0], true, args[1], args[2]);
-    } else if (
-      (keyword === "Social" && callee === "get") ||
-      callee === "socialGet"
-    ) {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'keys' for Social.get");
-      }
-      return this.vm.cachedSocialGet(args[0], false, args[1], args[2]);
-    } else if (keyword === "Social" && callee === "keys") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'keys' for Social.keys");
-      }
-      return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
-    } else if (keyword === "Social" && callee === "index") {
-      if (args.length < 2) {
-        throw new Error("Missing argument 'action' and 'key` for Social.index");
-      }
-      return this.vm.cachedIndex(args[0], args[1], args[2]);
-    } else if (keyword === "Near" && callee === "view") {
-      if (args.length < 2) {
-        throw new Error(
-          "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
-        );
-      }
-      return this.vm.cachedNearView(...args);
-    } else if (keyword === "Near" && callee === "block") {
-      return this.vm.cachedNearBlock(...args);
-    } else if (keyword === "Near" && callee === "call") {
-      if (args.length < 2 || args.length > 5) {
-        throw new Error(
-          "Method: Near.call. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'gas' (defaults to 300Tg), 'deposit' (defaults to 0)"
-        );
-      }
-      this.vm.confirmTransaction({
-        contractName: args[0],
-        methodName: args[1],
-        args: args[2] ?? {},
-        gas: args[3],
-        deposit: args[4],
-      });
-      return;
-    } else if (callee === "fetch") {
-      if (args.length < 1) {
-        throw new Error(
-          "Method: fetch. Required arguments: 'url'. Optional: 'options'"
-        );
-      }
-      return this.vm.cachedFetch(...args);
-    } else if (callee === "parseInt") {
-      return parseInt(...args);
-    } else if (callee === "parseFloat") {
-      return parseFloat(...args);
-    } else if (callee === "isNaN") {
-      return isNaN(...args);
-    } else if (
-      (keyword === "JSON" && callee === "stringify") ||
-      callee === "stringify"
-    ) {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'obj' for JSON.stringify");
-      }
-      return JSON.stringify(args[0], args[1], args[2]);
-    } else if (keyword === "JSON" && callee === "parse") {
-      if (args.length < 1) {
-        throw new Error("Missing argument 's' for JSON.parse");
-      }
-      try {
-        const obj = JSON.parse(args[0]);
-        assertValidObject(obj);
-        return obj;
-      } catch (e) {
-        return null;
-      }
-    } else if (keyword === "Object") {
-      if (callee === "keys") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'obj' for Object.keys");
-        }
-        return Object.keys(args[0]);
-      } else if (callee === "values") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'obj' for Object.values");
-        }
-        return Object.values(args[0]);
-      } else if (callee === "entries") {
-        if (args.length < 1) {
-          throw new Error("Missing argument 'obj' for Object.entries");
-        }
-        return Object.entries(args[0]);
-      } else if (callee === "assign") {
-        const obj = Object.assign(...args);
-        assertValidObject(obj);
-        return obj;
-      } else if (callee === "fromEntries") {
-        const obj = Object.fromEntries(args[0]);
-        assertValidObject(obj);
-        return obj;
-      }
-    } else if (
-      (keyword === "State" && callee === "init") ||
-      callee === "initState"
-    ) {
-      if (args.length < 1) {
-        throw new Error("Missing argument 'initialState' for State.init");
-      }
+  callFunction(keyword, callee, args, optional) {
+    const keywordType = Keywords[keyword];
+    if (keywordType === true || keywordType === undefined) {
       if (
-        args[0] === null ||
-        typeof args[0] !== "object" ||
-        isReactObject(args[0])
+        (keyword === "Social" && callee === "getr") ||
+        callee === "socialGetr"
       ) {
-        throw new Error("'initialState' is not an object");
+        if (args.length < 1) {
+          throw new Error("Missing argument 'keys' for Social.getr");
+        }
+        return this.vm.cachedSocialGet(args[0], true, args[1], args[2]);
+      } else if (
+        (keyword === "Social" && callee === "get") ||
+        callee === "socialGet"
+      ) {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'keys' for Social.get");
+        }
+        return this.vm.cachedSocialGet(args[0], false, args[1], args[2]);
+      } else if (keyword === "Social" && callee === "keys") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'keys' for Social.keys");
+        }
+        return this.vm.cachedSocialKeys(args[0], args[1], args[2]);
+      } else if (keyword === "Social" && callee === "index") {
+        if (args.length < 2) {
+          throw new Error(
+            "Missing argument 'action' and 'key` for Social.index"
+          );
+        }
+        return this.vm.cachedIndex(args[0], args[1], args[2]);
+      } else if (keyword === "Near" && callee === "view") {
+        if (args.length < 2) {
+          throw new Error(
+            "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
+          );
+        }
+        return this.vm.cachedNearView(...args);
+      } else if (keyword === "Near" && callee === "block") {
+        return this.vm.cachedNearBlock(...args);
+      } else if (keyword === "Near" && callee === "call") {
+        if (args.length < 2 || args.length > 5) {
+          throw new Error(
+            "Method: Near.call. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'gas' (defaults to 300Tg), 'deposit' (defaults to 0)"
+          );
+        }
+        this.vm.confirmTransaction({
+          contractName: args[0],
+          methodName: args[1],
+          args: args[2] ?? {},
+          gas: args[3],
+          deposit: args[4],
+        });
+        return;
+      } else if (callee === "fetch") {
+        if (args.length < 1) {
+          throw new Error(
+            "Method: fetch. Required arguments: 'url'. Optional: 'options'"
+          );
+        }
+        return this.vm.cachedFetch(...args);
+      } else if (callee === "parseInt") {
+        return parseInt(...args);
+      } else if (callee === "parseFloat") {
+        return parseFloat(...args);
+      } else if (callee === "isNaN") {
+        return isNaN(...args);
+      } else if (
+        (keyword === "JSON" && callee === "stringify") ||
+        callee === "stringify"
+      ) {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'obj' for JSON.stringify");
+        }
+        return JSON.stringify(args[0], args[1], args[2]);
+      } else if (keyword === "JSON" && callee === "parse") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 's' for JSON.parse");
+        }
+        try {
+          const obj = JSON.parse(args[0]);
+          assertValidObject(obj);
+          return obj;
+        } catch (e) {
+          return null;
+        }
+      } else if (keyword === "Object") {
+        if (callee === "keys") {
+          if (args.length < 1) {
+            throw new Error("Missing argument 'obj' for Object.keys");
+          }
+          return Object.keys(args[0]);
+        } else if (callee === "values") {
+          if (args.length < 1) {
+            throw new Error("Missing argument 'obj' for Object.values");
+          }
+          return Object.values(args[0]);
+        } else if (callee === "entries") {
+          if (args.length < 1) {
+            throw new Error("Missing argument 'obj' for Object.entries");
+          }
+          return Object.entries(args[0]);
+        } else if (callee === "assign") {
+          const obj = Object.assign(...args);
+          assertValidObject(obj);
+          return obj;
+        } else if (callee === "fromEntries") {
+          const obj = Object.fromEntries(args[0]);
+          assertValidObject(obj);
+          return obj;
+        }
+      } else if (
+        (keyword === "State" && callee === "init") ||
+        callee === "initState"
+      ) {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'initialState' for State.init");
+        }
+        if (
+          args[0] === null ||
+          typeof args[0] !== "object" ||
+          isReactObject(args[0])
+        ) {
+          throw new Error("'initialState' is not an object");
+        }
+        if (this.vm.state.state === undefined) {
+          const newState = deepCopy(args[0]);
+          this.vm.setReactState(newState);
+          this.vm.state.state = newState;
+        }
+        return this.vm.state.state;
+      } else if (keyword === "State" && callee === "update") {
+        if (isObject(args[0])) {
+          this.vm.state.state = this.vm.state.state ?? {};
+          Object.assign(this.vm.state.state, deepCopy(args[0]));
+        }
+        if (this.vm.state.state === undefined) {
+          throw new Error("The error was not initialized");
+        }
+        this.vm.setReactState(this.vm.state.state);
+        return this.vm.state.state;
+      } else if (keyword === "console" && callee === "log") {
+        return console.log(...args);
       }
-      if (this.vm.state.state === undefined) {
-        const newState = deepCopy(args[0]);
-        this.vm.setReactState(newState);
-        this.vm.state.state = newState;
+    } else {
+      const f = callee === keyword ? keywordType : keywordType[callee];
+      if (typeof f === "function") {
+        return f(...args);
       }
-      return this.vm.state.state;
-    } else if (keyword === "State" && callee === "update") {
-      if (isObject(args[0])) {
-        this.vm.state.state = this.vm.state.state ?? {};
-        Object.assign(this.vm.state.state, deepCopy(args[0]));
-      }
-      if (this.vm.state.state === undefined) {
-        throw new Error("The error was not initialized");
-      }
-      this.vm.setReactState(this.vm.state.state);
-      return this.vm.state.state;
-    } else if (keyword === "console" && callee === "log") {
-      return console.log(...args);
-    } else if (callee === "Date") {
-      return new Date(...args);
-    } else if (keyword === "Date") {
-      if (callee === "now") {
-        return Date.now();
-      } else if (callee === "parse") {
-        return Date.parse(...args);
-      } else if (callee === "UTC") {
-        return Date.UTC(...args);
-      }
+    }
+
+    if (optional) {
+      return undefined;
     }
 
     throw new Error(
@@ -675,6 +688,8 @@ class VmStack {
           "Unknown AssignmentExpression operator '" + code.operator + "'"
         );
       }
+    } else if (type === "ChainExpression") {
+      return this.executeExpression(code.expression);
     } else if (type === "MemberExpression") {
       const { obj, key } = this.resolveMemberExpression(code);
       return obj?.[key];
@@ -695,7 +710,7 @@ class VmStack {
         }
       }
       return quasis.join("");
-    } else if (type === "CallExpression") {
+    } else if (type === "CallExpression" || type === "NewExpression") {
       const { obj, key, keyword } = this.resolveMemberExpression(code.callee, {
         callee: true,
       });
@@ -703,8 +718,11 @@ class VmStack {
       if (!keyword && obj?.[key] instanceof Function) {
         return obj?.[key](...args);
       } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
-        return this.callFunction(keyword ?? "", key, args);
+        return this.callFunction(keyword ?? "", key, args, code.optional);
       } else {
+        if (code.optional) {
+          return undefined;
+        }
         throw new Error("Not a function call expression");
       }
     } else if (type === "Literal" || type === "JSXText") {
@@ -750,6 +768,12 @@ class VmStack {
         );
       }
     } else if (type === "UnaryExpression") {
+      if (code.operator === "delete") {
+        const { obj, key } = this.resolveMemberExpression(code.argument, {
+          left: true,
+        });
+        return delete obj?.[key];
+      }
       const argument = this.executeExpression(code.argument);
       if (code.operator === "-") {
         return -argument;
