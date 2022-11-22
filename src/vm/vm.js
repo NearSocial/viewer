@@ -660,6 +660,18 @@ class VmStack {
     }
   }
 
+  getArray(elements) {
+    const result = [];
+    elements.forEach((element) => {
+      if (element.type === "SpreadElement") {
+        result.push(...this.executeExpression(element.argument));
+      } else {
+        result.push(this.executeExpression(element));
+      }
+    });
+    return result;
+  }
+
   executeExpressionInternal(code) {
     if (!code) {
       return null;
@@ -714,7 +726,7 @@ class VmStack {
       const { obj, key, keyword } = this.resolveMemberExpression(code.callee, {
         callee: true,
       });
-      const args = code.arguments.map((arg) => this.executeExpression(arg));
+      const args = this.getArray(code.arguments);
       if (!keyword && obj?.[key] instanceof Function) {
         return obj?.[key](...args);
       } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
@@ -831,15 +843,7 @@ class VmStack {
         return object;
       }, {});
     } else if (type === "ArrayExpression") {
-      const result = [];
-      code.elements.forEach((element) => {
-        if (element.type === "SpreadElement") {
-          result.push(...this.executeExpression(element.argument));
-        } else {
-          result.push(this.executeExpression(element));
-        }
-      });
-      return result;
+      return this.getArray(code.elements);
     } else if (type === "JSXEmptyExpression") {
       return null;
     } else if (type === "ArrowFunctionExpression") {
@@ -866,9 +870,7 @@ class VmStack {
         }
 
         if (code.tag.type === "CallExpression") {
-          const args = code.tag.arguments.map((arg) =>
-            this.executeExpression(arg)
-          );
+          const args = this.getArray(code.tag.arguments);
           const arg = args?.[0];
           if (!isStyledComponent(arg)) {
             throw new Error("styled() can only take `styled` components");
