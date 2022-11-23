@@ -78,7 +78,7 @@ function App(props) {
     if (!near) {
       return;
     }
-    const wallet = await near.selector.wallet();
+    const wallet = await (await near.selector).wallet();
     wallet.signOut();
     near.accountId = null;
     setSignedIn(false);
