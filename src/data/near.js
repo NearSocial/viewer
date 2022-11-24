@@ -207,7 +207,7 @@ async function updateAccount(near, walletState) {
     near.connectedContractId = null;
     walletState = selector.store.getState();
   }
-  near.accountId = walletState?.accounts?.[0]?.accountId;
+  near.accountId = walletState?.accounts?.[0]?.accountId ?? null;
   if (near.accountId) {
     near.publicKey = nearAPI.KeyPair.fromString(
       ls.get(
@@ -324,7 +324,6 @@ async function _initNear() {
     ],
   });
 
-  // updateAccount(_near, selector.store.getState());
   return _near;
 }
 
@@ -345,7 +344,7 @@ export const useNear = singletonHook(defaultNear, () => {
   return near;
 });
 
-const defaultAccountId = null;
+const defaultAccountId = undefined;
 export const useAccountId = singletonHook(defaultAccountId, () => {
   const [accountId, setAccountId] = useState(defaultAccountId);
   const near = useNear();
