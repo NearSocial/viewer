@@ -132,6 +132,7 @@ export function Widget(props) {
       return;
     }
     setContext({
+      loading: accountId === undefined,
       accountId,
     });
   }, [near, accountId]);
