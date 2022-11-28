@@ -4,81 +4,14 @@ import Logo from "../images/near_social_icon.svg";
 import { NearConfig, TGas, useAccountId, useNear } from "../data/near";
 import { Widget } from "./Widget/Widget";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { cachedViewCall, socialGet } from "../data/cache";
 import { Loading } from "../data/utils";
-
-async function fetchApps(near, onInvalidate) {
-  const taggedWidgets = await cachedViewCall(
-    near,
-    NearConfig.contractName,
-    "keys",
-    {
-      keys: ["*/widget/*/metadata/tags/app"],
-    },
-    "final",
-    onInvalidate
-  );
-
-  const keys = Object.entries(taggedWidgets)
-    .map((kv) => Object.keys(kv[1].widget).map((w) => `${kv[0]}/widget/${w}`))
-    .flat();
-
-  if (!keys.length) {
-    return [];
-  }
-
-  const widgetKeys = await cachedViewCall(
-    near,
-    NearConfig.contractName,
-    "keys",
-    {
-      keys,
-      options: {
-        return_type: "BlockHeight",
-      },
-    },
-    "final",
-    onInvalidate
-  );
-
-  const allMetadata = await cachedViewCall(
-    near,
-    NearConfig.contractName,
-    "get",
-    {
-      keys: keys.map((k) => `${k}/metadata/**`),
-    },
-    "final",
-    onInvalidate
-  );
-
-  const accounts = Object.entries(widgetKeys);
-
-  const allItems = accounts
-    .map((account) => {
-      const accountId = account[0];
-      const accountsMetadata = allMetadata[accountId]?.widget;
-      return Object.entries(account[1].widget).map((kv) => {
-        const widgetName = kv[0];
-        const metadata = accountsMetadata[widgetName]?.metadata;
-        return {
-          accountId,
-          widgetName,
-          blockHeight: kv[1],
-          metadata,
-        };
-      });
-    })
-    .flat();
-
-  allItems.sort((a, b) => b.blockHeight - a.blockHeight);
-  return allItems;
-}
+import { useCache } from "../data/cache";
 
 export function Sidebar(props) {
   const near = useNear();
   const accountId = useAccountId();
   const widgetSrc = props.widgetSrc;
+  const cache = useCache();
 
   const withdrawStorage = useCallback(
     async (e) => {
@@ -89,22 +22,13 @@ export function Sidebar(props) {
     [near]
   );
 
-  const [apps, setApps] = useState(null);
-
-  useEffect(() => {
-    if (!near) {
-      return;
-    }
-    fetchApps(near).then(setApps);
-  }, [near]);
-
   return (
     <div className="min-vh-100 vh-100">
       <div
         className="position-fixed h-100"
         style={{ width: "4rem", zIndex: 1000 }}
       >
-        <div className="h-100 d-flex flex-column flex-shrink-0 bg-light">
+        <div className="h-100 d-flex flex-column bg-light">
           <OverlayTrigger
             placement="right"
             overlay={<Tooltip>Near Social</Tooltip>}
@@ -122,55 +46,22 @@ export function Sidebar(props) {
             </Link>
           </OverlayTrigger>
 
-          <ul className="nav nav-pills nav-flush flex-column mb-auto text-center">
-            {apps ? (
-              apps.map((app) => {
-                const widgetSrc = `${app.accountId}/widget/${app.widgetName}`;
-                return (
-                  <OverlayTrigger
-                    placement="right"
-                    overlay={
-                      <Tooltip>{app.metadata?.name || app.widgetName}</Tooltip>
-                    }
-                    key={widgetSrc}
-                  >
-                    <li className="nav-item">
-                      <Link
-                        to={`/${widgetSrc}`}
-                        className="nav-link py-3 border-bottom" // todo active
-                        aria-current="page"
-                        title="Home"
-                        style={{ borderRadius: 0 }}
-                      >
-                        <div
-                          className="d-inline-block"
-                          style={{ width: "2em", height: "2em" }}
-                        >
-                          <Widget
-                            src={NearConfig.widgets.image}
-                            props={{
-                              image: app.metadata?.image,
-                              className: "w-100 h-100 shadow",
-                              style: {
-                                objectFit: "cover",
-                                borderRadius: "0.4em",
-                              },
-                              thumbnail: false,
-                              fallbackUrl:
-                                "https://ipfs.near.social/ipfs/bafkreido7gsk4dlb63z3s5yirkkgrjs2nmyar5bxyet66chakt2h5jve6e",
-                              alt: app.widgetName,
-                            }}
-                          />
-                        </div>
-                      </Link>
-                    </li>
-                  </OverlayTrigger>
-                );
-              })
-            ) : (
-              <li className="nav-item">{Loading}</li>
-            )}
-          </ul>
+          <div className="flex-shrink-1 overflow-hidden">
+            <ul className="nav nav-pills nav-flush flex-column mb-auto text-center">
+              <Widget
+                src={NearConfig.widgets.navigationApps}
+                props={{ tag: "app" }}
+              />
+            </ul>
+          </div>
+          <OverlayTrigger
+            placement="right"
+            overlay={<Tooltip>Notifications</Tooltip>}
+          >
+            <div className="d-block py-1 text-center link-dark text-decoration-none border-top">
+              <Widget src={NearConfig.widgets.notificationButton} />
+            </div>
+          </OverlayTrigger>
           <div className="dropend border-top">
             <OverlayTrigger
               placement="right"
