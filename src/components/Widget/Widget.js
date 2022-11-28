@@ -109,23 +109,24 @@ export function Widget(props) {
       return;
     }
     setState(undefined);
-    const vm = new VM(
+    const vm = new VM({
       near,
       gkey,
-      parsedCode.parsedCode,
-      setState,
+      code: parsedCode.parsedCode,
+      setReactState: setState,
       cache,
-      () => {
+      refreshCache: () => {
         setCacheNonce((cacheNonce) => cacheNonce + 1);
       },
       confirmTransaction,
-      depth
-    );
+      depth,
+      widgetSrc: src,
+    });
     setVm(vm);
     return () => {
       vm.alive = false;
     };
-  }, [near, gkey, parsedCode, depth]);
+  }, [src, near, gkey, parsedCode, depth]);
 
   useEffect(() => {
     if (!near) {

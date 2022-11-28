@@ -32,6 +32,11 @@ const StakeKey = "state";
 const ExpressionDebug = false;
 const StatementDebug = false;
 
+const StorageType = {
+  Private: "private",
+  Public: "public",
+};
+
 const ApprovedTags = {
   h1: true,
   h2: true,
@@ -83,6 +88,7 @@ const ApprovedTags = {
 const Keywords = {
   JSON: true,
   Social: true,
+  Storage: true,
   Near: true,
   State: true,
   console: true,
@@ -262,31 +268,35 @@ class VmStack {
       attributes.className = "btn btn-outline-primary";
     }
 
-    const attributesMap = (
-      code.type === "JSXFragment" ? code.openingFragment : code.openingElement
-    ).attributes.reduce((obj, attribute) => {
-      if (attribute.type !== "JSXAttribute") {
-        throw new Error("Non JSXAttribute: " + attribute.type);
-      }
-      const name = requireJSXIdentifier(attribute.name);
-      obj[name] = attribute.value;
-      return obj;
-    }, {});
+    const rawAttributes = {};
 
-    Object.entries(attributesMap).forEach(([name, value]) => {
-      if (value === null) {
-        attributes[name] = true;
+    (code.type === "JSXFragment"
+      ? code.openingFragment
+      : code.openingElement
+    ).attributes.forEach((attribute) => {
+      if (attribute.type === "JSXAttribute") {
+        const name = requireJSXIdentifier(attribute.name);
+        attributes[name] =
+          attribute.value === null
+            ? true
+            : this.executeExpression(attribute.value);
+        if (name === "value" || name === "image" || name === "onChange") {
+          rawAttributes[name] = attribute.value;
+        }
+      } else if (attribute.type === "JSXSpreadAttribute") {
+        const value = this.executeExpression(attribute.argument);
+        Object.assign(attributes, value);
       } else {
-        attributes[name] = this.executeExpression(value);
+        throw new Error("Unknown attribute type: " + attribute.type);
       }
     });
 
-    Object.entries(attributesMap).forEach(([name, value]) => {
+    Object.entries(rawAttributes).forEach(([name, value]) => {
       if (
         name === "value" &&
         element === "input" &&
         value.type === "JSXExpressionContainer" &&
-        !("onChange" in attributesMap)
+        !("onChange" in rawAttributes)
       ) {
         const { obj, key } = this.resolveMemberExpression(value.expression, {
           requireState: true,
@@ -584,6 +594,54 @@ class VmStack {
         }
         this.vm.setReactState(this.vm.state.state);
         return this.vm.state.state;
+      } else if (keyword === "Storage" && callee === "privateSet") {
+        if (args.length < 2) {
+          throw new Error(
+            "Missing argument 'key' or 'value' for Storage.privateSet"
+          );
+        }
+        return this.vm.storageSet(
+          {
+            src: this.vm.widgetSrc,
+            type: StorageType.Private,
+          },
+          args[0],
+          args[1]
+        );
+      } else if (keyword === "Storage" && callee === "privateGet") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'key' for Storage.privateGet");
+        }
+        return this.vm.storageGet(
+          {
+            src: this.vm.widgetSrc,
+            type: StorageType.Private,
+          },
+          args[0]
+        );
+      } else if (keyword === "Storage" && callee === "set") {
+        if (args.length < 2) {
+          throw new Error("Missing argument 'key' or 'value' for Storage.set");
+        }
+        return this.vm.storageSet(
+          {
+            src: this.vm.widgetSrc,
+            type: StorageType.Public,
+          },
+          args[0],
+          args[1]
+        );
+      } else if (keyword === "Storage" && callee === "get") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'key' for Storage.get");
+        }
+        return this.vm.storageGet(
+          {
+            src: args[1] ?? this.vm.widgetSrc,
+            type: StorageType.Public,
+          },
+          args[0]
+        );
       } else if (keyword === "console" && callee === "log") {
         return console.log(...args);
       }
@@ -1088,19 +1146,25 @@ class VmStack {
 }
 
 export default class VM {
-  constructor(
-    near,
-    gkey,
-    code,
-    setReactState,
-    cache,
-    refreshCache,
-    confirmTransaction,
-    depth
-  ) {
+  constructor(options) {
+    const {
+      near,
+      gkey,
+      code,
+      setReactState,
+      cache,
+      refreshCache,
+      confirmTransaction,
+      depth,
+      widgetSrc,
+    } = options;
+
     if (!code) {
       throw new Error("Not a program");
     }
+
+    this.alive = true;
+
     this.near = near;
     this.gkey = gkey;
     this.code = code;
@@ -1108,8 +1172,8 @@ export default class VM {
     this.cache = cache;
     this.refreshCache = refreshCache;
     this.confirmTransaction = confirmTransaction;
-    this.alive = true;
     this.depth = depth;
+    this.widgetSrc = widgetSrc;
   }
 
   cachedPromise(promise) {
@@ -1133,6 +1197,16 @@ export default class VM {
         onInvalidate
       )
     );
+  }
+
+  storageGet(domain, key) {
+    return this.cachedPromise((onInvalidate) =>
+      this.cache.localStorageGet(domain, key, onInvalidate)
+    );
+  }
+
+  storageSet(domain, key, value) {
+    return this.cache.localStorageSet(domain, key, value);
   }
 
   cachedSocialKeys(keys, blockId, options) {
