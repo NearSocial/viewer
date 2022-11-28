@@ -7,6 +7,7 @@ const Action = {
   ViewCall: "ViewCall",
   Fetch: "Fetch",
   Block: "Block",
+  LocalStorage: "LocalStorage",
 };
 
 const CacheStatus = {
@@ -53,11 +54,12 @@ class Cache {
   async innerGet(key) {
     return (await this.dbPromise).get(CacheDbObject, key);
   }
+
   async innerSet(key, val) {
     return (await this.dbPromise).put(CacheDbObject, val, key);
   }
 
-  cachedPromise(key, promise, onInvalidate) {
+  cachedPromise(key, promise, onInvalidate, forceCachedValue) {
     key = JSON.stringify(key);
     const cached = this.cache[key] || {
       status: CacheStatus.NotStarted,
@@ -76,7 +78,10 @@ class Cache {
     }
     if (cached.status === CacheStatus.NotStarted) {
       this.innerGet(key).then((cachedResult) => {
-        if (cachedResult && cached.status === CacheStatus.InProgress) {
+        if (
+          (cachedResult || forceCachedValue) &&
+          cached.status === CacheStatus.InProgress
+        ) {
           CacheDebug && console.log("Cached value", key, cachedResult);
           cached.result = cachedResult;
           invalidateCallbacks(cached, false);
@@ -84,16 +89,18 @@ class Cache {
       });
     }
     cached.status = CacheStatus.InProgress;
-    promise().then((result) => {
-      CacheDebug && console.log("Fetched result", key);
-      cached.status = CacheStatus.Done;
-      if (JSON.stringify(result) !== JSON.stringify(cached.result)) {
-        cached.result = result;
-        this.innerSet(key, result);
-        CacheDebug && console.log("Replacing value", key, result);
-        invalidateCallbacks(cached, false);
-      }
-    });
+    if (promise) {
+      promise().then((result) => {
+        CacheDebug && console.log("Fetched result", key);
+        cached.status = CacheStatus.Done;
+        if (JSON.stringify(result) !== JSON.stringify(cached.result)) {
+          cached.result = result;
+          this.innerSet(key, result);
+          CacheDebug && console.log("Replacing value", key, result);
+          invalidateCallbacks(cached, false);
+        }
+      });
+    }
     CacheDebug && console.log("New cache request", key);
     return cached.result;
   }
@@ -267,6 +274,40 @@ class Cache {
     );
 
     return res?.ok ? res.body : null;
+  }
+
+  localStorageGet(domain, key, onInvalidate) {
+    return this.cachedPromise(
+      {
+        action: Action.LocalStorage,
+        domain,
+        key,
+      },
+      undefined,
+      onInvalidate,
+      true
+    );
+  }
+
+  localStorageSet(domain, key, value) {
+    key = JSON.stringify({
+      action: Action.LocalStorage,
+      domain,
+      key,
+    });
+    const cached = this.cache[key] || {
+      status: CacheStatus.NotStarted,
+      invalidationCallbacks: [],
+      result: null,
+    };
+    this.cache[key] = cached;
+    cached.status = CacheStatus.Done;
+    if (JSON.stringify(value) !== JSON.stringify(cached.result)) {
+      cached.result = value;
+      this.innerSet(key, value);
+      CacheDebug && console.log("Replacing value", key, value);
+      invalidateCallbacks(cached, false);
+    }
   }
 }
 

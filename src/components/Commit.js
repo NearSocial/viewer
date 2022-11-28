@@ -133,21 +133,10 @@ export const CommitButton = (props) => {
   const accountId = useAccountId();
   const cache = useCache();
 
-  const data = props.data;
-  const children = props.children;
-  const originalOnClick = props.onClick;
-  const onCommit = props.onCommit;
-  const disabled = props.disabled;
-  const filteredProps = Object.assign({}, props);
-  delete filteredProps.data;
-  delete filteredProps.onClick;
-  delete filteredProps.children;
-  delete filteredProps.onCommit;
-  delete filteredProps.disabled;
+  const { data, children, onClick, onCommit, disabled, force, ...rest } = props;
 
   const [loading, setLoading] = useState(false);
 
-  const forceRewrite = !!props.forceRewrite;
   const [lastData, setLastData] = useState(null);
   const [commit, setCommit] = useState(null);
 
@@ -163,21 +152,21 @@ export const CommitButton = (props) => {
     }
     setLastData(data);
     setCommit(null);
-    prepareCommit(near, data, forceRewrite).then((newCommit) => {
+    prepareCommit(near, data, force).then((newCommit) => {
       setCommit(newCommit);
     });
-  }, [loading, data, lastData, forceRewrite, near, accountId]);
+  }, [loading, data, lastData, force, near, accountId]);
 
   return (
     <>
       <button
-        {...filteredProps}
+        {...rest}
         disabled={disabled || loading || !near?.accountId}
         onClick={(e) => {
           e.preventDefault();
           setLoading(true);
-          if (originalOnClick) {
-            originalOnClick();
+          if (onClick) {
+            onClick();
           }
         }}
       >

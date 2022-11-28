@@ -18,7 +18,6 @@ import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
-import Logo from "./images/near_social_combo.svg";
 import { Sidebar } from "./components/Sidebar";
 
 export const refreshAllowanceObj = {};
@@ -70,7 +69,7 @@ function App(props) {
     if (!near) {
       return;
     }
-    const wallet = await near.selector.wallet();
+    const wallet = await (await near.selector).wallet();
     wallet.signOut();
     near.accountId = null;
     setSignedIn(false);
