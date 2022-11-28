@@ -19,6 +19,7 @@ import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
 import Logo from "./images/near_social_combo.svg";
+import { Widget } from "./components/Widget/Widget";
 
 export const refreshAllowanceObj = {};
 
