@@ -108,6 +108,7 @@ function App(props) {
     availableStorage,
     widgetSrc,
     logOut,
+    requestSignIn,
   };
 
   return (

@@ -67,6 +67,7 @@ export function Sidebar(props) {
                 id="dropdownWidgets"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
+                data-bs-offset="-62,16"
               >
                 <i className="bi bi-gear-fill fs-4"></i>
               </a>
@@ -117,6 +118,7 @@ export function Sidebar(props) {
                 id="dropdownUser"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
+                data-bs-offset="-1,12"
               >
                 <div
                   className="d-inline-block"
