@@ -45,6 +45,7 @@ const TestNearConfig = {
     widgetMetadataEditor: "eugenethedream/widget/WidgetMetadataEditor",
     widgetMetadata: "eugenethedream/widget/WidgetMetadata",
     profileImage: "eugenethedream/widget/ProfileImage",
+    notificationButton: "eugenethedream/widget/NotificationButton",
   },
   apiUrl: null,
   finalSynchronizationDelayMs: 3000,
