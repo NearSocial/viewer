@@ -991,6 +991,7 @@ class VmStack {
                   id: arg?.target?.id,
                   dataset: arg?.target?.dataset,
                   href: arg?.target?.href,
+                  checked: arg?.target?.checked,
                 },
                 data: arg?.data,
                 code: arg?.code,
