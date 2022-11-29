@@ -30,12 +30,28 @@ a {
 
 #sidebar {
   border-right: 1px solid #e5e5e5;
-  height: 100%;
   position: fixed;
   width: 4em;
   z-index: 1000;
   top: 0;
   left: 0;
+  height: 100vh !important;
+
+}
+
+.sidebar-items {
+  &> div {
+    border-bottom: 1px solid #e5e5e5;
+    text-align: center;
+    height: 4em;
+    width: 4em;
+    display: flex;
+  }
+
+  &> div:not(.apps) {
+    align-items: center !important;
+    justify-content: center !important;
+  }
 }
 
 #content {
@@ -44,7 +60,7 @@ a {
 
 @media screen and (max-device-width:575px) {
   #sidebar:not(.show) {
-    display: none;
+    display: none !important;
   }
   #content:not(.show) {
     margin-left: 0;
