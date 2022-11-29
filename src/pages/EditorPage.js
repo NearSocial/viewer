@@ -200,7 +200,7 @@ export default function EditorPage(props) {
   );
 
   return (
-    <div className="container">
+    <div className="container mt-3">
       <div className="min-vh-100 d-flex align-content-start">
         <div className="me-2">
           <div

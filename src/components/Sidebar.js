@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../images/near_social_icon.svg";
+import LogoHorizontal from "../images/near_social_combo.svg";
 import { NearConfig, TGas, useAccountId, useNear } from "../data/near";
 import { Widget } from "./Widget/Widget";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { Loading } from "../data/utils";
-import { useCache } from "../data/cache";
 
 export function Sidebar(props) {
   const near = useNear();
   const accountId = useAccountId();
   const widgetSrc = props.widgetSrc;
-  const cache = useCache();
+  const [show, setShow] = useState(false);
 
   const withdrawStorage = useCallback(
     async (e) => {
@@ -24,10 +23,7 @@ export function Sidebar(props) {
 
   return (
     <div className="min-vh-100 vh-100">
-      <div
-        className="position-fixed h-100"
-        style={{ width: "4rem", zIndex: 1000 }}
-      >
+      <div id="sidebar" className={show ? "show" : ""}>
         <div className="h-100 d-flex flex-column bg-light">
           <OverlayTrigger
             placement="right"
@@ -46,13 +42,10 @@ export function Sidebar(props) {
             </Link>
           </OverlayTrigger>
 
-          <div className="flex-shrink-1 overflow-hidden">
-            <ul className="nav nav-pills nav-flush flex-column mb-auto text-center">
-              <Widget
-                src={NearConfig.widgets.navigationApps}
-                props={{ tag: "app" }}
-              />
-            </ul>
+          <div className="flex-grow-1 flex-shrink-1 overflow-hidden">
+            {NearConfig.widgets.navigationApps && (
+              <Widget src={NearConfig.widgets.navigationApps} />
+            )}
           </div>
           <OverlayTrigger
             placement="right"
@@ -181,7 +174,24 @@ export function Sidebar(props) {
           </div>
         </div>
       </div>
-      <div style={{ marginLeft: "4.5rem" }}>{props.children}</div>
+      <div className="navbar fixed-top d-sm-none bg-light w-100 pb-2">
+        <div className="container-fluid">
+          <button className="navbar-toggler" onClick={() => setShow(!show)}>
+            <span className="navbar-toggler-icon" />
+          </button>
+          <Link className="navbar-brand" to="/" title="Near Social">
+            <img
+              src={LogoHorizontal}
+              alt="Near Social logo horizontal"
+              height="24"
+              className="d-inline-block align-text-top me-2"
+            />
+          </Link>
+        </div>
+      </div>
+      <div id="content" className={show ? "show" : ""}>
+        {props.children}
+      </div>
     </div>
   );
 }

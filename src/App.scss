@@ -4,7 +4,6 @@ body, html {
   -webkit-font-smoothing: antialiased;
 }
 
-
 .pointer {
   cursor: pointer;
 }
@@ -26,5 +25,31 @@ a {
   }
   &.btn {
     text-decoration: none;
+  }
+}
+
+#sidebar {
+  border-right: 1px solid #e5e5e5;
+  height: 100%;
+  position: fixed;
+  width: 4em;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+}
+
+#content {
+  margin-left: 4em;
+}
+
+@media screen and (max-device-width:575px) {
+  #sidebar:not(.show) {
+    display: none;
+  }
+  #content:not(.show) {
+    margin-left: 0;
+  }
+  #content {
+    padding-top: 4em;
   }
 }
