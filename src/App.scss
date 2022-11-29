@@ -32,11 +32,14 @@ a {
   border-right: 1px solid #e5e5e5;
   position: fixed;
   width: 4em;
-  z-index: 1000;
+  z-index: 1100;
   top: 0;
   left: 0;
   height: 100vh !important;
+}
 
+.navbar {
+  z-index: 1110;
 }
 
 .sidebar-items {
