@@ -189,6 +189,7 @@ class Cache {
       },
       async () => {
         options = {
+          mode: "no-cors",
           method: options?.method,
           headers: options?.headers,
           body: options?.body,
