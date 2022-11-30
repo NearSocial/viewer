@@ -67,7 +67,7 @@ export const MainNearConfig = {
     widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
     widgetMetadata: "mob.near/widget/WidgetMetadata",
     profileImage: "mob.near/widget/ProfileImage",
-    navigationApps: "mob.near/widget/AppsTbd",
+    navigationApps: "mob.near/widget/AppsTbdHor",
     notificationButton: "mob.near/widget/NotificationButton",
   },
   apiUrl: "https://api.near.social",
