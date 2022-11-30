@@ -200,7 +200,7 @@ export default function EditorPage(props) {
   );
 
   return (
-    <div className="container">
+    <div className="container-fluid mt-1">
       <div className="min-vh-100 d-flex align-content-start">
         <div className="me-2">
           <div
@@ -261,7 +261,7 @@ export default function EditorPage(props) {
                     Props
                   </button>
                 </li>
-                {NearConfig.widgetMetadataEditor && (
+                {NearConfig.widgets.widgetMetadataEditor && (
                   <li className="nav-item">
                     <button
                       className={`nav-link ${
@@ -360,14 +360,15 @@ export default function EditorPage(props) {
               </div>
               <div
                 className={`${
-                  tab === Tab.Metadata && NearConfig.widgetMetadataEditor
+                  tab === Tab.Metadata &&
+                  NearConfig.widgets.widgetMetadataEditor
                     ? ""
                     : "visually-hidden"
                 }`}
               >
                 <div className="mb-3">
                   <Widget
-                    src={NearConfig.widgetMetadataEditor}
+                    src={NearConfig.widgets.widgetMetadataEditor}
                     props={useMemo(
                       () => ({
                         widgetPath,
@@ -405,7 +406,7 @@ export default function EditorPage(props) {
                 <div className="row">
                   <div className="d-inline-block position-relative overflow-hidden">
                     <Widget
-                      src={NearConfig.widgetMetadata}
+                      src={NearConfig.widgets.widgetMetadata}
                       props={useMemo(
                         () => ({ metadata, accountId, widgetName }),
                         [metadata, accountId, widgetName]

@@ -9,7 +9,7 @@ export default function ViewPage(props) {
   const query = useQuery();
   const [widgetProps, setWidgetProps] = useState({});
 
-  const src = widgetSrc || NearConfig.defaultWidget;
+  const src = widgetSrc || NearConfig.widgets.default;
   const setWidgetSrc = props.setWidgetSrc;
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function ViewPage(props) {
   useEffect(() => {
     setTimeout(() => {
       setWidgetSrc(
-        src === NearConfig.viewSourceWidget && query.get("src")
+        src === NearConfig.widgets.viewSource && query.get("src")
           ? {
               edit: query.get("src"),
               view: null,

@@ -18,8 +18,7 @@ import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
-import Logo from "./images/near_social_combo.svg";
-import { Widget } from "./components/Widget/Widget";
+import { Sidebar } from "./components/Sidebar";
 
 export const refreshAllowanceObj = {};
 
@@ -28,8 +27,8 @@ function App(props) {
   const [signedIn, setSignedIn] = useState(false);
   const [signedAccountId, setSignedAccountId] = useState(null);
   const [availableStorage, setAvailableStorage] = useState(null);
-  const [widgetSrc, setWidgetSrc] = useState(null);
   const [walletModal, setWalletModal] = useState(null);
+  const [widgetSrc, setWidgetSrc] = useState(null);
 
   const near = useNear();
   const accountId = useAccountId();
@@ -66,15 +65,6 @@ function App(props) {
     [walletModal]
   );
 
-  const withdrawStorage = useCallback(
-    async (e) => {
-      e && e.preventDefault();
-      await near.contract.storage_withdraw({}, TGas.mul(30).toFixed(0), "1");
-      return false;
-    },
-    [near]
-  );
-
   const logOut = useCallback(async () => {
     if (!near) {
       return;
@@ -91,7 +81,7 @@ function App(props) {
       "You're out of access key allowance. Need sign in again to refresh it"
     );
     await logOut();
-    await requestSignIn();
+    requestSignIn();
   }, [logOut, requestSignIn]);
   refreshAllowanceObj.refreshAllowance = refreshAllowance;
 
@@ -115,104 +105,11 @@ function App(props) {
     signedAccountId,
     signedIn,
     connected,
+    availableStorage,
+    widgetSrc,
+    logOut,
+    requestSignIn,
   };
-
-  const header = !connected ? (
-    <div>
-      Connecting...{" "}
-      <span
-        className="spinner-grow spinner-grow-sm"
-        role="status"
-        aria-hidden="true"
-      />
-    </div>
-  ) : signedIn ? (
-    <div>
-      <button
-        className="btn btn-outline-dark m-1 border-0"
-        onClick={(e) => withdrawStorage(e)}
-        title={`Withdraw all available storage`}
-      >
-        Available {availableStorage && availableStorage.div(1000).toFixed(2)}kb
-      </button>
-      <button className="btn btn-outline-dark m-1" onClick={(e) => logOut(e)}>
-        Sign out {signedAccountId}
-      </button>
-    </div>
-  ) : (
-    <div>
-      <button
-        className="btn btn-outline-dark m-1"
-        onClick={(e) => requestSignIn(e)}
-      >
-        Sign in with NEAR Wallet
-      </button>
-    </div>
-  );
-  const nav = (
-    <nav className="navbar navbar-expand-lg bg-light mb-3">
-      <div className="container-fluid">
-        <Link className="navbar-brand" to="/" title="Near Social">
-          <img
-            src={Logo}
-            alt="Near Social logo horizontal"
-            height="24"
-            className="d-inline-block align-text-top me-2"
-          />
-          {!IsMainnet && "Testnet"}
-        </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-lg-0">
-            <li className="nav-item">
-              <Link
-                className="btn btn-outline-dark border-0 m-1"
-                aria-current="page"
-                to="/edit/new"
-              >
-                New widget
-              </Link>
-            </li>
-            {widgetSrc?.edit && (
-              <li className="nav-item">
-                <Link
-                  className="btn btn-outline-dark border-0 m-1"
-                  aria-current="page"
-                  to={`/edit/${widgetSrc.edit}`}
-                >
-                  {widgetSrc.edit.startsWith(`${signedAccountId}/widget/`)
-                    ? "Edit widget"
-                    : "Fork widget"}
-                </Link>
-              </li>
-            )}
-            {widgetSrc?.view && (
-              <li className="nav-item">
-                <Link
-                  className="btn btn-outline-dark border-0 m-1"
-                  aria-current="page"
-                  to={`/${NearConfig.viewSourceWidget}?src=${widgetSrc?.view}`}
-                >
-                  View source
-                </Link>
-              </li>
-            )}
-          </ul>
-          <form className="d-flex">{header}</form>
-        </div>
-      </div>
-    </nav>
-  );
 
   return (
     <div className="App">
@@ -222,16 +119,14 @@ function App(props) {
             <EmbedPage {...passProps} />
           </Route>
           <Route path={"/edit/:widgetSrc*"}>
-            <>
-              {nav}
+            <Sidebar {...passProps}>
               <EditorPage {...passProps} />
-            </>
+            </Sidebar>
           </Route>
           <Route path={"/:widgetSrc*"}>
-            <>
-              {nav}
+            <Sidebar {...passProps}>
               <ViewPage {...passProps} />
-            </>
+            </Sidebar>
           </Route>
         </Switch>
       </Router>
