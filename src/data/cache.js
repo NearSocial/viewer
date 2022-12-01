@@ -289,6 +289,16 @@ class Cache {
     );
   }
 
+  asyncLocalStorageGet(domain, key) {
+    key = JSON.stringify({
+      action: Action.LocalStorage,
+      domain,
+      key,
+    });
+
+    return this.innerGet(key);
+  }
+
   localStorageSet(domain, key, value) {
     key = JSON.stringify({
       action: Action.LocalStorage,

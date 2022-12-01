@@ -8,11 +8,25 @@ import { useHistory, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { useCache } from "../data/cache";
 import { CommitButton } from "../components/Commit";
+import { Nav } from "react-bootstrap";
+import RenameModal from "../components/Editor/RenameModal";
+import OpenModal from "../components/Editor/OpenModal";
 
-const EditorCodeKey = LsKey + "editorCode:";
+const StorageDomain = {
+  page: "editor",
+};
+
+const StorageType = {
+  Code: "code",
+  Files: "files",
+};
+
+const Filetype = {
+  Widget: "widget",
+  Module: "module",
+};
+
 const EditorLayoutKey = LsKey + "editorLayout:";
-const WidgetNameKey = LsKey + "widgetName:";
-const LastWidgetPathKey = LsKey + "widgetPath:";
 const WidgetPropsKey = LsKey + "widgetProps:";
 
 const DefaultEditorCode = "return <div>Hello World</div>;";
@@ -34,9 +48,14 @@ export default function EditorPage(props) {
   const history = useHistory();
   const setWidgetSrc = props.setWidgetSrc;
 
-  const [code, setCode] = useState(ls.get(EditorCodeKey) || DefaultEditorCode);
-  const [widgetName, setWidgetName] = useState(ls.get(WidgetNameKey) || "");
-  const [widgetPath, setWidgetPath] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [code, setCode] = useState(undefined);
+  const [path, setPath] = useState(undefined);
+  const [files, setFiles] = useState(undefined);
+  const [lastPath, setLastPath] = useState(undefined);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [showOpenModal, setShowOpenModal] = useState(false);
+
   const [renderCode, setRenderCode] = useState(code);
   const [widgetProps, setWidgetProps] = useState(
     ls.get(WidgetPropsKey) || "{}"
@@ -69,23 +88,21 @@ export default function EditorPage(props) {
   }, [widgetSrc, setWidgetSrc]);
 
   const updateCode = useCallback(
-    (code) => {
-      ls.set(EditorCodeKey, code);
+    (path, code) => {
+      cache.localStorageSet(
+        StorageDomain,
+        {
+          path,
+          type: StorageType.Code,
+        },
+        {
+          code,
+          time: Date.now(),
+        }
+      );
       setCode(code);
     },
-    [setCode]
-  );
-
-  const updateWidgetName = useCallback(
-    (name) => {
-      ls.set(WidgetNameKey, name);
-      setWidgetName(name);
-      const widgetPath = `${accountId}/widget/${name}`;
-      setWidgetPath(widgetPath);
-      ls.set(LastWidgetPathKey, widgetPath);
-      history.replace(`/edit/${widgetPath}`);
-    },
-    [history, accountId]
+    [cache, setCode]
   );
 
   useEffect(() => {
@@ -100,52 +117,190 @@ export default function EditorPage(props) {
     }
   }, [widgetProps]);
 
+  const removeFromFiles = useCallback(
+    (path) => {
+      path = JSON.stringify(path);
+      setFiles((files) =>
+        files.filter((file) => JSON.stringify(file) !== path)
+      );
+      setLastPath(path);
+    },
+    [setFiles, setLastPath]
+  );
+
+  const addToFiles = useCallback(
+    (path) => {
+      const jpath = JSON.stringify(path);
+      setFiles((files) => {
+        const newFiles = [...files];
+        if (!files.find((file) => JSON.stringify(file) === jpath)) {
+          newFiles.push(path);
+        }
+        return newFiles;
+      });
+      setLastPath(path);
+    },
+    [setFiles, setLastPath]
+  );
+
   useEffect(() => {
-    if (!near) {
+    if (files && lastPath) {
+      cache.localStorageSet(
+        StorageDomain,
+        {
+          type: StorageType.Files,
+        },
+        { files, lastPath }
+      );
+    }
+  }, [files, lastPath, cache]);
+
+  const openFile = useCallback(
+    (path, code) => {
+      setPath(path);
+      addToFiles(path);
+      if (code !== undefined) {
+        updateCode(path, code);
+        setRenderCode(code);
+      } else {
+        setLoading(true);
+        cache
+          .asyncLocalStorageGet(StorageDomain, {
+            path,
+            type: StorageType.Code,
+          })
+          .then(({ code }) => {
+            updateCode(path, code);
+            setRenderCode(code);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    },
+    [updateCode, addToFiles]
+  );
+
+  const toPath = useCallback((type, nameOrPath) => {
+    const name =
+      nameOrPath.indexOf("/") >= 0
+        ? nameOrPath.split("/").slice(2).join("/")
+        : nameOrPath;
+    return { type, name };
+  }, []);
+
+  const loadFile = useCallback(
+    (nameOrPath) => {
+      if (!near) {
+        return;
+      }
+      const widgetSrc =
+        nameOrPath.indexOf("/") >= 0
+          ? nameOrPath
+          : `${accountId}/widget/${nameOrPath}`;
+      const c = () => {
+        const code = cache.socialGet(
+          near,
+          widgetSrc,
+          false,
+          undefined,
+          undefined,
+          c
+        );
+        if (code) {
+          const name = widgetSrc.split("/").slice(2).join("/");
+          openFile(toPath(Filetype.Widget, widgetSrc), code);
+        }
+      };
+
+      c();
+    },
+    [accountId, openFile, toPath, near, cache]
+  );
+
+  const generateNewName = useCallback(
+    (type) => {
+      for (let i = 0; ; i++) {
+        const name = `Widget-${i}`;
+        const path = toPath(type, name);
+        path.unnamed = true;
+        const jPath = JSON.stringify(path);
+        if (!files?.find((file) => JSON.stringify(file) === jPath)) {
+          return path;
+        }
+      }
+    },
+    [toPath, files]
+  );
+
+  const createFile = useCallback(
+    (type) => {
+      const path = generateNewName(type);
+      openFile(path, DefaultEditorCode);
+    },
+    [generateNewName, openFile]
+  );
+
+  const renameFile = useCallback(
+    (newName, code) => {
+      const newPath = toPath(path.type, newName);
+      const jNewPath = JSON.stringify(newPath);
+      const jPath = JSON.stringify(path);
+      setFiles((files) => {
+        const newFiles = files.filter(
+          (file) => JSON.stringify(file) !== jNewPath
+        );
+        const i = newFiles.findIndex((file) => JSON.stringify(file) === jPath);
+        if (i >= 0) {
+          newFiles[i] = newPath;
+        }
+        return newFiles;
+      });
+      setLastPath(newPath);
+      setPath(newPath);
+      updateCode(newPath, code);
+    },
+    [path, toPath, updateCode]
+  );
+
+  useEffect(() => {
+    cache
+      .asyncLocalStorageGet(StorageDomain, { type: StorageType.Files })
+      .then((value) => {
+        const { files, lastPath } = value || {};
+        setFiles(files || []);
+        setLastPath(lastPath);
+      });
+  }, [cache]);
+
+  useEffect(() => {
+    if (!near || !files) {
       return;
     }
     if (widgetSrc) {
-      if (ls.get(LastWidgetPathKey) !== widgetSrc) {
-        ls.set(LastWidgetPathKey, widgetSrc);
-        if (widgetSrc === "new") {
-          ls.set(WidgetNameKey, null);
-          setWidgetName("");
-          updateCode(DefaultEditorCode);
-          setRenderCode(DefaultEditorCode);
-        } else {
-          const c = () => {
-            const code = cache.socialGet(
-              near,
-              widgetSrc,
-              false,
-              undefined,
-              undefined,
-              c
-            );
-            if (code) {
-              const widgetName = widgetSrc.split("/").slice(2).join("/");
-              ls.set(WidgetNameKey, widgetName);
-              setWidgetName(widgetName);
-              updateCode(code);
-              setRenderCode(code);
-            }
-          };
-
-          c();
-        }
+      if (widgetSrc === "new") {
+        createFile(Filetype.Widget);
+      } else {
+        loadFile(widgetSrc);
       }
-      setWidgetPath(widgetSrc);
+      history.replace(`/edit/`);
+    } else if (path === undefined) {
+      if (files.length === 0) {
+        createFile(Filetype.Widget);
+      } else {
+        openFile(lastPath, undefined);
+      }
     }
-  }, [near, cache, widgetSrc, updateCode]);
+  }, [near, createFile, lastPath, files, path, widgetSrc, openFile, loadFile]);
 
   const reformat = useCallback(
-    (code) => {
+    (path, code) => {
       try {
         const formattedCode = prettier.format(code, {
           parser: "babel",
           plugins: [parserBabel],
         });
-        updateCode(formattedCode);
+        updateCode(path, formattedCode);
       } catch (e) {
         console.log(e);
       }
@@ -178,13 +333,12 @@ export default function EditorPage(props) {
     [setLayout, tab, setTab]
   );
 
+  const widgetName = path?.name;
+
   const commitButton = (
     <CommitButton
       className="btn btn-primary"
       disabled={!widgetName}
-      onClick={() => {
-        updateWidgetName(widgetName);
-      }}
       near={near}
       data={{
         widget: {
@@ -199,8 +353,76 @@ export default function EditorPage(props) {
     </CommitButton>
   );
 
+  const widgetPath = `${accountId}/${path?.type}/${path?.name}`;
+  const jpath = JSON.stringify(path);
+
   return (
     <div className="container-fluid mt-1">
+      <RenameModal
+        key={`rename-modal-${jpath}`}
+        show={showRenameModal}
+        name={path?.name}
+        onRename={(newName) => renameFile(newName, code)}
+        onHide={() => setShowRenameModal(false)}
+      />
+      <OpenModal
+        show={showOpenModal}
+        onOpen={(newName) => loadFile(newName)}
+        onNew={(newName) =>
+          newName
+            ? openFile(toPath(Filetype.Widget, newName), DefaultEditorCode)
+            : createFile(Filetype.Widget)
+        }
+        onHide={() => setShowOpenModal(false)}
+      />
+      <div className="mb-3">
+        <Nav
+          variant="pills"
+          activeKey={jpath}
+          onSelect={(key) => openFile(JSON.parse(key))}
+        >
+          {files?.map((p, idx) => {
+            const jp = JSON.stringify(p);
+            return (
+              <Nav.Item key={jp}>
+                <Nav.Link className="text-decoration-none" eventKey={jp}>
+                  {p.name}
+                  <button
+                    className={`btn btn-sm border-0 py-0 px-1 ms-1 rounded-circle ${
+                      jp === jpath
+                        ? "btn-outline-light"
+                        : "btn-outline-secondary"
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      removeFromFiles(p);
+                      if (jp === jpath) {
+                        if (files.length > 0) {
+                          openFile(files[idx - 1] || files[idx + 1]);
+                        } else {
+                          createFile(Filetype.Widget);
+                        }
+                      }
+                    }}
+                  >
+                    <i className="bi bi-x"></i>
+                  </button>
+                </Nav.Link>
+              </Nav.Item>
+            );
+          })}
+          <Nav.Item>
+            <Nav.Link
+              className="text-decoration-none"
+              onClick={() => setShowOpenModal(true)}
+            >
+              <i className="bi bi-file-earmark-plus"></i> Add
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
+        <hr />
+      </div>
       <div className="min-vh-100 d-flex align-content-start">
         <div className="me-2">
           <div
@@ -293,27 +515,14 @@ export default function EditorPage(props) {
               </ul>
 
               <div className={`${tab === Tab.Editor ? "" : "visually-hidden"}`}>
-                <div className="input-group mb-3">
-                  <span className="input-group-text" id="widget-path-prefix">
-                    {accountId}/widget/
-                  </span>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="widget-name"
-                    placeholder="MyWidget"
-                    aria-describedby="widget-path-prefix"
-                    value={widgetName}
-                    onChange={(e) => updateWidgetName(e.target.value)}
-                  />
-                </div>
                 <div className="form-control mb-3" style={{ height: "70vh" }}>
                   <Editor
                     value={code}
+                    path={widgetPath}
                     defaultLanguage="javascript"
-                    onChange={(code) => updateCode(code)}
+                    onChange={(code) => updateCode(path, code)}
                     wrapperProps={{
-                      onBlur: () => reformat(code),
+                      onBlur: () => reformat(path, code),
                     }}
                   />
                 </div>
@@ -329,8 +538,18 @@ export default function EditorPage(props) {
                   >
                     Render preview
                   </button>
-                  {commitButton}
-                  {widgetPath && (
+                  {!path?.unnamed && commitButton}
+                  <button
+                    className={`btn ${
+                      path?.unnamed ? "btn-primary" : "btn-secondary"
+                    }`}
+                    onClick={() => {
+                      setShowRenameModal(true);
+                    }}
+                  >
+                    Rename {path?.type}
+                  </button>
+                  {path && accountId && (
                     <a
                       className="btn btn-outline-primary"
                       href={`#/${widgetPath}`}
@@ -369,6 +588,7 @@ export default function EditorPage(props) {
                 <div className="mb-3">
                   <Widget
                     src={NearConfig.widgets.widgetMetadataEditor}
+                    key={`metadata-editor-${jpath}`}
                     props={useMemo(
                       () => ({
                         widgetPath,
@@ -408,8 +628,8 @@ export default function EditorPage(props) {
                     <Widget
                       src={NearConfig.widgets.widgetMetadata}
                       props={useMemo(
-                        () => ({ metadata, accountId, widgetName }),
-                        [metadata, accountId, widgetName]
+                        () => ({ metadata, accountId, widgetName: path?.name }),
+                        [metadata, accountId, path]
                       )}
                     />
                   </div>
