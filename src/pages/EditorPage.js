@@ -356,6 +356,9 @@ export default function EditorPage(props) {
   const widgetPath = `${accountId}/${path?.type}/${path?.name}`;
   const jpath = JSON.stringify(path);
 
+  {
+    console.log(files);
+  }
   return (
     <div className="container-fluid mt-1">
       <RenameModal
@@ -398,7 +401,7 @@ export default function EditorPage(props) {
                       e.stopPropagation();
                       removeFromFiles(p);
                       if (jp === jpath) {
-                        if (files.length > 0) {
+                        if (files.length > 1) {
                           openFile(files[idx - 1] || files[idx + 1]);
                         } else {
                           createFile(Filetype.Widget);
