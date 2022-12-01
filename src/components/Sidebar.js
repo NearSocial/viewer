@@ -23,7 +23,7 @@ export function Sidebar(props) {
     <>
       <div
         className="navbar p-0 bg-light fixed-top w-100 border-bottom"
-        style={{ height: "4em" }}
+        style={{ height: "4rem" }}
       >
         <div className="w-100 sidebar-items d-flex flex-row">
           <div title="Near Social">
@@ -165,7 +165,7 @@ export function Sidebar(props) {
           </div>
         </div>
       </div>
-      <div style={{ paddingTop: "4.5em" }}>{props.children}</div>
+      <div style={{ paddingTop: "4.5rem" }}>{props.children}</div>
     </>
   );
 }
