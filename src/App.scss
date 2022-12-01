@@ -32,12 +32,13 @@ a {
   &> div {
     border-right: 1px solid #e5e5e5;
     text-align: center;
-    min-height: 4em;
+    min-height: 4rem;
+    max-height: 4rem;
     display: flex;
   }
 
   &> div:not(.apps) {
-    min-width: 4em;
+    min-width: 4rem;
     align-items: center !important;
     justify-content: center !important;
   }
