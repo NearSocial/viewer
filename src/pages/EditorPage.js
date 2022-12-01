@@ -225,7 +225,7 @@ export default function EditorPage(props) {
         const path = toPath(type, name);
         path.unnamed = true;
         const jPath = JSON.stringify(path);
-        if (!files.find((file) => JSON.stringify(file) === jPath)) {
+        if (!files?.find((file) => JSON.stringify(file) === jPath)) {
           return path;
         }
       }
@@ -266,7 +266,8 @@ export default function EditorPage(props) {
   useEffect(() => {
     cache
       .asyncLocalStorageGet(StorageDomain, { type: StorageType.Files })
-      .then(({ files, lastPath }) => {
+      .then((value) => {
+        const { files, lastPath } = value || {};
         setFiles(files || []);
         setLastPath(lastPath);
       });
