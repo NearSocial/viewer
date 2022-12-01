@@ -90,16 +90,28 @@ class Cache {
     }
     cached.status = CacheStatus.InProgress;
     if (promise) {
-      promise().then((result) => {
-        CacheDebug && console.log("Fetched result", key);
-        cached.status = CacheStatus.Done;
-        if (JSON.stringify(result) !== JSON.stringify(cached.result)) {
-          cached.result = result;
-          this.innerSet(key, result);
-          CacheDebug && console.log("Replacing value", key, result);
-          invalidateCallbacks(cached, false);
-        }
-      });
+      promise()
+        .then((result) => {
+          CacheDebug && console.log("Fetched result", key);
+          cached.status = CacheStatus.Done;
+          if (JSON.stringify(result) !== JSON.stringify(cached.result)) {
+            cached.result = result;
+            this.innerSet(key, result);
+            CacheDebug && console.log("Replacing value", key, result);
+            invalidateCallbacks(cached, false);
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+          cached.status = CacheStatus.Done;
+          const result = undefined;
+          if (JSON.stringify(result) !== JSON.stringify(cached.result)) {
+            cached.result = result;
+            this.innerSet(key, result);
+            CacheDebug && console.log("Replacing value", key, result);
+            invalidateCallbacks(cached, false);
+          }
+        });
     }
     CacheDebug && console.log("New cache request", key);
     return cached.result;

@@ -98,6 +98,7 @@ const Keywords = {
   Number: Number,
   Big: Big,
   Math: Math,
+  Buffer: Buffer,
 };
 
 const ReservedKeys = {
@@ -110,7 +111,7 @@ const ReservedKeys = {
 };
 
 const assertNotReservedKey = (key) => {
-  if (key in ReservedKeys) {
+  if (key !== "toString" && key in ReservedKeys) {
     throw new Error(`${key} is reserved and can't be used`);
   }
 };
@@ -295,6 +296,7 @@ class VmStack {
       if (
         name === "value" &&
         element === "input" &&
+        attributes.type === "text" &&
         value.type === "JSXExpressionContainer" &&
         !("onChange" in rawAttributes)
       ) {
