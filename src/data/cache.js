@@ -192,6 +192,36 @@ class Cache {
     );
   }
 
+  async asyncFetch(url, options) {
+    options = {
+      method: options?.method,
+      headers: options?.headers,
+      body: options?.body,
+    };
+    try {
+      const response = await fetch(url, options);
+      const status = response.status;
+      const ok = response.ok;
+      const contentType = response.headers.get("content-type");
+      const body = await (ok &&
+      contentType &&
+      contentType.indexOf("application/json") !== -1
+        ? response.json()
+        : response.text());
+      return {
+        ok,
+        status,
+        contentType,
+        body,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: e.message,
+      };
+    }
+  }
+
   cachedFetch(url, options, onInvalidate) {
     return this.cachedPromise(
       {
@@ -199,35 +229,7 @@ class Cache {
         url,
         options,
       },
-      async () => {
-        options = {
-          method: options?.method,
-          headers: options?.headers,
-          body: options?.body,
-        };
-        try {
-          const response = await fetch(url, options);
-          const status = response.status;
-          const ok = response.ok;
-          const contentType = response.headers.get("content-type");
-          const body = await (ok &&
-          contentType &&
-          contentType.indexOf("application/json") !== -1
-            ? response.json()
-            : response.text());
-          return {
-            ok,
-            status,
-            contentType,
-            body,
-          };
-        } catch (e) {
-          return {
-            ok: false,
-            error: e.message,
-          };
-        }
-      },
+      () => this.asyncFetch(url, options),
       onInvalidate
     );
   }
