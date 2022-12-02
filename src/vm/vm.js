@@ -645,7 +645,7 @@ class VmStack {
           args[0]
         );
       } else if (keyword === "console" && callee === "log") {
-        return console.log(...args);
+        return console.log(this.vm.widgetSrc, ...args);
       }
     } else {
       const f = callee === keyword ? keywordType : keywordType[callee];
