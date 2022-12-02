@@ -356,9 +356,6 @@ export default function EditorPage(props) {
   const widgetPath = `${accountId}/${path?.type}/${path?.name}`;
   const jpath = JSON.stringify(path);
 
-  {
-    console.log(files);
-  }
   return (
     <div className="container-fluid mt-1">
       <RenameModal
