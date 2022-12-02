@@ -493,6 +493,13 @@ class VmStack {
           );
         }
         return this.vm.cachedNearView(...args);
+      } else if (keyword === "Near" && callee === "asyncView") {
+        if (args.length < 2) {
+          throw new Error(
+            "Method: Near.asyncView. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
+          );
+        }
+        return this.vm.asyncNearView(...args);
       } else if (keyword === "Near" && callee === "block") {
         return this.vm.cachedNearBlock(...args);
       } else if (keyword === "Near" && callee === "call") {
@@ -516,6 +523,13 @@ class VmStack {
           );
         }
         return this.vm.cachedFetch(...args);
+      } else if (callee === "asyncFetch") {
+        if (args.length < 1) {
+          throw new Error(
+            "Method: asyncFetch. Required arguments: 'url'. Optional: 'options'"
+          );
+        }
+        return this.vm.asyncFetch(...args);
       } else if (callee === "parseInt") {
         return parseInt(...args);
       } else if (callee === "parseFloat") {
@@ -1229,6 +1243,10 @@ export default class VM {
     );
   }
 
+  asyncNearView(contractName, methodName, args, blockId) {
+    return this.near.viewCall(contractName, methodName, args, blockId);
+  }
+
   cachedNearView(contractName, methodName, args, blockId) {
     return this.cachedPromise((onInvalidate) =>
       this.cache.cachedViewCall(
@@ -1246,6 +1264,10 @@ export default class VM {
     return this.cachedPromise((onInvalidate) =>
       this.cache.cachedBlock(this.near, blockId, onInvalidate)
     );
+  }
+
+  asyncFetch(url, options) {
+    return this.cache.asyncFetch(url, options);
   }
 
   cachedFetch(url, options) {
