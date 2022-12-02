@@ -177,6 +177,10 @@ export function Widget(props) {
             transaction={transaction}
             onHide={() => setTransaction(null)}
           />
+          // <CommitModal
+          // commit={commit}
+          // onHide={() => setTransaction(null)}
+          // />
         }
       </>
     </ErrorBoundary>

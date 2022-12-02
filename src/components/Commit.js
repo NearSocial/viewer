@@ -18,16 +18,47 @@ ${json}
 \`\`\``;
 };
 
-export const Commit = (props) => {
+export const CommitModal = (props) => {
+  const near = useNear();
+  const accountId = useAccountId();
+  const cache = useCache();
+
   const [extraStorage, setExtraStorage] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const [lastData, setLastData] = useState(null);
+  const [commit, setCommit] = useState(null);
+
   const show = props.show;
   const onHide = props.onHide;
-  const commit = props.commit;
+  const onCancel = () => {
+    if (props.onCancel) {
+      try {
+        props.onCancel();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    onHide();
+  };
+  const data = props.data;
+  const force = props.force;
+
+  useEffect(() => {
+    if (loading || !show || !accountId || !near) {
+      return;
+    }
+    const jdata = JSON.stringify(data ?? null);
+    if (!force && jdata === lastData) {
+      return;
+    }
+    setLastData(jdata);
+    setCommit(null);
+    prepareCommit(near, data, force).then(setCommit);
+  }, [loading, data, lastData, force, near, accountId, show]);
 
   return (
-    <Modal size="xl" centered scrollable show={show} onHide={onHide}>
+    <Modal size="xl" centered scrollable show={show} onHide={onCancel}>
       <Modal.Header closeButton>
         <Modal.Title>Saving data</Modal.Title>
       </Modal.Header>
@@ -108,17 +139,37 @@ export const Commit = (props) => {
         <button
           className="btn btn-success"
           disabled={!commit?.data || loading}
-          onClick={(e) => {
+          onClick={async (e) => {
             e.preventDefault();
             setLoading(true);
-            props.onCommit(extraStorage).then(() => setLoading(false));
+
+            const deposit = commit.deposit.add(
+              StorageCostPerByte.mul(extraStorage)
+            );
+            if (commit.permissionGranted) {
+              await asyncCommit(near, commit.data, deposit);
+            } else {
+              await requestPermissionAndCommit(near, commit.data, deposit);
+            }
+            setCommit(null);
+            setLastData(null);
+            if (props.onCommit) {
+              try {
+                props.onCommit(commit.data);
+              } catch (e) {
+                console.error(e);
+              }
+            }
+            cache.invalidateCache(commit.data);
+            onHide();
+            setLoading(false);
           }}
         >
           {loading && Loading} Save Data
         </button>
         <button
           className="btn btn-secondary"
-          onClick={onHide}
+          onClick={onCancel}
           disabled={loading}
         >
           Close
@@ -129,73 +180,44 @@ export const Commit = (props) => {
 };
 
 export const CommitButton = (props) => {
-  const near = useNear();
   const accountId = useAccountId();
-  const cache = useCache();
 
-  const { data, children, onClick, onCommit, disabled, force, ...rest } = props;
+  const {
+    data,
+    children,
+    onClick,
+    onCommit,
+    onCancel,
+    disabled,
+    force,
+    ...rest
+  } = props;
 
-  const [loading, setLoading] = useState(false);
-
-  const [lastData, setLastData] = useState(null);
-  const [commit, setCommit] = useState(null);
-
-  useEffect(() => {
-    if (!loading) {
-      return;
-    }
-    if (!accountId) {
-      return;
-    }
-    if (JSON.stringify(data ?? null) === JSON.stringify(lastData ?? null)) {
-      return;
-    }
-    setLastData(data);
-    setCommit(null);
-    prepareCommit(near, data, force).then((newCommit) => {
-      setCommit(newCommit);
-    });
-  }, [loading, data, lastData, force, near, accountId]);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <>
       <button
         {...rest}
-        disabled={disabled || loading || !near?.accountId}
+        disabled={disabled || showModal || !accountId}
         onClick={(e) => {
           e.preventDefault();
-          setLoading(true);
+          setShowModal(true);
           if (onClick) {
             onClick();
           }
         }}
       >
-        {loading && Loading}
+        {showModal && Loading}
         {children}
       </button>
-      <Commit
-        show={loading && !!commit}
-        commit={commit}
-        onHide={() => setLoading(false)}
-        onCommit={async (extraStorage) => {
-          const deposit = commit.deposit.add(
-            StorageCostPerByte.mul(extraStorage)
-          );
-          if (commit.permissionGranted) {
-            await asyncCommit(near, commit.data, deposit);
-          } else {
-            await requestPermissionAndCommit(near, commit.data, deposit);
-          }
-          setLoading(false);
-          if (onCommit) {
-            try {
-              onCommit(commit.data);
-            } catch (e) {
-              console.error(e);
-            }
-          }
-          cache.invalidateCache(commit.data);
-        }}
+      <CommitModal
+        show={showModal}
+        data={data}
+        force={force}
+        onHide={() => setShowModal(false)}
+        onCancel={onCancel}
+        onCommit={onCommit}
       />
     </>
   );
