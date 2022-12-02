@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../images/near_social_icon.svg";
+import LogoHorizontal from "../images/near_social_combo.svg";
 import { NearConfig, TGas, useAccountId, useNear } from "../data/near";
 import { Widget } from "./Widget/Widget";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export function Sidebar(props) {
   const near = useNear();
@@ -26,12 +26,18 @@ export function Sidebar(props) {
         style={{ height: "4rem" }}
       >
         <div className="w-100 sidebar-items d-flex flex-row">
-          <div title="Near Social">
+          <div title="Near Social" className="border-0">
             <Link className="d-block link-dark" to="/">
               <img
-                src={Logo}
+                src={LogoHorizontal}
                 alt="Near Social logo horizontal"
-                className="d-inline-block"
+                className="d-none d-sm-inline-block px-3"
+                style={{ height: "1.5rem" }}
+              />
+              <img
+                src={Logo}
+                alt="Near Social logo"
+                className="d-inline-block d-sm-none"
                 style={{ height: "1.5rem" }}
               />
             </Link>
