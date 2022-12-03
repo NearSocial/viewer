@@ -13,6 +13,7 @@ import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import { socialGet, useCache } from "../../data/cache";
+import { CommitModal } from "../Commit";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -44,6 +45,7 @@ export function Widget(props) {
   const [context, setContext] = useState({});
   const [vm, setVm] = useState(null);
   const [transaction, setTransaction] = useState(null);
+  const [commitRequest, setCommitRequest] = useState(null);
 
   const cache = useCache();
   const near = useNear();
@@ -98,10 +100,21 @@ export function Widget(props) {
       if (!near) {
         return null;
       }
-      console.log("confirm");
+      console.log("confirm", transaction);
       setTransaction(transaction);
     },
     [near]
+  );
+
+  const requestCommit = useCallback(
+    (commitRequest) => {
+      if (!near || !accountId) {
+        return null;
+      }
+      console.log("commit requested", commitRequest);
+      setCommitRequest(commitRequest);
+    },
+    [near, accountId]
   );
 
   useEffect(() => {
@@ -121,6 +134,7 @@ export function Widget(props) {
       confirmTransaction,
       depth,
       widgetSrc: src,
+      requestCommit,
     });
     setVm(vm);
     return () => {
@@ -172,16 +186,21 @@ export function Widget(props) {
     >
       <>
         {element}
-        {
-          <ConfirmTransaction
-            transaction={transaction}
-            onHide={() => setTransaction(null)}
+        <ConfirmTransaction
+          transaction={transaction}
+          onHide={() => setTransaction(null)}
+        />
+        {commitRequest && (
+          <CommitModal
+            show={true}
+            widgetSrc={src}
+            data={commitRequest.data}
+            force={commitRequest.force}
+            onHide={() => setCommitRequest(null)}
+            onCommit={commitRequest.onCommit}
+            onCancel={commitRequest.onCancel}
           />
-          // <CommitModal
-          // commit={commit}
-          // onHide={() => setTransaction(null)}
-          // />
-        }
+        )}
       </>
     </ErrorBoundary>
   ) : (

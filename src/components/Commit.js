@@ -4,7 +4,7 @@ import {
   prepareCommit,
   requestPermissionAndCommit,
 } from "../data/commitData";
-import { displayNear, Loading } from "../data/utils";
+import { computeWritePermission, displayNear, Loading } from "../data/utils";
 import Modal from "react-bootstrap/Modal";
 import { Markdown } from "./Markdown";
 import { StorageCostPerByte, useAccountId, useNear } from "../data/near";
@@ -18,18 +18,30 @@ ${json}
 \`\`\``;
 };
 
+const StorageDomain = {
+  page: "commit",
+};
+
+const StorageType = {
+  WritePermission: "write_permission",
+};
+
 export const CommitModal = (props) => {
   const near = useNear();
   const accountId = useAccountId();
   const cache = useCache();
 
+  const [commitStarted, setCommitStarted] = useState(false);
   const [extraStorage, setExtraStorage] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const [lastData, setLastData] = useState(null);
   const [commit, setCommit] = useState(null);
 
-  const show = props.show;
+  const [writePermission, setWritePermission] = useState(null);
+  const [giveWritePermission, setGiveWritePermission] = useState(true);
+
+  const showIntent = props.show;
   const onHide = props.onHide;
   const onCancel = () => {
     if (props.onCancel) {
@@ -43,9 +55,29 @@ export const CommitModal = (props) => {
   };
   const data = props.data;
   const force = props.force;
+  const widgetSrc = props.widgetSrc;
 
   useEffect(() => {
-    if (loading || !show || !accountId || !near) {
+    if (widgetSrc) {
+      setWritePermission(null);
+      cache
+        .asyncLocalStorageGet(StorageDomain, {
+          widgetSrc,
+          accountId,
+          type: StorageType.WritePermission,
+        })
+        .then((wp) => setWritePermission(wp));
+    } else {
+      setWritePermission(false);
+    }
+  }, [widgetSrc, accountId, cache, showIntent]);
+
+  useEffect(() => {
+    setGiveWritePermission(writePermission !== false);
+  }, [writePermission]);
+
+  useEffect(() => {
+    if (loading || !showIntent || !accountId || !near) {
       return;
     }
     const jdata = JSON.stringify(data ?? null);
@@ -55,7 +87,67 @@ export const CommitModal = (props) => {
     setLastData(jdata);
     setCommit(null);
     prepareCommit(near, data, force).then(setCommit);
-  }, [loading, data, lastData, force, near, accountId, show]);
+  }, [loading, data, lastData, force, near, accountId, showIntent]);
+
+  const onCommit = async () => {
+    setLoading(true);
+
+    const newWritePermission =
+      giveWritePermission &&
+      computeWritePermission(writePermission, commit.data[accountId]);
+    cache.localStorageSet(
+      StorageDomain,
+      {
+        widgetSrc,
+        accountId,
+        type: StorageType.WritePermission,
+      },
+      newWritePermission
+    );
+    setWritePermission(newWritePermission);
+
+    const deposit = commit.deposit.add(StorageCostPerByte.mul(extraStorage));
+    if (commit.permissionGranted) {
+      await asyncCommit(near, commit.data, deposit);
+    } else {
+      await requestPermissionAndCommit(near, commit.data, deposit);
+    }
+    setCommit(null);
+    setLastData(null);
+    if (props.onCommit) {
+      try {
+        props.onCommit(commit.data);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    cache.invalidateCache(commit.data);
+    onHide();
+    setLoading(false);
+  };
+
+  if (
+    !commitStarted &&
+    commit &&
+    showIntent &&
+    writePermission &&
+    commit.data
+  ) {
+    const deposit = commit.deposit.add(StorageCostPerByte.mul(extraStorage));
+    if (deposit.eq(0) && commit.permissionGranted) {
+      if (
+        JSON.stringify(
+          computeWritePermission(writePermission, commit.data[accountId])
+        ) === JSON.stringify(writePermission)
+      ) {
+        setCommitStarted(true);
+        onCommit().then(() => setCommitStarted(false));
+      }
+    }
+  }
+
+  const show =
+    !!commit && showIntent && !commitStarted && writePermission !== null;
 
   return (
     <Modal size="xl" centered scrollable show={show} onHide={onCancel}>
@@ -130,6 +222,27 @@ export const CommitModal = (props) => {
                 </div>
               </div>
             )}
+            {widgetSrc && commit.data && (
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="dont-ask-for-widget"
+                  checked={giveWritePermission}
+                  onChange={(e) => {
+                    setGiveWritePermission(e.target.checked);
+                  }}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="dont-ask-for-widget"
+                >
+                  Don't ask again for saving similar data by{" "}
+                  <span className="font-monospace">{widgetSrc}</span>
+                </label>
+              </div>
+            )}
           </div>
         ) : (
           Loading
@@ -139,30 +252,9 @@ export const CommitModal = (props) => {
         <button
           className="btn btn-success"
           disabled={!commit?.data || loading}
-          onClick={async (e) => {
+          onClick={(e) => {
             e.preventDefault();
-            setLoading(true);
-
-            const deposit = commit.deposit.add(
-              StorageCostPerByte.mul(extraStorage)
-            );
-            if (commit.permissionGranted) {
-              await asyncCommit(near, commit.data, deposit);
-            } else {
-              await requestPermissionAndCommit(near, commit.data, deposit);
-            }
-            setCommit(null);
-            setLastData(null);
-            if (props.onCommit) {
-              try {
-                props.onCommit(commit.data);
-              } catch (e) {
-                console.error(e);
-              }
-            }
-            cache.invalidateCache(commit.data);
-            onHide();
-            setLoading(false);
+            onCommit();
           }}
         >
           {loading && Loading} Save Data
@@ -189,6 +281,7 @@ export const CommitButton = (props) => {
     onCommit,
     onCancel,
     disabled,
+    widgetSrc,
     force,
     ...rest
   } = props;
@@ -213,6 +306,7 @@ export const CommitButton = (props) => {
       </button>
       <CommitModal
         show={showModal}
+        widgetSrc={widgetSrc}
         data={data}
         force={force}
         onHide={() => setShowModal(false)}
