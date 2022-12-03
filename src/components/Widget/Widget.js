@@ -140,7 +140,7 @@ export function Widget(props) {
     return () => {
       vm.alive = false;
     };
-  }, [src, near, gkey, parsedCode, depth]);
+  }, [src, near, gkey, parsedCode, depth, requestCommit, confirmTransaction]);
 
   useEffect(() => {
     if (!near) {

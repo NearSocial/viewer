@@ -31,9 +31,9 @@ export const CommitModal = (props) => {
   const accountId = useAccountId();
   const cache = useCache();
 
-  const [commitStarted, setCommitStarted] = useState(false);
+  const [asyncCommitStarted, setAsyncAsyncCommitStarted] = useState(false);
   const [extraStorage, setExtraStorage] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [commitInProgress, setCommitInProgress] = useState(false);
 
   const [lastData, setLastData] = useState(null);
   const [commit, setCommit] = useState(null);
@@ -77,7 +77,7 @@ export const CommitModal = (props) => {
   }, [writePermission]);
 
   useEffect(() => {
-    if (loading || !showIntent || !accountId || !near) {
+    if (commitInProgress || !showIntent || !accountId || !near) {
       return;
     }
     const jdata = JSON.stringify(data ?? null);
@@ -87,10 +87,10 @@ export const CommitModal = (props) => {
     setLastData(jdata);
     setCommit(null);
     prepareCommit(near, data, force).then(setCommit);
-  }, [loading, data, lastData, force, near, accountId, showIntent]);
+  }, [commitInProgress, data, lastData, force, near, accountId, showIntent]);
 
   const onCommit = async () => {
-    setLoading(true);
+    setCommitInProgress(true);
 
     const newWritePermission =
       giveWritePermission &&
@@ -123,11 +123,12 @@ export const CommitModal = (props) => {
     }
     cache.invalidateCache(commit.data);
     onHide();
-    setLoading(false);
+    setCommitInProgress(false);
   };
 
   if (
-    !commitStarted &&
+    !commitInProgress &&
+    !asyncCommitStarted &&
     commit &&
     showIntent &&
     writePermission &&
@@ -140,14 +141,14 @@ export const CommitModal = (props) => {
           computeWritePermission(writePermission, commit.data[accountId])
         ) === JSON.stringify(writePermission)
       ) {
-        setCommitStarted(true);
-        onCommit().then(() => setCommitStarted(false));
+        setAsyncAsyncCommitStarted(true);
+        onCommit().then(() => setAsyncAsyncCommitStarted(false));
       }
     }
   }
 
   const show =
-    !!commit && showIntent && !commitStarted && writePermission !== null;
+    !!commit && showIntent && !asyncCommitStarted && writePermission !== null;
 
   return (
     <Modal size="xl" centered scrollable show={show} onHide={onCancel}>
@@ -188,7 +189,7 @@ export const CommitModal = (props) => {
                     name="storageDeposit"
                     value={extraStorage}
                     onChange={setExtraStorage}
-                    disabled={loading}
+                    disabled={commitInProgress}
                   >
                     <ToggleButton
                       id="esd-0"
@@ -251,18 +252,18 @@ export const CommitModal = (props) => {
       <Modal.Footer>
         <button
           className="btn btn-success"
-          disabled={!commit?.data || loading}
+          disabled={!commit?.data || commitInProgress}
           onClick={(e) => {
             e.preventDefault();
             onCommit();
           }}
         >
-          {loading && Loading} Save Data
+          {commitInProgress && Loading} Save Data
         </button>
         <button
           className="btn btn-secondary"
           onClick={onCancel}
-          disabled={loading}
+          disabled={commitInProgress}
         >
           Close
         </button>
