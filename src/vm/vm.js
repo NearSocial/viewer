@@ -16,7 +16,7 @@ import { CommitButton } from "../components/Commit";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import { Typeahead } from "react-bootstrap-typeahead";
-import styled, { isStyledComponent } from "styled-components";
+import styled, { isStyledComponent, keyframes } from "styled-components";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Big from "big.js";
 
@@ -99,6 +99,10 @@ const Keywords = {
   Big: Big,
   Math: Math,
   Buffer: Buffer,
+  Audio: Audio,
+  Image: Image,
+  File: File,
+  Blob: Blob,
 };
 
 const ReservedKeys = {
@@ -459,7 +463,7 @@ class VmStack {
     return key;
   }
 
-  callFunction(keyword, callee, args, optional) {
+  callFunction(keyword, callee, args, optional, isNew) {
     const keywordType = Keywords[keyword];
     if (keywordType === true || keywordType === undefined) {
       if (
@@ -673,7 +677,7 @@ class VmStack {
     } else {
       const f = callee === keyword ? keywordType : keywordType[callee];
       if (typeof f === "function") {
-        return f(...args);
+        return isNew ? new f(...args) : f(...args);
       }
     }
 
@@ -806,6 +810,7 @@ class VmStack {
       }
       return quasis.join("");
     } else if (type === "CallExpression" || type === "NewExpression") {
+      const isNew = type === "NewExpression";
       const { obj, key, keyword } = this.resolveMemberExpression(code.callee, {
         callee: true,
       });
@@ -813,7 +818,13 @@ class VmStack {
       if (!keyword && obj?.[key] instanceof Function) {
         return obj?.[key](...args);
       } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
-        return this.callFunction(keyword ?? "", key, args, code.optional);
+        return this.callFunction(
+          keyword ?? "",
+          key,
+          args,
+          code.optional,
+          isNew
+        );
       } else {
         if (code.optional) {
           return undefined;
@@ -960,7 +971,9 @@ class VmStack {
           }
           styledTemplate = styled(arg);
         } else {
-          if (key in ApprovedTags) {
+          if (key === "keyframes") {
+            styledTemplate = keyframes;
+          } else if (key in ApprovedTags) {
             styledTemplate = styled(key);
           } else {
             throw new Error("Unsupported styled tag: " + key);
