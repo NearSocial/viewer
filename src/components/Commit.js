@@ -287,30 +287,30 @@ export const CommitButton = (props) => {
     ...rest
   } = props;
 
-  const [showModal, setShowModal] = useState(false);
+  const [computedData, setComputedData] = useState(null);
 
   return (
     <>
       <button
         {...rest}
-        disabled={disabled || showModal || !accountId}
+        disabled={disabled || !data || !!computedData || !accountId}
         onClick={(e) => {
           e.preventDefault();
-          setShowModal(true);
+          setComputedData(typeof data === "function" ? data() : data);
           if (onClick) {
             onClick();
           }
         }}
       >
-        {showModal && Loading}
+        {!!computedData && Loading}
         {children}
       </button>
       <CommitModal
-        show={showModal}
+        show={!!computedData}
         widgetSrc={widgetSrc}
-        data={data}
+        data={computedData}
         force={force}
-        onHide={() => setShowModal(false)}
+        onHide={() => setComputedData(null)}
         onCancel={onCancel}
         onCommit={onCommit}
       />
