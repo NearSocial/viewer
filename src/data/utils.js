@@ -283,3 +283,40 @@ export const indexMatch = (action, key, data) => {
     }
   });
 };
+
+const KnownSecondLevelKeys = {
+  graph: true,
+  post: true,
+  index: true,
+  settings: true,
+};
+
+export const computeWritePermission = (previousPermissions, data) => {
+  const permissions = isObject(previousPermissions)
+    ? JSON.parse(JSON.stringify(previousPermissions))
+    : {};
+
+  if (isObject(data)) {
+    Object.entries(data).forEach(([key, value]) => {
+      if (key in KnownSecondLevelKeys) {
+        if (isObject(value)) {
+          const subPermissions = (permissions[key] = permissions[key] || {});
+          Object.keys(value).forEach((key) => {
+            subPermissions[key] = true;
+          });
+        } else {
+          permissions[key] = true;
+        }
+      } else {
+        permissions[key] = true;
+      }
+    });
+  }
+
+  // console.log(
+  //   JSON.stringify(previousPermissions),
+  //   JSON.stringify(data),
+  //   JSON.stringify(permissions)
+  // );
+  return permissions;
+};

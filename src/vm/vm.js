@@ -378,7 +378,11 @@ class VmStack {
     if (element === "Widget") {
       return <Widget {...attributes} />;
     } else if (element === "CommitButton") {
-      return <CommitButton {...attributes}>{children}</CommitButton>;
+      return (
+        <CommitButton {...attributes} widgetSrc={this.vm.widgetSrc}>
+          {children}
+        </CommitButton>
+      );
     } else if (element === "InfiniteScroll") {
       return <InfiniteScroll {...attributes}>{children}</InfiniteScroll>;
     } else if (element === "Tooltip") {
@@ -486,6 +490,11 @@ class VmStack {
           );
         }
         return this.vm.cachedIndex(args[0], args[1], args[2]);
+      } else if (keyword === "Social" && callee === "set") {
+        if (args.length < 1) {
+          throw new Error("Missing argument 'data' for Social.set");
+        }
+        return this.vm.socialSet(args[0], args[1]);
       } else if (keyword === "Near" && callee === "view") {
         if (args.length < 2) {
           throw new Error(
@@ -1174,6 +1183,7 @@ export default class VM {
       confirmTransaction,
       depth,
       widgetSrc,
+      requestCommit,
     } = options;
 
     if (!code) {
@@ -1191,6 +1201,7 @@ export default class VM {
     this.confirmTransaction = confirmTransaction;
     this.depth = depth;
     this.widgetSrc = widgetSrc;
+    this.requestCommit = requestCommit;
   }
 
   cachedPromise(promise) {
@@ -1280,6 +1291,15 @@ export default class VM {
     return this.cachedPromise((onInvalidate) =>
       this.cache.socialIndex(action, key, options, onInvalidate)
     );
+  }
+
+  socialSet(data, options) {
+    return this.requestCommit({
+      data,
+      force: options?.force,
+      onCommit: options?.onCommit,
+      onCancel: options?.onCancel,
+    });
   }
 
   renderCode({ props, context, state }) {
