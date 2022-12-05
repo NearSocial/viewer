@@ -7,13 +7,14 @@ import React, {
 import { Parser } from "acorn";
 import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
-import { useAccountId, useNear } from "../../data/near";
-import ConfirmTransaction from "../ConfirmTransaction";
+import { TGas, useAccountId, useNear } from "../../data/near";
+import ConfirmTransactions from "../ConfirmTransactions";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import { socialGet, useCache } from "../../data/cache";
 import { CommitModal } from "../Commit";
+import Big from "big.js";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -44,7 +45,7 @@ export function Widget(props) {
   const [parsedCode, setParsedCode] = useState(null);
   const [context, setContext] = useState({});
   const [vm, setVm] = useState(null);
-  const [transaction, setTransaction] = useState(null);
+  const [transactions, setTransactions] = useState(null);
   const [commitRequest, setCommitRequest] = useState(null);
 
   const cache = useCache();
@@ -95,13 +96,20 @@ export function Widget(props) {
     }
   }, [code]);
 
-  const confirmTransaction = useCallback(
-    (transaction) => {
-      if (!near) {
+  const confirmTransactions = useCallback(
+    (transactions) => {
+      if (!near || !transactions || transactions.length === 0) {
         return null;
       }
-      console.log("confirm", transaction);
-      setTransaction(transaction);
+      transactions = transactions.map((t) => ({
+        contractName: t.contractName,
+        methodName: t.methodName,
+        args: t.args || {},
+        deposit: t.deposit ? Big(t.deposit) : Big(0),
+        gas: t.gas ? Big(t.gas) : TGas.mul(30),
+      }));
+      console.log("confirm txs", transactions);
+      setTransactions(transactions);
     },
     [near]
   );
@@ -131,7 +139,7 @@ export function Widget(props) {
       refreshCache: () => {
         setCacheNonce((cacheNonce) => cacheNonce + 1);
       },
-      confirmTransaction,
+      confirmTransactions,
       depth,
       widgetSrc: src,
       requestCommit,
@@ -140,7 +148,7 @@ export function Widget(props) {
     return () => {
       vm.alive = false;
     };
-  }, [src, near, gkey, parsedCode, depth, requestCommit, confirmTransaction]);
+  }, [src, near, gkey, parsedCode, depth, requestCommit, confirmTransactions]);
 
   useEffect(() => {
     if (!near) {
@@ -186,10 +194,12 @@ export function Widget(props) {
     >
       <>
         {element}
-        <ConfirmTransaction
-          transaction={transaction}
-          onHide={() => setTransaction(null)}
-        />
+        {transactions && (
+          <ConfirmTransactions
+            transactions={transactions}
+            onHide={() => setTransactions(null)}
+          />
+        )}
         {commitRequest && (
           <CommitModal
             show={true}

@@ -3,6 +3,7 @@ import { Widget } from "../components/Widget/Widget";
 import {
   ipfsUpload,
   ipfsUrl,
+  isArray,
   isObject,
   isString,
   Loading,
@@ -516,19 +517,33 @@ class VmStack {
       } else if (keyword === "Near" && callee === "block") {
         return this.vm.cachedNearBlock(...args);
       } else if (keyword === "Near" && callee === "call") {
-        if (args.length < 2 || args.length > 5) {
-          throw new Error(
-            "Method: Near.call. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'gas' (defaults to 300Tg), 'deposit' (defaults to 0)"
-          );
+        if (args.length === 1) {
+          if (isObject(args[0])) {
+            return this.vm.confirmTransactions([args[0]]);
+          } else if (isArray(args[0])) {
+            return this.vm.confirmTransactions(args[0]);
+          } else {
+            throw new Error(
+              "Method: Near.call. Required argument: 'tx/txs'. A single argument call requires an TX object or an array of TX objects."
+            );
+          }
+        } else {
+          if (args.length < 2 || args.length > 5) {
+            throw new Error(
+              "Method: Near.call. Required argument: 'contractName'. If the first argument is a string: 'methodName'. Optional: 'args', 'gas' (defaults to 300Tg), 'deposit' (defaults to 0)"
+            );
+          }
+
+          return this.vm.confirmTransactions([
+            {
+              contractName: args[0],
+              methodName: args[1],
+              args: args[2] ?? {},
+              gas: args[3],
+              deposit: args[4],
+            },
+          ]);
         }
-        this.vm.confirmTransaction({
-          contractName: args[0],
-          methodName: args[1],
-          args: args[2] ?? {},
-          gas: args[3],
-          deposit: args[4],
-        });
-        return;
       } else if (callee === "fetch") {
         if (args.length < 1) {
           throw new Error(
@@ -1193,7 +1208,7 @@ export default class VM {
       setReactState,
       cache,
       refreshCache,
-      confirmTransaction,
+      confirmTransactions,
       depth,
       widgetSrc,
       requestCommit,
@@ -1211,7 +1226,7 @@ export default class VM {
     this.setReactState = setReactState;
     this.cache = cache;
     this.refreshCache = refreshCache;
-    this.confirmTransaction = confirmTransaction;
+    this.confirmTransactions = confirmTransactions;
     this.depth = depth;
     this.widgetSrc = widgetSrc;
     this.requestCommit = requestCommit;
