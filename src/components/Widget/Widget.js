@@ -5,15 +5,15 @@ import React, {
   useState,
 } from "react";
 import { Parser } from "acorn";
-import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
-import { TGas, useAccountId, useNear } from "../../data/near";
+import { TGas, useNear } from "../../data/near";
 import ConfirmTransactions from "../ConfirmTransactions";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
-import { socialGet, useCache } from "../../data/cache";
+import { useCache } from "../../data/cache";
 import { CommitModal } from "../Commit";
+import { useAccountId } from "../../data/account";
 import Big from "big.js";
 
 const AcornOptions = {
@@ -32,7 +32,6 @@ const parseCode = (code) => {
 };
 
 export function Widget(props) {
-  const [gkey] = useState(uuid());
   const src = props.src;
   const rawCode = props.code;
   const codeProps = props.props;
@@ -58,6 +57,8 @@ export function Widget(props) {
       return;
     }
     setVm(null);
+    setParsedCode(null);
+    setElement(null);
     if (src) {
       setCode(null);
       setCode(
@@ -132,7 +133,6 @@ export function Widget(props) {
     setState(undefined);
     const vm = new VM({
       near,
-      gkey,
       code: parsedCode.parsedCode,
       setReactState: setState,
       cache,
@@ -148,7 +148,7 @@ export function Widget(props) {
     return () => {
       vm.alive = false;
     };
-  }, [src, near, gkey, parsedCode, depth, requestCommit, confirmTransactions]);
+  }, [src, near, parsedCode, depth, requestCommit, confirmTransactions]);
 
   useEffect(() => {
     if (!near) {

@@ -229,6 +229,7 @@ class Stack {
 
 class VmStack {
   constructor(vm, prevStack, state) {
+    this.gIndex = 0;
     this.vm = vm;
     this.stack = new Stack(prevStack, state);
   }
@@ -355,12 +356,11 @@ class VmStack {
         };
       }
     });
-    attributes.key = `${this.vm.gkey}-${attributes.key ?? this.vm.gIndex++}`;
+    attributes.key =
+      attributes.key ?? `${this.vm.widgetSrc}-${element}-${this.vm.gIndex}`;
     delete attributes.dangerouslySetInnerHTML;
-    if (styledComponent) {
-      delete attributes.as;
-      delete attributes.forwardedAs;
-    }
+    delete attributes.as;
+    delete attributes.forwardedAs;
     if (element === "img") {
       attributes.alt = attributes.alt ?? "not defined";
     } else if (element === "a") {
@@ -376,9 +376,11 @@ class VmStack {
         "And element '" + element + "' contains children, but shouldn't"
       );
     }
-    const children = code.children.map((child) =>
-      this.executeExpression(child)
-    );
+
+    const children = code.children.map((child, i) => {
+      this.vm.gIndex = i;
+      return this.executeExpression(child);
+    });
 
     if (element === "Widget") {
       return <Widget {...attributes} />;
@@ -406,10 +408,7 @@ class VmStack {
       return <React.Fragment {...attributes}>{children}</React.Fragment>;
     } else if (element === "IpfsImageUpload") {
       return (
-        <div
-          className="d-inline-block"
-          key={`${this.vm.gkey}-${this.vm.gIndex++}`}
-        >
+        <div className="d-inline-block" key={attributes.key}>
           {status.img?.cid && (
             <div
               className="d-inline-block me-2 overflow-hidden align-middle"
@@ -1203,7 +1202,6 @@ export default class VM {
   constructor(options) {
     const {
       near,
-      gkey,
       code,
       setReactState,
       cache,
@@ -1221,7 +1219,6 @@ export default class VM {
     this.alive = true;
 
     this.near = near;
-    this.gkey = gkey;
     this.code = code;
     this.setReactState = setReactState;
     this.cache = cache;

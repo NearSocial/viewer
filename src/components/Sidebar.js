@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../images/near_social_icon.svg";
 import LogoHorizontal from "../images/near_social_combo.svg";
-import { NearConfig, TGas, useAccountId, useNear } from "../data/near";
+import { NearConfig, TGas, useNear } from "../data/near";
 import { Widget } from "./Widget/Widget";
+import { useAccount } from "../data/account";
 
 export function Sidebar(props) {
   const near = useNear();
-  const accountId = useAccountId();
+  const account = useAccount();
+  const accountId = account.accountId;
   const widgetSrc = props.widgetSrc;
 
   const withdrawStorage = useCallback(

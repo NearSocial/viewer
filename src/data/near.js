@@ -8,14 +8,11 @@ import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
-import ls from "local-storage";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 
 export const TGas = Big(10).pow(12);
 export const MaxGasPerTransaction = TGas.mul(250);
 export const StorageCostPerByte = Big(10).pow(19);
-
-const LsKeyAccountId = LsKey + ":accountId:";
 
 export const randomPublicKey = nearAPI.utils.PublicKey.from(
   "ed25519:8fWHD35Rjd78yeowShh9GwhRudRtLLsGCRjZtgPjAtw9"
@@ -144,6 +141,14 @@ async function functionCall(
   }
 }
 
+async function accountState(near, accountId) {
+  const account = new nearAPI.Account(
+    near.nearConnection.connection,
+    accountId
+  );
+  return await account.state();
+}
+
 async function sendTransactions(near, functionCalls) {
   try {
     const wallet = await (await near.selector).wallet();
@@ -250,35 +255,6 @@ async function web4ViewCall(contractId, methodName, args, fallback) {
   }
 }
 
-async function updateAccount(near, walletState) {
-  near.connectedContractId = walletState?.contract?.contractId;
-  if (
-    near.connectedContractId &&
-    near.connectedContractId !== NearConfig.contractName
-  ) {
-    const wallet = await selector.wallet();
-    await wallet.signOut();
-    near.connectedContractId = null;
-    walletState = selector.store.getState();
-  }
-  near.accountId = walletState?.accounts?.[0]?.accountId ?? null;
-  if (near.accountId) {
-    near.publicKey = nearAPI.KeyPair.fromString(
-      ls.get(
-        walletState?.selectedWalletId === "meteor-wallet"
-          ? `_meteor_wallet${near.accountId}:${NearConfig.networkId}`
-          : `near-api-js:keystore:${near.accountId}:${NearConfig.networkId}`
-      )
-    ).getPublicKey();
-  }
-
-  near.storageBalance = near.accountId
-    ? await near.contract.storage_balance_of({
-        account_id: near.accountId,
-      })
-    : null;
-}
-
 async function _initNear() {
   const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
   const selector = setupWalletSelector({
@@ -380,6 +356,8 @@ async function _initNear() {
     ],
   });
 
+  _near.accountState = (accountId) => accountState(_near, accountId);
+
   return _near;
 }
 
@@ -398,26 +376,4 @@ export const useNear = singletonHook(defaultNear, () => {
   }, [_near]);
 
   return near;
-});
-
-const defaultAccountId = ls.get(LsKeyAccountId) ?? undefined;
-export const useAccountId = singletonHook(defaultAccountId, () => {
-  const [accountId, setAccountId] = useState(defaultAccountId);
-  const near = useNear();
-
-  useEffect(() => {
-    if (!near) {
-      return;
-    }
-    near.selector.then((selector) => {
-      selector.store.observable.subscribe(async (walletState) => {
-        await updateAccount(near, walletState);
-
-        setAccountId(near.accountId);
-        ls.set(LsKeyAccountId, near.accountId);
-      });
-    });
-  }, [near]);
-
-  return accountId;
 });
