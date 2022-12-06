@@ -159,9 +159,9 @@ export default function EditorPage(props) {
     (path, code) => {
       setPath(path);
       addToFiles(path);
+      setRenderCode(null);
       if (code !== undefined) {
         updateCode(path, code);
-        setRenderCode(code);
       } else {
         setLoading(true);
         cache
@@ -171,7 +171,6 @@ export default function EditorPage(props) {
           })
           .then(({ code }) => {
             updateCode(path, code);
-            setRenderCode(code);
           })
           .finally(() => {
             setLoading(false);
@@ -612,7 +611,11 @@ export default function EditorPage(props) {
               <div className="container">
                 <div className="row">
                   <div className="d-inline-block position-relative overflow-hidden">
-                    <Widget code={renderCode} props={parsedWidgetProps} />
+                    {renderCode ? (
+                      <Widget code={renderCode} props={parsedWidgetProps} />
+                    ) : (
+                      'Click "Render preview" button to render the widget'
+                    )}
                   </div>
                 </div>
               </div>
