@@ -1,5 +1,5 @@
 import Big from "big.js";
-import { NearConfig } from "./near";
+import { NearConfig, TGas } from "./near";
 import React from "react";
 import { useLocation } from "react-router-dom";
 
@@ -111,10 +111,23 @@ export const bigToString = (b, p, len) => {
 };
 
 export const displayNear = (balance) =>
-  balance ? (
+  !balance ? (
+    "???"
+  ) : balance.eq(1) ? (
+    <>
+      1 <span className="text-secondary">yoctoNEAR</span>
+    </>
+  ) : (
     <>
       {bigToString(balance.div(OneNear))}{" "}
       <span className="text-secondary">NEAR</span>
+    </>
+  );
+
+export const displayGas = (gas) =>
+  gas ? (
+    <>
+      {bigToString(gas.div(TGas))} <span className="text-secondary">TGas</span>
     </>
   ) : (
     "???"

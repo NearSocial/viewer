@@ -12,7 +12,7 @@ import ls from "local-storage";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 
 export const TGas = Big(10).pow(12);
-export const MaxGasPerTransaction = TGas.mul(300);
+export const MaxGasPerTransaction = TGas.mul(250);
 export const StorageCostPerByte = Big(10).pow(19);
 
 const LsKeyAccountId = LsKey + ":accountId:";
@@ -135,6 +135,48 @@ async function functionCall(
         },
       ],
     });
+  } catch (e) {
+    const msg = e.toString();
+    if (msg.indexOf("does not have enough balance") !== -1) {
+      return await refreshAllowanceObj.refreshAllowance();
+    }
+    throw e;
+  }
+}
+
+async function sendTransactions(near, functionCalls) {
+  try {
+    const wallet = await (await near.selector).wallet();
+    const transactions = [];
+    let currentTotalGas = Big(0);
+    functionCalls.forEach(
+      ({ contractName, methodName, args, gas, deposit }) => {
+        const newTotalGas = currentTotalGas.add(gas);
+        const action = {
+          type: "FunctionCall",
+          params: {
+            methodName,
+            args,
+            gas: gas.toFixed(0),
+            deposit: deposit.toFixed(0),
+          },
+        };
+        if (
+          transactions[transactions.length - 1]?.receiverId !== contractName ||
+          newTotalGas.gt(MaxGasPerTransaction)
+        ) {
+          transactions.push({
+            receiverId: contractName,
+            actions: [],
+          });
+          currentTotalGas = gas;
+        } else {
+          currentTotalGas = newTotalGas;
+        }
+        transactions[transactions.length - 1].actions.push(action);
+      }
+    );
+    return await wallet.signAndSendTransactions({ transactions });
   } catch (e) {
     const msg = e.toString();
     if (msg.indexOf("does not have enough balance") !== -1) {
@@ -318,6 +360,8 @@ async function _initNear() {
   };
   _near.functionCall = (contractName, methodName, args, gas, deposit) =>
     functionCall(_near, contractName, methodName, args, gas, deposit);
+  _near.sendTransactions = (transactions) =>
+    sendTransactions(_near, transactions);
 
   _near.contract = setupContract(_near, NearConfig.contractName, {
     viewMethods: [
