@@ -36,7 +36,7 @@ export default function ViewPage(props) {
     <div className="container">
       <div className="row">
         <div className="d-inline-block position-relative overflow-hidden">
-          <Widget src={src} props={widgetProps} />{" "}
+          <Widget key={src} src={src} props={widgetProps} />{" "}
         </div>
       </div>
     </div>

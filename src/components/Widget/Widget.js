@@ -57,6 +57,8 @@ export function Widget(props) {
       return;
     }
     setVm(null);
+    setParsedCode(null);
+    setElement(null);
     if (src) {
       setCode(null);
       setCode(
