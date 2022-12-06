@@ -15,6 +15,8 @@ export const TGas = Big(10).pow(12);
 export const MaxGasPerTransaction = TGas.mul(300);
 export const StorageCostPerByte = Big(10).pow(19);
 
+const LsKeyAccountId = LsKey + ":accountId:";
+
 export const randomPublicKey = nearAPI.utils.PublicKey.from(
   "ed25519:8fWHD35Rjd78yeowShh9GwhRudRtLLsGCRjZtgPjAtw9"
 );
@@ -354,7 +356,7 @@ export const useNear = singletonHook(defaultNear, () => {
   return near;
 });
 
-const defaultAccountId = undefined;
+const defaultAccountId = ls.get(LsKeyAccountId) ?? undefined;
 export const useAccountId = singletonHook(defaultAccountId, () => {
   const [accountId, setAccountId] = useState(defaultAccountId);
   const near = useNear();
@@ -368,6 +370,7 @@ export const useAccountId = singletonHook(defaultAccountId, () => {
         await updateAccount(near, walletState);
 
         setAccountId(near.accountId);
+        ls.set(LsKeyAccountId, near.accountId);
       });
     });
   }, [near]);
