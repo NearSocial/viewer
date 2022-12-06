@@ -5,20 +5,14 @@ import "@near-wallet-selector/modal-ui/styles.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import "App.scss";
 import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
-import {
-  IsMainnet,
-  NearConfig,
-  StorageCostPerByte,
-  TGas,
-  useAccountId,
-  useNear,
-} from "./data/near";
+import { NearConfig, StorageCostPerByte, useNear } from "./data/near";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
-import Big from "big.js";
 import EmbedPage from "./pages/EmbedPage";
 import { Sidebar } from "./components/Sidebar";
+import { useAccount } from "./data/account";
+import Big from "big.js";
 
 export const refreshAllowanceObj = {};
 
@@ -31,7 +25,8 @@ function App(props) {
   const [widgetSrc, setWidgetSrc] = useState(null);
 
   const near = useNear();
-  const accountId = useAccountId();
+  const account = useAccount();
+  const accountId = account.accountId;
 
   const location = window.location;
 
@@ -91,13 +86,16 @@ function App(props) {
     }
     setSignedIn(!!accountId);
     setSignedAccountId(accountId);
-    setAvailableStorage(
-      near.storageBalance
-        ? Big(near.storageBalance.available).div(StorageCostPerByte)
-        : Big(0)
-    );
     setConnected(true);
   }, [near, accountId]);
+
+  useEffect(() => {
+    setAvailableStorage(
+      account.storageBalance
+        ? Big(account.storageBalance.available).div(StorageCostPerByte)
+        : Big(0)
+    );
+  }, [account]);
 
   const passProps = {
     refreshAllowance: () => refreshAllowance(),

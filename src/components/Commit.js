@@ -7,9 +7,10 @@ import {
 import { computeWritePermission, displayNear, Loading } from "../data/utils";
 import Modal from "react-bootstrap/Modal";
 import { Markdown } from "./Markdown";
-import { StorageCostPerByte, useAccountId, useNear } from "../data/near";
+import { StorageCostPerByte, useNear } from "../data/near";
 import { ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { useCache } from "../data/cache";
+import { useAccountId } from "../data/account";
 
 const jsonMarkdown = (data) => {
   const json = JSON.stringify(data, null, 2);

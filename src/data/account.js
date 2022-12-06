@@ -1,14 +1,41 @@
 import { singletonHook } from "react-singleton-hook";
 import { useEffect, useState } from "react";
-import { useNearPromise } from "./near";
-import { keysToCamel } from "./utils";
+import { LsKey, NearConfig, useNear } from "./near";
+import ls from "local-storage";
+import * as nearAPI from "near-api-js";
+
+const LsKeyAccountId = LsKey + ":accountId:";
 
 const defaultAccount = {
   loading: true,
-  accountId: null,
+  accountId: ls.get(LsKeyAccountId) ?? undefined,
   state: null,
   near: null,
 };
+
+async function updateAccount(near, walletState) {
+  near.connectedContractId = walletState?.contract?.contractId;
+  if (
+    near.connectedContractId &&
+    near.connectedContractId !== NearConfig.contractName
+  ) {
+    const selector = await near.selector;
+    const wallet = await selector.wallet();
+    await wallet.signOut();
+    near.connectedContractId = null;
+    walletState = selector.store.getState();
+  }
+  near.accountId = walletState?.accounts?.[0]?.accountId ?? null;
+  if (near.accountId) {
+    near.publicKey = nearAPI.KeyPair.fromString(
+      ls.get(
+        walletState?.selectedWalletId === "meteor-wallet"
+          ? `_meteor_wallet${near.accountId}:${NearConfig.networkId}`
+          : `near-api-js:keystore:${near.accountId}:${NearConfig.networkId}`
+      )
+    ).getPublicKey();
+  }
+}
 
 const loadAccount = async (near, setAccount) => {
   const accountId = near.accountId;
@@ -20,18 +47,13 @@ const loadAccount = async (near, setAccount) => {
     refresh: async () => await loadAccount(near, setAccount),
   };
   if (accountId) {
-    const [rawStorage, writePermission, state] = await Promise.all([
+    const [storageBalance, state] = await Promise.all([
       near.contract.storage_balance_of({
         account_id: accountId,
       }),
-      near.contract.is_write_permission_granted({
-        predecessor_id: accountId,
-        key: `${accountId}`,
-      }),
-      near.account.state(),
+      near.accountState(accountId),
     ]);
-    account.storage = keysToCamel(rawStorage);
-    account.writePermission = writePermission;
+    account.storageBalance = storageBalance;
     account.state = state;
   }
 
@@ -40,17 +62,29 @@ const loadAccount = async (near, setAccount) => {
 
 export const useAccount = singletonHook(defaultAccount, () => {
   const [account, setAccount] = useState(defaultAccount);
-  const _near = useNearPromise();
+  const near = useNear();
 
   useEffect(() => {
-    _near.then(async (near) => {
-      try {
-        await loadAccount(near, setAccount);
-      } catch (e) {
-        console.error(e);
-      }
+    if (!near) {
+      return;
+    }
+    near.selector.then((selector) => {
+      selector.store.observable.subscribe(async (walletState) => {
+        await updateAccount(near, walletState);
+        try {
+          await loadAccount(near, setAccount);
+        } catch (e) {
+          console.error(e);
+        }
+        ls.set(LsKeyAccountId, near.accountId);
+      });
     });
-  }, [_near]);
+  }, [near]);
 
   return account;
 });
+
+export const useAccountId = () => {
+  const account = useAccount();
+  return account.accountId;
+};

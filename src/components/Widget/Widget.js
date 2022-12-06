@@ -5,15 +5,15 @@ import React, {
   useState,
 } from "react";
 import { Parser } from "acorn";
-import uuid from "react-uuid";
 import * as jsx from "acorn-jsx";
-import { useAccountId, useNear } from "../../data/near";
+import { useNear } from "../../data/near";
 import ConfirmTransaction from "../ConfirmTransaction";
 import VM from "../../vm/vm";
 import { ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
-import { socialGet, useCache } from "../../data/cache";
+import { useCache } from "../../data/cache";
 import { CommitModal } from "../Commit";
+import { useAccountId } from "../../data/account";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -31,7 +31,6 @@ const parseCode = (code) => {
 };
 
 export function Widget(props) {
-  const [gkey] = useState(uuid());
   const src = props.src;
   const rawCode = props.code;
   const codeProps = props.props;
@@ -124,7 +123,6 @@ export function Widget(props) {
     setState(undefined);
     const vm = new VM({
       near,
-      gkey,
       code: parsedCode.parsedCode,
       setReactState: setState,
       cache,
@@ -140,7 +138,7 @@ export function Widget(props) {
     return () => {
       vm.alive = false;
     };
-  }, [src, near, gkey, parsedCode, depth, requestCommit, confirmTransaction]);
+  }, [src, near, parsedCode, depth, requestCommit, confirmTransaction]);
 
   useEffect(() => {
     if (!near) {

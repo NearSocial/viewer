@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Widget } from "../components/Widget/Widget";
 import ls from "local-storage";
-import { LsKey, NearConfig, useAccountId, useNear } from "../data/near";
+import { LsKey, NearConfig, useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ import { CommitButton } from "../components/Commit";
 import { Nav } from "react-bootstrap";
 import RenameModal from "../components/Editor/RenameModal";
 import OpenModal from "../components/Editor/OpenModal";
+import { useAccountId } from "../data/account";
 
 const StorageDomain = {
   page: "editor",
@@ -159,6 +160,7 @@ export default function EditorPage(props) {
     (path, code) => {
       setPath(path);
       addToFiles(path);
+      setMetadata(undefined);
       setRenderCode(null);
       if (code !== undefined) {
         updateCode(path, code);
@@ -612,7 +614,11 @@ export default function EditorPage(props) {
                 <div className="row">
                   <div className="d-inline-block position-relative overflow-hidden">
                     {renderCode ? (
-                      <Widget code={renderCode} props={parsedWidgetProps} />
+                      <Widget
+                        key={`preview-${jpath}`}
+                        code={renderCode}
+                        props={parsedWidgetProps}
+                      />
                     ) : (
                       'Click "Render preview" button to render the widget'
                     )}
@@ -629,10 +635,11 @@ export default function EditorPage(props) {
                 <div className="row">
                   <div className="d-inline-block position-relative overflow-hidden">
                     <Widget
+                      key={`metadata-${jpath}`}
                       src={NearConfig.widgets.widgetMetadata}
                       props={useMemo(
-                        () => ({ metadata, accountId, widgetName: path?.name }),
-                        [metadata, accountId, path]
+                        () => ({ metadata, accountId, widgetName }),
+                        [metadata, accountId, widgetName]
                       )}
                     />
                   </div>
