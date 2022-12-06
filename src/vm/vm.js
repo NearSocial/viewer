@@ -357,8 +357,6 @@ class VmStack {
     });
     attributes.key =
       attributes.key ?? `${this.vm.widgetSrc}-${element}-${this.vm.gIndex}`;
-    //attributes.key = `${this.vm.gkey}-${attributes.key ?? this.vm.gIndex++}`;
-    // attributes.key = `${this.vm.gkey}-${attributes.key ?? this.vm.gIndex++}`;
     delete attributes.dangerouslySetInnerHTML;
     delete attributes.as;
     delete attributes.forwardedAs;
