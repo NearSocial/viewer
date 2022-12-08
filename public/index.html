@@ -24,7 +24,7 @@
     <link rel="manifest" href="manifest.json" />
     <title>Near Social</title>
     <script defer data-domain="near.social" src="https://plausible.io/js/script.hash.js"></script>
-    <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }; window.analytics = () => window.plausible(...arguments)</script>
+    <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }; window.analytics = function() { window.plausible(...arguments) }</script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
