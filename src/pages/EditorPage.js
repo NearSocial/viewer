@@ -284,6 +284,11 @@ export default function EditorPage(props) {
       } else {
         loadFile(widgetSrc);
       }
+      analytics("edit", {
+        props: {
+          widget: widgetSrc,
+        },
+      });
       history.replace(`/edit/`);
     } else if (path === undefined) {
       if (files.length === 0) {

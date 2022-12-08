@@ -20,6 +20,14 @@ export default function EmbedPage(props) {
     );
   }, [query]);
 
+  useEffect(() => {
+    analytics("embed", {
+      props: {
+        widget: src,
+      },
+    });
+  }, [src]);
+
   return (
     <div className="d-inline-block position-relative overflow-hidden">
       <Widget key={src} src={src} props={widgetProps} />{" "}
