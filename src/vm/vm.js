@@ -77,7 +77,7 @@ const ApprovedTags = {
   Fragment: true,
   textarea: true,
   select: true,
-  options: true,
+  option: true,
   label: true,
   small: true,
   InfiniteScroll: true,
