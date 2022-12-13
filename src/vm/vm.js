@@ -104,6 +104,7 @@ const Keywords = {
   Image: Image,
   File: File,
   Blob: Blob,
+  Array: Array,
 };
 
 const ReservedKeys = {
