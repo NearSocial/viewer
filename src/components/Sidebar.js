@@ -76,6 +76,11 @@ export function Sidebar(props) {
                     New widget
                   </Link>
                 </li>
+                <li>
+                  <Link className="dropdown-item" to="/edit">
+                    Editor
+                  </Link>
+                </li>
                 {widgetSrc?.edit && (
                   <li>
                     <Link
