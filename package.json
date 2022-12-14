@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "/",
   "private": true,
   "dependencies": {
@@ -20,6 +20,7 @@
     "bootstrap": "^5.2.1",
     "bootstrap-icons": "^1.9.0",
     "collections": "^5.1.12",
+    "elliptic": "^6.5.4",
     "error-polyfill": "^0.1.2",
     "idb": "^7.1.1",
     "local-storage": "^2.0.0",
@@ -39,7 +40,8 @@
     "react-uuid": "^1.0.2",
     "remark-gfm": "^3.0.1",
     "styled-components": "^5.3.6",
-    "swr": "^0.5.6"
+    "swr": "^0.5.6",
+    "tweetnacl": "^1.0.3"
   },
   "scripts": {
     "serve": "webpack serve",
