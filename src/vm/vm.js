@@ -1192,6 +1192,49 @@ class VmStack {
       return {
         break: true,
       };
+    } else if (token.type === "ThrowStatement") {
+      throw this.executeExpression(token.argument);
+    } else if (token.type === "TryStatement") {
+      try {
+        const stack = this.newStack();
+        const result = stack.executeStatement(token.block);
+        if (result) {
+          return result;
+        }
+      } catch (e) {
+        if (!this.vm.alive || !token.handler) {
+          return null;
+        }
+        if (token.handler.type !== "CatchClause") {
+          throw new Error(
+            "Unknown try statement handler type '" + token.handler.type + "'"
+          );
+        }
+        const stack = this.newStack();
+        if (token.handler.param) {
+          stack.stackDeclare(
+            requireIdentifier(token.handler.param),
+            deepCopy(
+              e instanceof Error
+                ? {
+                    name: e?.name,
+                    message: e?.message,
+                    toString: () => e.toString(),
+                  }
+                : e
+            )
+          );
+        }
+        const result = stack.executeStatement(token.handler.body);
+        if (result) {
+          return result;
+        }
+      } finally {
+        if (this.vm.alive) {
+          const stack = this.newStack();
+          stack.executeStatement(token.finalizer);
+        }
+      }
     } else {
       throw new Error("Unknown token type '" + token.type + "'");
     }
