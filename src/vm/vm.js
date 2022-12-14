@@ -21,7 +21,7 @@ import styled, { isStyledComponent, keyframes } from "styled-components";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Big from "big.js";
 
-const LoopLimit = 10000;
+const LoopLimit = 1000000;
 const MaxDepth = 32;
 
 const ReactKey = "$$typeof";
