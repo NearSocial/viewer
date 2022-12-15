@@ -333,3 +333,20 @@ export const computeWritePermission = (previousPermissions, data) => {
   // );
   return permissions;
 };
+
+function isGetter(obj, prop) {
+  return !!Object.getOwnPropertyDescriptor(obj, prop)["get"];
+}
+
+export const deepFreeze = (obj) => {
+  Object.keys(obj).forEach((prop) => {
+    if (
+      !isGetter(obj, prop) &&
+      typeof obj[prop] === "object" &&
+      !Object.isFrozen(obj[prop])
+    ) {
+      deepFreeze(obj[prop]);
+    }
+  });
+  return Object.freeze(obj);
+};

@@ -1,6 +1,7 @@
 import React from "react";
 import { Widget } from "../components/Widget/Widget";
 import {
+  deepFreeze,
   ipfsUpload,
   ipfsUrl,
   isArray,
@@ -20,6 +21,28 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import styled, { isStyledComponent, keyframes } from "styled-components";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Big from "big.js";
+import * as elliptic from "elliptic";
+import BN from "bn.js";
+import * as nacl from "tweetnacl";
+
+const frozenNacl = Object.freeze({
+  randomBytes: deepFreeze(nacl.randomBytes),
+  secretbox: deepFreeze(nacl.secretbox),
+  scalarMult: deepFreeze(nacl.scalarMult),
+  box: deepFreeze(nacl.box),
+  sign: deepFreeze(nacl.sign),
+  hash: deepFreeze(nacl.hash),
+  verify: deepFreeze(nacl.verify),
+});
+
+const frozenElliptic = Object.freeze({
+  version: deepFreeze(elliptic.version),
+  utils: deepFreeze(elliptic.utils),
+  curve: deepFreeze(elliptic.curve),
+  curves: deepFreeze(elliptic.curves),
+  ec: Object.freeze(elliptic.ec),
+  eddsa: Object.freeze(elliptic.eddsa),
+});
 
 const LoopLimit = 1000000;
 const MaxDepth = 32;
@@ -95,16 +118,18 @@ const Keywords = {
   console: true,
   styled: true,
   Object: true,
-  Date: Date,
-  Number: Number,
-  Big: Big,
-  Math: Math,
-  Buffer: Buffer,
-  Audio: Audio,
-  Image: Image,
-  File: File,
-  Blob: Blob,
-  Array: Array,
+  Date,
+  Number,
+  Big,
+  Math,
+  Buffer,
+  Audio,
+  Image,
+  File,
+  Blob,
+  Array,
+  BN,
+  Uint8Array,
 };
 
 const ReservedKeys = {
@@ -134,6 +159,10 @@ const assertValidObject = (o) => {
 const deepCopy = (o) => {
   if (Array.isArray(o)) {
     return o.map((v) => deepCopy(v));
+  } else if (Buffer.isBuffer(o)) {
+    return Buffer.from(o);
+  } else if (o instanceof Uint8Array || o instanceof ArrayBuffer) {
+    return o.slice(0);
   } else if (isObject(o)) {
     if (isReactObject(o)) {
       return o;
@@ -1411,6 +1440,8 @@ export default class VM {
       props: deepCopy(props),
       context,
       state: deepCopy(state),
+      nacl: frozenNacl,
+      elliptic: frozenElliptic,
     };
     this.loopLimit = LoopLimit;
     this.vmStack = new VmStack(this, undefined, this.state);
