@@ -148,6 +148,13 @@ const deepCopy = (o) => {
   }
 };
 
+const maybeSubscribe = (subscribe, blockId) =>
+  subscribe &&
+  (blockId === undefined ||
+    blockId === null ||
+    blockId === "final" ||
+    blockId === "optimistic");
+
 const requireIdentifier = (id) => {
   if (id.type !== "Identifier") {
     throw new Error("Non identifier: " + id.type);
@@ -503,10 +510,18 @@ class VmStack {
       } else if (keyword === "Near" && callee === "view") {
         if (args.length < 2) {
           throw new Error(
-            "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality'"
+            "Method: Near.view. Required arguments: 'contractName', 'methodName'. Optional: 'args', 'blockId/finality', 'subscribe'"
           );
         }
-        return this.vm.cachedNearView(...args);
+        const [contractName, methodName, viewArg, blockId, subscribe] = args;
+
+        return this.vm.cachedNearView(
+          contractName,
+          methodName,
+          viewArg,
+          blockId,
+          maybeSubscribe(subscribe, blockId)
+        );
       } else if (keyword === "Near" && callee === "asyncView") {
         if (args.length < 2) {
           throw new Error(
@@ -515,7 +530,11 @@ class VmStack {
         }
         return this.vm.asyncNearView(...args);
       } else if (keyword === "Near" && callee === "block") {
-        return this.vm.cachedNearBlock(...args);
+        const [blockId, subscribe] = args;
+        return this.vm.cachedNearBlock(
+          blockId,
+          maybeSubscribe(subscribe, blockId)
+        );
       } else if (keyword === "Near" && callee === "call") {
         if (args.length === 1) {
           if (isObject(args[0])) {
@@ -1273,32 +1292,37 @@ export default class VM {
     this.requestCommit = requestCommit;
   }
 
-  cachedPromise(promise) {
-    const onInvalidate = () => {
-      if (this.alive) {
-        this.refreshCache();
-      }
+  cachedPromise(promise, subscribe) {
+    const invalidate = {
+      onInvalidate: () => {
+        if (this.alive) {
+          this.refreshCache();
+        }
+      },
+      subscribe: !!subscribe,
     };
-    return deepCopy(promise(onInvalidate));
+    return deepCopy(promise(invalidate));
   }
 
   cachedSocialGet(keys, recursive, blockId, options) {
     keys = Array.isArray(keys) ? keys : [keys];
-    return this.cachedPromise((onInvalidate) =>
-      this.cache.socialGet(
-        this.near,
-        keys,
-        recursive,
-        blockId,
-        options,
-        onInvalidate
-      )
+    return this.cachedPromise(
+      (invalidate) =>
+        this.cache.socialGet(
+          this.near,
+          keys,
+          recursive,
+          blockId,
+          options,
+          invalidate
+        ),
+      options?.subscribe
     );
   }
 
   storageGet(domain, key) {
-    return this.cachedPromise((onInvalidate) =>
-      this.cache.localStorageGet(domain, key, onInvalidate)
+    return this.cachedPromise((invalidate) =>
+      this.cache.localStorageGet(domain, key, invalidate)
     );
   }
 
@@ -1308,18 +1332,20 @@ export default class VM {
 
   cachedSocialKeys(keys, blockId, options) {
     keys = Array.isArray(keys) ? keys : [keys];
-    return this.cachedPromise((onInvalidate) =>
-      this.cache.cachedViewCall(
-        this.near,
-        NearConfig.contractName,
-        "keys",
-        {
-          keys,
-          options,
-        },
-        blockId,
-        onInvalidate
-      )
+    return this.cachedPromise(
+      (invalidate) =>
+        this.cache.cachedViewCall(
+          this.near,
+          NearConfig.contractName,
+          "keys",
+          {
+            keys,
+            options,
+          },
+          blockId,
+          invalidate
+        ),
+      options?.subscribe
     );
   }
 
@@ -1327,22 +1353,25 @@ export default class VM {
     return this.near.viewCall(contractName, methodName, args, blockId);
   }
 
-  cachedNearView(contractName, methodName, args, blockId) {
-    return this.cachedPromise((onInvalidate) =>
-      this.cache.cachedViewCall(
-        this.near,
-        contractName,
-        methodName,
-        args,
-        blockId,
-        onInvalidate
-      )
+  cachedNearView(contractName, methodName, args, blockId, subscribe) {
+    return this.cachedPromise(
+      (invalidate) =>
+        this.cache.cachedViewCall(
+          this.near,
+          contractName,
+          methodName,
+          args,
+          blockId,
+          invalidate
+        ),
+      subscribe
     );
   }
 
-  cachedNearBlock(blockId) {
-    return this.cachedPromise((onInvalidate) =>
-      this.cache.cachedBlock(this.near, blockId, onInvalidate)
+  cachedNearBlock(blockId, subscribe) {
+    return this.cachedPromise(
+      (invalidate) => this.cache.cachedBlock(this.near, blockId, invalidate),
+      subscribe
     );
   }
 
@@ -1351,14 +1380,16 @@ export default class VM {
   }
 
   cachedFetch(url, options) {
-    return this.cachedPromise((onInvalidate) =>
-      this.cache.cachedFetch(url, options, onInvalidate)
+    return this.cachedPromise(
+      (invalidate) => this.cache.cachedFetch(url, options, invalidate),
+      options?.subscribe
     );
   }
 
   cachedIndex(action, key, options) {
-    return this.cachedPromise((onInvalidate) =>
-      this.cache.socialIndex(action, key, options, onInvalidate)
+    return this.cachedPromise(
+      (invalidate) => this.cache.socialIndex(action, key, options, invalidate),
+      options?.subscribe
     );
   }
 
