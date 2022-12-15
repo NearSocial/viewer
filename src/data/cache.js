@@ -1,5 +1,5 @@
 import { NearConfig } from "./near";
-import { indexMatch, patternMatch } from "./utils";
+import { indexMatch, isObject, patternMatch } from "./utils";
 import { openDB } from "idb";
 import { singletonHook } from "react-singleton-hook";
 
@@ -17,6 +17,7 @@ const CacheStatus = {
   Invalidated: "Invalidated",
 };
 
+const CacheSubscriptionTimeoutMs = 5000;
 const CacheDebug = false;
 
 function invalidateCallbacks(cached, isFinal) {
@@ -59,7 +60,7 @@ class Cache {
     return (await this.dbPromise).put(CacheDbObject, val, key);
   }
 
-  cachedPromise(key, promise, onInvalidate, forceCachedValue) {
+  cachedPromise(key, promise, invalidate, forceCachedValue) {
     key = JSON.stringify(key);
     const cached = this.cache[key] || {
       status: CacheStatus.NotStarted,
@@ -67,8 +68,28 @@ class Cache {
       result: null,
     };
     this.cache[key] = cached;
-    if (onInvalidate) {
-      cached.invalidationCallbacks.push(onInvalidate);
+    if (!isObject(invalidate)) {
+      invalidate = {
+        onInvalidate: invalidate,
+      };
+    }
+    if (invalidate.onInvalidate) {
+      cached.invalidationCallbacks.push(invalidate.onInvalidate);
+    }
+    if (!cached.subscription && invalidate.subscribe) {
+      const makeTimer = () => {
+        cached.subscription = setTimeout(() => {
+          CacheDebug && console.log("Cached subscription invalidation", key);
+          if (document.hidden) {
+            makeTimer();
+          } else {
+            cached.subscription = null;
+            cached.status = CacheStatus.Invalidated;
+            invalidateCallbacks(cached, false);
+          }
+        }, CacheSubscriptionTimeoutMs);
+      };
+      makeTimer();
     }
     if (
       cached.status === CacheStatus.InProgress ||
@@ -167,18 +188,18 @@ class Cache {
     });
   }
 
-  cachedBlock(near, blockId, onInvalidate) {
+  cachedBlock(near, blockId, invalidate) {
     return this.cachedPromise(
       {
         action: Action.Block,
         blockId,
       },
       () => near.block(blockId),
-      onInvalidate
+      invalidate
     );
   }
 
-  cachedViewCall(near, contractId, methodName, args, blockId, onInvalidate) {
+  cachedViewCall(near, contractId, methodName, args, blockId, invalidate) {
     return this.cachedPromise(
       {
         action: Action.ViewCall,
@@ -188,7 +209,7 @@ class Cache {
         blockId,
       },
       () => near.viewCall(contractId, methodName, args, blockId),
-      onInvalidate
+      invalidate
     );
   }
 
@@ -222,7 +243,7 @@ class Cache {
     }
   }
 
-  cachedFetch(url, options, onInvalidate) {
+  cachedFetch(url, options, invalidate) {
     return this.cachedPromise(
       {
         action: Action.Fetch,
@@ -230,11 +251,11 @@ class Cache {
         options,
       },
       () => this.asyncFetch(url, options),
-      onInvalidate
+      invalidate
     );
   }
 
-  socialGet(near, keys, recursive, blockId, options, onInvalidate) {
+  socialGet(near, keys, recursive, blockId, options, invalidate) {
     if (!near) {
       return null;
     }
@@ -250,7 +271,7 @@ class Cache {
       "get",
       args,
       blockId,
-      onInvalidate
+      invalidate
     );
     if (data === null) {
       return null;
@@ -270,7 +291,7 @@ class Cache {
     return data;
   }
 
-  socialIndex(action, key, options, onInvalidate) {
+  socialIndex(action, key, options, invalidate) {
     const res = this.cachedFetch(
       `${NearConfig.apiUrl}/index`,
       {
@@ -284,13 +305,13 @@ class Cache {
           options,
         }),
       },
-      onInvalidate
+      invalidate
     );
 
     return res?.ok ? res.body : null;
   }
 
-  localStorageGet(domain, key, onInvalidate) {
+  localStorageGet(domain, key, invalidate) {
     return this.cachedPromise(
       {
         action: Action.LocalStorage,
@@ -298,7 +319,7 @@ class Cache {
         key,
       },
       undefined,
-      onInvalidate,
+      invalidate,
       true
     );
   }
