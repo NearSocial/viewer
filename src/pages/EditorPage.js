@@ -8,7 +8,7 @@ import { useHistory, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import { useCache } from "../data/cache";
 import { CommitButton } from "../components/Commit";
-import { Nav } from "react-bootstrap";
+import { Nav, OverlayTrigger, Tooltip } from "react-bootstrap";
 import RenameModal from "../components/Editor/RenameModal";
 import OpenModal from "../components/Editor/OpenModal";
 import { useAccountId } from "../data/account";
@@ -222,7 +222,7 @@ export default function EditorPage(props) {
   const generateNewName = useCallback(
     (type) => {
       for (let i = 0; ; i++) {
-        const name = `Widget-${i}`;
+        const name = `Draft-${i}`;
         const path = toPath(type, name);
         path.unnamed = true;
         const jPath = JSON.stringify(path);
@@ -383,7 +383,7 @@ export default function EditorPage(props) {
       />
       <div className="mb-3">
         <Nav
-          variant="pills"
+          variant="pills mb-1"
           activeKey={jpath}
           onSelect={(key) => openFile(JSON.parse(key))}
         >
@@ -427,9 +427,41 @@ export default function EditorPage(props) {
             </Nav.Link>
           </Nav.Item>
         </Nav>
-        <hr />
+        {NearConfig.widgets.editorComponentSearch && (
+          <div>
+            <Widget
+              src={NearConfig.widgets.editorComponentSearch}
+              props={useMemo(
+                () => ({
+                  extraButtons: ({ widgetName, widgetPath, onHide }) => (
+                    <OverlayTrigger
+                      placement="auto"
+                      overlay={
+                        <Tooltip>
+                          Open "{widgetName}" component in the editor
+                        </Tooltip>
+                      }
+                    >
+                      <button
+                        className="btn btn-outline-primary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          loadFile(widgetPath);
+                          onHide && onHide();
+                        }}
+                      >
+                        Open
+                      </button>
+                    </OverlayTrigger>
+                  ),
+                }),
+                [loadFile]
+              )}
+            />
+          </div>
+        )}
       </div>
-      <div className="min-vh-100 d-flex align-content-start">
+      <div className="d-flex align-content-start">
         <div className="me-2">
           <div
             className="btn-group-vertical"
@@ -562,14 +594,13 @@ export default function EditorPage(props) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Open Widget in a new tab
+                      Open Component in a new tab
                     </a>
                   )}
                 </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
-                Props for debugging (JSON)
-                <div className="form-control mb-3" style={{ height: "40vh" }}>
+                <div className="form-control" style={{ height: "70vh" }}>
                   <Editor
                     value={widgetProps}
                     defaultLanguage="json"
@@ -579,6 +610,7 @@ export default function EditorPage(props) {
                     }}
                   />
                 </div>
+                <div className=" mb-3">^^ Props for debugging (in JSON)</div>
                 {propsError && (
                   <pre className="alert alert-danger">{propsError}</pre>
                 )}
