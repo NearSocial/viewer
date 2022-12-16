@@ -66,6 +66,7 @@ export const MainNearConfig = {
     widgetMetadata: "mob.near/widget/WidgetMetadata",
     profileImage: "mob.near/widget/ProfileImage",
     notificationButton: "mob.near/widget/NotificationButton",
+    editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
   },
   apiUrl: "https://api.near.social",
   finalSynchronizationDelayMs: 3000,
