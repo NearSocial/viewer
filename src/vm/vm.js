@@ -130,6 +130,7 @@ const Keywords = {
   Array,
   BN,
   Uint8Array,
+  clipboard: true,
 };
 
 const ReservedKeys = {
@@ -265,14 +266,15 @@ class Stack {
 }
 
 class VmStack {
-  constructor(vm, prevStack, state) {
+  constructor(vm, prevStack, state, isTrusted) {
     this.gIndex = 0;
     this.vm = vm;
+    this.isTrusted = !!isTrusted;
     this.stack = new Stack(prevStack, state);
   }
 
-  newStack() {
-    return new VmStack(this.vm, this.stack, {});
+  newStack(isTrusted) {
+    return new VmStack(this.vm, this.stack, {}, this.isTrusted || !!isTrusted);
   }
 
   executeExpression(code) {
@@ -736,6 +738,10 @@ class VmStack {
         );
       } else if (keyword === "console" && callee === "log") {
         return console.log(this.vm.widgetSrc, ...args);
+      } else if (keyword === "clipboard" && callee === "writeText") {
+        return this.isTrusted
+          ? navigator.clipboard.writeText(...args)
+          : Promise.reject(new Error("Not trusted (not a click)"));
       }
     } else {
       const f = callee === keyword ? keywordType : keywordType[callee];
@@ -1077,13 +1083,17 @@ class VmStack {
       if (!this.vm.alive) {
         return;
       }
-      const stack = this.newStack();
+      const isTrusted = !!(
+        args?.[0]?.nativeEvent instanceof Event &&
+        args?.[0]?.nativeEvent.isTrusted
+      );
+      const stack = this.newStack(isTrusted);
       params.forEach((param, i) => {
         let v = undefined;
         let arg = args?.[i];
         if (arg !== undefined) {
           try {
-            if (arg.nativeEvent instanceof Event) {
+            if (arg?.nativeEvent instanceof Event) {
               arg.preventDefault();
               arg = arg.nativeEvent;
               arg = {
