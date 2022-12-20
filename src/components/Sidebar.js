@@ -155,6 +155,17 @@ export function Sidebar(props) {
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
+                      <a
+                        className="dropdown-item text-decoration-none"
+                        href={`#/${NearConfig.widgets.profilePage}?accountId=${accountId}`}
+                      >
+                        Profile
+                      </a>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
                       <button
                         className="dropdown-item"
                         onClick={(e) => props.logOut(e)}
