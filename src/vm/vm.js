@@ -148,7 +148,7 @@ const assertNotReservedKey = (key) => {
   }
 };
 
-const assertNonReactObject = (o) => {
+const assertNotReactObject = (o) => {
   if (isReactObject(o)) {
     throw new Error("React objects shouldn't dereferenced");
   }
@@ -627,7 +627,7 @@ class VmStack {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for JSON.stringify");
         }
-        assertNonReactObject(args[0]);
+        assertNotReactObject(args[0]);
         return JSON.stringify(args[0], args[1], args[2]);
       } else if (keyword === "JSON" && callee === "parse") {
         if (args.length < 1) {
@@ -645,22 +645,22 @@ class VmStack {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.keys");
           }
-          assertNonReactObject(args[0]);
+          assertNotReactObject(args[0]);
           return Object.keys(args[0]);
         } else if (callee === "values") {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.values");
           }
-          assertNonReactObject(args[0]);
+          assertNotReactObject(args[0]);
           return Object.values(args[0]);
         } else if (callee === "entries") {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.entries");
           }
-          assertNonReactObject(args[0]);
+          assertNotReactObject(args[0]);
           return Object.entries(args[0]);
         } else if (callee === "assign") {
-          args.forEach((arg) => assertNonReactObject(arg));
+          args.forEach((arg) => assertNotReactObject(arg));
           const obj = Object.assign(...args);
           assertValidObject(obj);
           return obj;
@@ -848,6 +848,7 @@ class VmStack {
       const { obj, key } = this.resolveMemberExpression(code.left, {
         left: true,
       });
+      assertNotReactObject(obj);
       const right = this.executeExpression(code.right);
 
       if (code.operator === "=") {
@@ -896,7 +897,7 @@ class VmStack {
       });
       const args = this.getArray(code.arguments);
       if (!keyword && obj?.[key] instanceof Function) {
-        assertNonReactObject(obj);
+        assertNotReactObject(obj);
         return obj?.[key](...args);
       } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
         return this.callFunction(
@@ -959,6 +960,7 @@ class VmStack {
         const { obj, key } = this.resolveMemberExpression(code.argument, {
           left: true,
         });
+        assertNotReactObject(obj);
         return delete obj?.[key];
       }
       const argument = this.executeExpression(code.argument);
@@ -1011,6 +1013,7 @@ class VmStack {
           object[key] = this.executeExpression(property.value);
         } else if (property.type === "SpreadElement") {
           const value = this.executeExpression(property.argument);
+          assertNotReactObject(value);
           Object.assign(object, value);
         } else {
           throw new Error("Unknown property type: " + property.type);
