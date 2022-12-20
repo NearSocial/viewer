@@ -784,6 +784,7 @@ class VmStack {
         throw new Error(`The top object should be ${StakeKey}`);
       }
       const obj = this.stack.findObj(key) ?? this.stack.state;
+      assertNotReactObject(obj);
       if (obj === this.stack.state) {
         if (key in Keywords) {
           if (options?.left) {
@@ -817,10 +818,8 @@ class VmStack {
         }
       }
       const obj = this.executeExpression(code.object);
+      assertNotReactObject(obj);
       const key = this.resolveKey(code.property, code.computed);
-      if (isReactObject(obj)) {
-        throw new Error("React objects shouldn't dereferenced");
-      }
       return { obj, key };
     } else {
       throw new Error("Unsupported member type: '" + code.type + "'");
@@ -848,7 +847,6 @@ class VmStack {
       const { obj, key } = this.resolveMemberExpression(code.left, {
         left: true,
       });
-      assertNotReactObject(obj);
       const right = this.executeExpression(code.right);
 
       if (code.operator === "=") {
@@ -897,7 +895,6 @@ class VmStack {
       });
       const args = this.getArray(code.arguments);
       if (!keyword && obj?.[key] instanceof Function) {
-        assertNotReactObject(obj);
         return obj?.[key](...args);
       } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
         return this.callFunction(
@@ -960,7 +957,6 @@ class VmStack {
         const { obj, key } = this.resolveMemberExpression(code.argument, {
           left: true,
         });
-        assertNotReactObject(obj);
         return delete obj?.[key];
       }
       const argument = this.executeExpression(code.argument);
