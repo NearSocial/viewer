@@ -13,6 +13,7 @@ import EmbedPage from "./pages/EmbedPage";
 import { Sidebar } from "./components/Sidebar";
 import { useAccount } from "./data/account";
 import Big from "big.js";
+//import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 
 export const refreshAllowanceObj = {};
 
@@ -107,6 +108,7 @@ function App(props) {
     widgetSrc,
     logOut,
     requestSignIn,
+    NearConfig
   };
 
   return (
@@ -122,6 +124,7 @@ function App(props) {
             </Sidebar>
           </Route>
           <Route path={"/:widgetSrc*"}>
+            {/* TODO: Replace with <NavigationWrapper {...passProps} />*/}
             <Sidebar {...passProps}>
               <ViewPage {...passProps} />
             </Sidebar>
