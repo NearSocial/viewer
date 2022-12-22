@@ -1148,6 +1148,7 @@ class VmStack {
     if (pattern.type === "Identifier") {
       this.stack.state[pattern.name] = value;
     } else if (pattern.type === "ArrayPattern") {
+      assertNotReactObject(value);
       pattern.elements.forEach((element, i) => {
         if (element.type === "RestElement") {
           this.stackDeclare(element.argument, value.slice(i));
@@ -1156,6 +1157,7 @@ class VmStack {
         }
       });
     } else if (pattern.type === "ObjectPattern") {
+      assertNotReactObject(value);
       pattern.properties.forEach((property) => {
         if (property.type === "RestElement") {
           this.stackDeclare(property.argument, isObject(value) ? value : {});
