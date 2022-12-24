@@ -290,7 +290,10 @@ export const indexMatch = (action, key, data) => {
   return Object.values(data).some((value) => {
     const indexValue = value?.index?.[action];
     try {
-      return indexValue && JSON.parse(indexValue).key === key;
+      return (
+        indexValue &&
+        JSON.stringify(JSON.parse(indexValue).key) === JSON.stringify(key)
+      );
     } catch {
       return false;
     }
