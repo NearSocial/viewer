@@ -27,13 +27,30 @@ async function updateAccount(near, walletState) {
   }
   near.accountId = walletState?.accounts?.[0]?.accountId ?? null;
   if (near.accountId) {
-    near.publicKey = nearAPI.KeyPair.fromString(
-      ls.get(
-        walletState?.selectedWalletId === "meteor-wallet"
-          ? `_meteor_wallet${near.accountId}:${NearConfig.networkId}`
-          : `near-api-js:keystore:${near.accountId}:${NearConfig.networkId}`
-      )
-    ).getPublicKey();
+    near.publicKey = null;
+    try {
+      if (walletState?.selectedWalletId === "here-wallet") {
+        const hereKeystore = ls.get("herewallet:keystore");
+        near.publicKey = nearAPI.KeyPair.fromString(
+          hereKeystore[NearConfig.networkId].accounts[near.accountId]
+        ).getPublicKey();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    if (!near.publicKey) {
+      try {
+        near.publicKey = nearAPI.KeyPair.fromString(
+          ls.get(
+            walletState?.selectedWalletId === "meteor-wallet"
+              ? `_meteor_wallet${near.accountId}:${NearConfig.networkId}`
+              : `near-api-js:keystore:${near.accountId}:${NearConfig.networkId}`
+          )
+        ).getPublicKey();
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }
 }
 
