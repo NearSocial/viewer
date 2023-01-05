@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Widget } from "../../Widget/Widget";
 import styled from "styled-components";
 import { User } from "../../icons/User";
 import { LogOut } from "../../icons/LogOut";
+import { Withdraw } from "../../icons/Withdraw";
 import { NavLink } from "react-router-dom";
+import { NearConfig, TGas, useNear } from "../../../data/near";
 
 const StyledDropdown = styled.div`
   button, a {
@@ -51,7 +53,7 @@ const StyledDropdown = styled.div`
     width: 100%;
 
     li {
-      padding: 6px;
+      padding: 0 6px;
     }
     
     button, a {
@@ -59,15 +61,12 @@ const StyledDropdown = styled.div`
       display: flex;
       align-items: center;
       border-radius: 8px;
-      padding: 8px;
+      padding: 12px;
 
       :hover, :focus {
         text-decoration: none;
-      }
-
-      :focus {
-        background-color: white;
-        color: inherit;
+        background-color: var(--slate-dark-1);
+        color: white;
       }
 
       svg {
@@ -81,6 +80,14 @@ const StyledDropdown = styled.div`
 `;
 
 export function UserDropdown(props) {
+  const near = useNear();
+
+  const withdrawStorage = useCallback(async () => {
+    await near.contract.storage_withdraw({}, TGas.mul(30).toFixed(0), "1");
+  },
+    [near]
+  );
+
   return (
     <StyledDropdown className="dropdown">
       <button className="dropdown-toggle" type="button" id="dropdownMenu2222" data-bs-toggle="dropdown" aria-expanded="false">
@@ -93,13 +100,14 @@ export function UserDropdown(props) {
           }}
         />
         <div className='profile-info'>
-          <div className='profile-name'><Widget src={props.NearConfig.widgets.profileName}/></div>
+          <div className='profile-name'><Widget src={props.NearConfig.widgets.profileName} /></div>
           <div className='profile-username'>{props.signedAccountId}</div>
         </div>
       </button>
       <ul className="dropdown-menu" aria-labelledby="dropdownMenu2222">
-        <li><NavLink className="dropdown-item" type="button" to={`${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}><User/>My Profile</NavLink></li>
-        <li><button className="dropdown-item" type="button" onClick={() => props.logOut()}><LogOut/>Sign Out</button></li>
+        <li><NavLink className="dropdown-item" type="button" to={`${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}><User />My Profile</NavLink></li>
+        <li><button className="dropdown-item" type="button" onClick={() => withdrawStorage()}><Withdraw />Withdraw {props.availableStorage.div(1000).toFixed(2)}kb</button></li>
+        <li><button className="dropdown-item" type="button" onClick={() => props.logOut()}><LogOut />Sign Out</button></li>
       </ul>
     </StyledDropdown>
   );
