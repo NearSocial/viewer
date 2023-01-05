@@ -44,6 +44,10 @@ module.exports = function (env) {
       resolve: {
         modules: [paths.srcPath, "node_modules"],
         extensions: [".js", ".jsx", ".json"],
+        fallback: {
+          crypto: require.resolve("crypto-browserify"),
+          stream: require.resolve("stream-browserify"),
+        },
       },
       plugins: [
         new webpack.EnvironmentPlugin({

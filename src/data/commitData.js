@@ -30,10 +30,12 @@ export const prepareCommit = async (near, originalData, forceRewrite) => {
     near.viewCall(NearConfig.contractName, "storage_balance_of", {
       account_id: accountId,
     }),
-    near.viewCall(NearConfig.contractName, "is_write_permission_granted", {
-      public_key: near.publicKey.toString(),
-      key: accountId,
-    }),
+    near.publicKey
+      ? near.viewCall(NearConfig.contractName, "is_write_permission_granted", {
+          public_key: near.publicKey.toString(),
+          key: accountId,
+        })
+      : Promise.resolve(false),
   ]);
   const availableStorage = Big(storageBalance?.available || "0");
   let data = {
@@ -90,32 +92,34 @@ export const asyncCommitData = async (near, originalData, forceRewrite) => {
 
 export const requestPermissionAndCommit = async (near, data, deposit) => {
   const wallet = await (await near.selector).wallet();
+  const actions = [];
+  if (near.publicKey) {
+    actions.push({
+      type: "FunctionCall",
+      params: {
+        methodName: "grant_write_permission",
+        args: {
+          public_key: near.publicKey.toString(),
+          keys: [near.accountId],
+        },
+        gas: TGas.mul(100).toFixed(0),
+        deposit: deposit.gt(0) ? deposit.toFixed(0) : "1",
+      },
+    });
+  }
+  actions.push({
+    type: "FunctionCall",
+    params: {
+      methodName: "set",
+      args: {
+        data,
+      },
+      gas: TGas.mul(100).toFixed(0),
+      deposit: "1",
+    },
+  });
   return await wallet.signAndSendTransaction({
     receiverId: NearConfig.contractName,
-    actions: [
-      {
-        type: "FunctionCall",
-        params: {
-          methodName: "grant_write_permission",
-          args: {
-            public_key: near.publicKey.toString(),
-            keys: [near.accountId],
-          },
-          gas: TGas.mul(100).toFixed(0),
-          deposit: deposit.gt(0) ? deposit.toFixed(0) : "1",
-        },
-      },
-      {
-        type: "FunctionCall",
-        params: {
-          methodName: "set",
-          args: {
-            data,
-          },
-          gas: TGas.mul(100).toFixed(0),
-          deposit: "1",
-        },
-      },
-    ],
+    actions,
   });
 };
