@@ -227,8 +227,10 @@ class Cache {
       const body = await (ok &&
       contentType &&
       contentType.indexOf("application/json") !== -1
-        ? response.json()
-        : response.text());
+        ? response.json() :
+        contentType.indexOf("application/wasm") !== -1 ?
+        response.arrayBuffer() :
+        response.text());
       return {
         ok,
         status,

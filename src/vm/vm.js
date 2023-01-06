@@ -107,6 +107,7 @@ const ApprovedTags = {
   Typeahead: false,
   Tooltip: true,
   OverlayTrigger: true,
+  audio: true
 };
 
 const Keywords = {
@@ -130,6 +131,12 @@ const Keywords = {
   Array,
   BN,
   Uint8Array,
+  AudioContext,
+  AudioWorkletNode,
+  URL,
+  MessageChannel,
+  Worker,
+  TextDecoder,
   clipboard: true,
 };
 
