@@ -1344,6 +1344,40 @@ class VmStack {
           stack.executeStatement(token.finalizer);
         }
       }
+    } else if (token.type === "SwitchStatement") {
+      const discriminant = this.executeExpression(token.discriminant);
+      const stack = this.newStack();
+      const cases = token.cases;
+      let found = false;
+      for (const caseToken of cases) {
+        if (caseToken.type !== "SwitchCase") {
+          throw new Error("Unknown switch case type '" + caseToken.type + "'");
+        }
+        if (!found && caseToken.test) {
+          const test = stack.executeExpression(caseToken.test);
+          if (test !== discriminant) {
+            continue;
+          }
+          found = true;
+        }
+        if (found) {
+          let isBreak = false;
+          for (const statement of caseToken.consequent) {
+            const result = stack.executeStatement(statement);
+            if (result) {
+              if (result.break) {
+                isBreak = true;
+                break;
+              } else {
+                return result;
+              }
+            }
+          }
+          if (isBreak) {
+            break;
+          }
+        }
+      }
     } else {
       throw new Error("Unknown token type '" + token.type + "'");
     }
