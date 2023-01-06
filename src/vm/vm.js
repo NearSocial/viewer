@@ -159,6 +159,8 @@ const Keywords = {
   Array,
   BN,
   Uint8Array,
+  Map,
+  Set,
   clipboard: true,
 };
 
@@ -195,6 +197,13 @@ const assertValidObject = (o) => {
 const deepCopy = (o) => {
   if (Array.isArray(o)) {
     return o.map((v) => deepCopy(v));
+  } else if (o instanceof Map) {
+    return new Map(
+      [...o.entries()].map(([k, v]) => [deepCopy(k), deepCopy(v)])
+    );
+  }
+  if (o instanceof Set) {
+    return new Set([...o].map((v) => deepCopy(v)));
   } else if (Buffer.isBuffer(o)) {
     return Buffer.from(o);
   } else if (o instanceof Uint8Array || o instanceof ArrayBuffer) {
