@@ -1269,6 +1269,42 @@ class VmStack {
       if (this.vm.loopLimit <= 0) {
         throw new Error("Exceeded loop limit");
       }
+    } else if (token.type === "ForOfStatement") {
+      const stack = this.newStack();
+      const right = stack.executeExpression(token.right);
+      assertNotReactObject(right);
+      for (const value of right) {
+        if (this.vm.loopLimit-- <= 0) {
+          throw new Error("Exceeded loop limit");
+        }
+        if (token.left.type === "VariableDeclaration") {
+          if (token.left.declarations.length !== 1) {
+            throw new Error("Invalid for-of statement");
+          }
+          token.left.declarations.forEach((declaration) => {
+            if (declaration.type === "VariableDeclarator") {
+              this.stackDeclare(requirePattern(declaration.id), value);
+            } else {
+              throw new Error(
+                "Unknown variable declaration type '" + declaration.type + "'"
+              );
+            }
+          });
+        } else {
+          const { obj, key } = this.resolveMemberExpression(token.left, {
+            left: true,
+          });
+          obj[key] = value;
+        }
+        const result = stack.executeStatement(token.body);
+        if (result) {
+          if (result.break) {
+            break;
+          } else {
+            return result;
+          }
+        }
+      }
     } else if (token.type === "WhileStatement") {
       const stack = this.newStack();
       while (this.vm.loopLimit-- > 0) {
