@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 
 const StyledNavigationButton = styled.div`
   a {
-    color: #9BA1A6;
+    color: #9ba1a6;
     font-size: 16px;
     padding: 10px;
     border-radius: 8px;
@@ -13,8 +13,9 @@ const StyledNavigationButton = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    &:hover, &.active {
+
+    &:hover,
+    &.active {
       color: white;
       text-decoration: none;
       background-color: var(--slate-dark-6);
@@ -25,14 +26,15 @@ const StyledNavigationButton = styled.div`
 export function NavigationButton(props) {
   return (
     <StyledNavigationButton>
-      {
-        props.route ?
-          <NavLink to={props.route} exact={true}>
-            {props.children}
-          </NavLink>
-          :
-          <a href={props.href} target="_blank" rel="noopener noreferrer">{props.children}</a>
-      }
+      {props.route ? (
+        <NavLink to={props.route} exact={true}>
+          {props.children}
+        </NavLink>
+      ) : (
+        <a href={props.href} target="_blank" rel="noopener noreferrer">
+          {props.children}
+        </a>
+      )}
     </StyledNavigationButton>
   );
 }

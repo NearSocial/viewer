@@ -31,7 +31,7 @@ const StyledButton = styled(Link)`
 
 export function CreateButton(props) {
   return (
-    <StyledButton className='nav-create-btn' to='/edit/new'>
+    <StyledButton className="nav-create-btn" to="/edit/new">
       <Glitter />
       Create
     </StyledButton>

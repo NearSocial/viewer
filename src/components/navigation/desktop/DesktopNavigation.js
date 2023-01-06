@@ -17,7 +17,7 @@ const StyledNavigation = styled.div`
   width: 100%;
   background-color: var(--slate-dark-1);
   z-index: 1000;
-  padding: 16px 0;
+  padding: 12px 0;
 
   .user-section {
     margin-left: auto;
@@ -79,29 +79,27 @@ export function DesktopNavigation(props) {
   return (
     <StyledNavigation>
       <div className="container">
-        <Link to='/' className='logo-link'>
+        <Link to="/" className="logo-link">
           <Logotype />
         </Link>
-        <div className='navigation-section'>
-          <NavigationButton route='/'>
-            Home
-          </NavigationButton>
-          <NavigationButton route='/edit'>
-            Editor
-          </NavigationButton>
-          <NavigationButton href='https://thewiki.near.page/near.social_docs'>
+        <div className="navigation-section">
+          <NavigationButton route="/">Home</NavigationButton>
+          <NavigationButton route="/edit">Editor</NavigationButton>
+          <NavigationButton href="https://thewiki.near.page/near.social_docs">
             Documentation
             <ArrowUpRight />
           </NavigationButton>
         </div>
-        <div className='user-section'>
-          {!props.signedIn && <SignInButton onSignIn={() => props.requestSignIn()} />}
+        <div className="user-section">
+          {!props.signedIn && (
+            <SignInButton onSignIn={() => props.requestSignIn()} />
+          )}
           <CreateButton />
-          {props.signedIn &&
-            <div className='nav-notification-widget'>
+          {props.signedIn && (
+            <div className="nav-notification-widget">
               <Widget src={props.NearConfig.widgets.notificationButton} />
             </div>
-          }
+          )}
           {props.signedIn && <UserDropdown {...props} />}
         </div>
       </div>

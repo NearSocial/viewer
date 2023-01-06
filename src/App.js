@@ -108,7 +108,7 @@ function App(props) {
     widgetSrc,
     logOut,
     requestSignIn,
-    NearConfig
+    NearConfig,
   };
 
   return (
