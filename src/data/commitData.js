@@ -106,6 +106,7 @@ export const requestPermissionAndCommit = async (near, data, deposit) => {
         deposit: deposit.gt(0) ? deposit.toFixed(0) : "1",
       },
     });
+    deposit = Big(0);
   }
   actions.push({
     type: "FunctionCall",
@@ -115,7 +116,7 @@ export const requestPermissionAndCommit = async (near, data, deposit) => {
         data,
       },
       gas: TGas.mul(100).toFixed(0),
-      deposit: "1",
+      deposit: deposit.gt(0) ? deposit.toFixed(0) : "1",
     },
   });
   return await wallet.signAndSendTransaction({
