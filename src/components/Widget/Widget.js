@@ -60,19 +60,24 @@ export function Widget(props) {
     setParsedCode(null);
     setElement(null);
     if (src) {
-      setCode(null);
-      setCode(
-        cache.socialGet(
-          near,
-          src.toString(),
-          false,
-          undefined,
-          undefined,
-          () => {
-            setNonce(nonce + 1);
-          }
-        )
+      const code = cache.socialGet(
+        near,
+        src.toString(),
+        false,
+        undefined,
+        undefined,
+        () => {
+          setNonce(nonce + 1);
+        }
       );
+      setCode(code);
+      if (code === undefined) {
+        setElement(
+          <div className="alert alert-danger">
+            Source code for "{src}" is not found
+          </div>
+        );
+      }
     } else {
       setCode(rawCode);
     }
@@ -88,7 +93,7 @@ export function Widget(props) {
     } catch (e) {
       setElement(
         <div className="alert alert-danger">
-          Compile error:
+          Compilation error:
           <pre>{e.message}</pre>
           <pre>{e.stack}</pre>
         </div>
