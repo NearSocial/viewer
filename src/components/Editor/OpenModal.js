@@ -23,7 +23,9 @@ export default function OpenModal(props) {
           id="widget-src-input"
           type="text"
           value={widgetSrc}
-          onChange={(e) => setWidgetSrc(e.target.value)}
+          onChange={(e) =>
+            setWidgetSrc(e.target.value.replaceAll(/[^a-zA-Z0-9_.\-\/]/g, ""))
+          }
         />
       </Modal.Body>
       <Modal.Footer>
@@ -41,6 +43,7 @@ export default function OpenModal(props) {
         </button>
         <button
           className="btn btn-outline-success"
+          disabled={widgetSrc && widgetSrc.indexOf("/") !== -1}
           onClick={(e) => {
             e.preventDefault();
             onNew(widgetSrc);

@@ -23,7 +23,9 @@ export default function RenameModal(props) {
           id="rename-input"
           type="text"
           value={newName}
-          onChange={(e) => setNewName(e.target.value)}
+          onChange={(e) =>
+            setNewName(e.target.value.replaceAll(/[^a-zA-Z0-9_.\-]/g, ""))
+          }
         />
       </Modal.Body>
       <Modal.Footer>
