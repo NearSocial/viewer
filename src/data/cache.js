@@ -214,6 +214,7 @@ class Cache {
   }
 
   async asyncFetch(url, options) {
+    const blob = !!options?.blob;
     options = {
       method: options?.method,
       headers: options?.headers,
@@ -224,9 +225,9 @@ class Cache {
       const status = response.status;
       const ok = response.ok;
       const contentType = response.headers.get("content-type");
-      const body = await (ok &&
-      contentType &&
-      contentType.indexOf("application/json") !== -1
+      const body = await (ok && blob
+        ? response.blob()
+        : contentType && contentType.indexOf("application/json") !== -1
         ? response.json()
         : response.text());
       return {
