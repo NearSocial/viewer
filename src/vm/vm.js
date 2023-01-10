@@ -157,6 +157,8 @@ const Keywords = {
   Image,
   File,
   Blob,
+  FileReader,
+  URL,
   Array,
   BN,
   Uint8Array,
@@ -206,6 +208,8 @@ const deepCopy = (o) => {
     return new Set([...o].map((v) => deepCopy(v)));
   } else if (Buffer.isBuffer(o)) {
     return Buffer.from(o);
+  } else if (o instanceof URL) {
+    return new URL(o);
   } else if (o instanceof File) {
     return new File([o], o.name, { type: o.type });
   } else if (o instanceof Blob) {
