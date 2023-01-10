@@ -5,12 +5,12 @@ import { User } from "../../icons/User";
 import { LogOut } from "../../icons/LogOut";
 import { Withdraw } from "../../icons/Withdraw";
 import { NavLink } from "react-router-dom";
-import { NearConfig, TGas, useNear } from "../../../data/near";
+import { TGas, useNear } from "../../../data/near";
 
 const StyledDropdown = styled.div`
   button,
   a {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
   }
   .dropdown-toggle {
     display: flex;
