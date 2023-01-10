@@ -167,9 +167,6 @@ export function useQuery() {
 }
 
 export const ipfsUpload = async (f) => {
-  const formData = new FormData();
-
-  formData.append("file", f);
   const res = await fetch("https://ipfs.near.social/add", {
     method: "POST",
     headers: {

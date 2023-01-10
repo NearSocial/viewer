@@ -136,6 +136,7 @@ const ApprovedTags = {
   tspan: true,
   use: false,
   // svg ends
+  Files: true,
 };
 
 const Keywords = {
@@ -201,11 +202,14 @@ const deepCopy = (o) => {
     return new Map(
       [...o.entries()].map(([k, v]) => [deepCopy(k), deepCopy(v)])
     );
-  }
-  if (o instanceof Set) {
+  } else if (o instanceof Set) {
     return new Set([...o].map((v) => deepCopy(v)));
   } else if (Buffer.isBuffer(o)) {
     return Buffer.from(o);
+  } else if (o instanceof File) {
+    return new File([o], o.name, { type: o.type });
+  } else if (o instanceof Blob) {
+    return new Blob([o], { type: o.type });
   } else if (o instanceof Uint8Array || o instanceof ArrayBuffer) {
     return o.slice(0);
   } else if (isObject(o)) {
@@ -522,6 +526,8 @@ class VmStack {
           </Files>
         </div>
       );
+    } else if (element === "Files") {
+      return <Files {...attributes}>{children}</Files>;
     } else if (styledComponent) {
       return React.createElement(
         styledComponent,
