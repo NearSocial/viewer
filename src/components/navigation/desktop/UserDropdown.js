@@ -81,6 +81,7 @@ const StyledDropdown = styled.div`
 
       svg {
         margin-right: 7px;
+        min-width: 24px;
         path {
           stroke: var(--slate-dark-9);
         }
