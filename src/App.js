@@ -10,9 +10,9 @@ import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
-import { Sidebar } from "./components/Sidebar";
 import { useAccount } from "./data/account";
 import Big from "big.js";
+import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 
 export const refreshAllowanceObj = {};
 
@@ -107,6 +107,7 @@ function App(props) {
     widgetSrc,
     logOut,
     requestSignIn,
+    NearConfig,
   };
 
   return (
@@ -117,14 +118,12 @@ function App(props) {
             <EmbedPage {...passProps} />
           </Route>
           <Route path={"/edit/:widgetSrc*"}>
-            <Sidebar {...passProps}>
-              <EditorPage {...passProps} />
-            </Sidebar>
+            <NavigationWrapper {...passProps} />
+            <EditorPage {...passProps} />
           </Route>
           <Route path={"/:widgetSrc*"}>
-            <Sidebar {...passProps}>
-              <ViewPage {...passProps} />
-            </Sidebar>
+            <NavigationWrapper {...passProps} />
+            <ViewPage {...passProps} />
           </Route>
         </Switch>
       </Router>
