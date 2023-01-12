@@ -8,6 +8,7 @@ const StyledMobileMenuButton = styled.button`
   align-items: center;
   color: white;
   font-weight: var(--font-weight-bold);
+  padding: 0;
 
   .menu {
     width: 18px;
@@ -34,7 +35,7 @@ export function MobileMenuButton(props) {
         <div />
         <div />
       </div>
-      Home
+      {props.currentPage}
     </StyledMobileMenuButton>
   );
 }

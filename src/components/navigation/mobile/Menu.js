@@ -9,8 +9,8 @@ import { Fork } from "../../icons/Fork";
 import { UserCircle } from "../../icons/UserCircle";
 import { Widget } from "../../Widget/Widget";
 import { NavigationButton } from "../NavigationButton";
+import { SignInButton } from "../SignInButton";
 import { Link } from "react-router-dom";
-import { NearConfig } from "../../../data/near";
 
 const StyledMenu = styled.div`
   position: fixed;
@@ -40,6 +40,20 @@ const StyledMenu = styled.div`
     display: flex;
     flex-direction: column;
     padding: 25px;
+    overflow-x: auto;
+
+    .nav-sign-in-btn {
+      width: fit-content;
+    }
+
+    .profile-link {
+      max-width: 100%;
+      white-space: nowrap;
+
+      :hover {
+        text-decoration: none;
+      }
+    }
 
     img {
       border-radius: 50% !important;
@@ -48,34 +62,45 @@ const StyledMenu = styled.div`
     .profile-name {
       color: var(--slate-dark-12);
       font-weight: var(--font-weight-bold);
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .profile-username {
       color: var(--slate-dark-11);
     }
+
+    .profile-name,
+    .profile-username {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
 
-  a,
-  button {
-    justify-content: flex-start;
-    padding: 28px 0;
-    display: flex;
-    align-items: center;
-    color: var(--slate-dark-11);
-    font-weight: var(--font-weight-bold);
+  .top-links,
+  .bottom-links {
+    a,
+    button {
+      justify-content: flex-start;
+      padding: 28px 0;
+      display: flex;
+      align-items: center;
+      color: var(--slate-dark-11);
+      font-weight: var(--font-weight-bold);
 
-    svg {
-      margin-right: 12px;
-    }
-
-    &.active,
-    &:hover,
-    &:focus {
-      background-color: transparent;
       svg {
-        path {
-          stroke: white;
+        margin-right: 12px;
+      }
+
+      &.active,
+      &:hover,
+      &:focus {
+        background-color: transparent;
+        color: white;
+        text-decoration: none;
+        svg {
+          path {
+            stroke: white;
+          }
         }
       }
     }
@@ -132,20 +157,32 @@ export function Menu(props) {
   return (
     <StyledMenu className={props.showMenu ? "show" : ""}>
       <div className="left-side">
-        <div>
-          <Widget
-            src={props.NearConfig.widgets.profileImage}
-            props={{
-              accountId: props.signedAccountId,
-              className: "d-inline-block",
-              style: { width: "56px", height: "56px" },
+        {props.signedIn ? (
+          <Link
+            to={`${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
+            className="profile-link"
+          >
+            <Widget
+              src={props.NearConfig.widgets.profileImage}
+              props={{
+                accountId: props.signedAccountId,
+                className: "d-inline-block",
+                style: { width: "56px", height: "56px" },
+              }}
+            />
+            <div className="profile-name">
+              <Widget src={props.NearConfig.widgets.profileName} />
+            </div>
+            <div className="profile-username">{props.signedAccountId}</div>
+          </Link>
+        ) : (
+          <SignInButton
+            onSignIn={() => {
+              props.onCloseMenu();
+              props.requestSignIn();
             }}
           />
-          <div className="profile-name">
-            <Widget src={props.NearConfig.widgets.profileName} />
-          </div>
-          <div className="profile-username">{props.signedAccountId}</div>
-        </div>
+        )}
         <ul className="top-links">
           <li>
             <NavigationButton route="/">
@@ -155,7 +192,7 @@ export function Menu(props) {
           </li>
           <li>
             <NavigationButton
-              route={`${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
+              route={`/${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
             >
               <UserCircle />
               Profile
@@ -164,7 +201,7 @@ export function Menu(props) {
           <li>
             <NavigationButton route="/edit">
               <Code />
-              Editor
+              Create
             </NavigationButton>
           </li>
           <li>
@@ -190,7 +227,7 @@ export function Menu(props) {
           {props.widgetSrc?.view && (
             <li>
               <Link
-                to={`/${NearConfig.widgets.viewSource}?src=${props.widgetSrc?.view}`}
+                to={`/${props.NearConfig.widgets.viewSource}?src=${props.widgetSrc?.view}`}
               >
                 <Code />
                 View source
@@ -204,11 +241,11 @@ export function Menu(props) {
             </button>
           </li>
         </ul>
-        <button className="close-button" onClick={props.onClickCloseMenu}>
+        <button className="close-button" onClick={props.onCloseMenu}>
           <Close />
         </button>
       </div>
-      <div className="right-side" onClick={props.onClickCloseMenu} />
+      <div className="right-side" onClick={props.onCloseMenu} />
     </StyledMenu>
   );
 }

@@ -71,6 +71,12 @@ const StyledDropdown = styled.div`
         text-decoration: none;
         background-color: var(--slate-dark-1);
         color: white;
+
+        svg {
+          path {
+            stroke: white;
+          }
+        }
       }
 
       svg {

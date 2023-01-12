@@ -5,9 +5,9 @@ import { Logotype } from "../Logotype";
 import { NavigationButton } from "../NavigationButton";
 import { ArrowUpRight } from "../../icons/ArrowUpRight";
 import { SignInButton } from "../SignInButton";
-import { CreateButton } from "../CreateButton";
 import { UserDropdown } from "./UserDropdown";
-import { Widget } from "../../Widget/Widget";
+import { DevActionsDropdown } from "./DevActionsDropdown";
+import { NotificationWidget } from "../NotificationWidget";
 
 const StyledNavigation = styled.div`
   position: fixed;
@@ -54,25 +54,6 @@ const StyledNavigation = styled.div`
       margin-left: 4px;
     }
   }
-
-  .nav-notification-widget {
-    margin: 0 15px;
-    background-color: var(--slate-dark-5);
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    a {
-      color: var(--slate-dark-11) !important;
-
-      i {
-        font-size: 17px !important;
-      }
-    }
-  }
 `;
 
 export function DesktopNavigation(props) {
@@ -84,7 +65,7 @@ export function DesktopNavigation(props) {
         </Link>
         <div className="navigation-section">
           <NavigationButton route="/">Home</NavigationButton>
-          <NavigationButton route="/edit">Editor</NavigationButton>
+          <NavigationButton route="/edit">Create</NavigationButton>
           <NavigationButton href="https://thewiki.near.page/near.social_docs">
             Documentation
             <ArrowUpRight />
@@ -94,13 +75,17 @@ export function DesktopNavigation(props) {
           {!props.signedIn && (
             <SignInButton onSignIn={() => props.requestSignIn()} />
           )}
-          <CreateButton />
           {props.signedIn && (
-            <div className="nav-notification-widget">
-              <Widget src={props.NearConfig.widgets.notificationButton} />
-            </div>
+            <>
+              <DevActionsDropdown {...props} />
+              <NotificationWidget
+                notificationButtonSrc={
+                  props.NearConfig.widgets.notificationButton
+                }
+              />
+              <UserDropdown {...props} />
+            </>
           )}
-          {props.signedIn && <UserDropdown {...props} />}
         </div>
       </div>
     </StyledNavigation>
