@@ -21,13 +21,24 @@ const StyledNavigationButton = styled.div`
       background-color: var(--slate-dark-6);
     }
   }
+  &.disabled {
+    opacity: 0.5;
+  }
 `;
 
 export function NavigationButton(props) {
   return (
-    <StyledNavigationButton>
+    <StyledNavigationButton className={props.disabled ? "disabled" : ""}>
       {props.route ? (
-        <NavLink to={props.route} exact={true}>
+        <NavLink
+          onClick={(e) => {
+            if (props.disabled) {
+              e.preventDefault();
+            }
+          }}
+          to={props.route}
+          exact={true}
+        >
           {props.children}
         </NavLink>
       ) : (

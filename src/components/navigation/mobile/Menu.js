@@ -192,6 +192,7 @@ export function Menu(props) {
           </li>
           <li>
             <NavigationButton
+              disabled={!props.signedIn}
               route={`/${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
             >
               <UserCircle />
@@ -234,12 +235,14 @@ export function Menu(props) {
               </Link>
             </li>
           )}
-          <li>
-            <button onClick={() => props.logOut()} className="log-out-button">
-              <LogOut />
-              Sign Out
-            </button>
-          </li>
+          {props.signedIn && (
+            <li>
+              <button onClick={() => props.logOut()} className="log-out-button">
+                <LogOut />
+                Sign Out
+              </button>
+            </li>
+          )}
         </ul>
         <button className="close-button" onClick={props.onCloseMenu}>
           <Close />
