@@ -170,9 +170,11 @@ export function Menu(props) {
                 style: { width: "56px", height: "56px" },
               }}
             />
-            <div className="profile-name">
-              <Widget src={props.NearConfig.widgets.profileName} />
-            </div>
+            {props.NearConfig.widgets.profileName && (
+              <div className="profile-name">
+                <Widget src={props.NearConfig.widgets.profileName} />
+              </div>
+            )}
             <div className="profile-username">{props.signedAccountId}</div>
           </Link>
         ) : (

@@ -115,9 +115,11 @@ export function UserDropdown(props) {
           }}
         />
         <div className="profile-info">
-          <div className="profile-name">
-            <Widget src={props.NearConfig.widgets.profileName} />
-          </div>
+          {props.NearConfig.widgets.profileName && (
+            <div className="profile-name">
+              <Widget src={props.NearConfig.widgets.profileName} />
+            </div>
+          )}
           <div className="profile-username">{props.signedAccountId}</div>
         </div>
       </button>
