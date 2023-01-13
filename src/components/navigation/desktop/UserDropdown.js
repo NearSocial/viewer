@@ -81,6 +81,7 @@ const StyledDropdown = styled.div`
 
       svg {
         margin-right: 7px;
+        min-width: 24px;
         path {
           stroke: var(--slate-dark-9);
         }
@@ -114,9 +115,11 @@ export function UserDropdown(props) {
           }}
         />
         <div className="profile-info">
-          <div className="profile-name">
-            <Widget src={props.NearConfig.widgets.profileName} />
-          </div>
+          {props.NearConfig.widgets.profileName && (
+            <div className="profile-name">
+              <Widget src={props.NearConfig.widgets.profileName} />
+            </div>
+          )}
           <div className="profile-username">{props.signedAccountId}</div>
         </div>
       </button>
