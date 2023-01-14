@@ -159,7 +159,7 @@ export function Menu(props) {
       <div className="left-side">
         {props.signedIn ? (
           <Link
-            to={`${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
+            to={`/${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
             className="profile-link"
           >
             <Widget
