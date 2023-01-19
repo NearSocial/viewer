@@ -15,7 +15,7 @@ export const Markdown = (props) => {
           onLinkClick ? (
             <a onClick={onLinkClick} {...props} />
           ) : (
-            <a {...props} />
+            <a target="_blank" {...props} />
           ),
         img: ({ node, ...props }) => <img className="img-fluid" {...props} />,
         blockquote: ({ node, ...props }) => (
