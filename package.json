@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "homepage": "/",
   "private": true,
   "dependencies": {
@@ -41,7 +41,8 @@
     "react-uuid": "^1.0.2",
     "remark-gfm": "^3.0.1",
     "styled-components": "^5.3.6",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "mdast-util-find-and-replace": "^2.0.0"
   },
   "scripts": {
     "serve": "webpack serve",

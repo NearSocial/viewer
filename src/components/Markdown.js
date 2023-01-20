@@ -3,14 +3,27 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 import React from "react";
+import { mentions, mentionRegex } from "./remark/mentions";
+import { isString } from "../data/utils";
 
 export const Markdown = (props) => {
-  const onLinkClick = props.onLinkClick;
+  const { onLinkClick, text, onMention, ...rest } = props;
   return (
     <ReactMarkdown
-      {...props}
-      plugins={[gfm]}
+      {...rest}
+      plugins={[gfm, mentions]}
       components={{
+        strong({ node, children, ...props }) {
+          if (onMention && children.length === 1 && isString(children[0])) {
+            mentionRegex.lastIndex = 0;
+            const match = mentionRegex.exec(children[0]);
+            const accountId = match?.[1];
+            if (accountId && accountId.length >= 2 && accountId.length <= 64) {
+              return onMention(accountId);
+            }
+          }
+          return <strong {...props}>{children}</strong>;
+        },
         a: ({ node, ...props }) =>
           onLinkClick ? (
             <a onClick={onLinkClick} {...props} />
@@ -42,7 +55,7 @@ export const Markdown = (props) => {
         },
       }}
     >
-      {props.text}
+      {text}
     </ReactMarkdown>
   );
 };
