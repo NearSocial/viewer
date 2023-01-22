@@ -1206,12 +1206,18 @@ class VmStack {
       });
     } else if (pattern.type === "ObjectPattern") {
       assertNotReactObject(value);
+      const seen = new Set();
       pattern.properties.forEach((property) => {
         if (property.type === "RestElement") {
-          this.stackDeclare(property.argument, isObject(value) ? value : {});
+          const rest = {};
+          if (isObject(value)) {
+            Object.assign(rest, value);
+            seen.forEach((key) => delete rest[key]);
+          }
+          this.stackDeclare(property.argument, rest);
         } else {
           this.stackDeclare(property.value, value?.[property.key.name]);
-          delete value?.[property.key.name];
+          seen.add(property.key.name);
         }
       });
     } else {
