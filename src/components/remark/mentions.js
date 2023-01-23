@@ -1,7 +1,7 @@
 import { findAndReplace } from "mdast-util-find-and-replace";
 
 const mentionRegex =
-  /@((?:(?:[a-z\d]+[-_])*[a-z\d]+.)*(?:[a-z\d]+[-_])*[a-z\d]+)/gi;
+  /@((?:(?:[a-z\d]+[-_])*[a-z\d]+\.)*(?:[a-z\d]+[-_])*[a-z\d]+)/gi;
 
 export default function mentions() {
   function replace(value, username, match) {
