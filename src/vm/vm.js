@@ -177,7 +177,7 @@ const ReservedKeys = {
 };
 
 const assertNotReservedKey = (key) => {
-  if (key !== "toString" && key in ReservedKeys) {
+  if (ReservedKeys[key] === true) {
     throw new Error(`${key} is reserved and can't be used`);
   }
 };
