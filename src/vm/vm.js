@@ -174,6 +174,8 @@ const ReservedKeys = {
   __proto__: true,
   __defineGetter__: true,
   __defineSetter__: true,
+  __lookupGetter__: true,
+  __lookupSetter__: true,
 };
 
 const assertNotReservedKey = (key) => {
