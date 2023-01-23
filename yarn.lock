@@ -2335,6 +2335,15 @@
     joi "^17.6.1"
     lodash.uniqby "^4.7.0"
 
+"@web3-onboard/react@^2.5.5":
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/@web3-onboard/react/-/react-2.5.5.tgz#009c437e279108e3d5453fd1fb86eada933f0f23"
+  integrity sha512-Pli/FIH1BjtAQiD/F9yI+AqmhYBZ3gnhSRMOgbWd10Kwj9E+4Lv49SJP91JJ7lFU34gQpLPNh3NoQxI5/f5VUw==
+  dependencies:
+    "@web3-onboard/common" "^2.2.3"
+    "@web3-onboard/core" "^2.13.1"
+    use-sync-external-store "1.0.0"
+
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.11.1.tgz#2bfd767eae1a6996f432ff7e8d7fc75679c0b6a7"
@@ -8642,6 +8651,11 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-sync-external-store@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.0.0.tgz#d98f4a9c2e73d0f958e7e2d2c2bfb5f618cbd8fd"
+  integrity sha512-AFVsxg5GkFg8GDcxnl+Z0lMAz9rE8DGJCc28qnBuQF7lac57B5smLcT37aXpXIIPz75rW4g3eXHPjhHwdGskOw==
 
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"

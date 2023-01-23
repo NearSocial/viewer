@@ -15,6 +15,7 @@ import { useCache } from "../../data/cache";
 import { CommitModal } from "../Commit";
 import { useAccountId } from "../../data/account";
 import Big from "big.js";
+import { useEthersProvider } from "../../data/ethersProvider";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -46,6 +47,7 @@ export function Widget(props) {
   const [vm, setVm] = useState(null);
   const [transactions, setTransactions] = useState(null);
   const [commitRequest, setCommitRequest] = useState(null);
+  const ethersProvider = useEthersProvider();
 
   const cache = useCache();
   const near = useNear();
@@ -148,12 +150,21 @@ export function Widget(props) {
       depth,
       widgetSrc: src,
       requestCommit,
+      ethersProvider,
     });
     setVm(vm);
     return () => {
       vm.alive = false;
     };
-  }, [src, near, parsedCode, depth, requestCommit, confirmTransactions]);
+  }, [
+    src,
+    near,
+    parsedCode,
+    depth,
+    requestCommit,
+    confirmTransactions,
+    ethersProvider,
+  ]);
 
   useEffect(() => {
     if (!near) {

@@ -10,4 +10,7 @@
 
   --font-weight-medium: 500;
   --font-weight-bold: 600;
+
+  /* For web3 onboard */
+  --account-center-position-top: 60px;
 }

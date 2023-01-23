@@ -35,14 +35,16 @@ const frozenNacl = Object.freeze({
   verify: deepFreeze(nacl.verify),
 });
 
-const frozenElliptic = Object.freeze({
+// TODO: Fix freezing with ethers.
+const frozenElliptic = elliptic;
+/*Object.freeze({
   version: deepFreeze(elliptic.version),
   utils: deepFreeze(elliptic.utils),
   curve: deepFreeze(elliptic.curve),
   curves: deepFreeze(elliptic.curves),
   ec: Object.freeze(elliptic.ec),
   eddsa: Object.freeze(elliptic.eddsa),
-});
+});*/
 
 const LoopLimit = 1000000;
 const MaxDepth = 32;
@@ -1451,6 +1453,7 @@ export default class VM {
       depth,
       widgetSrc,
       requestCommit,
+      ethersProvider,
     } = options;
 
     if (!code) {
@@ -1468,6 +1471,8 @@ export default class VM {
     this.depth = depth;
     this.widgetSrc = widgetSrc;
     this.requestCommit = requestCommit;
+    this.ethersProvider = ethersProvider;
+    console.log(ethersProvider);
   }
 
   cachedPromise(promise, subscribe) {
