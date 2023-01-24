@@ -8,6 +8,7 @@ const Action = {
   Fetch: "Fetch",
   Block: "Block",
   LocalStorage: "LocalStorage",
+  CustomPromise: "CustomPromise",
 };
 
 const CacheStatus = {
@@ -262,6 +263,17 @@ class Cache {
         options,
       },
       () => this.asyncFetch(url, options),
+      invalidate
+    );
+  }
+
+  cachedCustomPromise(key, promise, invalidate) {
+    return this.cachedPromise(
+      {
+        action: Action.CustomPromise,
+        key,
+      },
+      () => promise(),
       invalidate
     );
   }

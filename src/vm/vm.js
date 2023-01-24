@@ -664,6 +664,18 @@ class VmStack {
           );
         }
         return this.vm.asyncFetch(...args);
+      } else if (callee === "useCache") {
+        if (args.length < 2) {
+          throw new Error(
+            "Method: useCache. Required arguments: 'promiseGenerator', 'dataKey'. Optional: 'options'"
+          );
+        }
+        if (!(args[0] instanceof Function)) {
+          throw new Error(
+            "Method: useCache. The first argument 'promiseGenerator' must be a function"
+          );
+        }
+        return this.vm.useCache(...args);
       } else if (callee === "parseInt") {
         return parseInt(...args);
       } else if (callee === "parseFloat") {
@@ -1567,6 +1579,21 @@ export default class VM {
   cachedIndex(action, key, options) {
     return this.cachedPromise(
       (invalidate) => this.cache.socialIndex(action, key, options, invalidate),
+      options?.subscribe
+    );
+  }
+
+  useCache(promiseGenerator, dataKey, options) {
+    return this.cachedPromise(
+      (invalidate) =>
+        this.cache.cachedCustomPromise(
+          {
+            widgetSrc: this.widgetSrc,
+            dataKey,
+          },
+          promiseGenerator,
+          invalidate
+        ),
       options?.subscribe
     );
   }
