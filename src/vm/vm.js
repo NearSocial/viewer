@@ -1554,7 +1554,7 @@ export default class VM {
     );
   }
 
-  cachedEthers(contractName, methodName, args, blockId, subscribe) {
+  cachedNearView(contractName, methodName, args, blockId, subscribe) {
     return this.cachedPromise(
       (invalidate) =>
         this.cache.cachedViewCall(
