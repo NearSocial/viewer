@@ -11,17 +11,21 @@ const web3onboardKey = LsKey + "web3-onboard:connectedWallets";
 
 const injected = injectedModule();
 
-const rpcUrl = "https://mainnet.aurora.dev";
-
 // initialize Onboard
 export const onboard = init({
   wallets: [injected],
   chains: [
     {
+      id: "0x1",
+      token: "ETH",
+      label: "Ethereum Mainnet",
+      rpcUrl: "https://rpc.ankr.com/eth",
+    },
+    {
       id: "0x4e454152",
       token: "ETH",
       label: "Aurora Mainnet",
-      rpcUrl,
+      rpcUrl: "https://mainnet.aurora.dev",
     },
   ],
 });

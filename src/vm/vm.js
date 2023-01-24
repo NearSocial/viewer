@@ -167,6 +167,8 @@ const Keywords = {
   Map,
   Set,
   clipboard: true,
+  Ethers: true,
+  EthersAsync: true,
 };
 
 const ReservedKeys = {
@@ -805,6 +807,10 @@ class VmStack {
         return this.isTrusted
           ? navigator.clipboard.writeText(...args)
           : Promise.reject(new Error("Not trusted (not a click)"));
+      } else if (keyword === "EthersAsync") {
+        return this.vm.ethersProvider[callee](...args);
+      } else if (keyword === "Ethers") {
+        return this.vm.cachedEthersCall(callee, args);
       }
     } else {
       const f = callee === keyword ? keywordType : keywordType[callee];
@@ -1472,7 +1478,6 @@ export default class VM {
     this.widgetSrc = widgetSrc;
     this.requestCommit = requestCommit;
     this.ethersProvider = ethersProvider;
-    console.log(ethersProvider);
   }
 
   cachedPromise(promise, subscribe) {
@@ -1536,7 +1541,20 @@ export default class VM {
     return this.near.viewCall(contractName, methodName, args, blockId);
   }
 
-  cachedNearView(contractName, methodName, args, blockId, subscribe) {
+  cachedEthersCall(callee, args, subscribe) {
+    return this.cachedPromise(
+      (invalidate) =>
+        this.cache.cachedEthersCall(
+          this.ethersProvider,
+          callee,
+          args,
+          invalidate
+        ),
+      subscribe
+    );
+  }
+
+  cachedEthers(contractName, methodName, args, blockId, subscribe) {
     return this.cachedPromise(
       (invalidate) =>
         this.cache.cachedViewCall(

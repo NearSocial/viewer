@@ -8,6 +8,7 @@ const Action = {
   Fetch: "Fetch",
   Block: "Block",
   LocalStorage: "LocalStorage",
+  EthersCall: "EthersCall",
 };
 
 const CacheStatus = {
@@ -364,6 +365,21 @@ class Cache {
       CacheDebug && console.log("Replacing value", key, value);
       invalidateCallbacks(cached, false);
     }
+  }
+
+  cachedEthersCall(ethersProvider, callee, args, invalidate) {
+    if (!ethersProvider) {
+      return null;
+    }
+    return this.cachedPromise(
+      {
+        action: Action.EthersCall,
+        callee,
+        args,
+      },
+      () => ethersProvider[callee](...args),
+      invalidate
+    );
   }
 }
 
