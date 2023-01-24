@@ -24,6 +24,7 @@ import Big from "big.js";
 import * as elliptic from "elliptic";
 import BN from "bn.js";
 import * as nacl from "tweetnacl";
+import { ethers } from "ethers";
 
 const frozenNacl = Object.freeze({
   randomBytes: deepFreeze(nacl.randomBytes),
@@ -33,6 +34,10 @@ const frozenNacl = Object.freeze({
   sign: deepFreeze(nacl.sign),
   hash: deepFreeze(nacl.hash),
   verify: deepFreeze(nacl.verify),
+});
+
+const frozenEthers = Object.freeze({
+  utils: deepFreeze(ethers.utils),
 });
 
 // TODO: Fix freezing with ethers.
@@ -1614,6 +1619,7 @@ export default class VM {
       state: deepCopy(state),
       nacl: frozenNacl,
       elliptic: frozenElliptic,
+      ethers: frozenEthers,
     };
     this.loopLimit = LoopLimit;
     this.vmStack = new VmStack(this, undefined, this.state);
