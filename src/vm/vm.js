@@ -38,6 +38,7 @@ const frozenNacl = Object.freeze({
 
 const frozenEthers = Object.freeze({
   utils: deepFreeze(ethers.utils),
+  BigNumber: deepFreeze(ethers.BigNumber),
 });
 
 // TODO: Fix freezing with ethers.
@@ -958,7 +959,7 @@ class VmStack {
       });
       const args = this.getArray(code.arguments);
       if (!keyword && obj?.[key] instanceof Function) {
-        return obj?.[key](...args);
+        return isNew ? new obj[key](...args) : obj[key](...args);
       } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
         return this.callFunction(
           keyword ?? "",
