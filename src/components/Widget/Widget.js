@@ -16,6 +16,7 @@ import { CommitModal } from "../Commit";
 import { useAccountId } from "../../data/account";
 import Big from "big.js";
 import { useEthersProvider } from "../../data/ethersProvider";
+import { ethers } from "ethers";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -47,12 +48,21 @@ export function Widget(props) {
   const [vm, setVm] = useState(null);
   const [transactions, setTransactions] = useState(null);
   const [commitRequest, setCommitRequest] = useState(null);
-  const ethersProvider = useEthersProvider();
+  const globalEthersProvider = useEthersProvider();
+  const [ethersProvider, setEthersProvider] = useState(null);
 
   const cache = useCache();
   const near = useNear();
   const accountId = useAccountId();
   const [element, setElement] = useState(null);
+
+  useEffect(() => {
+    setEthersProvider(
+      globalEthersProvider
+        ? new ethers.providers.Web3Provider(globalEthersProvider.provider)
+        : null
+    );
+  }, [globalEthersProvider]);
 
   useEffect(() => {
     if (!near) {

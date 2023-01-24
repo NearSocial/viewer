@@ -39,6 +39,7 @@ const frozenNacl = Object.freeze({
 const frozenEthers = Object.freeze({
   utils: deepFreeze(ethers.utils),
   BigNumber: deepFreeze(ethers.BigNumber),
+  Contract: deepFreeze(ethers.Contract),
 });
 
 // TODO: Fix freezing with ethers.
@@ -174,7 +175,6 @@ const Keywords = {
   Set,
   clipboard: true,
   Ethers: true,
-  EthersAsync: true,
 };
 
 const ReservedKeys = {
@@ -228,6 +228,8 @@ const deepCopy = (o) => {
     return new Blob([o], { type: o.type });
   } else if (o instanceof Uint8Array || o instanceof ArrayBuffer) {
     return o.slice(0);
+  } else if (o instanceof ethers.BigNumber) {
+    return o;
   } else if (isObject(o)) {
     if (isReactObject(o)) {
       return o;
@@ -813,9 +815,10 @@ class VmStack {
         return this.isTrusted
           ? navigator.clipboard.writeText(...args)
           : Promise.reject(new Error("Not trusted (not a click)"));
-      } else if (keyword === "EthersAsync") {
-        return this.vm.ethersProvider[callee](...args);
       } else if (keyword === "Ethers") {
+        if (callee === "provider") {
+          return this.vm.ethersProvider;
+        }
         return this.vm.cachedEthersCall(callee, args);
       }
     } else {
