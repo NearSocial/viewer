@@ -945,7 +945,7 @@ class VmStack {
       });
       const args = this.getArray(code.arguments);
       if (!keyword && obj?.[key] instanceof Function) {
-        return obj?.[key](...args);
+        return isNew ? new obj[key](...args) : obj[key](...args);
       } else if (keyword || obj === this.stack.state || obj === this.vm.state) {
         return this.callFunction(
           keyword ?? "",
