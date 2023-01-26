@@ -184,12 +184,9 @@ const assertNotReservedKey = (key) => {
   }
 };
 
-const assertNotReservedObject = (o) => {
+const assertNotReactObject = (o) => {
   if (isReactObject(o)) {
     throw new Error("React objects shouldn't dereferenced");
-  }
-  if (o instanceof Function) {
-    throw new Error("Functions shouldn't dereferenced");
   }
 };
 
@@ -692,7 +689,7 @@ class VmStack {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for JSON.stringify");
         }
-        assertNotReservedObject(args[0]);
+        assertNotReactObject(args[0]);
         return JSON.stringify(args[0], args[1], args[2]);
       } else if (keyword === "JSON" && callee === "parse") {
         if (args.length < 1) {
@@ -710,22 +707,22 @@ class VmStack {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.keys");
           }
-          assertNotReservedObject(args[0]);
+          assertNotReactObject(args[0]);
           return Object.keys(args[0]);
         } else if (callee === "values") {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.values");
           }
-          assertNotReservedObject(args[0]);
+          assertNotReactObject(args[0]);
           return Object.values(args[0]);
         } else if (callee === "entries") {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.entries");
           }
-          assertNotReservedObject(args[0]);
+          assertNotReactObject(args[0]);
           return Object.entries(args[0]);
         } else if (callee === "assign") {
-          args.forEach((arg) => assertNotReservedObject(arg));
+          args.forEach((arg) => assertNotReactObject(arg));
           const obj = Object.assign(...args);
           assertValidObject(obj);
           return obj;
@@ -849,7 +846,7 @@ class VmStack {
         throw new Error(`The top object should be ${StakeKey}`);
       }
       const obj = this.stack.findObj(key) ?? this.stack.state;
-      assertNotReservedObject(obj);
+      assertNotReactObject(obj);
       if (obj === this.stack.state) {
         if (key in Keywords) {
           if (options?.left) {
@@ -883,7 +880,7 @@ class VmStack {
         }
       }
       const obj = this.executeExpression(code.object);
-      assertNotReservedObject(obj);
+      assertNotReactObject(obj);
       const key = this.resolveKey(code.property, code.computed);
       return { obj, key };
     } else {
@@ -1074,7 +1071,7 @@ class VmStack {
           object[key] = this.executeExpression(property.value);
         } else if (property.type === "SpreadElement") {
           const value = this.executeExpression(property.argument);
-          assertNotReservedObject(value);
+          assertNotReactObject(value);
           Object.assign(object, value);
         } else {
           throw new Error("Unknown property type: " + property.type);
@@ -1213,7 +1210,7 @@ class VmStack {
     if (pattern.type === "Identifier") {
       this.stack.state[pattern.name] = value;
     } else if (pattern.type === "ArrayPattern") {
-      assertNotReservedObject(value);
+      assertNotReactObject(value);
       pattern.elements.forEach((element, i) => {
         if (element.type === "RestElement") {
           this.stackDeclare(element.argument, value.slice(i));
@@ -1222,7 +1219,7 @@ class VmStack {
         }
       });
     } else if (pattern.type === "ObjectPattern") {
-      assertNotReservedObject(value);
+      assertNotReactObject(value);
       const seen = new Set();
       pattern.properties.forEach((property) => {
         if (property.type === "RestElement") {
@@ -1305,7 +1302,7 @@ class VmStack {
     } else if (token.type === "ForOfStatement") {
       const stack = this.newStack();
       const right = stack.executeExpression(token.right);
-      assertNotReservedObject(right);
+      assertNotReactObject(right);
       for (const value of right) {
         if (this.vm.loopLimit-- <= 0) {
           throw new Error("Exceeded loop limit");
