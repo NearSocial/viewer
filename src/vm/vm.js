@@ -194,9 +194,12 @@ const assertNotReservedKey = (key) => {
   }
 };
 
-const assertNotReactObject = (o) => {
+const assertNotReservedObject = (o) => {
   if (isReactObject(o)) {
     throw new Error("React objects shouldn't dereferenced");
+  }
+  if (o instanceof Function) {
+    throw new Error("Functions shouldn't dereferenced");
   }
 };
 
@@ -676,6 +679,18 @@ class VmStack {
           );
         }
         return this.vm.asyncFetch(...args);
+      } else if (callee === "useCache") {
+        if (args.length < 2) {
+          throw new Error(
+            "Method: useCache. Required arguments: 'promiseGenerator', 'dataKey'. Optional: 'options'"
+          );
+        }
+        if (!(args[0] instanceof Function)) {
+          throw new Error(
+            "Method: useCache. The first argument 'promiseGenerator' must be a function"
+          );
+        }
+        return this.vm.useCache(...args);
       } else if (callee === "parseInt") {
         return parseInt(...args);
       } else if (callee === "parseFloat") {
@@ -689,7 +704,7 @@ class VmStack {
         if (args.length < 1) {
           throw new Error("Missing argument 'obj' for JSON.stringify");
         }
-        assertNotReactObject(args[0]);
+        assertNotReservedObject(args[0]);
         return JSON.stringify(args[0], args[1], args[2]);
       } else if (keyword === "JSON" && callee === "parse") {
         if (args.length < 1) {
@@ -707,22 +722,22 @@ class VmStack {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.keys");
           }
-          assertNotReactObject(args[0]);
+          assertNotReservedObject(args[0]);
           return Object.keys(args[0]);
         } else if (callee === "values") {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.values");
           }
-          assertNotReactObject(args[0]);
+          assertNotReservedObject(args[0]);
           return Object.values(args[0]);
         } else if (callee === "entries") {
           if (args.length < 1) {
             throw new Error("Missing argument 'obj' for Object.entries");
           }
-          assertNotReactObject(args[0]);
+          assertNotReservedObject(args[0]);
           return Object.entries(args[0]);
         } else if (callee === "assign") {
-          args.forEach((arg) => assertNotReactObject(arg));
+          args.forEach((arg) => assertNotReservedObject(arg));
           const obj = Object.assign(...args);
           assertValidObject(obj);
           return obj;
@@ -851,7 +866,7 @@ class VmStack {
         throw new Error(`The top object should be ${StakeKey}`);
       }
       const obj = this.stack.findObj(key) ?? this.stack.state;
-      assertNotReactObject(obj);
+      assertNotReservedObject(obj);
       if (obj === this.stack.state) {
         if (key in Keywords) {
           if (options?.left) {
@@ -885,7 +900,7 @@ class VmStack {
         }
       }
       const obj = this.executeExpression(code.object);
-      assertNotReactObject(obj);
+      assertNotReservedObject(obj);
       const key = this.resolveKey(code.property, code.computed);
       return { obj, key };
     } else {
@@ -1076,7 +1091,7 @@ class VmStack {
           object[key] = this.executeExpression(property.value);
         } else if (property.type === "SpreadElement") {
           const value = this.executeExpression(property.argument);
-          assertNotReactObject(value);
+          assertNotReservedObject(value);
           Object.assign(object, value);
         } else {
           throw new Error("Unknown property type: " + property.type);
@@ -1215,7 +1230,7 @@ class VmStack {
     if (pattern.type === "Identifier") {
       this.stack.state[pattern.name] = value;
     } else if (pattern.type === "ArrayPattern") {
-      assertNotReactObject(value);
+      assertNotReservedObject(value);
       pattern.elements.forEach((element, i) => {
         if (element.type === "RestElement") {
           this.stackDeclare(element.argument, value.slice(i));
@@ -1224,7 +1239,7 @@ class VmStack {
         }
       });
     } else if (pattern.type === "ObjectPattern") {
-      assertNotReactObject(value);
+      assertNotReservedObject(value);
       const seen = new Set();
       pattern.properties.forEach((property) => {
         if (property.type === "RestElement") {
@@ -1307,7 +1322,7 @@ class VmStack {
     } else if (token.type === "ForOfStatement") {
       const stack = this.newStack();
       const right = stack.executeExpression(token.right);
-      assertNotReactObject(right);
+      assertNotReservedObject(right);
       for (const value of right) {
         if (this.vm.loopLimit-- <= 0) {
           throw new Error("Exceeded loop limit");
@@ -1599,6 +1614,21 @@ export default class VM {
   cachedIndex(action, key, options) {
     return this.cachedPromise(
       (invalidate) => this.cache.socialIndex(action, key, options, invalidate),
+      options?.subscribe
+    );
+  }
+
+  useCache(promiseGenerator, dataKey, options) {
+    return this.cachedPromise(
+      (invalidate) =>
+        this.cache.cachedCustomPromise(
+          {
+            widgetSrc: this.widgetSrc,
+            dataKey,
+          },
+          promiseGenerator,
+          invalidate
+        ),
       options?.subscribe
     );
   }
