@@ -8,7 +8,7 @@ export default function mentions() {
     if (
       /[\w`]/.test(match.input.charAt(match.index - 1)) ||
       /[/\w`]/.test(match.input.charAt(match.index + value.length)) ||
-      username.length < 3 ||
+      username.length < 2 ||
       username.length > 64
     ) {
       return false;
