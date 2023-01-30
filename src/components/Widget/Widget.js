@@ -162,8 +162,9 @@ export function Widget(props) {
     setContext({
       loading: accountId === undefined,
       accountId,
+      widgetSrc: src,
     });
-  }, [near, accountId]);
+  }, [near, accountId, src]);
 
   useLayoutEffect(() => {
     if (!vm) {
