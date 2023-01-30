@@ -18,6 +18,7 @@ const CacheStatus = {
   Invalidated: "Invalidated",
 };
 
+const ExpirationTimeoutMs = 1000 * 60 * 5; // 5 minutes
 const CacheSubscriptionTimeoutMs = 5000;
 const CacheDebug = false;
 
@@ -67,6 +68,7 @@ class Cache {
       status: CacheStatus.NotStarted,
       invalidationCallbacks: [],
       result: null,
+      time: new Date().getTime(),
     };
     this.cache[key] = cached;
     if (!isObject(invalidate)) {
@@ -92,9 +94,12 @@ class Cache {
       };
       makeTimer();
     }
+    if (cached.status === CacheStatus.InProgress) {
+      return cached.result;
+    }
     if (
-      cached.status === CacheStatus.InProgress ||
-      cached.status === CacheStatus.Done
+      cached.status === CacheStatus.Done &&
+      cached.time + ExpirationTimeoutMs > new Date().getTime()
     ) {
       return cached.result;
     }
@@ -106,6 +111,7 @@ class Cache {
         ) {
           CacheDebug && console.log("Cached value", key, cachedResult);
           cached.result = cachedResult;
+          cached.time = new Date().getTime();
           invalidateCallbacks(cached, false);
         }
       });
@@ -116,6 +122,7 @@ class Cache {
         .then((result) => {
           CacheDebug && console.log("Fetched result", key);
           cached.status = CacheStatus.Done;
+          cached.time = new Date().getTime();
           if (JSON.stringify(result) !== JSON.stringify(cached.result)) {
             cached.result = result;
             this.innerSet(key, result);
@@ -127,6 +134,7 @@ class Cache {
           console.error(e);
           cached.status = CacheStatus.Done;
           const result = undefined;
+          cached.time = new Date().getTime();
           if (JSON.stringify(result) !== JSON.stringify(cached.result)) {
             cached.result = result;
             this.innerSet(key, result);
@@ -367,6 +375,7 @@ class Cache {
       status: CacheStatus.NotStarted,
       invalidationCallbacks: [],
       result: null,
+      time: new Date().getTime(),
     };
     this.cache[key] = cached;
     cached.status = CacheStatus.Done;
