@@ -46,7 +46,7 @@ const TestNearConfig = {
     widgetMetadata: "eugenethedream/widget/WidgetMetadata",
     profileImage: "eugenethedream/widget/ProfileImage",
     profilePage: "eugenethedream/widget/Profile",
-    profileName: "patrick.near/widget/ProfileName",
+    profileName: "eugenethedream/widget/ProfileName",
     notificationButton: "eugenethedream/widget/NotificationButton",
   },
   apiUrl: null,
