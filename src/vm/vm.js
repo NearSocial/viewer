@@ -61,7 +61,7 @@ const StorageType = {
   Public: "public",
 };
 
-const ApprovedTags = {
+const ApprovedTagsSimple = {
   h1: true,
   h2: true,
   h3: true,
@@ -73,7 +73,6 @@ const ApprovedTags = {
   strong: true,
   sub: true,
   sup: true,
-  a: true,
   pre: true,
   i: true,
   b: true,
@@ -93,20 +92,11 @@ const ApprovedTags = {
   br: false,
   hr: false,
   img: false,
-  Widget: false,
-  CommitButton: true,
-  IpfsImageUpload: false,
-  Markdown: false,
-  Fragment: true,
   textarea: true,
   select: true,
   option: true,
   label: true,
   small: true,
-  InfiniteScroll: true,
-  Typeahead: false,
-  Tooltip: true,
-  OverlayTrigger: true,
   // svg begin
   svg: true,
   animate: false,
@@ -136,8 +126,26 @@ const ApprovedTags = {
   tspan: true,
   use: false,
   // svg ends
+};
+
+const ApprovedTagsCustom = {
+  a: true,
+  Widget: false,
+  CommitButton: true,
+  IpfsImageUpload: false,
+  Markdown: false,
+  Fragment: true,
+  InfiniteScroll: true,
+  Typeahead: false,
+  Tooltip: true,
+  OverlayTrigger: true,
   Files: true,
   iframe: false,
+};
+
+const ApprovedTags = {
+  ...ApprovedTagsSimple,
+  ...ApprovedTagsCustom,
 };
 
 const Keywords = {
@@ -1085,7 +1093,7 @@ class VmStack {
         } else {
           if (key === "keyframes") {
             styledTemplate = keyframes;
-          } else if (key in ApprovedTags) {
+          } else if (key in ApprovedTagsSimple) {
             styledTemplate = styled(key);
           } else {
             throw new Error("Unsupported styled tag: " + key);

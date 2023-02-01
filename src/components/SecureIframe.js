@@ -3,8 +3,8 @@ import equal from "deep-equal";
 import { deepCopy } from "../data/utils";
 
 export default function SecureIframe(allProps) {
-  const { className, src, srcDoc, title, message, onMessage } = allProps;
-  const usedProps = { className, src, srcDoc, title };
+  const { className, style, src, srcDoc, title, message, onMessage } = allProps;
+  const usedProps = { className, style, src, srcDoc, title };
 
   const [loaded, setLoaded] = useState(false);
   const [prevMessage, setPrevMessage] = useState(undefined);
