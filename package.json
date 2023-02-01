@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "homepage": "/",
   "private": true,
   "dependencies": {
@@ -21,10 +21,12 @@
     "bootstrap": "^5.2.1",
     "bootstrap-icons": "^1.9.0",
     "collections": "^5.1.12",
+    "deep-equal": "^2.2.0",
     "elliptic": "^6.5.4",
     "error-polyfill": "^0.1.2",
     "idb": "^7.1.1",
     "local-storage": "^2.0.0",
+    "mdast-util-find-and-replace": "^2.0.0",
     "near-api-js": "^0.45.1",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
@@ -41,8 +43,7 @@
     "react-uuid": "^1.0.2",
     "remark-gfm": "^3.0.1",
     "styled-components": "^5.3.6",
-    "tweetnacl": "^1.0.3",
-    "mdast-util-find-and-replace": "^2.0.0"
+    "tweetnacl": "^1.0.3"
   },
   "scripts": {
     "serve": "webpack serve",
