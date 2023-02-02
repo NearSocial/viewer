@@ -9,12 +9,13 @@ import * as jsx from "acorn-jsx";
 import { TGas, useNear } from "../../data/near";
 import ConfirmTransactions from "../ConfirmTransactions";
 import VM from "../../vm/vm";
-import { ErrorFallback, Loading } from "../../data/utils";
+import { deepEqual, ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import { useCache } from "../../data/cache";
 import { CommitModal } from "../Commit";
 import { useAccountId } from "../../data/account";
 import Big from "big.js";
+import uuid from "react-uuid";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -46,6 +47,7 @@ export function Widget(props) {
   const [vm, setVm] = useState(null);
   const [transactions, setTransactions] = useState(null);
   const [commitRequest, setCommitRequest] = useState(null);
+  const [prevVmInput, setPrevVmInput] = useState(null);
 
   const cache = useCache();
   const near = useNear();
@@ -148,6 +150,7 @@ export function Widget(props) {
       depth,
       widgetSrc: src,
       requestCommit,
+      version: uuid(),
     });
     setVm(vm);
     return () => {
@@ -170,14 +173,19 @@ export function Widget(props) {
     if (!vm) {
       return;
     }
+    const vmInput = {
+      props: codeProps || {},
+      context,
+      state,
+      cacheNonce,
+      version: vm.version,
+    };
+    if (deepEqual(vmInput, prevVmInput)) {
+      return;
+    }
+    setPrevVmInput(vmInput);
     try {
-      setElement(
-        vm.renderCode({
-          props: codeProps || {},
-          context,
-          state,
-        }) ?? "Execution failed"
-      );
+      setElement(vm.renderCode(vmInput) ?? "Execution failed");
     } catch (e) {
       setElement(
         <div className="alert alert-danger">
@@ -188,7 +196,7 @@ export function Widget(props) {
       );
       console.error(e);
     }
-  }, [vm, codeProps, context, state, cacheNonce]);
+  }, [vm, codeProps, context, state, cacheNonce, prevVmInput]);
 
   return element !== null && element !== undefined ? (
     <ErrorBoundary

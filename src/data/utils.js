@@ -2,6 +2,7 @@ import Big from "big.js";
 import { NearConfig, TGas } from "./near";
 import React from "react";
 import { useLocation } from "react-router-dom";
+import equal from "deep-equal";
 
 const MinAccountIdLen = 2;
 const MaxAccountIdLen = 64;
@@ -350,3 +351,5 @@ export const deepFreeze = (obj) => {
   });
   return Object.freeze(obj);
 };
+
+export const deepEqual = equal;

@@ -1463,6 +1463,7 @@ export default class VM {
       depth,
       widgetSrc,
       requestCommit,
+      version,
     } = options;
 
     if (!code) {
@@ -1480,6 +1481,7 @@ export default class VM {
     this.depth = depth;
     this.widgetSrc = widgetSrc;
     this.requestCommit = requestCommit;
+    this.version = version;
   }
 
   cachedPromise(promise, subscribe) {
