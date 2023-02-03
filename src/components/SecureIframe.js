@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import equal from "deep-equal";
-import { deepCopy } from "../data/utils";
+import { deepCopy, deepEqual } from "../data/utils";
 
 export default function SecureIframe(allProps) {
   const { className, style, src, srcDoc, title, message, onMessage } = allProps;
@@ -28,7 +27,7 @@ export default function SecureIframe(allProps) {
   }, [onMessageEvent]);
 
   useEffect(() => {
-    if (ref.current && loaded && !equal(prevMessage, message)) {
+    if (ref.current && loaded && !deepEqual(prevMessage, message)) {
       setPrevMessage(deepCopy(message));
       ref.current.contentWindow.postMessage(message, "*");
     }
