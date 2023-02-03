@@ -131,7 +131,11 @@ export function UserDropdown(props) {
             <div className="profile-username">{account.accountId}</div>
           </div>
         </button>
-        <ul className="dropdown-menu" aria-labelledby="dropdownMenu2222">
+        <ul
+          className="dropdown-menu"
+          aria-labelledby="dropdownMenu2222"
+          style={{ minWidth: "fit-content" }}
+        >
           <li>
             <NavLink
               className="dropdown-item"
