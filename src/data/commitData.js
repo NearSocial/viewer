@@ -20,17 +20,27 @@ const fetchCurrentData = async (near, data) => {
   });
 };
 
-export const prepareCommit = async (near, originalData, forceRewrite) => {
-  const accountId = near.accountId;
-  if (!accountId) {
+export const prepareCommit = async (
+  near,
+  accountId,
+  originalData,
+  forceRewrite
+) => {
+  const signedAccountId = near.accountId;
+  if (!signedAccountId) {
     alert("You're not logged in. Sign in to commit data.");
     return;
   }
   const [storageBalance, permissionGranted] = await Promise.all([
     near.viewCall(NearConfig.contractName, "storage_balance_of", {
-      account_id: accountId,
+      account_id: signedAccountId,
     }),
-    near.publicKey
+    signedAccountId !== accountId
+      ? near.viewCall(NearConfig.contractName, "is_write_permission_granted", {
+          predecessor_id: signedAccountId,
+          key: accountId,
+        })
+      : near.publicKey
       ? near.viewCall(NearConfig.contractName, "is_write_permission_granted", {
           public_key: near.publicKey.toString(),
           key: accountId,
@@ -39,7 +49,7 @@ export const prepareCommit = async (near, originalData, forceRewrite) => {
   ]);
   const availableStorage = Big(storageBalance?.available || "0");
   let data = {
-    [near.accountId]: convertToStringLeaves(originalData),
+    [accountId]: convertToStringLeaves(originalData),
   };
   let currentData = {};
   if (!forceRewrite) {
