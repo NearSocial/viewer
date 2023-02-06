@@ -126,10 +126,10 @@ const ApprovedTagsSimple = {
   tspan: true,
   use: false,
   // svg ends
+  a: true,
 };
 
 const ApprovedTagsCustom = {
-  a: true,
   Widget: false,
   CommitButton: true,
   IpfsImageUpload: false,
@@ -430,9 +430,11 @@ class VmStack {
     delete attributes.dangerouslySetInnerHTML;
     delete attributes.as;
     delete attributes.forwardedAs;
-    if (element === "img") {
+    const basicElement = styledComponent?.target || element;
+
+    if (basicElement === "img") {
       attributes.alt = attributes.alt ?? "not defined";
-    } else if (element === "a") {
+    } else if (basicElement === "a") {
       if ("href" in attributes) {
         attributes.href = sanitizeUrl(attributes.href);
       }
