@@ -1067,7 +1067,7 @@ class VmStack {
     } else if (type === "TaggedTemplateExpression") {
       // Currently on `styled` component is supported.
 
-      let styledTemplate;
+      let styledTemplate, styledKey;
 
       if (
         code.tag.type === "MemberExpression" ||
@@ -1100,6 +1100,7 @@ class VmStack {
           } else {
             throw new Error("Unsupported styled tag: " + key);
           }
+          styledKey = key;
         }
       } else {
         throw new Error(
@@ -1117,16 +1118,14 @@ class VmStack {
         return element.value.cooked;
       });
 
-      const cacheKey = {
-        styledTemplate,
-        quasis,
-      };
       const canCache =
         code.quasi.expressions.length === 0 &&
         code.tag.type !== "CallExpression";
 
-      if (canCache && cacheKey in this.vm.cachedStyledComponents) {
-        return this.vm.cachedStyledComponents[cacheKey];
+      const cacheKey = JSON.stringify([styledKey, ...quasis]);
+
+      if (canCache && this.vm.cachedStyledComponents.has(cacheKey)) {
+        return this.vm.cachedStyledComponents.get(cacheKey);
       }
 
       const expressions = code.quasi.expressions.map((expression) =>
@@ -1136,7 +1135,7 @@ class VmStack {
       if (styledTemplate instanceof Function) {
         const result = styledTemplate(quasis, ...expressions);
         if (canCache) {
-          this.vm.cachedStyledComponents[cacheKey] = result;
+          this.vm.cachedStyledComponents.set(cacheKey, result);
         }
         return result;
       } else {
