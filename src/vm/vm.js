@@ -1116,12 +1116,29 @@ class VmStack {
         }
         return element.value.cooked;
       });
+
+      const cacheKey = {
+        styledTemplate,
+        quasis,
+      };
+      const canCache =
+        code.quasi.expressions.length === 0 &&
+        code.tag.type !== "CallExpression";
+
+      if (canCache && cacheKey in this.vm.cachedStyledComponents) {
+        return this.vm.cachedStyledComponents[cacheKey];
+      }
+
       const expressions = code.quasi.expressions.map((expression) =>
         this.executeExpression(expression)
       );
 
       if (styledTemplate instanceof Function) {
-        return styledTemplate(quasis, ...expressions);
+        const result = styledTemplate(quasis, ...expressions);
+        if (canCache) {
+          this.vm.cachedStyledComponents[cacheKey] = result;
+        }
+        return result;
       } else {
         throw new Error("styled error");
       }
@@ -1462,6 +1479,7 @@ export default class VM {
     this.widgetSrc = widgetSrc;
     this.requestCommit = requestCommit;
     this.version = version;
+    this.cachedStyledComponents = new Map();
   }
 
   cachedPromise(promise, subscribe) {
