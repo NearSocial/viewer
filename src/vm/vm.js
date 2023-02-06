@@ -739,7 +739,7 @@ class VmStack {
         if (this.vm.state.state === undefined) {
           throw new Error("The error was not initialized");
         }
-        this.vm.setReactState(this.vm.state.state);
+        this.vm.setReactState(deepCopy(this.vm.state.state));
         return this.vm.state.state;
       } else if (keyword === "Storage" && callee === "privateSet") {
         if (args.length < 2) {
