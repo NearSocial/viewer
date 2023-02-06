@@ -9,7 +9,7 @@ import * as jsx from "acorn-jsx";
 import { TGas, useNear } from "../../data/near";
 import ConfirmTransactions from "../ConfirmTransactions";
 import VM from "../../vm/vm";
-import { ErrorFallback, Loading } from "../../data/utils";
+import { deepEqual, ErrorFallback, Loading } from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import { useCache } from "../../data/cache";
 import { CommitModal } from "../Commit";
@@ -17,6 +17,7 @@ import { useAccountId } from "../../data/account";
 import Big from "big.js";
 import { useEthersProvider } from "../../data/ethersProvider";
 import { ethers } from "ethers";
+import uuid from "react-uuid";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -50,6 +51,7 @@ export function Widget(props) {
   const [commitRequest, setCommitRequest] = useState(null);
   const globalEthersProvider = useEthersProvider();
   const [ethersProvider, setEthersProvider] = useState(null);
+  const [prevVmInput, setPrevVmInput] = useState(null);
 
   const cache = useCache();
   const near = useNear();
@@ -161,6 +163,7 @@ export function Widget(props) {
       widgetSrc: src,
       requestCommit,
       ethersProvider,
+      version: uuid(),
     });
     setVm(vm);
     return () => {
@@ -183,21 +186,27 @@ export function Widget(props) {
     setContext({
       loading: accountId === undefined,
       accountId,
+      widgetSrc: src,
     });
-  }, [near, accountId]);
+  }, [near, accountId, src]);
 
   useLayoutEffect(() => {
     if (!vm) {
       return;
     }
+    const vmInput = {
+      props: codeProps || {},
+      context,
+      state,
+      cacheNonce,
+      version: vm.version,
+    };
+    if (deepEqual(vmInput, prevVmInput)) {
+      return;
+    }
+    setPrevVmInput(vmInput);
     try {
-      setElement(
-        vm.renderCode({
-          props: codeProps || {},
-          context,
-          state,
-        }) ?? "Execution failed"
-      );
+      setElement(vm.renderCode(vmInput) ?? "Execution failed");
     } catch (e) {
       setElement(
         <div className="alert alert-danger">
@@ -208,7 +217,7 @@ export function Widget(props) {
       );
       console.error(e);
     }
-  }, [vm, codeProps, context, state, cacheNonce]);
+  }, [vm, codeProps, context, state, cacheNonce, prevVmInput]);
 
   return element !== null && element !== undefined ? (
     <ErrorBoundary
