@@ -1082,7 +1082,7 @@ class VmStack {
     } else if (type === "TaggedTemplateExpression") {
       // Currently on `styled` component is supported.
 
-      let styledTemplate;
+      let styledTemplate, styledKey;
 
       if (
         code.tag.type === "MemberExpression" ||
@@ -1115,6 +1115,7 @@ class VmStack {
           } else {
             throw new Error("Unsupported styled tag: " + key);
           }
+          styledKey = key;
         }
       } else {
         throw new Error(
@@ -1131,12 +1132,27 @@ class VmStack {
         }
         return element.value.cooked;
       });
+
+      const canCache =
+        code.quasi.expressions.length === 0 &&
+        code.tag.type !== "CallExpression";
+
+      const cacheKey = JSON.stringify([styledKey, ...quasis]);
+
+      if (canCache && this.vm.cachedStyledComponents.has(cacheKey)) {
+        return this.vm.cachedStyledComponents.get(cacheKey);
+      }
+
       const expressions = code.quasi.expressions.map((expression) =>
         this.executeExpression(expression)
       );
 
       if (styledTemplate instanceof Function) {
-        return styledTemplate(quasis, ...expressions);
+        const result = styledTemplate(quasis, ...expressions);
+        if (canCache) {
+          this.vm.cachedStyledComponents.set(cacheKey, result);
+        }
+        return result;
       } else {
         throw new Error("styled error");
       }
@@ -1479,6 +1495,7 @@ export default class VM {
     this.requestCommit = requestCommit;
     this.ethersProvider = ethersProvider;
     this.version = version;
+    this.cachedStyledComponents = new Map();
   }
 
   cachedPromise(promise, subscribe) {
