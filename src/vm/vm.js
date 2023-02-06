@@ -1,13 +1,16 @@
 import React from "react";
 import { Widget } from "../components/Widget/Widget";
 import {
+  deepCopy,
   deepFreeze,
   ipfsUpload,
   ipfsUrl,
   isArray,
   isObject,
+  isReactObject,
   isString,
   Loading,
+  ReactKey,
 } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
@@ -24,6 +27,7 @@ import Big from "big.js";
 import * as elliptic from "elliptic";
 import BN from "bn.js";
 import * as nacl from "tweetnacl";
+import SecureIframe from "../components/SecureIframe";
 
 const frozenNacl = Object.freeze({
   randomBytes: deepFreeze(nacl.randomBytes),
@@ -47,10 +51,6 @@ const frozenElliptic = Object.freeze({
 const LoopLimit = 1000000;
 const MaxDepth = 32;
 
-const ReactKey = "$$typeof";
-const isReactObject = (o) =>
-  o !== null && typeof o === "object" && !!o[ReactKey];
-
 const StakeKey = "state";
 
 const ExpressionDebug = false;
@@ -61,7 +61,7 @@ const StorageType = {
   Public: "public",
 };
 
-const ApprovedTags = {
+const ApprovedTagsSimple = {
   h1: true,
   h2: true,
   h3: true,
@@ -73,7 +73,6 @@ const ApprovedTags = {
   strong: true,
   sub: true,
   sup: true,
-  a: true,
   pre: true,
   i: true,
   b: true,
@@ -93,20 +92,11 @@ const ApprovedTags = {
   br: false,
   hr: false,
   img: false,
-  Widget: false,
-  CommitButton: true,
-  IpfsImageUpload: false,
-  Markdown: false,
-  Fragment: true,
   textarea: true,
   select: true,
   option: true,
   label: true,
   small: true,
-  InfiniteScroll: true,
-  Typeahead: false,
-  Tooltip: true,
-  OverlayTrigger: true,
   // svg begin
   svg: true,
   animate: false,
@@ -136,7 +126,26 @@ const ApprovedTags = {
   tspan: true,
   use: false,
   // svg ends
+};
+
+const ApprovedTagsCustom = {
+  a: true,
+  Widget: false,
+  CommitButton: true,
+  IpfsImageUpload: false,
+  Markdown: false,
+  Fragment: true,
+  InfiniteScroll: true,
+  Typeahead: false,
+  Tooltip: true,
+  OverlayTrigger: true,
   Files: true,
+  iframe: false,
+};
+
+const ApprovedTags = {
+  ...ApprovedTagsSimple,
+  ...ApprovedTagsCustom,
 };
 
 const Keywords = {
@@ -196,39 +205,6 @@ const assertValidObject = (o) => {
       assertNotReservedKey(key);
       assertValidObject(value);
     });
-  }
-};
-
-const deepCopy = (o) => {
-  if (Array.isArray(o)) {
-    return o.map((v) => deepCopy(v));
-  } else if (o instanceof Map) {
-    return new Map(
-      [...o.entries()].map(([k, v]) => [deepCopy(k), deepCopy(v)])
-    );
-  } else if (o instanceof Set) {
-    return new Set([...o].map((v) => deepCopy(v)));
-  } else if (Buffer.isBuffer(o)) {
-    return Buffer.from(o);
-  } else if (o instanceof URL) {
-    return new URL(o);
-  } else if (o instanceof File) {
-    return new File([o], o.name, { type: o.type });
-  } else if (o instanceof Blob) {
-    return new Blob([o], { type: o.type });
-  } else if (o instanceof Uint8Array || o instanceof ArrayBuffer) {
-    return o.slice(0);
-  } else if (isObject(o)) {
-    if (isReactObject(o)) {
-      return o;
-    }
-    return Object.fromEntries(
-      Object.entries(o).map(([key, value]) => [key, deepCopy(value)])
-    );
-  } else if (o === undefined || typeof o === "function") {
-    return o;
-  } else {
-    return JSON.parse(JSON.stringify(o));
   }
 };
 
@@ -534,6 +510,8 @@ class VmStack {
       );
     } else if (element === "Files") {
       return <Files {...attributes}>{children}</Files>;
+    } else if (element === "iframe") {
+      return <SecureIframe {...attributes} />;
     } else if (styledComponent) {
       return React.createElement(
         styledComponent,
@@ -1115,7 +1093,7 @@ class VmStack {
         } else {
           if (key === "keyframes") {
             styledTemplate = keyframes;
-          } else if (key in ApprovedTags) {
+          } else if (key in ApprovedTagsSimple) {
             styledTemplate = styled(key);
           } else {
             throw new Error("Unsupported styled tag: " + key);

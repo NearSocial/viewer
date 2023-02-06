@@ -352,4 +352,41 @@ export const deepFreeze = (obj) => {
   return Object.freeze(obj);
 };
 
+export const ReactKey = "$$typeof";
+export const isReactObject = (o) =>
+  o !== null && typeof o === "object" && !!o[ReactKey];
+
+export const deepCopy = (o) => {
+  if (Array.isArray(o)) {
+    return o.map((v) => deepCopy(v));
+  } else if (o instanceof Map) {
+    return new Map(
+      [...o.entries()].map(([k, v]) => [deepCopy(k), deepCopy(v)])
+    );
+  } else if (o instanceof Set) {
+    return new Set([...o].map((v) => deepCopy(v)));
+  } else if (Buffer.isBuffer(o)) {
+    return Buffer.from(o);
+  } else if (o instanceof URL) {
+    return new URL(o);
+  } else if (o instanceof File) {
+    return new File([o], o.name, { type: o.type });
+  } else if (o instanceof Blob) {
+    return new Blob([o], { type: o.type });
+  } else if (o instanceof Uint8Array || o instanceof ArrayBuffer) {
+    return o.slice(0);
+  } else if (isObject(o)) {
+    if (isReactObject(o)) {
+      return o;
+    }
+    return Object.fromEntries(
+      Object.entries(o).map(([key, value]) => [key, deepCopy(value)])
+    );
+  } else if (o === undefined || typeof o === "function") {
+    return o;
+  } else {
+    return JSON.parse(JSON.stringify(o));
+  }
+};
+
 export const deepEqual = equal;
