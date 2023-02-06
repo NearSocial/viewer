@@ -332,7 +332,8 @@ async function _initNear() {
         ? web4ViewCall(contractId, methodName, args, nearViewCall)
         : nearViewCall();
 
-    return contractId === NearConfig.contractName && finality === "final"
+    return contractId === NearConfig.contractName &&
+      (blockId || finality === "final")
       ? apiCall(methodName, args, blockId, fastRpcCall)
       : fastRpcCall();
   };
