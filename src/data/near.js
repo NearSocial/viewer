@@ -19,16 +19,14 @@ export const randomPublicKey = nearAPI.utils.PublicKey.from(
   "ed25519:8fWHD35Rjd78yeowShh9GwhRudRtLLsGCRjZtgPjAtw9"
 );
 
-const MainnetDomains = {
-  "view.social08.org": true,
-  "near.social": true,
-  "social.near.page": true,
-  localhost: true,
+const TestnetDomains = {
+  "test.near.social": true,
+  "127.0.0.1": true,
 };
 
 const EnableWeb4FastRpc = false;
 
-export const IsMainnet = window.location.hostname in MainnetDomains;
+export const IsMainnet = !(window.location.hostname in TestnetDomains);
 const TestnetContract = "v1.social08.testnet";
 const TestNearConfig = {
   networkId: "testnet",
@@ -72,6 +70,7 @@ export const MainNearConfig = {
     profilePage: "mob.near/widget/ProfilePage",
     profileName: "patrick.near/widget/ProfileName",
     editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
+    profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
   },
   apiUrl: "https://api.near.social",
   finalSynchronizationDelayMs: 3000,

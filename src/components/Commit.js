@@ -87,7 +87,7 @@ export const CommitModal = (props) => {
     }
     setLastData(jdata);
     setCommit(null);
-    prepareCommit(near, data, force).then(setCommit);
+    prepareCommit(near, accountId, data, force).then(setCommit);
   }, [commitInProgress, data, lastData, force, near, accountId, showIntent]);
 
   const onCommit = async () => {
@@ -111,7 +111,12 @@ export const CommitModal = (props) => {
     if (commit.permissionGranted) {
       await asyncCommit(near, commit.data, deposit);
     } else {
-      await requestPermissionAndCommit(near, commit.data, deposit);
+      if (accountId === near.accountId) {
+        await requestPermissionAndCommit(near, commit.data, deposit);
+      } else {
+        // No permission for another account and not the owner. Can't commit.
+        alert("No permission to commit under given account");
+      }
     }
     setCommit(null);
     setLastData(null);
@@ -127,8 +132,12 @@ export const CommitModal = (props) => {
     setCommitInProgress(false);
   };
 
+  const cantCommit =
+    commit && !commit.permissionGranted && accountId !== near.accountId;
+
   if (
     !commitInProgress &&
+    !cantCommit &&
     !asyncCommitStarted &&
     commit &&
     showIntent &&
@@ -157,7 +166,14 @@ export const CommitModal = (props) => {
         <Modal.Title>Saving data</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {commit ? (
+        {cantCommit ? (
+          <div>
+            <h5>
+              Can't commit, because the account {near.accountId} doesn't have
+              permission to write under pretended account {accountId}
+            </h5>
+          </div>
+        ) : commit ? (
           <div>
             <div>
               {commit.data ? (
@@ -224,7 +240,7 @@ export const CommitModal = (props) => {
                 </div>
               </div>
             )}
-            {widgetSrc && commit.data && (
+            {!cantCommit && widgetSrc && commit.data && (
               <div className="form-check form-switch">
                 <input
                   className="form-check-input"
@@ -253,7 +269,7 @@ export const CommitModal = (props) => {
       <Modal.Footer>
         <button
           className="btn btn-success"
-          disabled={!commit?.data || commitInProgress}
+          disabled={!commit?.data || commitInProgress || cantCommit}
           onClick={(e) => {
             e.preventDefault();
             onCommit();

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { Fork } from "../../icons/Fork";
 import { Code } from "../../icons/Code";
+import { useAccount } from "../../../data/account";
 
 const StyledDropdown = styled.div`
   .dropdown-toggle {
@@ -84,6 +85,8 @@ const StyledDropdown = styled.div`
 `;
 
 export function DevActionsDropdown(props) {
+  const account = useAccount();
+
   if (props.widgetSrc?.edit || props.widgetSrc?.view) {
     return (
       <StyledDropdown className="dropdown">
@@ -105,9 +108,7 @@ export function DevActionsDropdown(props) {
             <li>
               <Link to={`/edit/${props.widgetSrc?.edit}`}>
                 <Fork />
-                {props.widgetSrc.edit.startsWith(
-                  `${props.signedAccountId}/widget/`
-                )
+                {props.widgetSrc.edit.startsWith(`${account.accountId}/widget/`)
                   ? "Edit widget"
                   : "Fork widget"}
               </Link>
