@@ -597,6 +597,14 @@ export default function EditorPage(props) {
                       Open Component in a new tab
                     </a>
                   )}
+                    <a
+                      className="btn btn-outline-primary"
+                      href="vscode:extension/maxistyping.near"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open in VS Code
+                    </a>
                 </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
