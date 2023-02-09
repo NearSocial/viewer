@@ -69,6 +69,7 @@ export function Widget(props) {
 
   const [nonce, setNonce] = useState(0);
   const [code, setCode] = useState(null);
+  const [src, setSrc] = useState(null);
   const [state, setState] = useState(undefined);
   const [cacheNonce, setCacheNonce] = useState(0);
   const [parsedCode, setParsedCode] = useState(null);
@@ -107,9 +108,6 @@ export function Widget(props) {
     if (!near) {
       return;
     }
-    setVm(null);
-    setParsedCode(null);
-    setElement(null);
     if (srcOrCode?.src) {
       const src = srcOrCode.src;
       const code = cache.socialGet(
@@ -123,6 +121,18 @@ export function Widget(props) {
         }
       );
       setCode(code);
+      setSrc(src);
+    } else if (srcOrCode?.code) {
+      setCode(srcOrCode.code);
+      setSrc(null);
+    }
+  }, [near, srcOrCode, nonce]);
+
+  useEffect(() => {
+    console.log("code/src", src, !!code);
+    setVm(null);
+    setElement(null);
+    if (!code) {
       if (code === undefined) {
         setElement(
           <div className="alert alert-danger">
@@ -130,13 +140,6 @@ export function Widget(props) {
           </div>
         );
       }
-    } else if (srcOrCode?.code) {
-      setCode(srcOrCode.code);
-    }
-  }, [near, srcOrCode, nonce]);
-
-  useEffect(() => {
-    if (!code) {
       return;
     }
     try {
@@ -152,7 +155,7 @@ export function Widget(props) {
       );
       console.error(e);
     }
-  }, [code]);
+  }, [code, src]);
 
   const confirmTransactions = useCallback(
     (transactions) => {
@@ -174,13 +177,13 @@ export function Widget(props) {
 
   const requestCommit = useCallback(
     (commitRequest) => {
-      if (!near || !accountId) {
+      if (!near) {
         return null;
       }
       console.log("commit requested", commitRequest);
       setCommitRequest(commitRequest);
     },
-    [near, accountId]
+    [near]
   );
 
   useEffect(() => {
@@ -198,7 +201,7 @@ export function Widget(props) {
       },
       confirmTransactions,
       depth,
-      widgetSrc: srcOrCode?.src,
+      widgetSrc: src,
       requestCommit,
       version: uuid(),
       widgetConfigs: configs,
@@ -208,7 +211,7 @@ export function Widget(props) {
       vm.alive = false;
     };
   }, [
-    srcOrCode,
+    src,
     near,
     parsedCode,
     depth,
@@ -222,11 +225,11 @@ export function Widget(props) {
       return;
     }
     setContext({
-      loading: accountId === undefined,
-      accountId,
-      widgetSrc: srcOrCode?.src,
+      loading: false,
+      accountId: accountId ?? null,
+      widgetSrc: src,
     });
-  }, [near, accountId, srcOrCode]);
+  }, [near, accountId, src]);
 
   useLayoutEffect(() => {
     if (!vm) {
@@ -276,7 +279,7 @@ export function Widget(props) {
         {commitRequest && (
           <CommitModal
             show={true}
-            widgetSrc={srcOrCode?.src}
+            widgetSrc={src}
             data={commitRequest.data}
             force={commitRequest.force}
             onHide={() => setCommitRequest(null)}
