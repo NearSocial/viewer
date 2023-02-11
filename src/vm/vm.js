@@ -440,6 +440,9 @@ class VmStack {
       }
     } else if (element === "Widget") {
       attributes.depth = this.vm.depth + 1;
+      attributes.config = [attributes.config, ...this.vm.widgetConfigs].filter(
+        Boolean
+      );
     }
 
     if (withChildren === false && code.children.length) {
@@ -1460,6 +1463,7 @@ export default class VM {
       widgetSrc,
       requestCommit,
       version,
+      widgetConfigs,
     } = options;
 
     if (!code) {
@@ -1479,6 +1483,7 @@ export default class VM {
     this.requestCommit = requestCommit;
     this.version = version;
     this.cachedStyledComponents = new Map();
+    this.widgetConfigs = widgetConfigs;
   }
 
   cachedPromise(promise, subscribe) {

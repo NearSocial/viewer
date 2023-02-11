@@ -9,13 +9,20 @@ import * as jsx from "acorn-jsx";
 import { TGas, useNear } from "../../data/near";
 import ConfirmTransactions from "../ConfirmTransactions";
 import VM from "../../vm/vm";
-import { deepEqual, ErrorFallback, Loading } from "../../data/utils";
+import {
+  deepEqual,
+  ErrorFallback,
+  isObject,
+  isString,
+  Loading,
+} from "../../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
 import { useCache } from "../../data/cache";
 import { CommitModal } from "../Commit";
 import { useAccountId } from "../../data/account";
 import Big from "big.js";
 import uuid from "react-uuid";
+import { isFunction } from "react-bootstrap-typeahead/types/utils";
 
 const AcornOptions = {
   ecmaVersion: 13,
@@ -32,14 +39,37 @@ const parseCode = (code) => {
   return (ParsedCodeCache[code] = JsxParser.parse(code, AcornOptions));
 };
 
+const computeSrcOrCode = (src, code, configs) => {
+  let srcOrCode = src ? { src } : code ? { code } : null;
+  for (const config of configs || []) {
+    if (srcOrCode?.src) {
+      const src = srcOrCode.src;
+      let value = isObject(config?.redirectMap) && config.redirectMap[src];
+      if (!value) {
+        try {
+          value = isFunction(config?.redirect) && config.redirect(src);
+        } catch {}
+      }
+      if (isString(value)) {
+        srcOrCode = { src: value };
+      } else if (isString(value?.code)) {
+        return { code: value.code };
+      }
+    }
+  }
+  return srcOrCode;
+};
+
 export function Widget(props) {
-  const src = props.src;
-  const rawCode = props.code;
-  const codeProps = props.props;
+  const propsSrc = props.src;
+  const propsCode = props.code;
+  const propsProps = props.props;
   const depth = props.depth || 0;
+  const propsConfig = props.config;
 
   const [nonce, setNonce] = useState(0);
   const [code, setCode] = useState(null);
+  const [src, setSrc] = useState(null);
   const [state, setState] = useState(undefined);
   const [cacheNonce, setCacheNonce] = useState(0);
   const [parsedCode, setParsedCode] = useState(null);
@@ -48,6 +78,8 @@ export function Widget(props) {
   const [transactions, setTransactions] = useState(null);
   const [commitRequest, setCommitRequest] = useState(null);
   const [prevVmInput, setPrevVmInput] = useState(null);
+  const [configs, setConfigs] = useState(null);
+  const [srcOrCode, setSrcOrCode] = useState(null);
 
   const cache = useCache();
   const near = useNear();
@@ -55,13 +87,29 @@ export function Widget(props) {
   const [element, setElement] = useState(null);
 
   useEffect(() => {
+    const newConfigs = propsConfig
+      ? Array.isArray(propsConfig)
+        ? propsConfig
+        : [propsConfig]
+      : [];
+    if (!deepEqual(newConfigs, configs)) {
+      setConfigs(newConfigs);
+    }
+  }, [propsConfig, configs]);
+
+  useEffect(() => {
+    const computedSrcOrCode = computeSrcOrCode(propsSrc, propsCode, configs);
+    if (!deepEqual(computedSrcOrCode, srcOrCode)) {
+      setSrcOrCode(computedSrcOrCode);
+    }
+  }, [propsSrc, propsCode, configs, srcOrCode]);
+
+  useEffect(() => {
     if (!near) {
       return;
     }
-    setVm(null);
-    setParsedCode(null);
-    setElement(null);
-    if (src) {
+    if (srcOrCode?.src) {
+      const src = srcOrCode.src;
       const code = cache.socialGet(
         near,
         src.toString(),
@@ -73,6 +121,18 @@ export function Widget(props) {
         }
       );
       setCode(code);
+      setSrc(src);
+    } else if (srcOrCode?.code) {
+      setCode(srcOrCode.code);
+      setSrc(null);
+    }
+  }, [near, srcOrCode, nonce]);
+
+  useEffect(() => {
+    console.log("code/src", src, !!code);
+    setVm(null);
+    setElement(null);
+    if (!code) {
       if (code === undefined) {
         setElement(
           <div className="alert alert-danger">
@@ -80,13 +140,6 @@ export function Widget(props) {
           </div>
         );
       }
-    } else {
-      setCode(rawCode);
-    }
-  }, [near, src, nonce, rawCode]);
-
-  useEffect(() => {
-    if (!code) {
       return;
     }
     try {
@@ -102,7 +155,7 @@ export function Widget(props) {
       );
       console.error(e);
     }
-  }, [code]);
+  }, [code, src]);
 
   const confirmTransactions = useCallback(
     (transactions) => {
@@ -124,13 +177,13 @@ export function Widget(props) {
 
   const requestCommit = useCallback(
     (commitRequest) => {
-      if (!near || !accountId) {
+      if (!near) {
         return null;
       }
       console.log("commit requested", commitRequest);
       setCommitRequest(commitRequest);
     },
-    [near, accountId]
+    [near]
   );
 
   useEffect(() => {
@@ -151,20 +204,29 @@ export function Widget(props) {
       widgetSrc: src,
       requestCommit,
       version: uuid(),
+      widgetConfigs: configs,
     });
     setVm(vm);
     return () => {
       vm.alive = false;
     };
-  }, [src, near, parsedCode, depth, requestCommit, confirmTransactions]);
+  }, [
+    src,
+    near,
+    parsedCode,
+    depth,
+    requestCommit,
+    confirmTransactions,
+    configs,
+  ]);
 
   useEffect(() => {
     if (!near) {
       return;
     }
     setContext({
-      loading: accountId === undefined,
-      accountId,
+      loading: false,
+      accountId: accountId ?? null,
       widgetSrc: src,
     });
   }, [near, accountId, src]);
@@ -174,7 +236,7 @@ export function Widget(props) {
       return;
     }
     const vmInput = {
-      props: codeProps || {},
+      props: propsProps || {},
       context,
       state,
       cacheNonce,
@@ -196,7 +258,7 @@ export function Widget(props) {
       );
       console.error(e);
     }
-  }, [vm, codeProps, context, state, cacheNonce, prevVmInput]);
+  }, [vm, propsProps, context, state, cacheNonce, prevVmInput]);
 
   return element !== null && element !== undefined ? (
     <ErrorBoundary
