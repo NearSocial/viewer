@@ -56,6 +56,8 @@ const StakeKey = "state";
 const ExpressionDebug = false;
 const StatementDebug = false;
 
+const MAX_INTERVALS = 16;
+
 const StorageType = {
   Private: "private",
   Public: "public",
@@ -676,6 +678,9 @@ class VmStack {
         this.vm.timeouts.add(timer);
         return timer;
       } else if (callee === "setInterval") {
+        if (this.vm.intervals.size >= MAX_INTERVALS) {
+          throw new Error(`Too many intervals. Max allowed: ${MAX_INTERVALS}`);
+        }
         const [callback, timeout] = args;
         const timer = setInterval(() => {
           if (!this.vm.alive) {
@@ -686,9 +691,13 @@ class VmStack {
         this.vm.intervals.add(timer);
         return timer;
       } else if (callee === "clearTimeout") {
-        return clearTimeout(...args);
+        const timer = args[0];
+        this.vm.timeouts.delete(timer);
+        return clearTimeout(timer);
       } else if (callee === "clearInterval") {
-        return clearInterval(...args);
+        const timer = args[0];
+        this.vm.intervals.delete(timer);
+        return clearInterval(timer);
       } else if (
         (keyword === "JSON" && callee === "stringify") ||
         callee === "stringify"
@@ -753,20 +762,23 @@ class VmStack {
           throw new Error("'initialState' is not an object");
         }
         if (this.vm.state.state === undefined) {
-          const newState = deepCopy(args[0]);
-          this.vm.setReactState(newState);
+          const newState = args[0];
           this.vm.state.state = newState;
+          this.vm.setReactState(newState);
         }
         return this.vm.state.state;
       } else if (keyword === "State" && callee === "update") {
         if (isObject(args[0])) {
           this.vm.state.state = this.vm.state.state ?? {};
           Object.assign(this.vm.state.state, deepCopy(args[0]));
+        } else if (args[0] instanceof Function) {
+          this.vm.state.state = this.vm.state.state ?? {};
+          this.vm.state.state = args[0](this.vm.state.state);
         }
         if (this.vm.state.state === undefined) {
-          throw new Error("The error was not initialized");
+          throw new Error("The state was not initialized");
         }
-        this.vm.setReactState(deepCopy(this.vm.state.state));
+        this.vm.setReactState(this.vm.state.state);
         return this.vm.state.state;
       } else if (keyword === "Storage" && callee === "privateSet") {
         if (args.length < 2) {
@@ -1498,7 +1510,7 @@ export default class VM {
 
     this.near = near;
     this.code = code;
-    this.setReactState = setReactState;
+    this.setReactState = (s) => setReactState(deepCopy(s));
     this.cache = cache;
     this.refreshCache = refreshCache;
     this.confirmTransactions = confirmTransactions;

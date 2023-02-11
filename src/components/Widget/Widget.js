@@ -10,6 +10,7 @@ import { TGas, useNear } from "../../data/near";
 import ConfirmTransactions from "../ConfirmTransactions";
 import VM from "../../vm/vm";
 import {
+  deepCopy,
   deepEqual,
   ErrorFallback,
   isObject,
@@ -244,7 +245,7 @@ export function Widget(props) {
     if (deepEqual(vmInput, prevVmInput)) {
       return;
     }
-    setPrevVmInput(vmInput);
+    setPrevVmInput(deepCopy(vmInput));
     try {
       setElement(vm.renderCode(vmInput) ?? "Execution failed");
     } catch (e) {
