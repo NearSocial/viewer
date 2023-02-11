@@ -665,6 +665,30 @@ class VmStack {
         return parseFloat(...args);
       } else if (callee === "isNaN") {
         return isNaN(...args);
+      } else if (callee === "setTimeout") {
+        const [callback, timeout] = args;
+        const timer = setTimeout(() => {
+          if (!this.vm.alive) {
+            return;
+          }
+          callback();
+        }, timeout);
+        this.vm.timeouts.add(timer);
+        return timer;
+      } else if (callee === "setInterval") {
+        const [callback, timeout] = args;
+        const timer = setInterval(() => {
+          if (!this.vm.alive) {
+            return;
+          }
+          callback();
+        }, timeout);
+        this.vm.intervals.add(timer);
+        return timer;
+      } else if (callee === "clearTimeout") {
+        return clearTimeout(...args);
+      } else if (callee === "clearInterval") {
+        return clearInterval(...args);
       } else if (
         (keyword === "JSON" && callee === "stringify") ||
         callee === "stringify"
@@ -1484,6 +1508,15 @@ export default class VM {
     this.version = version;
     this.cachedStyledComponents = new Map();
     this.widgetConfigs = widgetConfigs;
+
+    this.timeouts = new Set();
+    this.intervals = new Set();
+  }
+
+  stop() {
+    this.alive = false;
+    this.timeouts.forEach((timeout) => clearTimeout(timeout));
+    this.intervals.forEach((interval) => clearInterval(interval));
   }
 
   cachedPromise(promise, subscribe) {

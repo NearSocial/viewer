@@ -208,7 +208,7 @@ export function Widget(props) {
     });
     setVm(vm);
     return () => {
-      vm.alive = false;
+      vm.stop();
     };
   }, [
     src,
