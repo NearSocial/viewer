@@ -129,7 +129,6 @@ export function Widget(props) {
   }, [near, srcOrCode, nonce]);
 
   useEffect(() => {
-    console.log("code/src", src, !!code);
     setVm(null);
     setElement(null);
     if (!code) {
