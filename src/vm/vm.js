@@ -1325,6 +1325,8 @@ class VmStack {
         if (result) {
           if (result.break) {
             break;
+          } else if (result.continue) {
+            // continue
           } else {
             return result;
           }
@@ -1365,6 +1367,8 @@ class VmStack {
         if (result) {
           if (result.break) {
             break;
+          } else if (result.continue) {
+            // continue
           } else {
             return result;
           }
@@ -1381,6 +1385,8 @@ class VmStack {
         if (result) {
           if (result.break) {
             break;
+          } else if (result.continue) {
+            // continue
           } else {
             return result;
           }
@@ -1401,6 +1407,10 @@ class VmStack {
     } else if (token.type === "BreakStatement") {
       return {
         break: true,
+      };
+    } else if (token.type === "ContinueStatement") {
+      return {
+        continue: true,
       };
     } else if (token.type === "ThrowStatement") {
       throw this.executeExpression(token.argument);
@@ -1673,6 +1683,9 @@ export default class VM {
     const executionResult = this.vmStack.executeStatement(this.code);
     if (executionResult?.break) {
       throw new Error("BreakStatement outside of a loop");
+    }
+    if (executionResult?.continue) {
+      throw new Error("ContinueStatement outside of a loop");
     }
     const result = executionResult?.result;
 
