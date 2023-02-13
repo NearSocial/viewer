@@ -47,7 +47,7 @@ const frozenEthers = Object.freeze({
 });
 
 // TODO: Fix freezing with ethers.
-const frozenElliptic = elliptic;
+const frozenElliptic = Object.freeze({});
 /*Object.freeze({
   version: deepFreeze(elliptic.version),
   utils: deepFreeze(elliptic.utils),
