@@ -5,10 +5,14 @@ import ls from "local-storage";
 import * as nearAPI from "near-api-js";
 
 const LsKeyAccountId = LsKey + ":accountId:";
+const LsKeyPretendAccountId = LsKey + ":pretendAccountId:";
 
 const defaultAccount = {
   loading: true,
-  accountId: ls.get(LsKeyAccountId) ?? undefined,
+  signedAccountId: ls.get(LsKeyAccountId) ?? undefined,
+  pretendAccountId: ls.get(LsKeyPretendAccountId) ?? undefined,
+  accountId:
+    ls.get(LsKeyPretendAccountId) ?? ls.get(LsKeyAccountId) ?? undefined,
   state: null,
   near: null,
 };
@@ -55,20 +59,36 @@ async function updateAccount(near, walletState) {
 }
 
 const loadAccount = async (near, setAccount) => {
-  const accountId = near.accountId;
+  const signedAccountId = near.accountId;
+  if (signedAccountId) {
+    ls.set(LsKeyAccountId, signedAccountId);
+  } else {
+    ls.remove(LsKeyAccountId);
+  }
+  const pretendAccountId = ls.get(LsKeyPretendAccountId) ?? undefined;
   const account = {
     loading: false,
-    accountId,
+    signedAccountId,
+    pretendAccountId,
+    accountId: pretendAccountId ?? signedAccountId,
     state: null,
     near,
     refresh: async () => await loadAccount(near, setAccount),
+    startPretending: async (pretendAccountId) => {
+      if (pretendAccountId) {
+        ls.set(LsKeyPretendAccountId, pretendAccountId);
+      } else {
+        ls.remove(LsKeyPretendAccountId);
+      }
+      await loadAccount(near, setAccount);
+    },
   };
-  if (accountId) {
+  if (signedAccountId) {
     const [storageBalance, state] = await Promise.all([
       near.contract.storage_balance_of({
-        account_id: accountId,
+        account_id: signedAccountId,
       }),
-      near.accountState(accountId),
+      near.accountState(signedAccountId),
     ]);
     account.storageBalance = storageBalance;
     account.state = state;
@@ -93,7 +113,6 @@ export const useAccount = singletonHook(defaultAccount, () => {
         } catch (e) {
           console.error(e);
         }
-        ls.set(LsKeyAccountId, near.accountId);
       });
     });
   }, [near]);

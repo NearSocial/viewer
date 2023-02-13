@@ -6,6 +6,10 @@ import { LogOut } from "../../icons/LogOut";
 import { Withdraw } from "../../icons/Withdraw";
 import { NavLink } from "react-router-dom";
 import { TGas, useNear } from "../../../data/near";
+import { useAccount } from "../../../data/account";
+import PretendModal from "../PretendModal";
+import { Pretend } from "../../icons/Pretend";
+import { StopPretend, StopPretending } from "../../icons/StopPretending";
 
 const StyledDropdown = styled.div`
   button,
@@ -92,69 +96,106 @@ const StyledDropdown = styled.div`
 
 export function UserDropdown(props) {
   const near = useNear();
+  const account = useAccount();
 
   const withdrawStorage = useCallback(async () => {
     await near.contract.storage_withdraw({}, TGas.mul(30).toFixed(0), "1");
   }, [near]);
 
+  const [showPretendModal, setShowPretendModal] = React.useState(false);
+
   return (
-    <StyledDropdown className="dropdown">
-      <button
-        className="dropdown-toggle"
-        type="button"
-        id="dropdownMenu2222"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <Widget
-          src={props.NearConfig.widgets.profileImage}
-          props={{
-            accountId: props.signedAccountId,
-            className: "d-inline-block",
-            style: { width: "40px", height: "40px" },
-          }}
-        />
-        <div className="profile-info">
-          {props.NearConfig.widgets.profileName && (
-            <div className="profile-name">
-              <Widget src={props.NearConfig.widgets.profileName} />
-            </div>
+    <>
+      <StyledDropdown className="dropdown">
+        <button
+          className="dropdown-toggle"
+          type="button"
+          id="dropdownMenu2222"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <Widget
+            src={props.NearConfig.widgets.profileImage}
+            props={{
+              accountId: account.accountId,
+              className: "d-inline-block",
+              style: { width: "40px", height: "40px" },
+            }}
+          />
+          <div className="profile-info">
+            {props.NearConfig.widgets.profileName && (
+              <div className="profile-name">
+                <Widget src={props.NearConfig.widgets.profileName} />
+              </div>
+            )}
+            <div className="profile-username">{account.accountId}</div>
+          </div>
+        </button>
+        <ul
+          className="dropdown-menu"
+          aria-labelledby="dropdownMenu2222"
+          style={{ minWidth: "fit-content" }}
+        >
+          <li>
+            <NavLink
+              className="dropdown-item"
+              type="button"
+              to={`/${props.NearConfig.widgets.profilePage}?accountId=${account.accountId}`}
+            >
+              <User />
+              My Profile
+            </NavLink>
+          </li>
+          <li>
+            <button
+              className="dropdown-item"
+              type="button"
+              onClick={() => withdrawStorage()}
+            >
+              <Withdraw />
+              Withdraw {props.availableStorage.div(1000).toFixed(2)}kb
+            </button>
+          </li>
+          {account.pretendAccountId ? (
+            <li>
+              <button
+                className="dropdown-item"
+                type="button"
+                disabled={!account.startPretending}
+                onClick={() => account.startPretending(undefined)}
+              >
+                <StopPretending />
+                Stop pretending
+              </button>
+            </li>
+          ) : (
+            <li>
+              <button
+                className="dropdown-item"
+                type="button"
+                onClick={() => setShowPretendModal(true)}
+              >
+                <Pretend />
+                Pretend to be another account
+              </button>
+            </li>
           )}
-          <div className="profile-username">{props.signedAccountId}</div>
-        </div>
-      </button>
-      <ul className="dropdown-menu" aria-labelledby="dropdownMenu2222">
-        <li>
-          <NavLink
-            className="dropdown-item"
-            type="button"
-            to={`/${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
-          >
-            <User />
-            My Profile
-          </NavLink>
-        </li>
-        <li>
-          <button
-            className="dropdown-item"
-            type="button"
-            onClick={() => withdrawStorage()}
-          >
-            <Withdraw />
-            Withdraw {props.availableStorage.div(1000).toFixed(2)}kb
-          </button>
-        </li>
-        <li>
-          <button
-            className="dropdown-item"
-            type="button"
-            onClick={() => props.logOut()}
-          >
-            <LogOut />
-            Sign Out
-          </button>
-        </li>
-      </ul>
-    </StyledDropdown>
+          <li>
+            <button
+              className="dropdown-item"
+              type="button"
+              onClick={() => props.logOut()}
+            >
+              <LogOut />
+              Sign Out
+            </button>
+          </li>
+        </ul>
+      </StyledDropdown>
+      <PretendModal
+        show={showPretendModal}
+        onHide={() => setShowPretendModal(false)}
+      />
+    </>
   );
 }
