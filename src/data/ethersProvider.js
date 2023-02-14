@@ -16,16 +16,34 @@ export const onboard = init({
   wallets: [injected],
   chains: [
     {
-      id: "0x1",
+      id: 1,
       token: "ETH",
       label: "Ethereum Mainnet",
       rpcUrl: "https://rpc.ankr.com/eth",
+    },
+    {
+      id: 3,
+      token: "ETH",
+      label: "Ropsten - Ethereum Testnet",
+      rpcUrl: "https://rpc.ankr.com/eth_ropsten",
+    },
+    {
+      id: 5,
+      token: "ETH",
+      label: "Goerli - Ethereum Testnet",
+      rpcUrl: "https://rpc.ankr.com/eth_goerli",
     },
     {
       id: "0x4e454152",
       token: "ETH",
       label: "Aurora Mainnet",
       rpcUrl: "https://mainnet.aurora.dev",
+    },
+    {
+      id: 137,
+      token: "MATIC",
+      label: "Matic Mainnet",
+      rpcUrl: "https://rpc.ankr.com/polygon",
     },
   ],
   appMetadata: {
