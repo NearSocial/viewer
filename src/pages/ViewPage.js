@@ -29,21 +29,8 @@ export default function ViewPage(props) {
               view: src,
             }
       );
-      analytics("view", {
-        props: {
-          widget: src,
-        },
-      });
     }, 1);
   }, [src, query, setWidgetSrc]);
 
-  return (
-    <div className="container">
-      <div className="row">
-        <div className="d-inline-block position-relative overflow-hidden">
-          <Widget key={src} src={src} props={widgetProps} />{" "}
-        </div>
-      </div>
-    </div>
-  );
+  return <Widget key={src} src={src} props={widgetProps} />;
 }

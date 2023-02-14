@@ -1,6 +1,6 @@
 {
-  "short_name": "Near Social",
-  "name": "Near Social",
+  "short_name": "BOS",
+  "name": "Blockchain Operating System (BOS)",
   "icons": [
     {
       "src": "favicon.png",
@@ -10,6 +10,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#333333",
-  "background_color": "#ffffff"
+  "theme_color": "#ffffff",
+  "background_color": "#000000"
 }

@@ -12,6 +12,7 @@ import { Nav, OverlayTrigger, Tooltip } from "react-bootstrap";
 import RenameModal from "../components/Editor/RenameModal";
 import OpenModal from "../components/Editor/OpenModal";
 import { useAccountId } from "../data/account";
+import EditorSignIn from "../components/navigation/desktop/EditorSignIn";
 
 const StorageDomain = {
   page: "editor",
@@ -70,7 +71,7 @@ export default function EditorPage(props) {
 
   const [tab, setTab] = useState(Tab.Editor);
   const [layout, setLayoutState] = useState(
-    ls.get(EditorLayoutKey) || Layout.Tabs
+    ls.get(EditorLayoutKey) || Layout.Split
   );
 
   const setLayout = useCallback(
@@ -284,11 +285,6 @@ export default function EditorPage(props) {
       } else {
         loadFile(widgetSrc);
       }
-      analytics("edit", {
-        props: {
-          widget: widgetSrc,
-        },
-      });
       history.replace(`/edit/`);
     } else if (path === undefined) {
       if (files.length === 0) {
@@ -557,6 +553,7 @@ export default function EditorPage(props) {
                   <Editor
                     value={code}
                     path={widgetPath}
+                    theme="vs-dark"
                     defaultLanguage="javascript"
                     onChange={(code) => updateCode(path, code)}
                     wrapperProps={{
@@ -598,11 +595,15 @@ export default function EditorPage(props) {
                     </a>
                   )}
                 </div>
+                <div className="mb-3">
+                  <EditorSignIn {...props} />
+                </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
                 <div className="form-control" style={{ height: "70vh" }}>
                   <Editor
                     value={widgetProps}
+                    theme="vs-dark"
                     defaultLanguage="json"
                     onChange={(props) => setWidgetProps(props)}
                     wrapperProps={{

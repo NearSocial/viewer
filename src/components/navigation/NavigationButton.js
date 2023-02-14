@@ -8,6 +8,7 @@ const StyledNavigationButton = styled.div`
     font-size: 16px;
     padding: 10px;
     border-radius: 8px;
+    font-family: "Silkscreen", serif;
     font-weight: var(--font-weight-bold);
     height: 40px;
     display: flex;
