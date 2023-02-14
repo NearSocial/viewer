@@ -558,6 +558,7 @@ export default function EditorPage(props) {
                   <Editor
                     value={code}
                     path={widgetPath}
+                    theme="vs-dark"
                     defaultLanguage="javascript"
                     onChange={(code) => updateCode(path, code)}
                     wrapperProps={{
@@ -607,6 +608,7 @@ export default function EditorPage(props) {
                 <div className="form-control" style={{ height: "70vh" }}>
                   <Editor
                     value={widgetProps}
+                    theme="vs-dark"
                     defaultLanguage="json"
                     onChange={(props) => setWidgetProps(props)}
                     wrapperProps={{

@@ -27,7 +27,7 @@ const StyledNavigation = styled.div`
     }
   }
 
-  .container {
+  .container-fluid {
     display: flex;
     align-items: center;
 
@@ -60,7 +60,7 @@ const StyledNavigation = styled.div`
 export function DesktopNavigation(props) {
   return (
     <StyledNavigation>
-      <div className="container">
+      <div className="container-fluid">
         <Link to="/" className="logo-link">
           <Logotype />
         </Link>
@@ -73,8 +73,8 @@ export function DesktopNavigation(props) {
           </NavigationButton>
         </div>
         <div className="user-section">
-          <Web3ConnectButton />
           <DevActionsDropdown {...props} />
+          <Web3ConnectButton />
         </div>
       </div>
     </StyledNavigation>
