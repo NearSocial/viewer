@@ -648,21 +648,15 @@ export default function EditorPage(props) {
                   : "visually-hidden"
               }`}
             >
-              <div className="container">
-                <div className="row">
-                  <div className="d-inline-block position-relative overflow-hidden">
-                    {renderCode ? (
-                      <Widget
-                        key={`preview-${jpath}`}
-                        code={renderCode}
-                        props={parsedWidgetProps}
-                      />
-                    ) : (
-                      'Click "Render preview" button to render the widget'
-                    )}
-                  </div>
-                </div>
-              </div>
+              {renderCode ? (
+                <Widget
+                  key={`preview-${jpath}`}
+                  code={renderCode}
+                  props={parsedWidgetProps}
+                />
+              ) : (
+                'Click "Render preview" button to render the widget'
+              )}
             </div>
             <div
               className={`${
