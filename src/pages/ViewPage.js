@@ -29,11 +29,6 @@ export default function ViewPage(props) {
               view: src,
             }
       );
-      analytics("view", {
-        props: {
-          widget: src,
-        },
-      });
     }, 1);
   }, [src, query, setWidgetSrc]);
 
