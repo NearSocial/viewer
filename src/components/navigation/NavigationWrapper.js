@@ -16,7 +16,6 @@ export function NavigationWrapper(props) {
     <>
       {matches && <DesktopNavigation {...props} />}
       {!matches && <MobileNavigation {...props} />}
-      <div style={{ height: "100px" }} />
     </>
   );
 }
