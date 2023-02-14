@@ -12,6 +12,7 @@ import { Nav, OverlayTrigger, Tooltip } from "react-bootstrap";
 import RenameModal from "../components/Editor/RenameModal";
 import OpenModal from "../components/Editor/OpenModal";
 import { useAccountId } from "../data/account";
+import EditorSignIn from "../components/navigation/desktop/EditorSignIn";
 
 const StorageDomain = {
   page: "editor",
@@ -597,6 +598,9 @@ export default function EditorPage(props) {
                       Open Component in a new tab
                     </a>
                   )}
+                </div>
+                <div className="mb-3">
+                  <EditorSignIn {...props} />
                 </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>

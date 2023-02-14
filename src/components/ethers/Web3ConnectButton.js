@@ -13,7 +13,7 @@ export default function Web3ConnectButton() {
         disabled={connecting}
         onClick={() => (wallet ? disconnect(wallet) : connect())}
       >
-        Web3 {connecting ? "connecting" : wallet ? "disconnect" : "Connect"}
+        {connecting ? "Connecting" : wallet ? "Disconnect" : "Connect Wallet"}
       </button>
     </div>
   );

@@ -66,7 +66,7 @@ export function DesktopNavigation(props) {
         </Link>
         <div className="navigation-section">
           <NavigationButton route="/">Home</NavigationButton>
-          <NavigationButton route="/edit">Create</NavigationButton>
+          <NavigationButton route="/edit">Editor</NavigationButton>
           <NavigationButton href="https://thewiki.near.page/near.social_docs">
             Documentation
             <ArrowUpRight />
@@ -74,20 +74,7 @@ export function DesktopNavigation(props) {
         </div>
         <div className="user-section">
           <Web3ConnectButton />
-          {!props.signedIn && (
-            <SignInButton onSignIn={() => props.requestSignIn()} />
-          )}
-          {props.signedIn && (
-            <>
-              <DevActionsDropdown {...props} />
-              <NotificationWidget
-                notificationButtonSrc={
-                  props.NearConfig.widgets.notificationButton
-                }
-              />
-              <UserDropdown {...props} />
-            </>
-          )}
+          <DevActionsDropdown {...props} />
         </div>
       </div>
     </StyledNavigation>
