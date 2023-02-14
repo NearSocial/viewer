@@ -18,11 +18,40 @@ export const Markdown = (props) => {
           return <strong {...props}>{children}</strong>;
         },
         a: ({ node, ...props }) =>
-          onLinkClick ? (
-            <a onClick={onLinkClick} {...props} />
-          ) : (
-            <a target="_blank" {...props} />
-          ),
+        onLinkClick ? (
+          <a onClick={onLinkClick} {...props} />
+        ) : props.href && props.href.includes("spotify") ? (
+          <>
+            <iframe
+              style={{ borderRadius: "12px" }}
+              src={props.href.replace("open.spotify.com/", "open.spotify.com/embed/")}
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allowFullScreen
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+            />
+          </>
+        ) : props.href && props.href.includes("youtube") ? (
+          // Extract the video ID from the YouTube URL
+          (() => {
+            const videoId = props.href.match(/v=([\w-]{11})/)?.[1];
+            // Use the video ID in the iframe src
+            return (
+              <iframe
+                id="ytplayer"
+                type="text/html"
+                width="640"
+                height="360"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                frameBorder="0"
+              />
+            );
+          })()
+        ) : (
+          <a target="_blank" {...props} />
+        ),
         img: ({ node, ...props }) => <img className="img-fluid" {...props} />,
         blockquote: ({ node, ...props }) => (
           <blockquote className="blockquote" {...props} />
