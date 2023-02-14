@@ -1,7 +1,23 @@
+$primary: #ffffff;
+$danger: #ff4136;
+$body-bg: #000;
+$body-color: #eee;
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&family=Silkscreen&display=swap');
+$dark: #eee;
+$light: #222;
+$font-family-sans-serif: 'IBM Plex Mono', monospace;
+$font-family-monospace: 'IBM Plex Mono', monospace;
+$component-active-color: #000;
+
 @import "bootstrap";
 
 body, html {
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Silkscreen', serif;
 }
 
 .pointer {

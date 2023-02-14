@@ -27,7 +27,7 @@ const StyledNavigation = styled.div`
     }
   }
 
-  .container {
+  .container-fluid {
     display: flex;
     align-items: center;
 
@@ -60,34 +60,21 @@ const StyledNavigation = styled.div`
 export function DesktopNavigation(props) {
   return (
     <StyledNavigation>
-      <div className="container">
+      <div className="container-fluid">
         <Link to="/" className="logo-link">
           <Logotype />
         </Link>
         <div className="navigation-section">
           <NavigationButton route="/">Home</NavigationButton>
-          <NavigationButton route="/edit">Create</NavigationButton>
+          <NavigationButton route="/edit">Editor</NavigationButton>
           <NavigationButton href="https://thewiki.near.page/near.social_docs">
             Documentation
             <ArrowUpRight />
           </NavigationButton>
         </div>
         <div className="user-section">
+          <DevActionsDropdown {...props} />
           <Web3ConnectButton />
-          {!props.signedIn && (
-            <SignInButton onSignIn={() => props.requestSignIn()} />
-          )}
-          {props.signedIn && (
-            <>
-              <DevActionsDropdown {...props} />
-              <NotificationWidget
-                notificationButtonSrc={
-                  props.NearConfig.widgets.notificationButton
-                }
-              />
-              <UserDropdown {...props} />
-            </>
-          )}
         </div>
       </div>
     </StyledNavigation>

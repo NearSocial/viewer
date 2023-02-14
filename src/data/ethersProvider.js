@@ -16,10 +16,22 @@ export const onboard = init({
   wallets: [injected],
   chains: [
     {
-      id: "0x1",
+      id: 1,
       token: "ETH",
       label: "Ethereum Mainnet",
       rpcUrl: "https://rpc.ankr.com/eth",
+    },
+    {
+      id: 3,
+      token: "ETH",
+      label: "Ropsten - Ethereum Testnet",
+      rpcUrl: "https://rpc.ankr.com/eth_ropsten",
+    },
+    {
+      id: 5,
+      token: "ETH",
+      label: "Goerli - Ethereum Testnet",
+      rpcUrl: "https://rpc.ankr.com/eth_goerli",
     },
     {
       id: "0x4e454152",
@@ -27,16 +39,23 @@ export const onboard = init({
       label: "Aurora Mainnet",
       rpcUrl: "https://mainnet.aurora.dev",
     },
+    {
+      id: 137,
+      token: "MATIC",
+      label: "Matic Mainnet",
+      rpcUrl: "https://rpc.ankr.com/polygon",
+    },
   ],
   appMetadata: {
-    name: "NEAR Discovery",
-    icon: "<svg width=\"30\" height=\"26\" viewBox=\"0 0 26 26\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" class=\"logotype\"><path d=\"M9.55396 20.518L2 13.009L9.55396 5.5\" stroke=\"#3D7FFF\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M19.536 5.5L27 13.009L19.536 20.518\" stroke=\"#3D7FFF\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></path></svg>",
-    description: "Decentralized Frontends hosted on a NEAR Blockchain"
+    name: "bOS",
+    icon: '<svg width="30" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="logotype"><path d="M9.55396 20.518L2 13.009L9.55396 5.5" stroke="#3D7FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M19.536 5.5L27 13.009L19.536 20.518" stroke="#3D7FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></path></svg>',
+    description: "Blockchain Operating System",
   },
+  theme: "dark",
   containerElements: {
-     // connectModal: '#near-social-navigation-bar',
-     // accountCenter: '#near-social-navigation-bar'
-  }
+    // connectModal: '#near-social-navigation-bar',
+    // accountCenter: "#near-social-web3-account",
+  },
 });
 
 export const useEthersProvider = singletonHook(defaultEthersProvider, () => {

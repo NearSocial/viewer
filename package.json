@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "homepage": "/",
   "private": true,
   "dependencies": {
@@ -14,9 +14,9 @@
     "@near-wallet-selector/near-wallet": "^7.4.0",
     "@near-wallet-selector/neth": "^7.4.0",
     "@near-wallet-selector/sender": "^7.4.0",
-    "@web3-onboard/core": "^2.13.1",
-    "@web3-onboard/injected-wallets": "^2.6.0",
-    "@web3-onboard/react": "^2.5.5",
+    "@web3-onboard/core": "^2.15.0",
+    "@web3-onboard/injected-wallets": "^2.7.0",
+    "@web3-onboard/react": "^2.6.2",
     "acorn": "^8.8.0",
     "acorn-jsx": "^5.3.2",
     "big.js": "^6.1.1",
