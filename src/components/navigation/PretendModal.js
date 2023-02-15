@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import { NearConfig } from "../../data/near";
 import { useAccount } from "../../data/account";
 import { Widget } from "../Widget/Widget";
 
@@ -35,7 +34,7 @@ export default function PretendModal(props) {
         </div>
         <div className="mt-2">
           <Widget
-            src={NearConfig.widgets.profileInlineBlock}
+            src={props.widgets.profileInlineBlock}
             props={{ accountId }}
           />
         </div>

@@ -1,4 +1,4 @@
-import { NearConfig, StorageCostPerByte, TGas } from "./near";
+import { StorageCostPerByte, TGas } from "./near";
 import {
   bigMax,
   convertToStringLeaves,
@@ -32,16 +32,16 @@ export const prepareCommit = async (
     return;
   }
   const [storageBalance, permissionGranted] = await Promise.all([
-    near.viewCall(NearConfig.contractName, "storage_balance_of", {
+    near.viewCall(near.config.contractName, "storage_balance_of", {
       account_id: signedAccountId,
     }),
     signedAccountId !== accountId
-      ? near.viewCall(NearConfig.contractName, "is_write_permission_granted", {
+      ? near.viewCall(near.config.contractName, "is_write_permission_granted", {
           predecessor_id: signedAccountId,
           key: accountId,
         })
       : near.publicKey
-      ? near.viewCall(NearConfig.contractName, "is_write_permission_granted", {
+      ? near.viewCall(near.config.contractName, "is_write_permission_granted", {
           public_key: near.publicKey.toString(),
           key: accountId,
         })
@@ -130,7 +130,7 @@ export const requestPermissionAndCommit = async (near, data, deposit) => {
     },
   });
   return await wallet.signAndSendTransaction({
-    receiverId: NearConfig.contractName,
+    receiverId: near.config.contractName,
     actions,
   });
 };

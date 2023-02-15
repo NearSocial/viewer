@@ -1,4 +1,3 @@
-import { NearConfig } from "./near";
 import { indexMatch, isObject, patternMatch } from "./utils";
 import { openDB } from "idb";
 import { singletonHook } from "react-singleton-hook";
@@ -22,36 +21,37 @@ const ExpirationTimeoutMs = 1000 * 60 * 5; // 5 minutes
 const CacheSubscriptionTimeoutMs = 5000;
 const CacheDebug = false;
 
-function invalidateCallbacks(cached, isFinal) {
-  if (cached.invalidationCallbacks?.length) {
-    const callbacks = cached.invalidationCallbacks;
-    cached.invalidationCallbacks = [];
-    setTimeout(
-      () => {
-        callbacks.forEach((cb) => {
-          try {
-            cb();
-          } catch {
-            // ignore
-          }
-        });
-      },
-      isFinal ? NearConfig.finalSynchronizationDelayMs + 50 : 50
-    );
-  }
-}
-
 const CacheDb = "cacheDb";
 const CacheDbObject = "cache-v1";
 
 class Cache {
-  constructor() {
+  constructor(finalSynchronizationDelayMs = 3000) {
     this.dbPromise = openDB(CacheDb, 1, {
       upgrade(db) {
         db.createObjectStore(CacheDbObject);
       },
     });
     this.cache = {};
+    this.finalSynchronizationDelayMs = finalSynchronizationDelayMs;
+  }
+
+  invalidateCallbacks(cached, isFinal) {
+    if (cached.invalidationCallbacks?.length) {
+      const callbacks = cached.invalidationCallbacks;
+      cached.invalidationCallbacks = [];
+      setTimeout(
+        () => {
+          callbacks.forEach((cb) => {
+            try {
+              cb();
+            } catch {
+              // ignore
+            }
+          });
+        },
+        isFinal ? this.finalSynchronizationDelayMs + 50 : 50
+      );
+    }
   }
 
   async innerGet(key) {
@@ -88,7 +88,7 @@ class Cache {
           } else {
             cached.subscription = null;
             cached.status = CacheStatus.Invalidated;
-            invalidateCallbacks(cached, false);
+            this.invalidateCallbacks(cached, false);
           }
         }, CacheSubscriptionTimeoutMs);
       };
@@ -112,7 +112,7 @@ class Cache {
           CacheDebug && console.log("Cached value", key, cachedResult);
           cached.result = cachedResult;
           cached.time = new Date().getTime();
-          invalidateCallbacks(cached, false);
+          this.invalidateCallbacks(cached, false);
         }
       });
     }
@@ -127,7 +127,7 @@ class Cache {
             cached.result = result;
             this.innerSet(key, result);
             CacheDebug && console.log("Replacing value", key, result);
-            invalidateCallbacks(cached, false);
+            this.invalidateCallbacks(cached, false);
           }
         })
         .catch((e) => {
@@ -139,7 +139,7 @@ class Cache {
             cached.result = result;
             this.innerSet(key, result);
             CacheDebug && console.log("Replacing value", key, result);
-            invalidateCallbacks(cached, false);
+            this.invalidateCallbacks(cached, false);
           }
         });
     }
@@ -147,9 +147,9 @@ class Cache {
     return cached.result;
   }
 
-  invalidateCache(data) {
+  invalidateCache(near, data) {
     const affectedKeys = [];
-    const indexUrl = `${NearConfig.apiUrl}/index`;
+    const indexUrl = `${near.config.apiUrl}/index`;
     Object.keys(this.cache).forEach((stringKey) => {
       let key;
       try {
@@ -160,7 +160,7 @@ class Cache {
       }
       if (
         key.action === Action.ViewCall &&
-        key.contractId === NearConfig.contractName &&
+        key.contractId === near.config.contractName &&
         (!key.blockId ||
           key.blockId === "optimistic" ||
           key.blockId === "final")
@@ -193,7 +193,7 @@ class Cache {
     affectedKeys.forEach(([stringKey, isFinal]) => {
       const cached = this.cache[stringKey];
       cached.status = CacheStatus.Invalidated;
-      invalidateCallbacks(cached, isFinal);
+      this.invalidateCallbacks(cached, isFinal);
     });
   }
 
@@ -298,7 +298,7 @@ class Cache {
     };
     let data = this.cachedViewCall(
       near,
-      NearConfig.contractName,
+      near.config.contractName,
       "get",
       args,
       blockId,
@@ -322,9 +322,9 @@ class Cache {
     return data;
   }
 
-  socialIndex(action, key, options, invalidate) {
+  socialIndex(near, action, key, options, invalidate) {
     const res = this.cachedFetch(
-      `${NearConfig.apiUrl}/index`,
+      `${near.config.apiUrl}/index`,
       {
         method: "POST",
         headers: {
@@ -383,7 +383,7 @@ class Cache {
       cached.result = value;
       this.innerSet(key, value);
       CacheDebug && console.log("Replacing value", key, value);
-      invalidateCallbacks(cached, false);
+      this.invalidateCallbacks(cached, false);
     }
   }
 }

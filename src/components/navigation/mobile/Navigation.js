@@ -53,7 +53,7 @@ export function Navigation(props) {
       </Link>
       {props.signedIn ? (
         <NotificationWidget
-          notificationButtonSrc={props.NearConfig.widgets.notificationButton}
+          notificationButtonSrc={props.widgets.notificationButton}
         />
       ) : (
         <SignInButton onSignIn={() => props.requestSignIn()} />

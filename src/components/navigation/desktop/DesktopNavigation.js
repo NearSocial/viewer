@@ -79,9 +79,7 @@ export function DesktopNavigation(props) {
             <>
               <DevActionsDropdown {...props} />
               <NotificationWidget
-                notificationButtonSrc={
-                  props.NearConfig.widgets.notificationButton
-                }
+                notificationButtonSrc={props.widgets.notificationButton}
               />
               <UserDropdown {...props} />
             </>

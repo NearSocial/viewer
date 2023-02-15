@@ -9,7 +9,7 @@ import { TGas, useNear } from "../../../data/near";
 import { useAccount } from "../../../data/account";
 import PretendModal from "../PretendModal";
 import { Pretend } from "../../icons/Pretend";
-import { StopPretend, StopPretending } from "../../icons/StopPretending";
+import { StopPretending } from "../../icons/StopPretending";
 
 const StyledDropdown = styled.div`
   button,
@@ -115,7 +115,7 @@ export function UserDropdown(props) {
           aria-expanded="false"
         >
           <Widget
-            src={props.NearConfig.widgets.profileImage}
+            src={props.widgets.profileImage}
             props={{
               accountId: account.accountId,
               className: "d-inline-block",
@@ -123,9 +123,9 @@ export function UserDropdown(props) {
             }}
           />
           <div className="profile-info">
-            {props.NearConfig.widgets.profileName && (
+            {props.widgets.profileName && (
               <div className="profile-name">
-                <Widget src={props.NearConfig.widgets.profileName} />
+                <Widget src={props.widgets.profileName} />
               </div>
             )}
             <div className="profile-username">{account.accountId}</div>
@@ -140,7 +140,7 @@ export function UserDropdown(props) {
             <NavLink
               className="dropdown-item"
               type="button"
-              to={`/${props.NearConfig.widgets.profilePage}?accountId=${account.accountId}`}
+              to={`/${props.widgets.profilePage}?accountId=${account.accountId}`}
             >
               <User />
               My Profile
@@ -195,6 +195,7 @@ export function UserDropdown(props) {
       <PretendModal
         show={showPretendModal}
         onHide={() => setShowPretendModal(false)}
+        widgets={props.widgets}
       />
     </>
   );

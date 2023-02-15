@@ -127,7 +127,7 @@ export const CommitModal = (props) => {
         console.error(e);
       }
     }
-    cache.invalidateCache(commit.data);
+    cache.invalidateCache(near, commit.data);
     onHide();
     setCommitInProgress(false);
   };

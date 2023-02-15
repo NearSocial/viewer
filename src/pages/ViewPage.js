@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Widget } from "../components/Widget/Widget";
 import { useParams } from "react-router-dom";
 import { useQuery } from "../data/utils";
-import { NearConfig } from "../data/near";
 
 export default function ViewPage(props) {
   const { widgetSrc } = useParams();
   const query = useQuery();
   const [widgetProps, setWidgetProps] = useState({});
 
-  const src = widgetSrc || NearConfig.widgets.default;
+  const src = widgetSrc || props.widgets.default;
   const setWidgetSrc = props.setWidgetSrc;
+  const viewSourceWidget = props.widgets.viewSource;
 
   useEffect(() => {
     setWidgetProps(Object.fromEntries([...query.entries()]));
@@ -19,7 +19,7 @@ export default function ViewPage(props) {
   useEffect(() => {
     setTimeout(() => {
       setWidgetSrc(
-        src === NearConfig.widgets.viewSource && query.get("src")
+        src === viewSourceWidget && query.get("src")
           ? {
               edit: query.get("src"),
               view: null,
@@ -35,7 +35,7 @@ export default function ViewPage(props) {
         },
       });
     }, 1);
-  }, [src, query, setWidgetSrc]);
+  }, [src, query, setWidgetSrc, viewSourceWidget]);
 
   return (
     <div className="container-xl">
