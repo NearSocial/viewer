@@ -20,7 +20,7 @@ export function MobileNavigation(props) {
     switch (location.pathname) {
       case "/":
         return setCurrentPage("Home");
-      case `/${props.NearConfig.widgets.profilePage}`:
+      case `/${props.widgets.profilePage}`:
         return setCurrentPage("Profile");
       case "/edit":
         return setCurrentPage("Create");

@@ -117,7 +117,7 @@ export function DevActionsDropdown(props) {
           {props.widgetSrc?.view && (
             <li>
               <Link
-                to={`/${props.NearConfig.widgets.viewSource}?src=${props.widgetSrc?.view}`}
+                to={`/${props.widgets.viewSource}?src=${props.widgetSrc?.view}`}
               >
                 <Code />
                 View source

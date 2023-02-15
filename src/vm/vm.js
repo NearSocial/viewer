@@ -14,7 +14,6 @@ import {
 } from "../data/utils";
 import Files from "react-files";
 import { sanitizeUrl } from "@braintree/sanitize-url";
-import { NearConfig } from "../data/near";
 import { Markdown } from "../components/Markdown";
 import InfiniteScroll from "react-infinite-scroller";
 import { CommitButton } from "../components/Commit";
@@ -1585,7 +1584,7 @@ export default class VM {
       (invalidate) =>
         this.cache.cachedViewCall(
           this.near,
-          NearConfig.contractName,
+          this.near.config.contractName,
           "keys",
           {
             keys,
@@ -1637,7 +1636,8 @@ export default class VM {
 
   cachedIndex(action, key, options) {
     return this.cachedPromise(
-      (invalidate) => this.cache.socialIndex(action, key, options, invalidate),
+      (invalidate) =>
+        this.cache.socialIndex(this.near, action, key, options, invalidate),
       options?.subscribe
     );
   }

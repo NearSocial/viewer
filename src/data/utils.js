@@ -1,5 +1,5 @@
 import Big from "big.js";
-import { NearConfig, TGas } from "./near";
+import { StorageCostPerByte, TGas } from "./near";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import equal from "deep-equal";
@@ -149,7 +149,7 @@ export const displayTime = (d) => {
 export const availableNearBalance = (account) => {
   if (account && !account.loading && account.state) {
     let balance = Big(account.state.amount).sub(
-      Big(account.state.storage_usage).mul(Big(NearConfig.storageCostPerByte))
+      Big(account.state.storage_usage).mul(Big(StorageCostPerByte))
     );
     if (balance.gt(AccountSafetyMargin)) {
       return balance.sub(AccountSafetyMargin);

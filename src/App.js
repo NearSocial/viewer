@@ -5,7 +5,7 @@ import "@near-wallet-selector/modal-ui/styles.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import "App.scss";
 import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
-import { NearConfig, StorageCostPerByte, useNear } from "./data/near";
+import { StorageCostPerByte, useInitNear, useNear } from "./data/near";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
 import { setupModal } from "@near-wallet-selector/modal-ui";
@@ -13,6 +13,7 @@ import EmbedPage from "./pages/EmbedPage";
 import { useAccount } from "./data/account";
 import Big from "big.js";
 import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
+import { NetworkId, Widgets } from "./data/widgets";
 
 export const refreshAllowanceObj = {};
 
@@ -24,11 +25,19 @@ function App(props) {
   const [walletModal, setWalletModal] = useState(null);
   const [widgetSrc, setWidgetSrc] = useState(null);
 
+  const { initNear } = useInitNear();
   const near = useNear();
   const account = useAccount();
   const accountId = account.accountId;
 
   const location = window.location;
+
+  useEffect(() => {
+    initNear &&
+      initNear({
+        networkId: NetworkId,
+      });
+  }, [initNear]);
 
   useEffect(() => {
     if (
@@ -46,7 +55,7 @@ function App(props) {
     }
     near.selector.then((selector) => {
       setWalletModal(
-        setupModal(selector, { contractId: NearConfig.contractName })
+        setupModal(selector, { contractId: near.config.contractName })
       );
     });
   }, [near]);
@@ -107,7 +116,7 @@ function App(props) {
     widgetSrc,
     logOut,
     requestSignIn,
-    NearConfig,
+    widgets: Widgets,
   };
 
   return (

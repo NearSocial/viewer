@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Widget } from "../components/Widget/Widget";
 import ls from "local-storage";
-import { LsKey, NearConfig, useNear } from "../data/near";
+import { useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
@@ -27,6 +27,7 @@ const Filetype = {
   Module: "module",
 };
 
+const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
 const WidgetPropsKey = LsKey + "widgetProps:";
 
@@ -427,10 +428,10 @@ export default function EditorPage(props) {
             </Nav.Link>
           </Nav.Item>
         </Nav>
-        {NearConfig.widgets.editorComponentSearch && (
+        {props.widgets.editorComponentSearch && (
           <div>
             <Widget
-              src={NearConfig.widgets.editorComponentSearch}
+              src={props.widgets.editorComponentSearch}
               props={useMemo(
                 () => ({
                   extraButtons: ({ widgetName, widgetPath, onHide }) => (
@@ -521,7 +522,7 @@ export default function EditorPage(props) {
                     Props
                   </button>
                 </li>
-                {NearConfig.widgets.widgetMetadataEditor && (
+                {props.widgets.widgetMetadataEditor && (
                   <li className="nav-item">
                     <button
                       className={`nav-link ${
@@ -617,15 +618,14 @@ export default function EditorPage(props) {
               </div>
               <div
                 className={`${
-                  tab === Tab.Metadata &&
-                  NearConfig.widgets.widgetMetadataEditor
+                  tab === Tab.Metadata && props.widgets.widgetMetadataEditor
                     ? ""
                     : "visually-hidden"
                 }`}
               >
                 <div className="mb-3">
                   <Widget
-                    src={NearConfig.widgets.widgetMetadataEditor}
+                    src={props.widgets.widgetMetadataEditor}
                     key={`metadata-editor-${jpath}`}
                     props={useMemo(
                       () => ({
@@ -673,7 +673,7 @@ export default function EditorPage(props) {
                   <div className="d-inline-block position-relative overflow-hidden">
                     <Widget
                       key={`metadata-${jpath}`}
-                      src={NearConfig.widgets.widgetMetadata}
+                      src={props.widgets.widgetMetadata}
                       props={useMemo(
                         () => ({ metadata, accountId, widgetName }),
                         [metadata, accountId, widgetName]

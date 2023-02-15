@@ -159,20 +159,20 @@ export function Menu(props) {
       <div className="left-side">
         {props.signedIn ? (
           <Link
-            to={`/${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
+            to={`/${props.widgets.profilePage}?accountId=${props.signedAccountId}`}
             className="profile-link"
           >
             <Widget
-              src={props.NearConfig.widgets.profileImage}
+              src={props.widgets.profileImage}
               props={{
                 accountId: props.signedAccountId,
                 className: "d-inline-block",
                 style: { width: "56px", height: "56px" },
               }}
             />
-            {props.NearConfig.widgets.profileName && (
+            {props.widgets.profileName && (
               <div className="profile-name">
-                <Widget src={props.NearConfig.widgets.profileName} />
+                <Widget src={props.widgets.profileName} />
               </div>
             )}
             <div className="profile-username">{props.signedAccountId}</div>
@@ -195,7 +195,7 @@ export function Menu(props) {
           <li>
             <NavigationButton
               disabled={!props.signedIn}
-              route={`/${props.NearConfig.widgets.profilePage}?accountId=${props.signedAccountId}`}
+              route={`/${props.widgets.profilePage}?accountId=${props.signedAccountId}`}
             >
               <UserCircle />
               Profile
@@ -230,7 +230,7 @@ export function Menu(props) {
           {props.widgetSrc?.view && (
             <li>
               <Link
-                to={`/${props.NearConfig.widgets.viewSource}?src=${props.widgetSrc?.view}`}
+                to={`/${props.widgets.viewSource}?src=${props.widgetSrc?.view}`}
               >
                 <Code />
                 View source

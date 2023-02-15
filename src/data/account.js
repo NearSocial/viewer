@@ -1,9 +1,10 @@
 import { singletonHook } from "react-singleton-hook";
 import { useEffect, useState } from "react";
-import { LsKey, NearConfig, useNear } from "./near";
+import { useNear } from "./near";
 import ls from "local-storage";
 import * as nearAPI from "near-api-js";
 
+export const LsKey = "near-social-vm:v01:";
 const LsKeyAccountId = LsKey + ":accountId:";
 const LsKeyPretendAccountId = LsKey + ":pretendAccountId:";
 
@@ -21,7 +22,7 @@ async function updateAccount(near, walletState) {
   near.connectedContractId = walletState?.contract?.contractId;
   if (
     near.connectedContractId &&
-    near.connectedContractId !== NearConfig.contractName
+    near.connectedContractId !== near.config.contractName
   ) {
     const selector = await near.selector;
     const wallet = await selector.wallet();
@@ -36,7 +37,7 @@ async function updateAccount(near, walletState) {
       if (walletState?.selectedWalletId === "here-wallet") {
         const hereKeystore = ls.get("herewallet:keystore");
         near.publicKey = nearAPI.KeyPair.fromString(
-          hereKeystore[NearConfig.networkId].accounts[near.accountId]
+          hereKeystore[near.config.networkId].accounts[near.accountId]
         ).getPublicKey();
       }
     } catch (e) {
@@ -47,8 +48,8 @@ async function updateAccount(near, walletState) {
         near.publicKey = nearAPI.KeyPair.fromString(
           ls.get(
             walletState?.selectedWalletId === "meteor-wallet"
-              ? `_meteor_wallet${near.accountId}:${NearConfig.networkId}`
-              : `near-api-js:keystore:${near.accountId}:${NearConfig.networkId}`
+              ? `_meteor_wallet${near.accountId}:${near.config.networkId}`
+              : `near-api-js:keystore:${near.accountId}:${near.config.networkId}`
           )
         ).getPublicKey();
       } catch (e) {

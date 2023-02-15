@@ -1,8 +1,6 @@
 import * as nearAPI from "near-api-js";
-import { singletonHook } from "react-singleton-hook";
 import Big from "big.js";
-import { refreshAllowanceObj } from "../App";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
@@ -10,84 +8,41 @@ import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
+import { singletonHook } from "react-singleton-hook";
 
 export const TGas = Big(10).pow(12);
 export const MaxGasPerTransaction = TGas.mul(250);
 export const StorageCostPerByte = Big(10).pow(19);
 
-export const randomPublicKey = nearAPI.utils.PublicKey.from(
-  "ed25519:8fWHD35Rjd78yeowShh9GwhRudRtLLsGCRjZtgPjAtw9"
-);
-
-const TestnetDomains = {
-  "test.near.social": true,
-  "127.0.0.1": true,
-};
-
-const EnableWeb4FastRpc = false;
-
-export const IsMainnet = !(window.location.hostname in TestnetDomains);
-const TestnetContract = "v1.social08.testnet";
 const TestNearConfig = {
   networkId: "testnet",
   nodeUrl: "https://rpc.testnet.near.org",
   archivalNodeUrl: "https://rpc.testnet.internal.near.org",
-  contractName: TestnetContract,
+  contractName: "v1.social08.testnet",
   walletUrl: "https://wallet.testnet.near.org",
-  storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.testnet",
-  widgets: {
-    image: "eugenethedream/widget/Image",
-    default: "eugenethedream/widget/Welcome",
-    viewSource: "eugenethedream/widget/WidgetSource",
-    widgetMetadataEditor: "eugenethedream/widget/WidgetMetadataEditor",
-    widgetMetadata: "eugenethedream/widget/WidgetMetadata",
-    profileImage: "eugenethedream/widget/ProfileImage",
-    profilePage: "eugenethedream/widget/Profile",
-    profileName: "eugenethedream/widget/ProfileName",
-    notificationButton: "eugenethedream/widget/NotificationButton",
-  },
   apiUrl: null,
-  finalSynchronizationDelayMs: 3000,
+  enableWeb4FastRpc: false,
 };
-const MainnetContract = "social.near";
+
 export const MainNearConfig = {
   networkId: "mainnet",
   nodeUrl: "https://rpc.mainnet.near.org",
   archivalNodeUrl: "https://rpc.mainnet.internal.near.org",
-  contractName: MainnetContract,
+  contractName: "social.near",
   walletUrl: "https://wallet.near.org",
-  storageCostPerByte: StorageCostPerByte,
   wrapNearAccountId: "wrap.near",
-  widgets: {
-    image: "mob.near/widget/Image",
-    default: "mob.near/widget/Homepage",
-    viewSource: "mob.near/widget/WidgetSource",
-    widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
-    widgetMetadata: "mob.near/widget/WidgetMetadata",
-    profileImage: "mob.near/widget/ProfileImage",
-    notificationButton: "mob.near/widget/NotificationButton",
-    profilePage: "mob.near/widget/ProfilePage",
-    profileName: "patrick.near/widget/ProfileName",
-    editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
-    profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
-  },
   apiUrl: "https://api.near.social",
-  finalSynchronizationDelayMs: 3000,
+  enableWeb4FastRpc: false,
 };
 
-export const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;
-
-export const LsKey = NearConfig.contractName + ":v01:";
-
-const ApiEnabled = IsMainnet;
 const SupportedApiMethods = {
   get: true,
   keys: true,
 };
 
-const apiCall = async (methodName, args, blockId, fallback) => {
-  if (!ApiEnabled || !(methodName in SupportedApiMethods)) {
+const apiCall = async (config, methodName, args, blockId, fallback) => {
+  if (!config.apiUrl || !(methodName in SupportedApiMethods)) {
     return fallback();
   }
   args = args || {};
@@ -98,7 +53,7 @@ const apiCall = async (methodName, args, blockId, fallback) => {
 
   try {
     return await (
-      await fetch(`${NearConfig.apiUrl}/${methodName}`, {
+      await fetch(`${config.apiUrl}/${methodName}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -138,10 +93,10 @@ async function functionCall(
       ],
     });
   } catch (e) {
-    const msg = e.toString();
-    if (msg.indexOf("does not have enough balance") !== -1) {
-      return await refreshAllowanceObj.refreshAllowance();
-    }
+    // const msg = e.toString();
+    // if (msg.indexOf("does not have enough balance") !== -1) {
+    //   return await refreshAllowanceObj.refreshAllowance();
+    // }
     throw e;
   }
 }
@@ -188,10 +143,10 @@ async function sendTransactions(near, functionCalls) {
     );
     return await wallet.signAndSendTransactions({ transactions });
   } catch (e) {
-    const msg = e.toString();
-    if (msg.indexOf("does not have enough balance") !== -1) {
-      return await refreshAllowanceObj.refreshAllowance();
-    }
+    // const msg = e.toString();
+    // if (msg.indexOf("does not have enough balance") !== -1) {
+    //   return await refreshAllowanceObj.refreshAllowance();
+    // }
     throw e;
   }
 }
@@ -239,9 +194,6 @@ async function viewCall(
 }
 
 async function web4ViewCall(contractId, methodName, args, fallback) {
-  if (!IsMainnet) {
-    return fallback();
-  }
   args = args || {};
   const url = new URL(
     `https://rpc.web4.near.page/account/${contractId}/view/${methodName}`
@@ -260,41 +212,58 @@ async function web4ViewCall(contractId, methodName, args, fallback) {
   }
 }
 
-async function _initNear() {
-  const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
-  const selector = setupWalletSelector({
-    network: IsMainnet ? "mainnet" : "testnet",
-    modules: [
-      setupNearWallet(),
-      setupMyNearWallet(),
-      setupSender(),
-      setupHereWallet(),
-      setupMeteorWallet(),
-      setupNeth({
-        gas: "300000000000000",
-        bundle: false,
-      }),
-    ],
-  });
+async function _initNear({ networkId, config, keyStore, selector } = {}) {
+  if (!config) {
+    config = {};
+    if (!networkId) {
+      config.networkId = "mainnet";
+    }
+  }
+  if (networkId && !config.networkId) {
+    config.networkId = networkId;
+  }
+  if (config.networkId === "mainnet") {
+    config = Object.assign({}, config, MainNearConfig);
+  } else if (config.networkId === "testnet") {
+    config = Object.assign({}, config, TestNearConfig);
+  }
+  keyStore = keyStore ?? new nearAPI.keyStores.BrowserLocalStorageKeyStore();
+  selector =
+    selector ??
+    setupWalletSelector({
+      network: config.networkId,
+      modules: [
+        setupNearWallet(),
+        setupMyNearWallet(),
+        setupSender(),
+        setupHereWallet(),
+        setupMeteorWallet(),
+        setupNeth({
+          gas: "300000000000000",
+          bundle: false,
+        }),
+      ],
+    });
 
   const nearConnection = await nearAPI.connect(
-    Object.assign({ deps: { keyStore } }, NearConfig)
+    Object.assign({ deps: { keyStore } }, config)
   );
 
-  const _near = {};
-  _near.selector = selector;
+  const _near = {
+    config,
+    selector,
+    keyStore,
+    nearConnection,
+  };
 
   _near.nearArchivalConnection = nearAPI.Connection.fromConfig({
-    networkId: NearConfig.networkId,
+    networkId: config.networkId,
     provider: {
       type: "JsonRpcProvider",
-      args: { url: NearConfig.archivalNodeUrl },
+      args: { url: config.archivalNodeUrl },
     },
     signer: { type: "InMemorySigner", keyStore },
   });
-
-  _near.keyStore = keyStore;
-  _near.nearConnection = nearConnection;
 
   const transformBlockId = (blockId) =>
     blockId === "optimistic" || blockId === "final"
@@ -327,13 +296,13 @@ async function _initNear() {
       );
 
     const fastRpcCall = () =>
-      finality === "optimistic" && EnableWeb4FastRpc
+      finality === "optimistic" && config.enableWeb4FastRpc
         ? web4ViewCall(contractId, methodName, args, nearViewCall)
         : nearViewCall();
 
-    return contractId === NearConfig.contractName &&
+    return contractId === config.contractName &&
       (blockId || finality === "final")
-      ? apiCall(methodName, args, blockId, fastRpcCall)
+      ? apiCall(config, methodName, args, blockId, fastRpcCall)
       : fastRpcCall();
   };
 
@@ -349,7 +318,7 @@ async function _initNear() {
   _near.sendTransactions = (transactions) =>
     sendTransactions(_near, transactions);
 
-  _near.contract = setupContract(_near, NearConfig.contractName, {
+  _near.contract = setupContract(_near, config.contractName, {
     viewMethods: [
       "storage_balance_of",
       "get",
@@ -371,19 +340,23 @@ async function _initNear() {
   return _near;
 }
 
-const defaultNearPromise = Promise.resolve(_initNear());
-export const useNearPromise = singletonHook(defaultNearPromise, () => {
-  return defaultNearPromise;
+export const useInitNear = singletonHook({}, () => {
+  const [nearPromise, setNearPromise] = useState(null);
+
+  return {
+    nearPromise,
+    initNear: useMemo(() => (args) => setNearPromise(_initNear(args)), []),
+  };
 });
 
 const defaultNear = null;
 export const useNear = singletonHook(defaultNear, () => {
   const [near, setNear] = useState(defaultNear);
-  const _near = useNearPromise();
+  const { nearPromise } = useInitNear();
 
   useEffect(() => {
-    _near.then(setNear);
-  }, [_near]);
+    nearPromise && nearPromise.then(setNear);
+  }, [nearPromise]);
 
   return near;
 });
