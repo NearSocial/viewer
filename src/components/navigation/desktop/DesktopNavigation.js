@@ -19,10 +19,11 @@ const StyledNavigation = styled.div`
   z-index: 1000;
   padding: 12px 0;
   background: linear-gradient(
-    252.46deg,
-    rgba(82, 0, 255, 0.32) 6.76%,
-    rgba(255, 0, 154, 0) 94.32%
-  );
+      252.46deg,
+      rgba(82, 0, 255, 0.32) 6.76%,
+      rgba(255, 0, 154, 0) 94.32%
+    ),
+    #000;
 
   .user-section {
     margin-left: auto;
