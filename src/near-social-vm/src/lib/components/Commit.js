@@ -4,10 +4,15 @@ import {
   prepareCommit,
   requestPermissionAndCommit,
 } from "../data/commitData";
-import { computeWritePermission, displayNear, Loading } from "../data/utils";
+import {
+  computeWritePermission,
+  displayNear,
+  Loading,
+  StorageCostPerByte,
+} from "../data/utils";
 import Modal from "react-bootstrap/Modal";
 import { Markdown } from "./Markdown";
-import { StorageCostPerByte, useNear } from "../data/near";
+import { useNear } from "../data/near";
 import { ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { useCache } from "../data/cache";
 import { useAccountId } from "../data/account";

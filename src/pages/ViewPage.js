@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Widget } from "../components/Widget/Widget";
+import { Widget } from "near-social-vm";
 import { useParams } from "react-router-dom";
-import { useQuery } from "../data/utils";
+import { useQuery } from "../hooks/useQuery";
 
 export default function ViewPage(props) {
   const { widgetSrc } = useParams();

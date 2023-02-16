@@ -5,10 +5,10 @@ import React, {
   useState,
 } from "react";
 import { Parser } from "acorn";
-import * as jsx from "acorn-jsx";
-import { TGas, useNear } from "../../data/near";
-import ConfirmTransactions from "../ConfirmTransactions";
-import VM from "../../vm/vm";
+import jsx from "acorn-jsx";
+import { useNear } from "../data/near";
+import ConfirmTransactions from "./ConfirmTransactions";
+import VM from "../vm/vm";
 import {
   deepCopy,
   deepEqual,
@@ -16,11 +16,12 @@ import {
   isObject,
   isString,
   Loading,
-} from "../../data/utils";
+  TGas,
+} from "../data/utils";
 import { ErrorBoundary } from "react-error-boundary";
-import { useCache } from "../../data/cache";
-import { CommitModal } from "../Commit";
-import { useAccountId } from "../../data/account";
+import { useCache } from "../data/cache";
+import { CommitModal } from "./Commit";
+import { useAccountId } from "../data/account";
 import Big from "big.js";
 import uuid from "react-uuid";
 import { isFunction } from "react-bootstrap-typeahead/types/utils";

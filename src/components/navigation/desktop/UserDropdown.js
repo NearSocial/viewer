@@ -1,12 +1,10 @@
 import React, { useCallback } from "react";
-import { Widget } from "../../Widget/Widget";
+import { Widget, useNear, useAccount } from "near-social-vm";
 import styled from "styled-components";
 import { User } from "../../icons/User";
 import { LogOut } from "../../icons/LogOut";
 import { Withdraw } from "../../icons/Withdraw";
 import { NavLink } from "react-router-dom";
-import { TGas, useNear } from "../../../data/near";
-import { useAccount } from "../../../data/account";
 import PretendModal from "../PretendModal";
 import { Pretend } from "../../icons/Pretend";
 import { StopPretending } from "../../icons/StopPretending";
@@ -99,7 +97,7 @@ export function UserDropdown(props) {
   const account = useAccount();
 
   const withdrawStorage = useCallback(async () => {
-    await near.contract.storage_withdraw({}, TGas.mul(30).toFixed(0), "1");
+    await near.contract.storage_withdraw({}, undefined, "1");
   }, [near]);
 
   const [showPretendModal, setShowPretendModal] = React.useState(false);

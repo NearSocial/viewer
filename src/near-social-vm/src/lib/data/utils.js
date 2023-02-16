@@ -1,8 +1,10 @@
 import Big from "big.js";
-import { StorageCostPerByte, TGas } from "./near";
 import React from "react";
-import { useLocation } from "react-router-dom";
 import equal from "deep-equal";
+
+export const TGas = Big(10).pow(12);
+export const MaxGasPerTransaction = TGas.mul(250);
+export const StorageCostPerByte = Big(10).pow(19);
 
 const MinAccountIdLen = 2;
 const MaxAccountIdLen = 64;
@@ -160,12 +162,6 @@ export const availableNearBalance = (account) => {
 
 export const isoDate = (d) =>
   d ? new Date(d).toISOString().substring(0, 10) : "";
-
-export function useQuery() {
-  const { search } = useLocation();
-
-  return React.useMemo(() => new URLSearchParams(search), [search]);
-}
 
 export const ipfsUpload = async (f) => {
   const res = await fetch("https://ipfs.near.social/add", {
