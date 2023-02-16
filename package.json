@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "homepage": "/",
   "private": true,
   "dependencies": {
@@ -14,7 +14,7 @@
     "error-polyfill": "^0.1.2",
     "local-storage": "^2.0.0",
     "near-api-js": "^0.45.1",
-    "near-social-vm": "file:src/near-social-vm",
+    "near-social-vm": "git+https://github.com/NearSocial/VM.git#master",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",

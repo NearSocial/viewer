@@ -45,25 +45,9 @@ module.exports = function (env) {
         modules: [paths.srcPath, "node_modules"],
         extensions: [".js", ".jsx", ".json"],
         fallback: {
-          // fs: false,
-          // path: require.resolve("path-browserify"),
-          // http: require.resolve("stream-http"),
-          // https: require.resolve("https-browserify"),
-          // zlib: require.resolve("browserify-zlib"),
           crypto: require.resolve("crypto-browserify"),
           stream: require.resolve("stream-browserify"),
         },
-        alias:
-          mode === "production"
-            ? {}
-            : {
-                react: path.join(__dirname, "node_modules/react"),
-                "react-dom": path.join(__dirname, "node_modules/react-dom"),
-                "styled-components": path.join(
-                  __dirname,
-                  "node_modules/styled-components"
-                ),
-              },
       },
       plugins: [
         new webpack.EnvironmentPlugin({
