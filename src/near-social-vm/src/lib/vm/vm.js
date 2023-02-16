@@ -429,9 +429,14 @@ class VmStack {
     attributes.key =
       attributes.key ?? `${this.vm.widgetSrc}-${element}-${this.vm.gIndex}`;
     delete attributes.dangerouslySetInnerHTML;
-    delete attributes.as;
-    delete attributes.forwardedAs;
     const basicElement = styledComponent?.target || element;
+
+    if (attributes.as && !ApprovedTagsSimple[attributes.as]) {
+      delete attributes.as;
+    }
+    if (attributes.forwardedAs && !ApprovedTagsSimple[attributes.forwardedAs]) {
+      delete attributes.forwardedAs;
+    }
 
     if (basicElement === "img") {
       attributes.alt = attributes.alt ?? "not defined";
