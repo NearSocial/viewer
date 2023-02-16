@@ -10,7 +10,12 @@ export const SaveDraftModal = (props) => {
     const show = props.show;
     const onHide = props.onHide;
     const near = props.near;
-  
+    
+    const onCancel = (e) => {
+      e.preventDefault();
+      setCommitMessage("");
+      onHide();
+    };
   
     return (
       <Modal size="xl" centered scrollable show={show} onHide={onHide}>
@@ -58,7 +63,7 @@ export const SaveDraftModal = (props) => {
         </CommitButton>
           <button
             className="btn btn-secondary"
-            onClick={onHide}
+            onClick={onCancel}
           >
             Cancel
           </button>
