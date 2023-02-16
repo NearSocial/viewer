@@ -636,6 +636,20 @@ export default function EditorPage(props) {
       Save in Local Storage
     </button>
   );
+
+  const saveDraftButton = (
+    <button
+      className="btn btn-danger"
+      disabled={!widgetName}
+      onClick={(e) => {
+        e.preventDefault();
+        setShowSaveDraftModal(true);
+      }}
+    >
+      Save Draft on chain
+    </button>
+  );
+
   const publishButton = (
     <CommitButton
       className={`btn btn-primary`}
