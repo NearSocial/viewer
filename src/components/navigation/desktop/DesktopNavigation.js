@@ -66,7 +66,7 @@ export function DesktopNavigation(props) {
         <div className="navigation-section">
           <NavigationButton route="/">Home</NavigationButton>
           <NavigationButton route="/edit">Create</NavigationButton>
-          <NavigationButton href="https://thewiki.near.page/near.social_docs">
+          <NavigationButton href={props.documentationHref}>
             Documentation
             <ArrowUpRight />
           </NavigationButton>
