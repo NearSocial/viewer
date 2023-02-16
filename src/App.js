@@ -17,7 +17,6 @@ import { NetworkId, Widgets } from "./data/widgets";
 export const refreshAllowanceObj = {};
 
 function App(props) {
-  console.log(useState);
   const [connected, setConnected] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [signedAccountId, setSignedAccountId] = useState(null);
