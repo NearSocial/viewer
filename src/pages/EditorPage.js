@@ -626,6 +626,16 @@ export default function EditorPage(props) {
     </button>
   );
 
+  const saveLocallyButton = (
+    <button
+      className="btn btn-primary"
+      // disabled={!widgetName}
+      // onClick={(e) => {
+      // }}
+    >
+      Save in Local Storage
+    </button>
+  );
   const publishButton = (
     <CommitButton
       className={`btn btn-primary`}
