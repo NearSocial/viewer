@@ -7,7 +7,7 @@ import { Code } from "../../icons/Code";
 import { LogOut } from "../../icons/LogOut";
 import { Fork } from "../../icons/Fork";
 import { UserCircle } from "../../icons/UserCircle";
-import { Widget } from "../../Widget/Widget";
+import { Widget } from "near-social-vm";
 import { NavigationButton } from "../NavigationButton";
 import { SignInButton } from "../SignInButton";
 import { Link } from "react-router-dom";

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { Fork } from "../../icons/Fork";
 import { Code } from "../../icons/Code";
-import { useAccount } from "../../../data/account";
+import { useAccount } from "near-social-vm";
 
 const StyledDropdown = styled.div`
   .dropdown-toggle {

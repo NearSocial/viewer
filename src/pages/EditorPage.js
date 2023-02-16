@@ -1,17 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Widget } from "../components/Widget/Widget";
 import ls from "local-storage";
-import { useNear } from "../data/near";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
-import { useCache } from "../data/cache";
-import { CommitButton } from "../components/Commit";
+import {
+  Widget,
+  useCache,
+  useNear,
+  CommitButton,
+  useAccountId,
+} from "near-social-vm";
 import { Nav, OverlayTrigger, Tooltip } from "react-bootstrap";
 import RenameModal from "../components/Editor/RenameModal";
 import OpenModal from "../components/Editor/OpenModal";
-import { useAccountId } from "../data/account";
 
 const StorageDomain = {
   page: "editor",
