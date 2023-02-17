@@ -351,7 +351,7 @@ export default function EditorPage(props) {
         },
       }}
     >
-      Save Widget
+      Save
     </CommitButton>
   );
 
@@ -571,7 +571,7 @@ export default function EditorPage(props) {
                       }
                     }}
                   >
-                    Render preview
+                    Preview
                   </button>
                   {!path?.unnamed && commitButton}
                   <button
@@ -582,7 +582,7 @@ export default function EditorPage(props) {
                       setShowRenameModal(true);
                     }}
                   >
-                    Rename {path?.type}
+                    Rename
                   </button>
                   {path && accountId && (
                     <a
@@ -655,7 +655,7 @@ export default function EditorPage(props) {
                   props={parsedWidgetProps}
                 />
               ) : (
-                'Click "Render preview" button to render the widget'
+                'Click the "Preview" button to render the widget'
               )}
             </div>
             <div
