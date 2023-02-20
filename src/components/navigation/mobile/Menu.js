@@ -208,7 +208,7 @@ export function Menu(props) {
             </NavigationButton>
           </li>
           <li>
-            <NavigationButton href="https://thewiki.near.page/near.social_docs">
+            <NavigationButton href="https://docs.bos.gg">
               <Book />
               Documentation
             </NavigationButton>
