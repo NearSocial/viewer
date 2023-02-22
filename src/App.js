@@ -11,7 +11,7 @@ import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
 import { useAccount, useInitNear, useNear, utils } from "near-social-vm";
 import Big from "big.js";
-import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
+import { NavigationWrapper } from "./components/navigation/alpha/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
 
 export const refreshAllowanceObj = {};
