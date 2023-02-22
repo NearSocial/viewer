@@ -5,8 +5,8 @@ import Apps from "../../icons/apps.svg";
 import UserCircle from "../../icons/user-circle.svg";
 import Users from "../../icons/users.svg";
 import Code from "../../icons/code.svg";
-import Education from "../../icons/Education.svg";
-import Notebook from "../../icons/Notebook.svg";
+import Education from "../../icons/education.svg";
+import Notebook from "../../icons/notebook.svg";
 import { useAccount } from "near-social-vm";
 
 const StyledDropdownLinkList = styled.ul`
