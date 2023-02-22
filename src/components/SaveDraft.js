@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CommitButton } from "./Commit";
+import { CommitButton } from "near-social-vm";;
 import Modal from "react-bootstrap/Modal";
 
 export const SaveDraftModal = (props) => {
