@@ -542,7 +542,7 @@ export default function EditorPage(props) {
                         setTab(Tab.Widget);
                       }}
                     >
-                      Widget Preview
+                      Preview
                     </button>
                   </li>
                 )}
