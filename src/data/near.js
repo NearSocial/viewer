@@ -63,7 +63,7 @@ export const MainNearConfig = {
     image: "mob.near/widget/Image",
     default: "ethden.near/widget/BosHomepage",
     viewSource: "mob.near/widget/WidgetSource",
-    widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
+    widgetMetadataEditor: "wecare.near/widget/WidgetMetadataEditor",
     widgetMetadata: "mob.near/widget/WidgetMetadata",
     profileImage: "mob.near/widget/ProfileImage",
     notificationButton: "mob.near/widget/NotificationButton",
