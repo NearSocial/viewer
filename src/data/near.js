@@ -63,7 +63,7 @@ export const MainNearConfig = {
     image: "mob.near/widget/Image",
     default: "ethden.near/widget/BosHomepage",
     viewSource: "mob.near/widget/WidgetSource",
-    widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
+    widgetMetadataEditor: "zavodil.near/widget/WidgetMetadataEditor",
     widgetMetadata: "mob.near/widget/WidgetMetadata",
     profileImage: "mob.near/widget/ProfileImage",
     notificationButton: "mob.near/widget/NotificationButton",
@@ -74,6 +74,7 @@ export const MainNearConfig = {
   },
   apiUrl: "https://api.near.social",
   finalSynchronizationDelayMs: 3000,
+  forcedTag: "ethdenver2023",
 };
 
 export const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;

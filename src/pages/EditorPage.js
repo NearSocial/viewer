@@ -632,6 +632,7 @@ export default function EditorPage(props) {
                       () => ({
                         widgetPath,
                         onChange: setMetadata,
+                        forcedTag: NearConfig.forcedTag
                       }),
                       [widgetPath]
                     )}
