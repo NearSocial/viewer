@@ -15,6 +15,7 @@ import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
 
 export const refreshAllowanceObj = {};
+const documentationHref = "https://social.near-docs.io/";
 
 function App(props) {
   const [connected, setConnected] = useState(false);
@@ -116,6 +117,7 @@ function App(props) {
     logOut,
     requestSignIn,
     widgets: Widgets,
+    documentationHref,
   };
 
   return (
