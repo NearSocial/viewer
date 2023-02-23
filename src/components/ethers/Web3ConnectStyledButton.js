@@ -12,9 +12,8 @@ export default function Web3ConnectStyledButton(props) {
         }`}
         disabled={connecting}
         onClick={() => (wallet ? disconnect(wallet) : connect())}
-        style={wallet ? { marginRight: "317px" } : {}}
       >
-        {connecting ? "Connecting" : wallet ? "Disconnect" : "Connect Wallet"}
+        {connecting ? props.connectingLabel ?? "Connecting" : wallet ? props.disconnectLabel ?? "Disconnect" : props.connectLabel ?? "Connect Wallet"}
       </button>
     </div>
   );

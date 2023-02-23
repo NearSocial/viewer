@@ -153,7 +153,7 @@ const ApprovedTagsCustom = {
   OverlayTrigger: true,
   Files: true,
   iframe: false,
-  Web3Connect: true
+  Web3Connect: false
 };
 
 const ApprovedTags = {
