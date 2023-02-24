@@ -19,6 +19,28 @@ const StyledApp = styled.div`
   @media (max-width: 991px) {
     padding-bottom: 40px;
   }
+  .logo-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    :after {
+      content: "alpha";
+      background-color: #59e692;
+      color: #101d46;
+      text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 3px;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      padding: 3px 6px;
+    }
+
+    :hover {
+      text-decoration: none;
+    }
+  }
 `;
 
 export const refreshAllowanceObj = {};

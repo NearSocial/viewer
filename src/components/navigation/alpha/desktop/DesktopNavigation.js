@@ -21,12 +21,6 @@ const StyledNavigation = styled.div`
   z-index: 1000;
   padding: 12px 0;
 
-  .logo-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .user-section {
     margin-left: auto;
     > button {

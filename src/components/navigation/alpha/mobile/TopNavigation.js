@@ -20,17 +20,6 @@ const StyledNavigation = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  .logo-link {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: fit-content;
-  }
-
   .nav-notification-widget {
     margin: 0;
   }
