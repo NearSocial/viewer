@@ -119,7 +119,7 @@ export function UserDropdown(props) {
             <NavLink
               className="dropdown-item"
               type="button"
-              to={`/${props.widgets.profilePage}?accountId=${account.accountId}`}
+              to={`/calebjacob.near/widget/ProfilePage?accountId=${account.accountId}`}
             >
               <User />
               My Profile

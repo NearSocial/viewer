@@ -8,6 +8,8 @@ import { UserDropdown } from "./UserDropdown";
 import { NavDropdownMenu } from "./nav_dropdown/NavDropdownMenu";
 import { NavDropdownButton } from "./NavDropdownButton";
 import { NotificationWidget } from "../NotificationWidget";
+import image from "../icons/search.svg";
+import { useHistory } from "react-router-dom";
 
 const StyledNavigation = styled.div`
   position: sticky;
@@ -63,16 +65,54 @@ const StyledNavigation = styled.div`
       margin-left: 4px;
     }
   }
+
+  input {
+    background-repeat: no-repeat;
+    background-repeat: no-repeat;
+    border-radius: 50px;
+    padding: 8px 5px 8px 44px;
+    background-position: 12px 8px;
+    border: 0;
+    background-color: #2b2f31;
+    font-weight: 500;
+    color: white;
+    margin-left: 50px;
+
+    :focus {
+      border: 0;
+      outline: 0;
+    }
+
+    ::placeholder {
+      color: #9ba1a6;
+      font-weight: 500;
+    }
+  }
 `;
 
 export function DesktopNavigation(props) {
   const [menuDropdown, setMenuDropdown] = useState(false);
+  const history = useHistory();
   return (
     <StyledNavigation onMouseLeave={() => setMenuDropdown(false)}>
       <div className="container">
         <Link to="/" className="logo-link">
           <Logo />
         </Link>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            history.push(
+              `/calebjacob.near/widget/GlobalSearchPage?term=${e.target[0].value}`
+            );
+            // return (window.location.href = `https://near.social/#/calebjacob.near/widget/GlobalSearchPage?term=${e.target[0].value}`);
+          }}
+        >
+          <input
+            placeholder="Search"
+            style={{ backgroundImage: `url(${image})` }}
+          />
+        </form>
         <div className="navigation-section">
           <NavigationButton
             onMouseEnter={() => setMenuDropdown(false)}

@@ -59,7 +59,8 @@ const StyledNavDropdownMenu = styled.div`
 
     a {
       &:first-of-type {
-        background-color: #0091ff;
+        background-color: #4ecfcf;
+        color: #11181c !important;
       }
     }
   }
@@ -70,7 +71,7 @@ export function NavDropdownMenu(props) {
     <StyledNavDropdownMenu className={props.menuDropdown ? "show" : ""}>
       <div className="container">
         <div className="section">
-          <div className="section-title">Current application</div>
+          <div className="section-title">Current component</div>
           <div className="current-app-wrapper">
             <Widget
               src="calebjacob.near/widget/ComponentSummary"

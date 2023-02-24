@@ -39,7 +39,23 @@ export function NavigationButton(props) {
             }
           }}
           to={props.route}
-          exact={true}
+          exact
+          isActive={(match, location) => {
+            if (
+              location.pathname !== "/" &&
+              props.route.includes(location.pathname)
+            ) {
+              return true;
+            }
+            if (props.homeRoute) {
+              if (location.pathname === "/") {
+                return true;
+              }
+              return (
+                location.pathname === "/calebjacob.near/widget/ActivityPage"
+              );
+            }
+          }}
         >
           {props.children}
         </NavLink>

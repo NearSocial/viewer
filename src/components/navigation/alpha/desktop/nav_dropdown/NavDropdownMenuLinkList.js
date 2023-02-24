@@ -52,14 +52,14 @@ export function NavDropdownMenuLinkList(props) {
 
   const NavMenuLinkData = [
     {
-      title: "Applications",
-      description: "Discover and use new applications on NEAR.",
+      title: "Components",
+      description: "Discover and use new components on NEAR.",
       link: "/mob.near/widget/Applications",
       icon: Apps,
       category: "discover",
     },
     {
-      title: "People",
+      title: "Community",
       description: "Connect with friends and follow inspiring creators.",
       link: "/calebjacob.near/widget/People",
       icon: UserCircle,
@@ -84,16 +84,14 @@ export function NavDropdownMenuLinkList(props) {
     },
     {
       title: "Documentation",
-      description:
-        "Build new components and applications with little to no setup.",
+      description: "Learn about platform and development best practices.",
       link: "https://thewiki.near.page/near.social_docs",
       icon: Education,
       category: "tools",
     },
     {
       title: "Tutorials",
-      description:
-        "Build new components and applications with little to no setup.",
+      description: "Learn the ropes by building an example app.",
       link: "https://thewiki.near.page/near.social_tutorial",
       icon: Notebook,
       category: "tools",

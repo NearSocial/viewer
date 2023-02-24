@@ -13,6 +13,13 @@ import { useAccount, useInitNear, useNear, utils } from "near-social-vm";
 import Big from "big.js";
 import { NavigationWrapper } from "./components/navigation/alpha/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
+import styled from "styled-components";
+
+const StyledApp = styled.div`
+  @media (max-width: 991px) {
+    padding-bottom: 40px;
+  }
+`;
 
 export const refreshAllowanceObj = {};
 
@@ -123,7 +130,7 @@ function App(props) {
   };
 
   return (
-    <div className="App">
+    <StyledApp className="App">
       <Router basename={process.env.PUBLIC_URL}>
         <Switch>
           <Route path={"/embed/:widgetSrc*"}>
@@ -139,7 +146,7 @@ function App(props) {
           </Route>
         </Switch>
       </Router>
-    </div>
+    </StyledApp>
   );
 }
 
