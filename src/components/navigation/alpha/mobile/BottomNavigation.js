@@ -91,11 +91,17 @@ export function BottomNavigation(props) {
           <Bell />
         </div>
       )}
-      <NavigationButton
-        route={`/calebjacob.near/widget/ProfilePage?accountId=${props.signedAccountId}`}
-      >
-        <UserLarge />
-      </NavigationButton>
+      {props.signedIn ? (
+        <NavigationButton
+          route={`/calebjacob.near/widget/ProfilePage?accountId=${props.signedAccountId}`}
+        >
+          <UserLarge />
+        </NavigationButton>
+      ) : (
+        <div className="bell-wrapper">
+          <UserLarge />
+        </div>
+      )}
     </StyledNavigation>
   );
 }
