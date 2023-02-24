@@ -54,7 +54,7 @@ export function NavDropdownMenuLinkList(props) {
     {
       title: "Components",
       description: "Discover and use new components on NEAR.",
-      link: "/mob.near/widget/Applications",
+      link: "/calebjacob.near/widget/ComponentsPage",
       icon: Apps,
       category: "discover",
     },
