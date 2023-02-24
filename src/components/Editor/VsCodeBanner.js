@@ -25,7 +25,7 @@ export default function VsCodeBanner() {
       <Text>
         Prefer to work locally?&nbsp;
         <VsCodeLink
-          href={`#`}
+          href="vscode:extension/maxistyping.near"
           target="_blank"
           rel="noopener noreferrer"
         >
