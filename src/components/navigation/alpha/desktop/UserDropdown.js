@@ -1,10 +1,13 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { User } from "../../../icons/User";
 import { LogOut } from "../../../icons/LogOut";
 import { Withdraw } from "../../../icons/Withdraw";
 import { NavLink } from "react-router-dom";
 import { Widget, useNear, TGas, useAccount } from "near-social-vm";
+import PretendModal from "../../PretendModal";
+import { Pretend } from "../../../icons/Pretend";
+import { StopPretending } from "../../../icons/StopPretending";
 
 const StyledDropdown = styled.div`
   button,
@@ -92,6 +95,8 @@ export function UserDropdown(props) {
     await near.contract.storage_withdraw({}, TGas.mul(30).toFixed(0), "1");
   }, [near]);
 
+  const [showPretendModal, setShowPretendModal] = useState(false);
+
   return (
     <>
       <StyledDropdown className="dropdown" onMouseEnter={props.onMouseEnter}>
@@ -135,6 +140,30 @@ export function UserDropdown(props) {
               Withdraw {props.availableStorage.div(1000).toFixed(2)}kb
             </button>
           </li>
+          {account.pretendAccountId ? (
+            <li>
+              <button
+                className="dropdown-item"
+                type="button"
+                disabled={!account.startPretending}
+                onClick={() => account.startPretending(undefined)}
+              >
+                <StopPretending />
+                Stop pretending
+              </button>
+            </li>
+          ) : (
+            <li>
+              <button
+                className="dropdown-item"
+                type="button"
+                onClick={() => setShowPretendModal(true)}
+              >
+                <Pretend />
+                Pretend to be another account
+              </button>
+            </li>
+          )}
           <li>
             <button
               className="dropdown-item"
@@ -147,6 +176,11 @@ export function UserDropdown(props) {
           </li>
         </ul>
       </StyledDropdown>
+      <PretendModal
+        show={showPretendModal}
+        onHide={() => setShowPretendModal(false)}
+        widgets={props.widgets}
+      />
     </>
   );
 }

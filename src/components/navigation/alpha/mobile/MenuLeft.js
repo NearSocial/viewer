@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Close } from "../../../icons/Close";
 import { Components } from "../icons/Components";
@@ -8,7 +8,7 @@ import { Editor } from "../icons/Editor";
 import { LogOut } from "../../../icons/LogOut";
 import { Withdraw } from "../icons/Withdraw";
 import { Community } from "../icons/Community";
-import { Widget } from "near-social-vm";
+import { Widget, useNear, TGas } from "near-social-vm";
 import { NavigationButton } from "../NavigationButton";
 import { SignInButton } from "../SignInButton";
 import { Link } from "react-router-dom";
@@ -170,6 +170,11 @@ const StyledMenu = styled.div`
 `;
 
 export function MenuLeft(props) {
+  const near = useNear();
+  const withdrawStorage = useCallback(async () => {
+    await near.contract.storage_withdraw({}, TGas.mul(30).toFixed(0), "1");
+  }, [near]);
+
   return (
     <StyledMenu className={props.showMenu ? "show" : ""}>
       <div className="left-side">
@@ -243,7 +248,7 @@ export function MenuLeft(props) {
         <ul className="bottom-links">
           {props.signedIn && (
             <li>
-              <button className="log-out-button">
+              <button className="log-out-button" onClick={withdrawStorage}>
                 <Withdraw />
                 Withdraw {props.availableStorage.div(1000).toFixed(2)}kb
               </button>
