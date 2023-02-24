@@ -61,7 +61,7 @@ export function NavDropdownMenuLinkList(props) {
     {
       title: "Community",
       description: "Connect with friends and follow inspiring creators.",
-      link: "/calebjacob.near/widget/People",
+      link: "/calebjacob.near/widget/PeoplePage",
       icon: UserCircle,
       category: "discover",
     },
