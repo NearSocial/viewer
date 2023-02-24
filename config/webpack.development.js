@@ -43,6 +43,7 @@ module.exports = () => ({
     static: path.resolve(__dirname, "../dist"),
     port: 3000,
     compress: true,
+    allowedHosts: "all",
   },
   plugins: [new HotModuleReplacementPlugin()],
 });

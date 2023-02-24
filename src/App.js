@@ -116,6 +116,10 @@ function App(props) {
     logOut,
     requestSignIn,
     widgets: Widgets,
+    tos: {
+      checkComponentPath: "adminalpha.near/widget/TosCheck",
+      contentComponentPath: "adminalpha.near/widget/TosContent",
+    },
   };
 
   return (

@@ -432,34 +432,41 @@ export default function EditorPage(props) {
         </Nav>
         {props.widgets.editorComponentSearch && (
           <div>
+            {/* We use the component search widget as a VM entry point to add a TOS check wrapper.
+                It does not need to be this component, just some <Widget /> on the page */}
             <Widget
-              src={props.widgets.editorComponentSearch}
-              props={useMemo(
-                () => ({
-                  extraButtons: ({ widgetName, widgetPath, onHide }) => (
-                    <OverlayTrigger
-                      placement="auto"
-                      overlay={
-                        <Tooltip>
-                          Open "{widgetName}" component in the editor
-                        </Tooltip>
-                      }
-                    >
-                      <button
-                        className="btn btn-outline-primary"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          loadFile(widgetPath);
-                          onHide && onHide();
-                        }}
+              src={props.tos.checkComponentPath}
+              props={{
+                logOut: props.logOut,
+                tosName: props.tos.contentComponentPath,
+                targetComponent: props.widgets.editorComponentSearch,
+                targetProps: useMemo(
+                  () => ({
+                    extraButtons: ({ widgetName, widgetPath, onHide }) => (
+                      <OverlayTrigger
+                        placement="auto"
+                        overlay={
+                          <Tooltip>
+                            Open "{widgetName}" component in the editor
+                          </Tooltip>
+                        }
                       >
-                        Open
-                      </button>
-                    </OverlayTrigger>
-                  ),
-                }),
-                [loadFile]
-              )}
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            loadFile(widgetPath);
+                            onHide && onHide();
+                          }}
+                        >
+                          Open
+                        </button>
+                      </OverlayTrigger>
+                    ),
+                  }),
+                  [loadFile]
+                ),
+              }}
             />
           </div>
         )}
