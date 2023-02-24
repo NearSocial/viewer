@@ -1,9 +1,17 @@
+@font-face {
+  font-family: "PixterDisplayBold";
+  src: url('./fonts/PixterDisplayBold/font.woff2') format('woff2'), url('./fonts/PixterDisplayBold/font.woff') format('woff');
+}
+@font-face {
+  font-family: "PixterDisplay";
+  src: url('./fonts/PixterDisplay/font.woff2') format('woff2'), url('./fonts/PixterDisplay/font.woff') format('woff');
+}
+
 $primary: #ffffff;
 $danger: #ff4136;
 $body-color: #eee;
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&family=VT323');
-$font-family-sans-serif: 'VT323', serif;
-$font-family-monospace: 'IBM Plex Mono', monospace;
+$font-family-sans-serif: 'PixterDisplay', serif;
+$font-family-monospace: 'PixterDisplay', monospace;
 
 $black:    #fff !default;
 $gray-900: #f8f9fa;

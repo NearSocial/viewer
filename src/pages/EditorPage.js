@@ -542,7 +542,7 @@ export default function EditorPage(props) {
                         setTab(Tab.Widget);
                       }}
                     >
-                      Widget Preview
+                      Preview
                     </button>
                   </li>
                 )}
@@ -632,6 +632,7 @@ export default function EditorPage(props) {
                       () => ({
                         widgetPath,
                         onChange: setMetadata,
+                        forcedTag: NearConfig.forcedTag
                       }),
                       [widgetPath]
                     )}

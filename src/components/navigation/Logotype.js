@@ -1,7 +1,7 @@
 import React from "react";
 
 export function Logotype({ color = "white" }) {
-  return <h2>bOS</h2>;
+  return <h2>BOS</h2>;
   // return (
   //   <svg
   //     width="155"

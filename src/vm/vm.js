@@ -29,6 +29,7 @@ import BN from "bn.js";
 import * as nacl from "tweetnacl";
 import { ethers } from "ethers";
 import SecureIframe from "../components/SecureIframe";
+import Web3ConnectStyledButton from "../components/ethers/Web3ConnectStyledButton";
 
 const frozenNacl = Object.freeze({
   randomBytes: deepFreeze(nacl.randomBytes),
@@ -152,6 +153,7 @@ const ApprovedTagsCustom = {
   OverlayTrigger: true,
   Files: true,
   iframe: false,
+  Web3Connect: false
 };
 
 const ApprovedTags = {
@@ -529,6 +531,8 @@ class VmStack {
       return <Files {...attributes}>{children}</Files>;
     } else if (element === "iframe") {
       return <SecureIframe {...attributes} />;
+    } else if (element === "Web3Connect") {
+      return <Web3ConnectStyledButton {...attributes} />;
     } else if (styledComponent) {
       return React.createElement(
         styledComponent,
