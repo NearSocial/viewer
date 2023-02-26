@@ -318,7 +318,7 @@ export default function EditorPage(props) {
 
   useEffect(() => {
     if (files) {
-      files.forEach(f => {
+      files.forEach((f) => {
         const widgetSrc = `${accountId}/widget/${f.name}/**`;
         const fetchCodeAndDraftOnChain = () => {
           const widgetCode = cache.socialGet(
@@ -332,27 +332,32 @@ export default function EditorPage(props) {
 
           const mainCode = widgetCode?.[""];
           const draft = widgetCode?.branch?.draft?.[""];
-          const isDraft = (!draft && !mainCode) || draft;  
+          const isDraft = (!draft && !mainCode) || draft;
           const path = f;
 
           cache
-          .asyncLocalStorageGet(StorageDomain, {
-            path,
-            type: StorageType.Code,
-          })
-          .then(({ code }) => {
-            let hasCodeChanged;
-            if (draft) {
-              hasCodeChanged = draft != code;
-            } else if (mainCode) {
-              hasCodeChanged = mainCode != code;
-            } else {
-              // no code on chain
-              hasCodeChanged = true;
-            }
-            setFilesDetails(filesDetails.set(f.name, {codeChangesPresent: hasCodeChanged, isDraft}));
-          })
-        }
+            .asyncLocalStorageGet(StorageDomain, {
+              path,
+              type: StorageType.Code,
+            })
+            .then(({ code }) => {
+              let hasCodeChanged;
+              if (draft) {
+                hasCodeChanged = draft != code;
+              } else if (mainCode) {
+                hasCodeChanged = mainCode != code;
+              } else {
+                // no code on chain
+                hasCodeChanged = true;
+              }
+              setFilesDetails(
+                filesDetails.set(f.name, {
+                  codeChangesPresent: hasCodeChanged,
+                  isDraft,
+                })
+              );
+            });
+        };
         fetchCodeAndDraftOnChain();
       });
     }
