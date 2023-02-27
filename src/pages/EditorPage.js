@@ -711,6 +711,8 @@ export default function EditorPage(props) {
     </button>
   );
 
+  const showEditor = !(files?.length === 1 && files[0]?.unnamed === true);
+
   return (
     <>
       <div
