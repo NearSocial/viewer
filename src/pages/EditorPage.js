@@ -716,12 +716,12 @@ export default function EditorPage(props) {
   return (
     <>
       <div
-        className={`text-center d-flex justify-content-center align-items-center min-vh-100 ${
+        className={`text-center d-flex justify-content-center min-vh-100 ${
           showEditor ? `visually-hidden` : ``
         }`}
       >
         <div
-          className="container-fluid mt-1"
+          className="container-fluid mt-5"
           style={{
             width: "460px",
           }}
