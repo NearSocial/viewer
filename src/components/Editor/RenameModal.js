@@ -12,10 +12,10 @@ export default function RenameModal(props) {
   return (
     <Modal centered scrollable show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Rename</Modal.Title>
+        <Modal.Title>Rename Component</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <label htmlFor="rename-input" className="form-label">
+        <label htmlFor="rename-input" className="form-label text-secondary">
           New name
         </label>
         <input
@@ -41,7 +41,7 @@ export default function RenameModal(props) {
           Confirm
         </button>
         <button className="btn btn-secondary" onClick={onHide}>
-          Close
+          Cancel
         </button>
       </Modal.Footer>
     </Modal>

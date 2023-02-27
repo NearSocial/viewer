@@ -12,11 +12,11 @@ export default function OpenModal(props) {
   return (
     <Modal centered scrollable show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Open a Component</Modal.Title>
+        <Modal.Title>Create New Component</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <label htmlFor="widget-src-input" className="form-label text-secondary">
-          Widget name <span className="text-muted">(or path)</span>
+          Component name
         </label>
         <input
           className="form-control"
@@ -31,15 +31,15 @@ export default function OpenModal(props) {
       <Modal.Footer>
         <button
           className="btn btn-success"
-          disabled={!widgetSrc}
+          disabled={widgetSrc && widgetSrc.indexOf("/") !== -1}
           onClick={(e) => {
             e.preventDefault();
-            onOpen(widgetSrc);
+            onNew(widgetSrc);
             setWidgetSrc("");
             onHide();
           }}
         >
-          Open
+          Create
         </button>
         <button className="btn btn-secondary" onClick={onHide}>
           Cancel
