@@ -199,7 +199,7 @@ export function MenuLeft(props) {
                 <Widget src={props.widgets.profileName} />
               </div>
             )}
-            <div className="profile-username">@{props.signedAccountId}</div>
+            <div className="profile-username">{props.signedAccountId}</div>
           </Link>
         ) : (
           <SignInButton

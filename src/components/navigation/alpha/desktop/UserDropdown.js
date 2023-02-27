@@ -168,7 +168,7 @@ export function UserDropdown(props) {
               Withdraw {props.availableStorage.div(1000).toFixed(2)}kb
             </button>
           </li>
-          {account.pretendAccountId ? (
+          {/* {account.pretendAccountId ? (
             <li>
               <button
                 className="dropdown-item"
@@ -191,7 +191,7 @@ export function UserDropdown(props) {
                 Pretend to be another account
               </button>
             </li>
-          )}
+          )} */}
           <li>
             <button
               className="dropdown-item"
