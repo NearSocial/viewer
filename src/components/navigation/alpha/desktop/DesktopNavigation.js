@@ -21,6 +21,13 @@ const StyledNavigation = styled.div`
   z-index: 1000;
   padding: 12px 0;
 
+  button,
+  a,
+  input {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
   .user-section {
     margin-left: auto;
     > button {
@@ -64,7 +71,7 @@ const StyledNavigation = styled.div`
     background-repeat: no-repeat;
     background-repeat: no-repeat;
     border-radius: 50px;
-    padding: 8px 5px 8px 44px;
+    padding: 10px 5px 10px 44px;
     background-position: 12px 8px;
     border: 0;
     background-color: #2b2f31;

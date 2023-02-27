@@ -36,14 +36,36 @@ const StyledDropdown = styled.div`
     }
 
     > div {
-      width: auto !important;
-      height: auto !important;
+      :first-of-type {
+        width: auto !important;
+        height: auto !important;
+      }
     }
 
     img {
       border-radius: 50% !important;
       width: 28px !important;
       height: 28px !important;
+    }
+
+    .profile-info {
+      margin: 0 8px;
+      line-height: normal;
+      max-width: 110px;
+      font-size: 14px;
+
+      .profile-name,
+      .profile-username {
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      .profile-name {
+        color: var(--slate-dark-12);
+      }
+      .profile-username {
+        color: var(--slate-dark-11);
+      }
     }
   }
 
@@ -114,6 +136,12 @@ export function UserDropdown(props) {
               className: "d-inline-block",
             }}
           />
+          <div className="profile-info">
+            <div className="profile-name">
+              <Widget src={props.widgets.profileName} />
+            </div>
+            <div className="profile-username">{account.accountId}</div>
+          </div>
         </button>
         <ul
           className="dropdown-menu"
