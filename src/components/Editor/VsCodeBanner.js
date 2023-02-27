@@ -18,14 +18,18 @@ const VsCodeLink = styled("a")`
   font-weight: 600;
 `;
 
-export default function VsCodeBanner() {
+export default function VsCodeBanner({ accountId }) {
+  let ideLink = "vscode:extension/near-protocol.near-social-ide";
+  if (accountId) {
+    ideLink += `?account_id=${accountId}`
+  }
   return (
     <Wrapper className="d-flex align-center justify-content-center">
       <img src={VsCodeIcon} />
       <Text>
         Prefer to work locally?&nbsp;
         <VsCodeLink
-          href="vscode:extension/maxistyping.near"
+          href={ideLink}
           target="_blank"
           rel="noopener noreferrer"
         >
