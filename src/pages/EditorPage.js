@@ -1199,8 +1199,8 @@ export default function EditorPage(props) {
                               appearance: "none",
                               borderRadius: "0.375rem",
                               height: "70vh",
-                              marginTop: "8px",
                               maxWidth: "100%",
+                              padding: "20px",
                             }
                           : {
                               padding: "20px",
@@ -1212,11 +1212,9 @@ export default function EditorPage(props) {
                       }
                     >
                       <div className="h-100 row">
-                        <div className="d-inline-block position-relative overflow-hidden h-100">
+                        <div className="d-inline-block position-relative overflow-auto h-100">
                           <div
-                            className="h-100"
                             style={{
-                              height: "100%",
                               padding: 0,
                               margin: 0,
                               display: "flex",
