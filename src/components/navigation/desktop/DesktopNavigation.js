@@ -48,6 +48,10 @@ const StyledNavigation = styled.div`
       .nav-create-btn {
         margin-left: 10px;
       }
+
+      .nav-sign-in-btn {
+        margin-left: 10px;
+      }
     }
 
     .arrow-up-right {
@@ -72,12 +76,12 @@ export function DesktopNavigation(props) {
           </NavigationButton>
         </div>
         <div className="user-section">
+          <DevActionsDropdown {...props} />
           {!props.signedIn && (
             <SignInButton onSignIn={() => props.requestSignIn()} />
           )}
           {props.signedIn && (
             <>
-              <DevActionsDropdown {...props} />
               <NotificationWidget
                 notificationButtonSrc={props.widgets.notificationButton}
               />

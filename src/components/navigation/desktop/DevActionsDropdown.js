@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Fork } from "../../icons/Fork";
 import { Code } from "../../icons/Code";
 import { useAccount } from "near-social-vm";
+import { Diff } from "../../icons/Diff";
 
 const StyledDropdown = styled.div`
   .dropdown-toggle {
@@ -121,6 +122,16 @@ export function DevActionsDropdown(props) {
               >
                 <Code />
                 View source
+              </Link>
+            </li>
+          )}
+          {props.widgets.viewHistory && props.widgetSrc?.view && (
+            <li>
+              <Link
+                to={`/${props.widgets.viewHistory}?widgetPath=${props.widgetSrc?.view}`}
+              >
+                <Diff />
+                View history
               </Link>
             </li>
           )}

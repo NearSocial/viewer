@@ -29,6 +29,7 @@ const MainnetWidgets = {
   profileName: "patrick.near/widget/ProfileName",
   editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
   profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
+  viewHistory: "bozon.near/widget/WidgetHistory",
 };
 
 export const Widgets =
