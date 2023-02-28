@@ -12,6 +12,7 @@ import { Widget, useNear } from "near-social-vm";
 import { NavigationButton } from "../NavigationButton";
 import { SignInButton } from "../SignInButton";
 import { Link } from "react-router-dom";
+import { links } from "../../../../data/links";
 
 const StyledMenu = styled.div`
   position: fixed;
@@ -233,13 +234,13 @@ export function MenuLeft(props) {
             </NavigationButton>
           </li>
           <li>
-            <NavigationButton href="https://thewiki.near.page/near.social_docs">
+            <NavigationButton href={links.discoveryDocs}>
               <Notebook />
               Documentation
             </NavigationButton>
           </li>
           <li>
-            <NavigationButton href="https://thewiki.near.page/near.social_tutorial">
+            <NavigationButton href={links.discoveryTutorial}>
               <Education />
               Toturials
             </NavigationButton>

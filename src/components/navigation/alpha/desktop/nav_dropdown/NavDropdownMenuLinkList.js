@@ -8,6 +8,7 @@ import Code from "../../icons/code.svg";
 import Education from "../../icons/education.svg";
 import Notebook from "../../icons/notebook.svg";
 import { useAccount } from "near-social-vm";
+import { links } from "../../../../../data/links";
 
 const StyledDropdownLinkList = styled.ul`
   list-style: none;
@@ -85,14 +86,14 @@ export function NavDropdownMenuLinkList(props) {
     {
       title: "Documentation",
       description: "Learn about platform and development best practices.",
-      link: "https://thewiki.near.page/near.social_docs",
+      link: links.discoveryDocs,
       icon: Education,
       category: "tools",
     },
     {
       title: "Tutorials",
       description: "Learn the ropes by building an example app.",
-      link: "https://thewiki.near.page/near.social_tutorial",
+      link: links.discoveryTutorial,
       icon: Notebook,
       category: "tools",
     },
