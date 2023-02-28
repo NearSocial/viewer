@@ -271,7 +271,6 @@ export default function EditorPage(props) {
   };
 
   const checkHasCodeChangeSingleFile = (code) => {
-    console.log("Z2");
     const widgetSrc = `${accountId}/widget/${widgetName}/**`;
     const fetchCodeAndDraftOnChain = () => {
       const widgetCode = cache.socialGet(
@@ -435,6 +434,29 @@ export default function EditorPage(props) {
         nameOrPath.indexOf("/") >= 0
           ? nameOrPath
           : `${accountId}/widget/${nameOrPath}`;
+
+      const draftSrc = `${widgetSrc}/branch/draft`;
+      let changeCode;
+
+      const cDraft = () => {
+        const draftCode = cache.socialGet(
+          near,
+          draftSrc,
+          false,
+          undefined,
+          undefined,
+          cDraft
+        );
+
+        if (draftCode) {
+          changeCode = draftCode;
+        }
+      };
+
+      if (!widgetSrc.endsWith("draft")) {
+        cDraft();
+      }
+
       const c = () => {
         const code = cache.socialGet(
           near,
@@ -444,9 +466,9 @@ export default function EditorPage(props) {
           undefined,
           c
         );
-        if (code) {
+        if (changeCode || code) {
           // const name = widgetSrc.split("/").slice(2).join("/");
-          openFile(toPath(Filetype.Widget, widgetSrc), code);
+          openFile(toPath(Filetype.Widget, widgetSrc), changeCode || code);
         }
       };
 
@@ -468,6 +490,15 @@ export default function EditorPage(props) {
       }
     },
     [toPath, files]
+  );
+
+  const createNewFile = useCallback(
+    (type) => {
+      const path = generateNewName(type);
+      path.unnamed = undefined;
+      openFile(path, DefaultEditorCode);
+    },
+    [generateNewName, openFile]
   );
 
   const createFile = useCallback(
@@ -768,27 +799,20 @@ export default function EditorPage(props) {
           <OpenModal
             show={showOpenModal}
             onOpen={(newName) => loadFile(newName)}
-            onNew={(newName) =>
-              newName
-                ? openFile(toPath(Filetype.Widget, newName), DefaultEditorCode)
-                : createFile(Filetype.Widget)
-            }
             onHide={() => setShowOpenModal(false)}
           />
           <AddModal
             show={showAddModal}
             onOpen={() => (setShowAddModal(false), setShowOpenModal(true))}
-            onNew={() => (setShowAddModal(false), setShowCreateModal(true))}
+            onNew={() => (setShowAddModal(false), createNewFile())}
             onHide={() => setShowAddModal(false)}
           />
           <CreateModal
             show={showCreateModal}
             onOpen={(newName) => loadFile(newName)}
-            onNew={(newName) =>
-              newName
-                ? openFile(toPath(Filetype.Widget, newName), DefaultEditorCode)
-                : createFile(Filetype.Widget)
-            }
+            onNew={() => {
+              createNewFile(Filetype.Widget);
+            }}
             onHide={() => setShowCreateModal(false)}
           />
           <SaveDraftModal
