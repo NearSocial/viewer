@@ -799,11 +799,11 @@ export default function EditorPage(props) {
             widgetName={widgetName}
             code={code}
           />
-          <div className="mb-3">
+          <div className="">
             <div className="w-100 d-flex " style={{ flexWrap: "nowrap" }}>
               <div className="d-flex" style={{ flexWrap: "wrap" }}>
                 <Nav
-                  variant="pills mb-5 mt-3"
+                  variant="pills mb-2 mt-2"
                   activeKey={jpath}
                   onSelect={(key) => openFile(JSON.parse(key))}
                 >
@@ -869,7 +869,7 @@ export default function EditorPage(props) {
                 style={{ minWidth: "280px", flexWrap: "wrap" }}
               >
                 <Nav
-                  variant="pills mb-5 mt-3 ms-auto"
+                  variant="pills mb-2 mt-2 ms-auto"
                   activeKey={jpath}
                   onSelect={(key) => openFile(JSON.parse(key))}
                 >
@@ -1127,7 +1127,7 @@ export default function EditorPage(props) {
                       : "visually-hidden"
                   }`}
                 >
-                  <div style={{ height: "100%", height: "70vh" }}>
+                  <div style={{}}>
                     {tab === Tab.Widget || (
                       <div
                         style={{
