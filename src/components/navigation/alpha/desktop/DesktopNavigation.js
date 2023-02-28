@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { Logo } from "../icons/Logo";
+import { Return } from "../icons/Return";
 import { NavigationButton } from "../NavigationButton";
 import { SignInButton } from "../SignInButton";
 import { UserDropdown } from "./UserDropdown";
@@ -71,7 +72,7 @@ const StyledNavigation = styled.div`
     background-repeat: no-repeat;
     background-repeat: no-repeat;
     border-radius: 50px;
-    padding: 10px 5px 10px 44px;
+    padding: 10px 25px 10px 44px;
     background-position: 12px 8px;
     border: 0;
     background-color: #2b2f31;
@@ -89,10 +90,23 @@ const StyledNavigation = styled.div`
       font-weight: 500;
     }
   }
+
+  .form-wrapper {
+    position: relative;
+
+    svg {
+      position: absolute;
+      right: 16px;
+      top: 10px;
+      width: 20px;
+      height: 20px;
+    }
+  }
 `;
 
 export function DesktopNavigation(props) {
   const [menuDropdown, setMenuDropdown] = useState(false);
+  const [searchInputFocus, setSearchInputFocus] = useState(false);
   const history = useHistory();
   return (
     <StyledNavigation onMouseLeave={() => setMenuDropdown(false)}>
@@ -100,20 +114,24 @@ export function DesktopNavigation(props) {
         <Link to="/" className="logo-link">
           <Logo />
         </Link>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            history.push(
-              `/calebjacob.near/widget/GlobalSearchPage?term=${e.target[0].value}`
-            );
-            // return (window.location.href = `https://near.social/#/calebjacob.near/widget/GlobalSearchPage?term=${e.target[0].value}`);
-          }}
-        >
-          <input
-            placeholder="Search"
-            style={{ backgroundImage: `url(${image})` }}
-          />
-        </form>
+        <div className="form-wrapper">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              history.push(
+                `/calebjacob.near/widget/GlobalSearchPage?term=${e.target[0].value}`
+              );
+            }}
+          >
+            <input
+              placeholder="Search"
+              style={{ backgroundImage: `url(${image})` }}
+              onFocus={() => setSearchInputFocus(true)}
+              onBlur={() => setSearchInputFocus(false)}
+            />
+          </form>
+          {searchInputFocus && <Return />}
+        </div>
         <div className="navigation-section">
           <NavigationButton
             onMouseEnter={() => setMenuDropdown(false)}
