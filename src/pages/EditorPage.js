@@ -1228,25 +1228,32 @@ export default function EditorPage(props) {
                     >
                       <div className="h-100 row">
                         <div className="d-inline-block position-relative overflow-auto h-100">
-                          <div
-                            style={{
-                              padding: 0,
-                              margin: 0,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            {renderCode ? (
+                          {renderCode ? (
+                            <div
+                              style={{
+                                padding: 0,
+                                margin: 0,
+                              }}
+                            >
                               <Widget
                                 key={`preview-${jpath}`}
                                 code={renderCode}
                                 props={parsedWidgetProps}
                               />
-                            ) : (
-                              renderPreviewButton
-                            )}
-                          </div>
+                            </div>
+                          ) : (
+                            <div
+                              style={{
+                                padding: 0,
+                                margin: 0,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              {renderPreviewButton}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
