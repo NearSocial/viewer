@@ -1,3 +1,5 @@
+# NEAR Discovery (BOS)
+
 ## Setup & Development
 
 Initialize repo:
@@ -10,7 +12,7 @@ Start development version:
 yarn start
 ```
 
-## Widget example
+## Component example
 
 Profile view 
 
