@@ -798,11 +798,9 @@ export default function EditorPage(props) {
           <CreateModal
             show={showCreateModal}
             onOpen={(newName) => loadFile(newName)}
-            onNew={(newName) =>
-              newName
-                ? openFile(toPath(Filetype.Widget, newName), DefaultEditorCode)
-                : createFile(Filetype.Widget)
-            }
+            onNew={() => {
+              createNewFile(Filetype.Widget);
+            }}
             onHide={() => setShowCreateModal(false)}
           />
           <SaveDraftModal
