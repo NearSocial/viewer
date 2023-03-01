@@ -481,7 +481,6 @@ export default function EditorPage(props) {
     (type) => {
       const path = generateNewName(type);
       path.unnamed = undefined;
-      loadFile(path.name);
       openFile(path, DefaultEditorCode);
     },
     [generateNewName, openFile]
