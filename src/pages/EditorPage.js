@@ -430,45 +430,30 @@ export default function EditorPage(props) {
       if (!near) {
         return;
       }
-      const widgetSrc =
+
+      let widgetSrc =
         nameOrPath.indexOf("/") >= 0
           ? nameOrPath
           : `${accountId}/widget/${nameOrPath}`;
 
-      const draftSrc = `${widgetSrc}/branch/draft`;
-      let changeCode;
-
-      const cDraft = () => {
-        const draftCode = cache.socialGet(
-          near,
-          draftSrc,
-          false,
-          undefined,
-          undefined,
-          cDraft
-        );
-
-        if (draftCode) {
-          changeCode = draftCode;
-        }
-      };
-
-      if (!widgetSrc.endsWith("draft")) {
-        cDraft();
-      }
+      const widget = `${widgetSrc}/**`;
 
       const c = () => {
         const code = cache.socialGet(
           near,
-          widgetSrc,
+          widget,
           false,
           undefined,
           undefined,
           c
         );
-        if (changeCode || code) {
-          // const name = widgetSrc.split("/").slice(2).join("/");
-          openFile(toPath(Filetype.Widget, widgetSrc), changeCode || code);
+
+        const mainCode = code?.[""];
+        const draftCode = code?.branch?.draft?.[""];
+        const currentCode = draftCode || mainCode;
+
+        if (currentCode) {
+          openFile(toPath(Filetype.Widget, widgetSrc), currentCode);
         }
       };
 
