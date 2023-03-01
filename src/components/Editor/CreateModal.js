@@ -31,7 +31,7 @@ export default function OpenModal(props) {
       <Modal.Footer>
         <button
           className="btn btn-success"
-          disabled={widgetSrc && widgetSrc.indexOf("/") !== -1}
+          disabled={!widgetSrc}
           onClick={(e) => {
             e.preventDefault();
             onNew(widgetSrc);

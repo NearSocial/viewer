@@ -271,7 +271,6 @@ export default function EditorPage(props) {
   };
 
   const checkHasCodeChangeSingleFile = (code) => {
-    console.log("Z2");
     const widgetSrc = `${accountId}/widget/${widgetName}/**`;
     const fetchCodeAndDraftOnChain = () => {
       const widgetCode = cache.socialGet(
@@ -431,22 +430,30 @@ export default function EditorPage(props) {
       if (!near) {
         return;
       }
-      const widgetSrc =
+
+      let widgetSrc =
         nameOrPath.indexOf("/") >= 0
           ? nameOrPath
           : `${accountId}/widget/${nameOrPath}`;
+
+      const widget = `${widgetSrc}/**`;
+
       const c = () => {
         const code = cache.socialGet(
           near,
-          widgetSrc,
+          widget,
           false,
           undefined,
           undefined,
           c
         );
-        if (code) {
-          // const name = widgetSrc.split("/").slice(2).join("/");
-          openFile(toPath(Filetype.Widget, widgetSrc), code);
+
+        const mainCode = code?.[""];
+        const draftCode = code?.branch?.draft?.[""];
+        const currentCode = draftCode || mainCode;
+
+        if (currentCode) {
+          openFile(toPath(Filetype.Widget, widgetSrc), currentCode);
         }
       };
 
@@ -458,16 +465,25 @@ export default function EditorPage(props) {
   const generateNewName = useCallback(
     (type) => {
       for (let i = 0; ; i++) {
-        const name = `Draft-${i}`;
+        const name = `Untitled-${i}`;
         const path = toPath(type, name);
         path.unnamed = true;
         const jPath = JSON.stringify(path);
-        if (!files?.find((file) => JSON.stringify(file) === jPath)) {
+        if (!files?.find((file) => file.name === name)) {
           return path;
         }
       }
     },
     [toPath, files]
+  );
+
+  const createNewFile = useCallback(
+    (type) => {
+      const path = generateNewName(type);
+      path.unnamed = undefined;
+      openFile(path, DefaultEditorCode);
+    },
+    [generateNewName, openFile]
   );
 
   const createFile = useCallback(
@@ -747,7 +763,9 @@ export default function EditorPage(props) {
             <button
               className="btn btn-success mb-4"
               style={{ width: "250px" }}
-              onClick={() => (setShowAddModal(false), setShowCreateModal(true))}
+              onClick={() => (
+                setShowAddModal(false), createNewFile(Filetype.Widget)
+              )}
             >
               Create New Component
             </button>
@@ -768,27 +786,24 @@ export default function EditorPage(props) {
           <OpenModal
             show={showOpenModal}
             onOpen={(newName) => loadFile(newName)}
-            onNew={(newName) =>
-              newName
-                ? openFile(toPath(Filetype.Widget, newName), DefaultEditorCode)
-                : createFile(Filetype.Widget)
-            }
             onHide={() => setShowOpenModal(false)}
           />
           <AddModal
             show={showAddModal}
             onOpen={() => (setShowAddModal(false), setShowOpenModal(true))}
-            onNew={() => (setShowAddModal(false), setShowCreateModal(true))}
+            onNew={() => (
+              setShowAddModal(false),
+              setShowRenameModal(true),
+              createNewFile(Filetype.Widget)
+            )}
             onHide={() => setShowAddModal(false)}
           />
           <CreateModal
             show={showCreateModal}
             onOpen={(newName) => loadFile(newName)}
-            onNew={(newName) =>
-              newName
-                ? openFile(toPath(Filetype.Widget, newName), DefaultEditorCode)
-                : createFile(Filetype.Widget)
-            }
+            onNew={() => {
+              createNewFile(Filetype.Widget);
+            }}
             onHide={() => setShowCreateModal(false)}
           />
           <SaveDraftModal
@@ -799,11 +814,11 @@ export default function EditorPage(props) {
             widgetName={widgetName}
             code={code}
           />
-          <div className="mb-3">
+          <div className="">
             <div className="w-100 d-flex " style={{ flexWrap: "nowrap" }}>
               <div className="d-flex" style={{ flexWrap: "wrap" }}>
                 <Nav
-                  variant="pills mb-5 mt-3"
+                  variant="pills mb-2 mt-2"
                   activeKey={jpath}
                   onSelect={(key) => openFile(JSON.parse(key))}
                 >
@@ -869,7 +884,7 @@ export default function EditorPage(props) {
                 style={{ minWidth: "280px", flexWrap: "wrap" }}
               >
                 <Nav
-                  variant="pills mb-5 mt-3 ms-auto"
+                  variant="pills mb-2 mt-2 ms-auto"
                   activeKey={jpath}
                   onSelect={(key) => openFile(JSON.parse(key))}
                 >
@@ -1127,7 +1142,7 @@ export default function EditorPage(props) {
                       : "visually-hidden"
                   }`}
                 >
-                  <div style={{ height: "100%", height: "70vh" }}>
+                  <div style={{}}>
                     {tab === Tab.Widget || (
                       <div
                         style={{
