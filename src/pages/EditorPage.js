@@ -465,7 +465,7 @@ export default function EditorPage(props) {
   const generateNewName = useCallback(
     (type) => {
       for (let i = 0; ; i++) {
-        const name = `Draft-${i}`;
+        const name = `Untitled-${i}`;
         const path = toPath(type, name);
         path.unnamed = true;
         const jPath = JSON.stringify(path);
