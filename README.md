@@ -12,7 +12,7 @@ Start development version:
 yarn start
 ```
 
-## Widget example
+## Component example
 
 Profile view 
 
