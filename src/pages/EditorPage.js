@@ -469,7 +469,7 @@ export default function EditorPage(props) {
         const path = toPath(type, name);
         path.unnamed = true;
         const jPath = JSON.stringify(path);
-        if (!files?.find((file) => JSON.stringify(file) === jPath)) {
+        if (!files?.find((file) => file.name === name)) {
           return path;
         }
       }
@@ -481,6 +481,7 @@ export default function EditorPage(props) {
     (type) => {
       const path = generateNewName(type);
       path.unnamed = undefined;
+      loadFile(path.name);
       openFile(path, DefaultEditorCode);
     },
     [generateNewName, openFile]
@@ -791,15 +792,17 @@ export default function EditorPage(props) {
           <AddModal
             show={showAddModal}
             onOpen={() => (setShowAddModal(false), setShowOpenModal(true))}
-            onNew={() => (setShowAddModal(false), createNewFile())}
+            onNew={() => (setShowAddModal(false), createNewFile(Filetype.Widget))}
             onHide={() => setShowAddModal(false)}
           />
           <CreateModal
             show={showCreateModal}
             onOpen={(newName) => loadFile(newName)}
-            onNew={() => {
-              createNewFile(Filetype.Widget);
-            }}
+            onNew={(newName) =>
+              newName
+                ? openFile(toPath(Filetype.Widget, newName), DefaultEditorCode)
+                : createFile(Filetype.Widget)
+            }
             onHide={() => setShowCreateModal(false)}
           />
           <SaveDraftModal
