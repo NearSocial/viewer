@@ -1,3 +1,5 @@
+# NEAR Discovery (BOS)
+
 ## Setup & Development
 
 Initialize repo:
