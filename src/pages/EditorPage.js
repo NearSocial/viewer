@@ -778,7 +778,9 @@ export default function EditorPage(props) {
             <button
               className="btn btn-success mb-4"
               style={{ width: "250px" }}
-              onClick={() => (setShowAddModal(false), setShowCreateModal(true))}
+              onClick={() => (
+                setShowAddModal(false), createNewFile(Filetype.Widget)
+              )}
             >
               Create New Component
             </button>
