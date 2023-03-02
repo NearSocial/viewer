@@ -242,7 +242,7 @@ export function MenuLeft(props) {
           <li>
             <NavigationButton href={links.discoveryTutorial}>
               <Education />
-              Toturials
+              Tutorials
             </NavigationButton>
           </li>
         </ul>
