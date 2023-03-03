@@ -45,6 +45,7 @@ export const SaveDraftModal = (props) => {
         <CommitButton
           className="btn btn-primary"
           near={near}
+          onCommit={() => onHide()}
           data={{
             post: {
               commit: {
