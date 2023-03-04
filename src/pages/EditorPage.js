@@ -322,16 +322,20 @@ export default function EditorPage(props) {
   );
 
   const closeCommitted = useCallback(
-    (allSaved) => {
+    (path, allSaved) => {
       setFiles((files) => {
         files = files.filter((file) => !allSaved[JSON.stringify(file)]);
-        if (allSaved[JSON.stringify(lastPath)]) {
-          openFile(files[files.length - 1], undefined);
+        if (allSaved[JSON.stringify(path)]) {
+          if (files.length > 0) {
+            openFile(files[files.length - 1], undefined);
+          } else {
+            createFile(Filetype.Widget);
+          }
         }
         return files;
       });
     },
-    [openFile]
+    [openFile, createFile]
   );
 
   const layoutClass = layout === Layout.Split ? "col-lg-6" : "";
@@ -427,7 +431,7 @@ export default function EditorPage(props) {
           <Nav.Item>
             <Nav.Link
               className="text-decoration-none"
-              onClick={() => closeCommitted(allSaved)}
+              onClick={() => closeCommitted(path, allSaved)}
             >
               <i className="bi bi-x-lg"></i> Close unchanged
             </Nav.Link>
