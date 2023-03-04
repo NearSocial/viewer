@@ -14,20 +14,13 @@ import {
 import { Nav, OverlayTrigger, Tooltip } from "react-bootstrap";
 import RenameModal from "../components/Editor/RenameModal";
 import OpenModal from "../components/Editor/OpenModal";
-
-const StorageDomain = {
-  page: "editor",
-};
-
-const StorageType = {
-  Code: "code",
-  Files: "files",
-};
-
-const Filetype = {
-  Widget: "widget",
-  Module: "module",
-};
+import {
+  FileTab,
+  Filetype,
+  StorageDomain,
+  StorageType,
+  toPath,
+} from "../components/Editor/FileTab";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -59,6 +52,7 @@ export default function EditorPage(props) {
   const [lastPath, setLastPath] = useState(undefined);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [showOpenModal, setShowOpenModal] = useState(false);
+  const [allSaved, setAllSaved] = useState({});
 
   const [renderCode, setRenderCode] = useState(code);
   const [widgetProps, setWidgetProps] = useState(
@@ -185,12 +179,10 @@ export default function EditorPage(props) {
     [updateCode, addToFiles]
   );
 
-  const toPath = useCallback((type, nameOrPath) => {
-    const name =
-      nameOrPath.indexOf("/") >= 0
-        ? nameOrPath.split("/").slice(2).join("/")
-        : nameOrPath;
-    return { type, name };
+  const updateSaved = useCallback((jp, saved) => {
+    setAllSaved((allSaved) => {
+      return Object.assign({}, allSaved, { [jp]: saved });
+    });
   }, []);
 
   const loadFile = useCallback(
@@ -329,6 +321,23 @@ export default function EditorPage(props) {
     [setWidgetProps]
   );
 
+  const closeCommitted = useCallback(
+    (path, allSaved) => {
+      setFiles((files) => {
+        files = files.filter((file) => !allSaved[JSON.stringify(file)]);
+        if (allSaved[JSON.stringify(path)]) {
+          if (files.length > 0) {
+            openFile(files[files.length - 1], undefined);
+          } else {
+            createFile(Filetype.Widget);
+          }
+        }
+        return files;
+      });
+    },
+    [openFile, createFile]
+  );
+
   const layoutClass = layout === Layout.Split ? "col-lg-6" : "";
 
   const onLayoutChange = useCallback(
@@ -392,33 +401,23 @@ export default function EditorPage(props) {
         >
           {files?.map((p, idx) => {
             const jp = JSON.stringify(p);
+            const active = jp === jpath;
             return (
-              <Nav.Item key={jp}>
-                <Nav.Link className="text-decoration-none" eventKey={jp}>
-                  {p.name}
-                  <button
-                    className={`btn btn-sm border-0 py-0 px-1 ms-1 rounded-circle ${
-                      jp === jpath
-                        ? "btn-outline-light"
-                        : "btn-outline-secondary"
-                    }`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      removeFromFiles(p);
-                      if (jp === jpath) {
-                        if (files.length > 1) {
-                          openFile(files[idx - 1] || files[idx + 1]);
-                        } else {
-                          createFile(Filetype.Widget);
-                        }
-                      }
-                    }}
-                  >
-                    <i className="bi bi-x"></i>
-                  </button>
-                </Nav.Link>
-              </Nav.Item>
+              <FileTab
+                key={jp}
+                {...{
+                  p,
+                  jp,
+                  idx,
+                  active,
+                  openFile,
+                  createFile,
+                  removeFromFiles,
+                  files,
+                  code: jp === jpath ? code : undefined,
+                  updateSaved,
+                }}
+              />
             );
           })}
           <Nav.Item>
@@ -427,6 +426,14 @@ export default function EditorPage(props) {
               onClick={() => setShowOpenModal(true)}
             >
               <i className="bi bi-file-earmark-plus"></i> Add
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              className="text-decoration-none"
+              onClick={() => closeCommitted(path, allSaved)}
+            >
+              <i className="bi bi-x-lg"></i> Close unchanged
             </Nav.Link>
           </Nav.Item>
         </Nav>
