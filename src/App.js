@@ -7,6 +7,13 @@ import "App.scss";
 import { HashRouter as Router, Link, Route, Switch } from "react-router-dom";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
+import { setupWalletSelector } from "@near-wallet-selector/core";
+import { setupNearWallet } from "@near-wallet-selector/near-wallet";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupSender } from "@near-wallet-selector/sender";
+import { setupHereWallet } from "@near-wallet-selector/here-wallet";
+import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import { setupNeth } from "@near-wallet-selector/neth";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
 import { useAccount, useInitNear, useNear, utils } from "near-social-vm";
@@ -64,6 +71,20 @@ function App(props) {
     initNear &&
       initNear({
         networkId: NetworkId,
+        selector: setupWalletSelector({
+          network: NetworkId,
+          modules: [
+            setupNearWallet(),
+            setupMyNearWallet(),
+            setupSender(),
+            setupHereWallet(),
+            setupMeteorWallet(),
+            setupNeth({
+              gas: "300000000000000",
+              bundle: false,
+            }),
+          ],
+        }),
       });
   }, [initNear]);
 
