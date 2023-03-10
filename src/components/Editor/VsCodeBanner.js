@@ -19,7 +19,7 @@ const VsCodeLink = styled("a")`
 `;
 
 export default function VsCodeBanner({ accountId }) {
-  let ideLink = "vscode:extension/near-protocol.near-social-ide";
+  let ideLink = "vscode:extension/near-protocol.near-discovery-ide";
   if (accountId) {
     ideLink += `?account_id=${accountId}`;
   }
