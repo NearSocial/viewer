@@ -55,14 +55,14 @@ export function NavDropdownMenuLinkList(props) {
     {
       title: "Components",
       description: "Discover and use new components on NEAR.",
-      link: "/calebjacob.near/widget/ComponentsPage",
+      link: `/${props.widgets?.componentsPage}`,
       icon: Apps,
       category: "discover",
     },
     {
       title: "Community",
       description: "Connect with friends and follow inspiring creators.",
-      link: "/calebjacob.near/widget/PeoplePage",
+      link: `/${props.widgets?.peoplePage}`,
       icon: UserCircle,
       category: "discover",
     },

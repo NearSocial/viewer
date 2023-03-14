@@ -127,7 +127,7 @@ export function MenuRight(props) {
         </button>
         <div className="current-app-wrapper">
           <Widget
-            src="calebjacob.near/widget/ComponentSummary"
+            src={props.widgets.componentSummary}
             props={{
               src: props.widgetSrc?.view,
               size: "medium",

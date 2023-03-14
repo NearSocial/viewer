@@ -7,14 +7,20 @@ export const NetworkId =
   window.location.hostname in TestnetDomains ? "testnet" : "mainnet";
 const TestnetWidgets = {
   image: "eugenethedream/widget/Image",
-  default: "eugenethedream/widget/Welcome",
+  default: "one.testnet/widget/ActivityPage",
   viewSource: "eugenethedream/widget/WidgetSource",
   widgetMetadataEditor: "eugenethedream/widget/WidgetMetadataEditor",
   widgetMetadata: "eugenethedream/widget/WidgetMetadata",
   profileImage: "eugenethedream/widget/ProfileImage",
   profilePage: "eugenethedream/widget/Profile",
   profileName: "eugenethedream/widget/ProfileName",
-  notificationButton: "eugenethedream/widget/NotificationButton",
+  componentsPage: "one.testnet/widget/ComponentsPage",
+  peoplePage: "one.testnet/widget/PeoplePage",
+  globalSearchPage: "one.testnet/widget/GlobalSearchPage",
+  notificationButton: "one.testnet/widget/NotificationButton",
+  profilePage: "one.testnet/widget/ProfilePage",
+  componentSummary: "one.testnet/widget/ComponentSummary",
+  notificationsPage: "one.testnet/widget/NotificationsPage",
 };
 
 const MainnetWidgets = {
@@ -24,11 +30,16 @@ const MainnetWidgets = {
   widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
   widgetMetadata: "mob.near/widget/WidgetMetadata",
   profileImage: "mob.near/widget/ProfileImage",
-  notificationButton: "mob.near/widget/NotificationButton",
-  profilePage: "mob.near/widget/ProfilePage",
   profileName: "patrick.near/widget/ProfileName",
   editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
   profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
+  componentsPage: "calebjacob.near/widget/ComponentsPage",
+  peoplePage: "calebjacob.near/widget/PeoplePage",
+  globalSearchPage: "calebjacob.near/widget/GlobalSearchPage",
+  notificationButton: "calebjacob.near/widget/NotificationButton",
+  profilePage: "calebjacob.near/widget/ProfilePage",
+  componentSummary: "calebjacob.near/widget/ComponentSummary",
+  notificationsPage: "calebjacob.near/widget/NotificationsPage",
 };
 
 export const Widgets =

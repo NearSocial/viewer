@@ -74,7 +74,7 @@ export function NavDropdownMenu(props) {
           <div className="section-title">Current component</div>
           <div className="current-app-wrapper">
             <Widget
-              src="calebjacob.near/widget/ComponentSummary"
+              src={props.widgets.componentSummary}
               props={{
                 src: props.widgetSrc?.view,
                 size: "medium",
@@ -89,6 +89,7 @@ export function NavDropdownMenu(props) {
             <NavDropdownMenuLinkList
               category="discover"
               onClick={props.onClickLink}
+              {...props}
             />
           </div>
         ) : (
