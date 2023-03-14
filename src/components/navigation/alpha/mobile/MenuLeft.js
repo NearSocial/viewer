@@ -213,13 +213,13 @@ export function MenuLeft(props) {
         <div className="links-title">Discover</div>
         <ul className="top-links">
           <li>
-            <NavigationButton route="/calebjacob.near/widget/ComponentsPage">
+            <NavigationButton route={`/${props.widgets?.componentsPage}`}>
               <Components />
               Components
             </NavigationButton>
           </li>
           <li>
-            <NavigationButton route="/calebjacob.near/widget/PeoplePage">
+            <NavigationButton route={`/${props.widgets?.peoplePage}`}>
               <Community />
               Community
             </NavigationButton>

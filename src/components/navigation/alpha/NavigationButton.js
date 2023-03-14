@@ -51,9 +51,7 @@ export function NavigationButton(props) {
               if (location.pathname === "/") {
                 return true;
               }
-              return (
-                location.pathname === "/calebjacob.near/widget/ActivityPage"
-              );
+              return location.pathname === `/${props.widgets?.default}`;
             }
           }}
         >
