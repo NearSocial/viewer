@@ -21,6 +21,8 @@ const TestnetWidgets = {
   profilePage: "one.testnet/widget/ProfilePage",
   componentSummary: "one.testnet/widget/ComponentSummary",
   notificationsPage: "one.testnet/widget/NotificationsPage",
+  tosCheck: "one.testnet/widget/TosCheck",
+  tosContent: "one.testnet/widget/TosContent",
 };
 
 const MainnetWidgets = {
@@ -40,6 +42,8 @@ const MainnetWidgets = {
   profilePage: "calebjacob.near/widget/ProfilePage",
   componentSummary: "calebjacob.near/widget/ComponentSummary",
   notificationsPage: "calebjacob.near/widget/NotificationsPage",
+  tosCheck: "adminalpha.near/widget/TosCheck",
+  tosContent: "adminalpha.near/widget/TosContent",
 };
 
 export const Widgets =

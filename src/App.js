@@ -167,8 +167,8 @@ function App(props) {
     requestSignIn,
     widgets: Widgets,
     tos: {
-      checkComponentPath: "adminalpha.near/widget/TosCheck",
-      contentComponentPath: "adminalpha.near/widget/TosContent",
+      checkComponentPath: Widgets.tosCheck,
+      contentComponentPath: Widgets.tosContent,
     },
   };
 
