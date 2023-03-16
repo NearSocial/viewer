@@ -48,6 +48,11 @@ module.exports = function (env) {
           crypto: require.resolve("crypto-browserify"),
           stream: require.resolve("stream-browserify"),
         },
+        // Fix for using `yarn link "near-social-vm"`
+        alias: {
+          react: path.resolve(__dirname, "./node_modules/react"),
+          "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
+        },
       },
       plugins: [
         new webpack.EnvironmentPlugin({
