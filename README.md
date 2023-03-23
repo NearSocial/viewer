@@ -14,6 +14,13 @@ Start development version:
 yarn start
 ```
 
+## Run with docker:
+```
+docker pull zavodil/nearbos
+docker run -p 3000:3000 zavodil/nearbos
+```
+Your local BOS gateway: http://localhost:3000/#/
+
 ## Widget example
 
 Profile view 
