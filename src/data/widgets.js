@@ -37,7 +37,7 @@ const MainnetWidgets = {
   profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
   componentsPage: "adminalpha.near/widget/ComponentsPage",
   peoplePage: "adminalpha.near/widget/PeoplePage",
-  globalSearchPage: "adminalpha.near/widget/GlobalSearchPage",
+  globalSearchPage: "chaotictempest.near/widget/Search",
   notificationButton: "adminalpha.near/widget/NotificationButton",
   profilePage: "adminalpha.near/widget/ProfilePage",
   componentSummary: "adminalpha.near/widget/ComponentSummary",
