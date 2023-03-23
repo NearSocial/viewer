@@ -30,15 +30,23 @@ export default function EmbedPage(props) {
   return (
     <div className="d-inline-block position-relative overflow-hidden">
       <Widget
-        key={props.tos.checkComponentPath}
-        src={props.tos.checkComponentPath}
+        key={props.widgets.wrapper}
+        src={props.widgets.wrapper}
         props={{
-          logOut: props.logOut,
-          tosName: props.tos.contentComponentPath,
-          targetComponent: src,
-          targetProps: widgetProps,
+          children: (
+            <Widget
+              key={props.tos.checkComponentPath}
+              src={props.tos.checkComponentPath}
+              props={{
+                logOut: props.logOut,
+                tosName: props.tos.contentComponentPath,
+                targetComponent: src,
+                targetProps: widgetProps,
+              }}
+            />
+          ),
         }}
-      />{" "}
+      />
     </div>
   );
 }
