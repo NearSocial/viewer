@@ -77,16 +77,3 @@ a {
 .focus .rbt-input-main {
   color: $black !important;
 }
-
-.layout {
-  min-height: calc(100vh - 4rem);
-}
-
-footer {
-  padding-top: 2rem;
-  height: 2rem;
-}
-
-footer a, span {
-  color: rgba(255, 255, 255, 0.2);
-}

@@ -111,30 +111,21 @@ function App(props) {
   };
 
   return (
-    <div className="App">
-      <div className="layout">
-        <Router basename={process.env.PUBLIC_URL}>
-          <Switch>
-            <Route path={"/embed/:widgetSrc*"}>
-              <EmbedPage {...passProps} />
-            </Route>
-            <Route path={"/edit/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
-              <EditorPage {...passProps} />
-            </Route>
-            <Route path={"/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
-              <ViewPage {...passProps} />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
-      <footer>
-        <div className="text-center">
-          <a href="/#/thebos.near/widget/Terms">Terms of Use</a> <span>|</span> <a href="/#/thebos.near/widget/Privacy">Privacy Policy</a>
-        </div>
-    </footer>
-    </div>
+    <Router basename={process.env.PUBLIC_URL}>
+      <Switch>
+        <Route path={"/embed/:widgetSrc*"}>
+          <EmbedPage {...passProps} />
+        </Route>
+        <Route path={"/edit/:widgetSrc*"}>
+          <NavigationWrapper {...passProps} />
+          <EditorPage {...passProps} />
+        </Route>
+        <Route path={"/:widgetSrc*"}>
+          <NavigationWrapper {...passProps} />
+          <ViewPage {...passProps} />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
