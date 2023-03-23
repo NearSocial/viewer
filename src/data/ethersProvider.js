@@ -2,6 +2,8 @@ import { singletonHook } from "react-singleton-hook";
 import { useEffect, useState } from "react";
 import { init, useConnectWallet } from "@web3-onboard/react";
 import injectedModule from "@web3-onboard/injected-wallets";
+import walletConnectModule from "@web3-onboard/walletconnect";
+import ledgerModule from "@web3-onboard/ledger";
 import { LsKey } from "./near";
 import { ethers } from "ethers";
 import ls from "local-storage";
@@ -9,11 +11,27 @@ import ls from "local-storage";
 const defaultEthersProvider = undefined;
 const web3onboardKey = LsKey + "web3-onboard:connectedWallets";
 
+const wcV1InitOptions = {
+  qrcodeModalOptions: {
+    mobileLinks: ["metamask", "argent", "trust"],
+  },
+  connectFirstChainId: true,
+};
+
+// const wcV2InitOptions = {
+//   version: 2,
+//   /**
+//    * Project ID associated with [WalletConnect account](https://cloud.walletconnect.com)
+//    */
+//   projectId: "abc123...",
+// };
+const walletConnect = walletConnectModule(wcV1InitOptions);
+const ledger = ledgerModule();
 const injected = injectedModule();
 
 // initialize Onboard
 export const onboard = init({
-  wallets: [injected],
+  wallets: [injected, walletConnect, ledger],
   chains: [
     {
       id: 1,
