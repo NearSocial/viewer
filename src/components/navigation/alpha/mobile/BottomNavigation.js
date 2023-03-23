@@ -70,21 +70,21 @@ export function BottomNavigation(props) {
   const location = useLocation();
   return (
     <StyledNavigation>
-      <NavigationButton route="/" homeRoute>
+      <NavigationButton route="/" homeRoute {...props}>
         <HouseLine />
       </NavigationButton>
-      <NavigationButton route="/calebjacob.near/widget/GlobalSearchPage">
+      <NavigationButton route={`/${props.widgets.globalSearchPage}`}>
         <MagnifyingGlass />
       </NavigationButton>
       {props.signedIn ? (
         <div
           className={
-            location.pathname === "/calebjacob.near/widget/NotificationsPage"
+            location.pathname === `/${props.widgets.notificationsPage}`
               ? "active-link"
               : ""
           }
         >
-          <Widget src="calebjacob.near/widget/NotificationButton" />
+          <Widget src={props.widgets.notificationButton} />
         </div>
       ) : (
         <div className="bell-wrapper">
@@ -93,7 +93,7 @@ export function BottomNavigation(props) {
       )}
       {props.signedIn ? (
         <NavigationButton
-          route={`/calebjacob.near/widget/ProfilePage?accountId=${props.signedAccountId}`}
+          route={`/${props.widgets.profilePage}?accountId=${props.signedAccountId}`}
         >
           <UserLarge />
         </NavigationButton>

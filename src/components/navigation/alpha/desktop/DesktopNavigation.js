@@ -119,7 +119,7 @@ export function DesktopNavigation(props) {
             onSubmit={(e) => {
               e.preventDefault();
               history.push(
-                `/calebjacob.near/widget/GlobalSearchPage?term=${e.target[0].value}`
+                `/${props.widgets?.globalSearchPage}?term=${e.target[0].value}`
               );
             }}
           >
@@ -153,7 +153,7 @@ export function DesktopNavigation(props) {
           {props.signedIn && (
             <>
               <NotificationWidget
-                notificationButtonSrc="calebjacob.near/widget/NotificationButton"
+                notificationButtonSrc={props.widgets.notificationButton}
                 onMouseEnter={() => setMenuDropdown(false)}
               />
               <UserDropdown

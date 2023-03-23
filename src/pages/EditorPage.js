@@ -147,6 +147,26 @@ export default function EditorPage(props) {
     });
   }, [widgetSrc, setWidgetSrc]);
 
+  useEffect(() => {
+    const widgetSrc = `${accountId}/widget/${widgetName}/**`;
+    const fetchCodeAndDraftOnChain = () => {
+      const widgetCode = cache.socialGet(
+        near,
+        widgetSrc,
+        false,
+        undefined,
+        undefined,
+        fetchCodeAndDraftOnChain
+      );
+      if (widgetCode?.branch?.draft?.[""]) {
+        setMetadata(widgetCode?.branch?.draft?.metadata);
+      } else {
+        setMetadata(widgetCode?.metadata);
+      }
+    };
+    fetchCodeAndDraftOnChain();
+  }, [draftOnChain, codeOnChain]);
+
   const updateCode = useCallback(
     (path, code) => {
       cache.localStorageSet(
@@ -620,7 +640,10 @@ export default function EditorPage(props) {
             "": code,
             metadata,
             branch: {
-              draft: null,
+              draft: {
+                "": null,
+                metadata: null,
+              }
             },
           },
         },
@@ -707,7 +730,7 @@ export default function EditorPage(props) {
     <a
       className="btn me-2 btn-outline-secondary"
       style={{ height: "38px" }}
-      href={`#/${widgetPath}`}
+      href={`#/${widgetPath}${filesDetails.get(widgetName)?.isDraft ? "/branch/draft" : ""}`}
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -813,6 +836,7 @@ export default function EditorPage(props) {
             widgetPath={widgetPath}
             widgetName={widgetName}
             code={code}
+            metadata={metadata}
           />
           <div className="">
             <div className="w-100 d-flex " style={{ flexWrap: "nowrap" }}>
@@ -1125,7 +1149,8 @@ export default function EditorPage(props) {
                         key={`metadata-editor-${jpath}`}
                         props={useMemo(
                           () => ({
-                            widgetPath,
+                            widgetPath: widgetPath
+                             + (filesDetails.get(widgetName)?.isDraft ? "/branch/draft" : ""),
                             onChange: setMetadata,
                           }),
                           [widgetPath]
@@ -1271,8 +1296,8 @@ export default function EditorPage(props) {
                           key={`metadata-${jpath}`}
                           src={props.widgets.widgetMetadata}
                           props={useMemo(
-                            () => ({ metadata, accountId, widgetName }),
-                            [metadata, accountId, widgetName]
+                            () => ({ metadata, accountId }),
+                            [metadata, accountId]
                           )}
                         />
                       </div>

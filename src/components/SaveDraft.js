@@ -10,6 +10,7 @@ export const SaveDraftModal = (props) => {
   const show = props.show;
   const onHide = props.onHide;
   const near = props.near;
+  const metadata = props.metadata
 
   const onCancel = (e) => {
     e.preventDefault();
@@ -59,6 +60,7 @@ export const SaveDraftModal = (props) => {
                 branch: {
                   draft: {
                     "": code,
+                    metadata,
                   },
                 },
               },

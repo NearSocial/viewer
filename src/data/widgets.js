@@ -7,28 +7,43 @@ export const NetworkId =
   window.location.hostname in TestnetDomains ? "testnet" : "mainnet";
 const TestnetWidgets = {
   image: "eugenethedream/widget/Image",
-  default: "eugenethedream/widget/Welcome",
+  default: "one.testnet/widget/ActivityPage",
   viewSource: "eugenethedream/widget/WidgetSource",
   widgetMetadataEditor: "eugenethedream/widget/WidgetMetadataEditor",
   widgetMetadata: "eugenethedream/widget/WidgetMetadata",
   profileImage: "eugenethedream/widget/ProfileImage",
   profilePage: "eugenethedream/widget/Profile",
   profileName: "eugenethedream/widget/ProfileName",
-  notificationButton: "eugenethedream/widget/NotificationButton",
+  componentsPage: "one.testnet/widget/ComponentsPage",
+  peoplePage: "one.testnet/widget/PeoplePage",
+  globalSearchPage: "one.testnet/widget/GlobalSearchPage",
+  notificationButton: "one.testnet/widget/NotificationButton",
+  profilePage: "one.testnet/widget/ProfilePage",
+  componentSummary: "one.testnet/widget/ComponentSummary",
+  notificationsPage: "one.testnet/widget/NotificationsPage",
+  tosCheck: "one.testnet/widget/TosCheck",
+  tosContent: "one.testnet/widget/TosContent",
 };
 
 const MainnetWidgets = {
   image: "mob.near/widget/Image",
-  default: "calebjacob.near/widget/ActivityPage",
+  default: "adminalpha.near/widget/ActivityPage",
   viewSource: "mob.near/widget/WidgetSource",
   widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
   widgetMetadata: "mob.near/widget/WidgetMetadata",
   profileImage: "mob.near/widget/ProfileImage",
-  notificationButton: "mob.near/widget/NotificationButton",
-  profilePage: "mob.near/widget/ProfilePage",
   profileName: "patrick.near/widget/ProfileName",
   editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
   profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
+  componentsPage: "adminalpha.near/widget/ComponentsPage",
+  peoplePage: "adminalpha.near/widget/PeoplePage",
+  globalSearchPage: "adminalpha.near/widget/GlobalSearchPage",
+  notificationButton: "adminalpha.near/widget/NotificationButton",
+  profilePage: "adminalpha.near/widget/ProfilePage",
+  componentSummary: "adminalpha.near/widget/ComponentSummary",
+  notificationsPage: "adminalpha.near/widget/NotificationsPage",
+  tosCheck: "adminalpha.near/widget/TosCheck",
+  tosContent: "adminalpha.near/widget/TosContent",
 };
 
 export const Widgets =
