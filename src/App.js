@@ -111,23 +111,23 @@ function App(props) {
   };
 
   return (
-      <div className="App">
-        <Router basename={process.env.PUBLIC_URL}>
-          <Switch>
-            <Route path={"/embed/:widgetSrc*"}>
-              <EmbedPage {...passProps} />
-            </Route>
-            <Route path={"/edit/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
-              <EditorPage {...passProps} />
-            </Route>
-            <Route path={"/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
-              <ViewPage {...passProps} />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
+    <div className="App">
+      <Router basename={process.env.PUBLIC_URL}>
+        <Switch>
+          <Route path={"/embed/:widgetSrc*"}>
+            <EmbedPage {...passProps} />
+          </Route>
+          <Route path={"/edit/:widgetSrc*"}>
+            <NavigationWrapper {...passProps} />
+            <EditorPage {...passProps} />
+          </Route>
+          <Route path={"/:widgetSrc*"}>
+            <NavigationWrapper {...passProps} />
+            <ViewPage {...passProps} />
+          </Route>
+        </Switch>
+      </Router>
+    </div>
   );
 }
 
