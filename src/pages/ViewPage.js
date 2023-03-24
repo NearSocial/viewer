@@ -48,15 +48,23 @@ export default function ViewPage(props) {
           }}
         >
           <Widget
-            key={props.tos.checkComponentPath}
-            src={props.tos.checkComponentPath}
+            key={props.widgets.wrapper}
+            src={props.widgets.wrapper}
             props={{
-              logOut: props.logOut,
-              targetProps: widgetProps,
-              targetComponent: src,
-              tosName: props.tos.contentComponentPath,
+              children: (
+                <Widget
+                  key={props.tos.checkComponentPath}
+                  src={props.tos.checkComponentPath}
+                  props={{
+                    logOut: props.logOut,
+                    targetProps: widgetProps,
+                    targetComponent: src,
+                    tosName: props.tos.contentComponentPath,
+                  }}
+                />
+              ),
             }}
-          />{" "}
+          />
         </div>
       </div>
     </div>
