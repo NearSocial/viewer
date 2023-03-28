@@ -21,6 +21,7 @@ import Big from "big.js";
 import { NavigationWrapper } from "./components/navigation/alpha/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
 import styled from "styled-components";
+import { Helmet } from "react-helmet";
 
 const StyledApp = styled.div`
   @media (max-width: 991px) {
@@ -174,6 +175,10 @@ function App(props) {
 
   return (
     <StyledApp className="App">
+      <Helmet>
+        <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+      </Helmet>
+
       <Router basename={process.env.PUBLIC_URL}>
         <Switch>
           <Route path={"/embed/:widgetSrc*"}>
