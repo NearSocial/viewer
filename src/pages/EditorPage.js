@@ -19,6 +19,7 @@ import CreateModal from "../components/Editor/CreateModal";
 import { SaveDraftModal } from "../components/SaveDraft";
 import styled from "styled-components";
 import VsCodeBanner from "../components/Editor/VsCodeBanner";
+import { useHashUrlBackwardsCompatibility } from "../hooks/useHashUrlBackwardsCompatibility";
 
 const TopMenu = styled.div`
   border-radius: 0.375rem;
@@ -131,6 +132,8 @@ export default function EditorPage(props) {
   const [layout, setLayoutState] = useState(
     ls.get(EditorLayoutKey) || Layout.Tabs
   );
+
+  useHashUrlBackwardsCompatibility();
 
   const setLayout = useCallback(
     (layout) => {
@@ -550,7 +553,7 @@ export default function EditorPage(props) {
     if (!near || !files) {
       return;
     }
-    if (widgetSrc) {
+    if (widgetSrc && !window.location.hash) {
       if (widgetSrc === "new") {
         createFile(Filetype.Widget);
       } else {

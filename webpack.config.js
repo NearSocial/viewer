@@ -21,6 +21,9 @@ module.exports = function (env) {
         filename: "[name].bundle.js",
         publicPath: "/",
       },
+      devServer: {
+        historyApiFallback: true,
+      },
       module: {
         rules: [
           {
