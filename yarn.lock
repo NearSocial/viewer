@@ -6501,9 +6501,9 @@ near-seed-phrase@^0.2.0:
     near-hd-key "^1.2.1"
     tweetnacl "^1.0.2"
 
-near-social-vm@NearSocial/VM#1.1.0:
-  version "1.1.0"
-  resolved "https://codeload.github.com/NearSocial/VM/tar.gz/7d434ab6cf8e3f80b08a3e429429a860799c11d9"
+near-social-vm@near/nearsocial-vm#latest:
+  version "1.2.0"
+  resolved "https://codeload.github.com/near/nearsocial-vm/tar.gz/519c19fb7b84bee6e36b998b445c1b674faf5b6c"
   dependencies:
     "@braintree/sanitize-url" "6.0.0"
     "@radix-ui/react-accordion" "^1.1.1"
