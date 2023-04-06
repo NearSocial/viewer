@@ -21,7 +21,7 @@
     "error-polyfill": "^0.1.2",
     "local-storage": "^2.0.0",
     "near-api-js": "^0.45.1",
-    "near-social-vm": "near/nearsocial-vm#latest",
+    "near-social-vm": "near/nearsocial-vm#v1.2.1",
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
