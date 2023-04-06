@@ -22,7 +22,9 @@ module.exports = function (env) {
         publicPath: "/",
       },
       devServer: {
-        historyApiFallback: true,
+        historyApiFallback: {
+          disableDotRule: true,
+        },
       },
       module: {
         rules: [
