@@ -6,7 +6,10 @@ export function useHashUrlBackwardsCompatibility() {
 
   function onHashChange(event) {
     const url = event.newURL.split("#").pop() ?? "/";
-    history.replace(url);
+
+    if (url[0] === "/") {
+      history.replace(url);
+    }
   }
 
   useEffect(() => {
@@ -20,7 +23,10 @@ export function useHashUrlBackwardsCompatibility() {
   useEffect(() => {
     if (window.location.hash) {
       const url = window.location.href.split("#").pop() ?? "/";
-      history.replace(url);
+
+      if (url[0] === "/") {
+        history.replace(url);
+      }
     }
   }, []);
 }
