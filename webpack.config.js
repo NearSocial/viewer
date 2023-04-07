@@ -21,6 +21,11 @@ module.exports = function (env) {
         filename: "[name].bundle.js",
         publicPath: "/",
       },
+      devServer: {
+        historyApiFallback: {
+          disableDotRule: true,
+        },
+      },
       module: {
         rules: [
           {
@@ -77,6 +82,7 @@ module.exports = function (env) {
           template: `${paths.publicPath}/index.html`,
           favicon: `${paths.publicPath}/favicon.png`,
           robots: `${paths.publicPath}/robots.txt`,
+          publicPath: "/",
         }),
         new webpack.ProgressPlugin(),
         new webpack.ProvidePlugin({

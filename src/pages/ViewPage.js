@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Widget } from "near-social-vm";
 import { useParams } from "react-router-dom";
 import { useQuery } from "../hooks/useQuery";
+import { useHashUrlBackwardsCompatibility } from "../hooks/useHashUrlBackwardsCompatibility";
 
 export default function ViewPage(props) {
   const { widgetSrc } = useParams();
@@ -11,6 +12,8 @@ export default function ViewPage(props) {
   const src = widgetSrc || props.widgets.default;
   const setWidgetSrc = props.setWidgetSrc;
   const viewSourceWidget = props.widgets.viewSource;
+
+  useHashUrlBackwardsCompatibility();
 
   useEffect(() => {
     setWidgetProps(Object.fromEntries([...query.entries()]));
