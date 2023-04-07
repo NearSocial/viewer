@@ -23,7 +23,7 @@ const TestnetWidgets = {
   notificationsPage: "one.testnet/widget/NotificationsPage",
   tosCheck: "one.testnet/widget/TosCheck",
   tosContent: "one.testnet/widget/TosContent",
-  wrapper: "one.testnet/widget/DS.Theme",
+  wrapper: "one.testnet/widget/DIG.Theme",
 };
 
 const MainnetWidgets = {
@@ -45,7 +45,7 @@ const MainnetWidgets = {
   notificationsPage: "adminalpha.near/widget/NotificationsPage",
   tosCheck: "adminalpha.near/widget/TosCheck",
   tosContent: "adminalpha.near/widget/TosContent",
-  wrapper: "adminalpha.near/widget/DS.Theme",
+  wrapper: "adminalpha.near/widget/DIG.Theme",
 };
 
 export const Widgets =
