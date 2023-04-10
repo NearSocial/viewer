@@ -147,8 +147,12 @@ export function DesktopNavigation(props) {
           </NavDropdownButton>
         </div>
         <div className="user-section">
+
           {!props.signedIn && (
-            <SignInButton onSignIn={() => props.requestSignIn()} />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <SignInButton onSignIn={() => history.push('signup')} > Sign Up</SignInButton>
+              <SignInButton onSignIn={() => props.requestSignIn()}> Sign In</SignInButton>
+            </div>
           )}
           {props.signedIn && (
             <>

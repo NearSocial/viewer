@@ -15,6 +15,9 @@ module.exports = function (env) {
   return merge(
     {
       mode,
+      experiments: {
+        topLevelAwait: true
+      },
       entry: `${paths.srcPath}/index.js`,
       output: {
         path: paths.distPath,
