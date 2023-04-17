@@ -63,6 +63,12 @@ export const onboard = init({
       label: "Matic Mainnet",
       rpcUrl: "https://rpc.ankr.com/polygon",
     },
+    {
+      id: 324,
+      token: "ETH",
+      label: "zkSync",
+      rpcUrl: "https://zksync2-mainnet.zksync.io"
+    }
   ],
   appMetadata: {
     name: "BOS",
