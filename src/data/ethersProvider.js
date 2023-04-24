@@ -67,8 +67,20 @@ export const onboard = init({
       id: 324,
       token: "ETH",
       label: "zkSync",
-      rpcUrl: "https://zksync2-mainnet.zksync.io"
-    }
+      rpcUrl: "https://zksync2-mainnet.zksync.io",
+    },
+    {
+      id: 56,
+      token: "BNB",
+      label: "Binance Smart Chain Mainnet",
+      rpcUrl: "https://bsc.publicnode.com",
+    },
+    {
+      id: 42161,
+      token: "ETH",
+      label: "Arbitrum One Mainnet",
+      rpcUrl: "https://endpoints.omniatech.io/v1/arbitrum/one/public",
+    },
   ],
   appMetadata: {
     name: "BOS",
