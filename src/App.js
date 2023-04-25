@@ -16,10 +16,17 @@ import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
-import { useAccount, useInitNear, useNear, utils } from "near-social-vm";
+import {
+  useAccount,
+  useInitNear,
+  useNear,
+  utils,
+  EthersProviderContext,
+} from "near-social-vm";
 import Big from "big.js";
 import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
+import { useEthersProviderContext } from "./data/web3";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -31,6 +38,8 @@ function App(props) {
   const [availableStorage, setAvailableStorage] = useState(null);
   const [walletModal, setWalletModal] = useState(null);
   const [widgetSrc, setWidgetSrc] = useState(null);
+
+  const ethersProviderContext = useEthersProviderContext();
 
   const { initNear } = useInitNear();
   const near = useNear();
@@ -143,21 +152,23 @@ function App(props) {
 
   return (
     <div className="App">
-      <Router basename={process.env.PUBLIC_URL}>
-        <Switch>
-          <Route path={"/embed/:widgetSrc*"}>
-            <EmbedPage {...passProps} />
-          </Route>
-          <Route path={"/edit/:widgetSrc*"}>
-            <NavigationWrapper {...passProps} />
-            <EditorPage {...passProps} />
-          </Route>
-          <Route path={"/:widgetSrc*"}>
-            <NavigationWrapper {...passProps} />
-            <ViewPage {...passProps} />
-          </Route>
-        </Switch>
-      </Router>
+      <EthersProviderContext.Provider value={ethersProviderContext}>
+        <Router basename={process.env.PUBLIC_URL}>
+          <Switch>
+            <Route path={"/embed/:widgetSrc*"}>
+              <EmbedPage {...passProps} />
+            </Route>
+            <Route path={"/edit/:widgetSrc*"}>
+              <NavigationWrapper {...passProps} />
+              <EditorPage {...passProps} />
+            </Route>
+            <Route path={"/:widgetSrc*"}>
+              <NavigationWrapper {...passProps} />
+              <ViewPage {...passProps} />
+            </Route>
+          </Switch>
+        </Router>
+      </EthersProviderContext.Provider>
     </div>
   );
 }
