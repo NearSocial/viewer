@@ -16,6 +16,7 @@ import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 import {
   useAccount,
   useInitNear,
@@ -66,6 +67,18 @@ function App(props) {
             }),
           ],
         }),
+        customElements: {
+          Link: (props) => {
+            if (!props.to && props.href) {
+              props.to = props.href;
+              delete props.href;
+            }
+            if (props.to) {
+              props.to = sanitizeUrl(props.to);
+            }
+            return <Link {...props} />;
+          },
+        },
       });
   }, [initNear]);
 
