@@ -4472,11 +4472,6 @@ bn.js@4.11.8:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==
 
-bn.js@5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.0.tgz#358860674396c6997771a9d051fcc1b57d4ae002"
-  integrity sha512-D7iWRBvnZE8ecXiLj/9wbxH7Tk79fAh8IHaTNq1RWRixsS02W+5qS+iE9yq6RYl0asXx5tw0bLhmT5pIfbSquw==
-
 bn.js@5.2.1, bn.js@^5.0.0, bn.js@^5.1.1, bn.js@^5.2.0, bn.js@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.1.tgz#0bc527a6a0d18d0aa8d5b0538ce4a77dccfa7b70"
@@ -8491,24 +8486,7 @@ near-abi@0.1.1:
   dependencies:
     "@types/json-schema" "^7.0.11"
 
-near-api-js@^0.45.1:
-  version "0.45.1"
-  resolved "https://registry.yarnpkg.com/near-api-js/-/near-api-js-0.45.1.tgz#0f0a4b378758a2f1b32555399d7356da73d0ef27"
-  integrity sha512-QyPO/vjvMFlcMO1DCpsqzmnSqPIyHsjK1Qi4B5ZR1cJCIWMkqugDF/TDf8FVQ85pmlcYeYwfiTqKanKz+3IG0A==
-  dependencies:
-    bn.js "5.2.0"
-    borsh "^0.7.0"
-    bs58 "^4.0.0"
-    depd "^2.0.0"
-    error-polyfill "^0.1.3"
-    http-errors "^1.7.2"
-    js-sha256 "^0.9.0"
-    mustache "^4.0.0"
-    node-fetch "^2.6.1"
-    text-encoding-utf-8 "^1.0.2"
-    tweetnacl "^1.0.1"
-
-near-api-js@^2.1.2:
+near-api-js@^2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/near-api-js/-/near-api-js-2.1.3.tgz#2e894c90cee33ef0c2101951375d15662753b443"
   integrity sha512-ggCQE/oGrrbr9dEtXZ9QU7XAf6RgISs+bfD7Q5I2QsQN45XgV85IA4c8KDLzo66u7FTX39gubKz3Ghieo6D7YA==
@@ -9649,6 +9627,24 @@ react-bootstrap-typeahead@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/react-bootstrap-typeahead/-/react-bootstrap-typeahead-6.0.0.tgz#3b5601d30a4db2adcd3cf815fc36a0a176053f7d"
   integrity sha512-0eTYwG8sYoY/jGO5Qxx1QMQyiVJlrSgo6xO77xxF93PqVLERgZEdbNMk+y/UX7/HTPcWN4tcCUqAEwVe1DVxog==
+  dependencies:
+    "@babel/runtime" "^7.14.6"
+    "@popperjs/core" "^2.10.2"
+    "@restart/hooks" "^0.4.0"
+    classnames "^2.2.0"
+    fast-deep-equal "^3.1.1"
+    invariant "^2.2.1"
+    lodash.debounce "^4.0.8"
+    prop-types "^15.5.8"
+    react-overlays "^5.2.0"
+    react-popper "^2.2.5"
+    scroll-into-view-if-needed "^2.2.20"
+    warning "^4.0.1"
+
+react-bootstrap-typeahead@^6.1.2:
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/react-bootstrap-typeahead/-/react-bootstrap-typeahead-6.1.2.tgz#75d96d289d173075c56bb3270296c2ca4632dae6"
+  integrity sha512-waIWRQ4CUZld69iL+EFiuL/2B+N4LecaAKcRTMQey0NDOM7Sxmtl+iELFzGltt2/DK6yvrxEUCbZI8pTztPFXA==
   dependencies:
     "@babel/runtime" "^7.14.6"
     "@popperjs/core" "^2.10.2"
