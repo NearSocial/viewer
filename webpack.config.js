@@ -49,6 +49,9 @@ module.exports = function (env) {
           stream: require.resolve("stream-browserify"),
           http: require.resolve("stream-http"),
           https: require.resolve("https-browserify"),
+          fs: false,
+          path: require.resolve("path-browserify"),
+          zlib: require.resolve("browserify-zlib"),
         },
         // Fix for using `yarn link "near-social-vm"`
         alias: {
