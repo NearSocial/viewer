@@ -8532,9 +8532,9 @@ near-seed-phrase@^0.2.0:
     near-hd-key "^1.2.1"
     tweetnacl "^1.0.2"
 
-"near-social-vm@git+https://github.com/NearSocial/VM.git#fix/legacy-function-call-creator":
-  version "2.0.0"
-  resolved "git+https://github.com/NearSocial/VM.git#f7f1edc813a1f6d493048baed8f0d536cfa4458f"
+"near-social-vm@git+https://github.com/NearSocial/VM.git#2.1.0":
+  version "2.1.0"
+  resolved "git+https://github.com/NearSocial/VM.git#d0d14655d5353818cf8eb66ff6aa5c706fe8a677"
   dependencies:
     "@braintree/sanitize-url" "6.0.0"
     "@radix-ui/react-accordion" "^1.1.1"
