@@ -1,6 +1,7 @@
 const TestnetDomains = {
   "test.near.social": true,
-  "127.0.0.1": true,
+  "127.0.0.1": true
+  //"localhost":true
 };
 
 export const NetworkId =
@@ -18,18 +19,19 @@ const TestnetWidgets = {
 };
 
 const MainnetWidgets = {
-  image: "mob.near/widget/Image",
-  default: "mob.near/widget/Homepage",
-  viewSource: "mob.near/widget/WidgetSource",
-  widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
-  widgetMetadata: "mob.near/widget/WidgetMetadata",
-  profileImage: "mob.near/widget/ProfileImage",
-  notificationButton: "mob.near/widget/NotificationButton",
-  profilePage: "mob.near/widget/ProfilePage",
-  profileName: "patrick.near/widget/ProfileName",
-  editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
-  profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
-  viewHistory: "bozon.near/widget/WidgetHistory",
+//image: "mob.near/widget/Image",
+ default: "mob.near/widget/Homepage",
+ //default: "jaswinder.near/widget/nft-marketplace",
+  // viewSource: "mob.near/widget/WidgetSource",
+  // widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
+  // widgetMetadata: "mob.near/widget/WidgetMetadata",
+  // profileImage: "mob.near/widget/ProfileImage",
+  // notificationButton: "mob.near/widget/NotificationButton",
+  // profilePage: "mob.near/widget/ProfilePage",
+  // profileName: "patrick.near/widget/ProfileName",
+  // editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
+  // profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
+  // viewHistory: "bozon.near/widget/WidgetHistory",
 };
 
 export const Widgets =
