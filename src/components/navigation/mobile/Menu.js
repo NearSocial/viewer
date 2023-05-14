@@ -193,6 +193,12 @@ export function Menu(props) {
             </NavigationButton>
           </li>
           <li>
+            <NavigationButton href="https://harmonicguild.io">
+              <Book />
+              About Us
+            </NavigationButton>
+          </li>
+          <li>
             <NavigationButton
               disabled={!props.signedIn}
               route={`/${props.widgets.profilePage}?accountId=${props.signedAccountId}`}
@@ -201,21 +207,10 @@ export function Menu(props) {
               Profile
             </NavigationButton>
           </li>
-          <li>
-            <NavigationButton route="/edit">
-              <Code />
-              Editor
-            </NavigationButton>
-          </li>
-          <li>
-            <NavigationButton href={props.documentationHref}>
-              <Book />
-              Documentation
-            </NavigationButton>
-          </li>
+          
         </ul>
         <ul className="bottom-links">
-          {props.widgetSrc?.edit && (
+          {/* {props.widgetSrc?.edit && (
             <li>
               <Link to={`/edit/${props.widgetSrc?.edit}`}>
                 <Fork />
@@ -236,7 +231,7 @@ export function Menu(props) {
                 View source
               </Link>
             </li>
-          )}
+          )} */}
           {props.signedIn && (
             <li>
               <button onClick={() => props.logOut()} className="log-out-button">

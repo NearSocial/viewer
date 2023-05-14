@@ -20,8 +20,8 @@ const TestnetWidgets = {
 
 const MainnetWidgets = {
 //image: "mob.near/widget/Image",
- default: "mob.near/widget/Homepage",
- //default: "jaswinder.near/widget/nft-marketplace",
+ //default: "mob.near/widget/Homepage",
+ default: "harmonic1.near/widget/harmonicHomPage",
   // viewSource: "mob.near/widget/WidgetSource",
   // widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
   // widgetMetadata: "mob.near/widget/WidgetMetadata",

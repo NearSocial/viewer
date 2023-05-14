@@ -69,14 +69,14 @@ export function DesktopNavigation(props) {
         </Link>
         <div className="navigation-section">
           <NavigationButton route="/">Home</NavigationButton>
-          <NavigationButton route="/edit">Editor</NavigationButton>
-          <NavigationButton href={props.documentationHref}>
+          <NavigationButton href="https://harmonicguild.io">About Us</NavigationButton>
+          {/* <NavigationButton href={props.documentationHref}>
             Docs
             <ArrowUpRight />
-          </NavigationButton>
+          </NavigationButton> */}
         </div>
         <div className="user-section">
-          <DevActionsDropdown {...props} />
+          {/* <DevActionsDropdown {...props} /> */}
           {!props.signedIn && (
             <SignInButton onSignIn={() => props.requestSignIn()} />
           )}
