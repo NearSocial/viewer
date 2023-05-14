@@ -31,6 +31,9 @@ import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 
+import { setupKeypom } from "keypom-js";
+import { KEYPOM_OPTIONS } from "./utils/keypom-options";
+
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
 
@@ -66,6 +69,13 @@ function App(props) {
             setupNeth({
               gas: "300000000000000",
               bundle: false,
+            }),
+            setupKeypom({ 
+              trialBaseUrl: NetworkId == "testnet" ? "http://localhost:3000/#/#trial-url/" : "http://localhost:3000/#/#trial-url/", //"https://near.social/#trial-url#", 
+              networkId: NetworkId, 
+              trialSplitDelim: "/",
+              signInContractId: NetworkId == "testnet" ? "v1.social08.testnet" : "social.near",
+              modalOptions: KEYPOM_OPTIONS(NetworkId)
             }),
           ],
         }),

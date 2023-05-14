@@ -49,7 +49,7 @@ export function Navigation(props) {
         currentPage={props.currentPage}
       />
       <Link to="/" className="logo-link">
-        <NearSocialLogo />
+      <img src="https://www.harmonicguild.io/playground_assets/harmonic%20logo.svg" width={100} height={40} alt="Logo" />
       </Link>
       {props.signedIn ? (
         <NotificationWidget
