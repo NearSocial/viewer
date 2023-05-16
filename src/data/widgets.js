@@ -1,7 +1,7 @@
 const TestnetDomains = {
   "test.near.social": true,
-  "127.0.0.1": true
-  //"localhost":true
+  "127.0.0.1": true,
+  "localhost":true
 };
 
 export const NetworkId =
