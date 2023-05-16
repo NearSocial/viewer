@@ -81,8 +81,9 @@ module.exports = function (env) {
         }),
         new HTMLWebpackPlugin({
           template: `${paths.publicPath}/index.html`,
-          favicon: `${paths.publicPath}/favicon.png`,
+          favicon: `${paths.publicPath}/logoHarmonic.png`,
           robots: `${paths.publicPath}/robots.txt`,
+          publicPath: "/",
         }),
         new webpack.ProgressPlugin(),
         new webpack.ProvidePlugin({
