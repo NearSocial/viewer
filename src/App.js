@@ -31,7 +31,7 @@ import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 
-import { setupKeypom } from "keypom-js";
+import { setupKeypom } from "@keypom/selector";
 import { KEYPOM_OPTIONS } from "./utils/keypom-options";
 
 export const refreshAllowanceObj = {};
