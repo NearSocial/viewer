@@ -8532,9 +8532,9 @@ near-seed-phrase@^0.2.0:
     near-hd-key "^1.2.1"
     tweetnacl "^1.0.2"
 
-"near-social-vm@git+https://github.com/NearSocial/VM.git#2.2.0":
-  version "2.2.0"
-  resolved "git+https://github.com/NearSocial/VM.git#bf9fd1dd125ebafef0ff587dfe51ed74b1bf6fcf"
+"near-social-vm@git+https://github.com/NearSocial/VM.git#fix-compilation-error-2.2.2":
+  version "2.2.2"
+  resolved "git+https://github.com/NearSocial/VM.git#5cc6f929dff7a63790f38a5afeeea8154fbfb257"
   dependencies:
     "@braintree/sanitize-url" "6.0.0"
     "@radix-ui/react-accordion" "^1.1.1"
