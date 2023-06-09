@@ -56,10 +56,22 @@ export const onboard = init({
       rpcUrl: "https://rpc.ankr.com/polygon",
     },
     {
+      id: 80001,
+      token: "MATIC",
+      label: "Matic Testnet Mumbai",
+      rpcUrl: "https://rpc.ankr.com/polygon_mumbai",
+    },
+    {
       id: 324,
       token: "ETH",
       label: "zkSync",
       rpcUrl: "https://zksync2-mainnet.zksync.io",
+    },
+    {
+      id: 1101,
+      token: "ETH",
+      label: "Polygon zkEVM",
+      rpcUrl: "https://zkevm-rpc.com",
     },
     {
       id: 56,
