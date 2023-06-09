@@ -52,13 +52,13 @@ export const onboard = init({
     {
       id: 137,
       token: "MATIC",
-      label: "Matic Mainnet",
+      label: "Polygon Mainnet",
       rpcUrl: "https://rpc.ankr.com/polygon",
     },
     {
       id: 80001,
       token: "MATIC",
-      label: "Matic Testnet Mumbai",
+      label: "Polygon Testnet Mumbai",
       rpcUrl: "https://rpc.ankr.com/polygon_mumbai",
     },
     {
