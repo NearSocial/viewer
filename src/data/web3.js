@@ -158,12 +158,6 @@ export const onboard = init({
       rpcUrl: "https://rpc.ankr.com/celo",
     },
     {
-      id: 42220,
-      token: "CELO",
-      label: "Celo Mainnet",
-      rpcUrl: "https://rpc.ankr.com/celo",
-    },
-    {
       id: 44787,
       token: "CELO",
       label: "Celo Alfajores Testnet",
@@ -180,6 +174,30 @@ export const onboard = init({
       token: "AVAX",
       label: "Avalanche Fuji Testnet",
       rpcUrl: "https://rpc.ankr.com/avalanche_fuji",
+    },
+    {
+      id: 250,
+      token: "FTM",
+      label: "Fantom Opera",
+      rpcUrl: "https://rpc.ankr.com/fantom",
+    },
+    {
+      id: 4002,
+      token: "FTM",
+      label: "Fantom Testnet",
+      rpcUrl: "https://rpc.ankr.com/fantom_testnet",
+    },
+    {
+      id: 1284,
+      token: "GLMR",
+      label: "Moonbeam",
+      rpcUrl: "https://rpc.ankr.com/moonbeam",
+    },
+    {
+      id: 61,
+      token: "ETC",
+      label: "Ethereum Classic Mainnet",
+      rpcUrl: "https://etc.rivet.link",
     },
   ],
   appMetadata: {
