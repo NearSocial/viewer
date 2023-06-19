@@ -110,6 +110,12 @@ export const onboard = init({
       rpcUrl: "https://zkevm-rpc.com",
     },
     {
+      id: 1442,
+      token: "ETH",
+      label: "Polygon zkEVM Testnet",
+      rpcUrl: "https://rpc.public.zkevm-test.net",
+    },
+    {
       id: 42161,
       token: "ETH",
       label: "Arbitrum One Mainnet",
