@@ -44,10 +44,40 @@ export const onboard = init({
       rpcUrl: "https://rpc.ankr.com/eth_goerli",
     },
     {
-      id: "0x4e454152",
+      id: 10,
+      token: "ETH",
+      label: "Optimism",
+      rpcUrl: "https://rpc.ankr.com/optimism",
+    },
+    {
+      id: 420,
+      token: "ETH",
+      label: "Optimism Goerli Testnet",
+      rpcUrl: "https://optimism-goerli.publicnode.com",
+    },
+    {
+      id: 56,
+      token: "BNB",
+      label: "Binance Smart Chain Mainnet",
+      rpcUrl: "https://bsc.publicnode.com",
+    },
+    {
+      id: 97,
+      token: "tBNB",
+      label: "Binance Smart Chain Testnet",
+      rpcUrl: "https://bsc-testnet.publicnode.com",
+    },
+    {
+      id: 1313161554,
       token: "ETH",
       label: "Aurora Mainnet",
       rpcUrl: "https://mainnet.aurora.dev",
+    },
+    {
+      id: 1313161555,
+      token: "ETH",
+      label: "Aurora Testnet",
+      rpcUrl: "https://testnet.aurora.dev",
     },
     {
       id: 137,
@@ -62,9 +92,15 @@ export const onboard = init({
       rpcUrl: "https://rpc.ankr.com/polygon_mumbai",
     },
     {
+      id: 280,
+      token: "ETH",
+      label: "zkSync Era Testnet",
+      rpcUrl: "https://testnet.era.zksync.dev",
+    },
+    {
       id: 324,
       token: "ETH",
-      label: "zkSync",
+      label: "zkSync Era Mainnet",
       rpcUrl: "https://zksync2-mainnet.zksync.io",
     },
     {
@@ -74,16 +110,100 @@ export const onboard = init({
       rpcUrl: "https://zkevm-rpc.com",
     },
     {
-      id: 56,
-      token: "BNB",
-      label: "Binance Smart Chain Mainnet",
-      rpcUrl: "https://bsc.publicnode.com",
+      id: 1442,
+      token: "ETH",
+      label: "Polygon zkEVM Testnet",
+      rpcUrl: "https://rpc.public.zkevm-test.net",
     },
     {
       id: 42161,
       token: "ETH",
       label: "Arbitrum One Mainnet",
-      rpcUrl: "https://endpoints.omniatech.io/v1/arbitrum/one/public",
+      rpcUrl: "https://arb1.arbitrum.io/rpc",
+    },
+    {
+      id: 42170,
+      token: "ETH",
+      label: "Arbitrum Nova",
+      rpcUrl: "https://nova.arbitrum.io/rpc",
+    },
+    {
+      id: 421613,
+      token: "AGOR",
+      label: "Arbitrum Goerli",
+      rpcUrl: "https://goerli-rollup.arbitrum.io/rpc",
+    },
+    {
+      id: 25,
+      token: "CRO",
+      label: "Cronos Mainnet Beta",
+      rpcUrl: "https://evm.cronos.org",
+    },
+    {
+      id: 338,
+      token: "TCRO",
+      label: "Cronos Testnet",
+      rpcUrl: "https://evm-t3.cronos.org",
+    },
+    {
+      id: 100,
+      token: "XDAI",
+      label: "Gnosis",
+      rpcUrl: "https://rpc.ankr.com/gnosis",
+    },
+    {
+      id: 10200,
+      token: "XDAI",
+      label: "Gnosis Chiado Testnet",
+      rpcUrl: "https://rpc.chiadochain.net",
+    },
+    {
+      id: 42220,
+      token: "CELO",
+      label: "Celo Mainnet",
+      rpcUrl: "https://rpc.ankr.com/celo",
+    },
+    {
+      id: 44787,
+      token: "CELO",
+      label: "Celo Alfajores Testnet",
+      rpcUrl: "https://alfajores-forno.celo-testnet.org",
+    },
+    {
+      id: 43114,
+      token: "AVAX",
+      label: "Avalanche C-Chain",
+      rpcUrl: "https://rpc.ankr.com/avalanche",
+    },
+    {
+      id: 43113,
+      token: "AVAX",
+      label: "Avalanche Fuji Testnet",
+      rpcUrl: "https://rpc.ankr.com/avalanche_fuji",
+    },
+    {
+      id: 250,
+      token: "FTM",
+      label: "Fantom Opera",
+      rpcUrl: "https://rpc.ankr.com/fantom",
+    },
+    {
+      id: 4002,
+      token: "FTM",
+      label: "Fantom Testnet",
+      rpcUrl: "https://rpc.ankr.com/fantom_testnet",
+    },
+    {
+      id: 1284,
+      token: "GLMR",
+      label: "Moonbeam",
+      rpcUrl: "https://rpc.ankr.com/moonbeam",
+    },
+    {
+      id: 61,
+      token: "ETC",
+      label: "Ethereum Classic Mainnet",
+      rpcUrl: "https://etc.rivet.link",
     },
   ],
   appMetadata: {
@@ -98,7 +218,10 @@ export const onboard = init({
   },
 });
 
-const defaultEthersProviderContext = { useConnectWallet };
+const defaultEthersProviderContext = {
+  useConnectWallet,
+  setChain: onboard.setChain,
+};
 
 export const useEthersProviderContext = singletonHook(
   defaultEthersProviderContext,
@@ -134,6 +257,7 @@ export const useEthersProviderContext = singletonHook(
       setEthersProvider({
         provider: wallet?.provider,
         useConnectWallet,
+        setChain: onboard.setChain,
       });
     }, [wallet]);
 
