@@ -85,16 +85,6 @@ function App(props) {
   }, [initNear]);
 
   useEffect(() => {
-    if (
-      !location.search.includes("?account_id") &&
-      !location.search.includes("&account_id") &&
-      (location.search || location.href.includes("/?#"))
-    ) {
-      window.history.replaceState({}, "/", "/" + location.hash);
-    }
-  }, [location]);
-
-  useEffect(() => {
     if (!near) {
       return;
     }
