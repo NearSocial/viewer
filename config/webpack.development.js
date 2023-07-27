@@ -44,7 +44,7 @@ module.exports = () => ({
     port: 3000,
     compress: true,
     historyApiFallback: {
-      index: "index.html",
+      disableDotRule: true,
     },
   },
   plugins: [new HotModuleReplacementPlugin()],

@@ -9,7 +9,7 @@ export function useHashRouterLegacy() {
       let url = event.newURL.split("#").pop() ?? "/";
 
       if (url[0] === "/") {
-        history && history.push(url);
+        history && history.replace(url);
       }
     },
     [history]
@@ -31,7 +31,7 @@ export function useHashRouterLegacy() {
 
     if (currentUrl.includes("#")) {
       const path = currentUrl.split("#")[1];
-      history.push(path);
+      history.replace(path);
     }
   }, [history]);
 }
