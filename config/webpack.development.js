@@ -43,6 +43,9 @@ module.exports = () => ({
     static: path.resolve(__dirname, "../dist"),
     port: 3000,
     compress: true,
+    historyApiFallback: {
+      index: "index.html",
+    },
   },
   plugins: [new HotModuleReplacementPlugin()],
 });
