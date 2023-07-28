@@ -21,6 +21,7 @@ import {
   StorageType,
   toPath,
 } from "../components/Editor/FileTab";
+import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -41,6 +42,7 @@ const Layout = {
 };
 
 export default function EditorPage(props) {
+  useHashRouterLegacy();
   const { widgetSrc } = useParams();
   const history = useHistory();
   const setWidgetSrc = props.setWidgetSrc;
@@ -595,7 +597,7 @@ export default function EditorPage(props) {
                   {path && accountId && (
                     <a
                       className="btn btn-outline-primary"
-                      href={`#/${widgetPath}`}
+                      href={`/${widgetPath}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

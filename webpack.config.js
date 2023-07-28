@@ -7,7 +7,6 @@ const HTMLWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { merge } = require("webpack-merge");
 const loadPreset = require("./config/presets/loadPreset");
-const { WebpackManifestPlugin } = require("webpack-manifest-plugin");
 const loadConfig = (mode) => require(`./config/webpack.${mode}.js`)(mode);
 
 module.exports = function (env) {
@@ -83,6 +82,7 @@ module.exports = function (env) {
           template: `${paths.publicPath}/index.html`,
           favicon: `${paths.publicPath}/favicon.png`,
           robots: `${paths.publicPath}/robots.txt`,
+          publicPath: "/",
         }),
         new webpack.ProgressPlugin(),
         new webpack.ProvidePlugin({
