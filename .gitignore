@@ -28,6 +28,3 @@ yarn-error.log*
 
 target
 neardev
-
-# OS X
-.DS_Store
