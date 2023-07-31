@@ -205,6 +205,18 @@ export const onboard = init({
       label: "Ethereum Classic Mainnet",
       rpcUrl: "https://etc.rivet.link",
     },
+    {
+      id: 84531,
+      token: "ETH",
+      label: "Base Goerli Testnet",
+      rpcUrl: "https://goerli.base.org",
+    },
+    {
+      id: 8453,
+      token: "ETH",
+      label: "Base Mainnet",
+      rpcUrl: "https://mainnet.base.org",
+    },
   ],
   appMetadata: {
     name: "NEAR Social",
