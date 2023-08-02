@@ -249,7 +249,8 @@ async function profileData(env, url, data) {
 
   const name = profile?.name;
   data.raw = profile;
-  data.description = profile?.description || "";
+  data.description =
+    profile?.description || `Profile of ${accountId} on Near Social`;
   data.image = await imageToUrl(env, profile?.image);
   data.authorImage =
     data.image ||
@@ -273,7 +274,8 @@ async function widgetData(env, url, data) {
 
   const name = metadata?.name || widgetId;
   data.raw = metadata;
-  data.description = metadata?.description || "";
+  data.description =
+    metadata?.description || `Component ${name} created by ${accountId}`;
   data.image = await imageToUrl(env, metadata?.image);
   data.title = `${name} by ${accountId} | Near Social`;
   data.accountName = name;
