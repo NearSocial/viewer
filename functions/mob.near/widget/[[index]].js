@@ -127,7 +127,7 @@ async function postData(url, parts, data) {
   data.description = content?.text || "";
   data.image = imageToUrl(content?.image);
   data.authorImage = imageToUrl(authorImage);
-  data.title = `Post by ${name} | Near Social`;
+  data.title = `Post by ${name ?? accountId} | Near Social`;
   data.accountName = name;
   data.accountId = accountId;
 }
