@@ -106,9 +106,16 @@ async function socialGet(keys, blockHeight, parse) {
   return data;
 }
 
+function wrapImage(url) {
+  return url ? `https://i.near.social/large/${url}` : null;
+}
+
 function imageToUrl(image) {
   if (image?.url) {
-    return `https://i.near.social/large/${image.url}`;
+    return image.url;
+  }
+  if (image?.ipfs_cid) {
+    return `https://ipfs.near.social/ipfs/${image.ipfs_cid}`;
   }
   // TODO: Add NFT image support
   return null;
@@ -125,8 +132,8 @@ async function postData(url, parts, data) {
 
   data.raw = content;
   data.description = content?.text || "";
-  data.image = imageToUrl(content?.image);
-  data.authorImage = imageToUrl(authorImage);
+  data.image = wrapImage(imageToUrl(content?.image));
+  data.authorImage = wrapImage(imageToUrl(authorImage));
   data.title = `Post by ${name ?? accountId} | Near Social`;
   data.accountName = name;
   data.accountId = accountId;
