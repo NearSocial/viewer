@@ -72,7 +72,7 @@ async function nftToImageUrl({ contractId, tokenId }) {
   return imageUrl;
 }
 
-export async function onRequest({ request, next }) {
+export async function onRequest({ request, next, env }) {
   const url = new URL(request.url);
   const parts = url.pathname.split("/");
   if (parts.length < 5) {
@@ -80,8 +80,15 @@ export async function onRequest({ request, next }) {
   }
   const contractId = parts[3];
   const tokenId = parts[4];
+  const NftKV = env.NftKV;
 
-  const imageUrl = await nftToImageUrl({ contractId, tokenId });
+  let imageUrl = await NftKV.get(`${contractId}/${tokenId}`);
+  if (!imageUrl) {
+    imageUrl = await nftToImageUrl({ contractId, tokenId });
+    if (imageUrl) {
+      await NftKV.put(`${contractId}/${tokenId}`, imageUrl);
+    }
+  }
 
   return new Response(imageUrl);
 }
