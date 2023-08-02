@@ -121,11 +121,15 @@ function imageToUrl(image) {
   return null;
 }
 
-async function postData(url, parts, data) {
+async function postData(url, parts, data, isPost) {
   const accountId = url.searchParams.get("accountId");
   const blockHeight = url.searchParams.get("blockHeight");
   const [content, name, authorImage] = await Promise.all([
-    socialGet(`${accountId}/post/main`, blockHeight, true),
+    socialGet(
+      `${accountId}/post/${isPost ? "main" : "comment"}`,
+      blockHeight,
+      true
+    ),
     socialGet(`${accountId}/profile/name`),
     socialGet(`${accountId}/profile/image/**`),
   ]);
@@ -134,7 +138,25 @@ async function postData(url, parts, data) {
   data.description = content?.text || "";
   data.image = wrapImage(imageToUrl(content?.image));
   data.authorImage = wrapImage(imageToUrl(authorImage));
-  data.title = `Post by ${name ?? accountId} | Near Social`;
+  data.title = isPost
+    ? `Post by ${name ?? accountId} | Near Social`
+    : `Comment by ${name ?? accountId} | Near Social`;
+  data.accountName = name;
+  data.accountId = accountId;
+}
+
+async function profileData(url, parts, data) {
+  const accountId = url.searchParams.get("accountId");
+  const profile = await socialGet(`${accountId}/profile/**`);
+
+  const name = profile?.name;
+  data.raw = profile;
+  data.description = profile?.description || "";
+  data.image = wrapImage(imageToUrl(profile?.image));
+  data.authorImage = data.image;
+  data.title = name
+    ? `${name} (${accountId}) | Near Social`
+    : `${accountId} | Near Social`;
   data.accountName = name;
   data.accountId = accountId;
 }
@@ -144,7 +166,11 @@ async function generateData(url) {
   const parts = url.pathname.split("/");
   try {
     if (url.pathname === "/mob.near/widget/MainPage.Post.Page") {
-      await postData(url, parts, data);
+      await postData(url, parts, data, true);
+    } else if (url.pathname === "/mob.near/widget/MainPage.Comment.Page") {
+      await postData(url, parts, data, false);
+    } else if (url.pathname === "/mob.near/widget/ProfilePage") {
+      await profileData(url, parts, data);
     }
   } catch (e) {
     console.error(e);
