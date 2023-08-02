@@ -110,15 +110,27 @@ function wrapImage(url) {
   return url ? `https://i.near.social/large/${url}` : null;
 }
 
-function imageToUrl(image) {
+async function internalImageToUrl(image) {
   if (image?.url) {
     return image.url;
-  }
-  if (image?.ipfs_cid) {
+  } else if (image?.ipfs_cid) {
     return `https://ipfs.near.social/ipfs/${image.ipfs_cid}`;
+  } else if (image?.nft) {
+    try {
+      const { contractId, tokenId } = image.nft;
+      const request = await fetch(
+        `https://near.social/magic/nft/${contractId}/${tokenId}`
+      );
+      return request.text();
+    } catch (e) {
+      return null;
+    }
   }
-  // TODO: Add NFT image support
   return null;
+}
+
+async function imageToUrl(image) {
+  return wrapImage(await internalImageToUrl(image));
 }
 
 async function postData(url, parts, data, isPost) {
@@ -136,8 +148,10 @@ async function postData(url, parts, data, isPost) {
 
   data.raw = content;
   data.description = content?.text || "";
-  data.image = wrapImage(imageToUrl(content?.image));
-  data.authorImage = wrapImage(imageToUrl(authorImage));
+  data.image = await imageToUrl(content?.image);
+  if (!data.image) {
+    data.authorImage = await imageToUrl(authorImage);
+  }
   data.title = isPost
     ? `Post by ${name ?? accountId} | Near Social`
     : `Comment by ${name ?? accountId} | Near Social`;
@@ -152,7 +166,7 @@ async function profileData(url, parts, data) {
   const name = profile?.name;
   data.raw = profile;
   data.description = profile?.description || "";
-  data.image = wrapImage(imageToUrl(profile?.image));
+  data.image = await imageToUrl(profile?.image);
   data.authorImage = data.image;
   data.title = name
     ? `${name} (${accountId}) | Near Social`

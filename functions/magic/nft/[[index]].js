@@ -25,7 +25,7 @@ async function viewCall({ contractId, method, args }) {
 }
 
 async function nftToImageUrl({ contractId, tokenId }) {
-  const [tokenMetadata, nftMetadata] = await Promise.all([
+  const [token, nftMetadata] = await Promise.all([
     viewCall({
       contractId,
       method: "nft_token",
@@ -38,6 +38,7 @@ async function nftToImageUrl({ contractId, tokenId }) {
     }),
   ]);
 
+  const tokenMetadata = token?.metadata || {};
   const tokenMedia = tokenMetadata.media || "";
 
   let imageUrl =
