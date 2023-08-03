@@ -8,17 +8,19 @@ export const generateSitemapSources = async (env) => {
   });
   return Object.entries(data)
     .map(([accountId, widget]) =>
-      Object.entries(widget.widget).map(([widgetId, blockHeights]) =>
-        blockHeights
-          .filter((blockHeight) => blockHeight >= MinBlockHeight)
-          .map(
-            (blockHeight) =>
-              `  <url>
+      Object.entries(widget.widget)
+        .map(([widgetId, blockHeights]) =>
+          blockHeights
+            .filter((blockHeight) => blockHeight >= MinBlockHeight)
+            .map(
+              (blockHeight) =>
+                `  <url>
     <loc>https://near.social/mob.near/widget/WidgetSource?src=${accountId}/widget/${widgetId}&blockHeight=${blockHeight}</loc>
     <changefreq>never</changefreq>
   </url>`
-          )
-      )
+            )
+        )
+        .flat()
     )
     .flat()
     .join("\n");
