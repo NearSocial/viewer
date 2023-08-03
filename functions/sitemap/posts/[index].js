@@ -26,8 +26,15 @@ export async function onRequest({ request, env, next }) {
   }
   const offset = parseInt(parts[3]);
 
-  return new Response(`<?xml version="1.0" encoding="UTF-8"?>
+  return new Response(
+    `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${await generateSitemapPosts(env, offset)}
-</urlset>`);
+</urlset>`,
+    {
+      headers: {
+        "content-type": "application/xml;charset=UTF-8",
+      },
+    }
+  );
 }
