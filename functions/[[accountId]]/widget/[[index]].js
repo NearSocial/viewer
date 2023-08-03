@@ -1,4 +1,4 @@
-import { Buffer } from "node:buffer";
+import { socialGet, viewCall } from "../../common";
 
 class MetaTitleInjector {
   constructor({ title }) {
@@ -79,60 +79,6 @@ function defaultData() {
     title,
     description,
   };
-}
-
-async function socialGet(keys, blockHeight, parse) {
-  const request = await fetch("https://api.near.social/get", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      keys: [keys],
-      blockHeight,
-    }),
-  });
-  let data = await request.json();
-  const parts = keys.split("/");
-  for (let i = 0; i < parts.length; i++) {
-    const part = parts[i];
-    if (part === "*" || part === "**") {
-      break;
-    }
-    data = data?.[part];
-  }
-  if (parse) {
-    try {
-      data = JSON.parse(data);
-    } catch (e) {
-      return null;
-    }
-  }
-  return data;
-}
-
-async function viewCall({ contractId, method, args }) {
-  const res = await fetch("https://rpc.mainnet.near.org", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: "dontcare",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        finality: "final",
-        account_id: contractId,
-        method_name: method,
-        args_base64: btoa(JSON.stringify(args)),
-      },
-    }),
-  });
-  const json = await res.json();
-  const result = Buffer.from(json.result.result).toString("utf-8");
-  return JSON.parse(result);
 }
 
 async function nftToImageUrl({ contractId, tokenId }) {
@@ -282,6 +228,24 @@ async function widgetData(env, url, data) {
   data.accountId = accountId;
 }
 
+async function sourceData(env, url, data) {
+  const key = url.searchParams.get("src");
+  const parts = key.split("/");
+  const accountId = parts[0];
+  const blockHeight = url.searchParams.get("blockHeight");
+  const [source, image] = await Promise.all([
+    socialGet(key, blockHeight),
+    socialGet(`${key}/metadata/image/**`),
+  ]);
+
+  data.raw = source;
+  data.description = source;
+  data.image = null;
+  data.authorImage = await imageToUrl(env, image);
+  data.title = `Source code of ${key} at block height ${blockHeight} | Near Social`;
+  data.accountId = accountId;
+}
+
 async function generateData(env, url) {
   const data = defaultData();
   try {
@@ -291,6 +255,8 @@ async function generateData(env, url) {
       await postData(env, url, data, false);
     } else if (url.pathname === "/mob.near/widget/ProfilePage") {
       await profileData(env, url, data);
+    } else if (url.pathname === "/mob.near/widget/WidgetSource") {
+      await sourceData(env, url, data);
     } else {
       await widgetData(env, url, data);
     }

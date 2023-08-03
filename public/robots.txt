@@ -1,3 +1,4 @@
 # https://www.robotstxt.org/robotstxt.html
+Sitemap: https://near.social/sitemap/
 User-agent: *
 Disallow:
