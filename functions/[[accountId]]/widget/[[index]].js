@@ -1,4 +1,9 @@
-import { socialGet, viewCall } from "../../common";
+import {
+  socialGet,
+  imageToUrl,
+  wrapImage,
+  DefaultProfileImage,
+} from "../../common";
 
 class MetaTitleInjector {
   constructor({ title }) {
@@ -81,88 +86,6 @@ function defaultData() {
   };
 }
 
-async function nftToImageUrl({ contractId, tokenId }) {
-  const [token, nftMetadata] = await Promise.all([
-    viewCall({
-      contractId,
-      method: "nft_token",
-      args: { token_id: tokenId },
-    }),
-    viewCall({
-      contractId,
-      method: "nft_metadata",
-      args: {},
-    }),
-  ]);
-
-  const tokenMetadata = token?.metadata || {};
-  const tokenMedia = tokenMetadata.media || "";
-
-  let imageUrl =
-    tokenMedia.startsWith("https://") ||
-    tokenMedia.startsWith("http://") ||
-    tokenMedia.startsWith("data:image")
-      ? tokenMedia
-      : nftMetadata.base_uri
-      ? `${nftMetadata.base_uri}/${tokenMedia}`
-      : tokenMedia.startsWith("Qm") || tokenMedia.startsWith("ba")
-      ? `https://ipfs.near.social/ipfs/${tokenMedia}`
-      : tokenMedia;
-
-  if (!tokenMedia && tokenMetadata.reference) {
-    const metadataUrl =
-      nftMetadata.base_uri === "https://arweave.net" &&
-      !tokenMetadata.reference.startsWith("https://")
-        ? `${nftMetadata.base_uri}/${tokenMetadata.reference}`
-        : tokenMetadata.reference.startsWith("https://") ||
-          tokenMetadata.reference.startsWith("http://")
-        ? tokenMetadata.reference
-        : tokenMetadata.reference.startsWith("ar://")
-        ? `https://arweave.net/${tokenMetadata.reference.split("//")[1]}`
-        : null;
-    if (metadataUrl) {
-      const res = await fetch(metadataUrl);
-      const json = await res.json();
-      imageUrl = json.media;
-    }
-  }
-
-  return imageUrl;
-}
-
-function wrapImage(url) {
-  return url ? `https://i.near.social/large/${url}` : null;
-}
-
-async function internalImageToUrl(env, image) {
-  if (image?.url) {
-    return image.url;
-  } else if (image?.ipfs_cid) {
-    return `https://ipfs.near.social/ipfs/${image.ipfs_cid}`;
-  } else if (image?.nft) {
-    try {
-      const { contractId, tokenId } = image.nft;
-      const NftKV = env.NftKV;
-
-      let imageUrl = await NftKV.get(`${contractId}/${tokenId}`);
-      if (!imageUrl) {
-        imageUrl = await nftToImageUrl({ contractId, tokenId });
-        if (imageUrl) {
-          await NftKV.put(`${contractId}/${tokenId}`, imageUrl);
-        }
-      }
-      return imageUrl;
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  return null;
-}
-
-async function imageToUrl(env, image) {
-  return wrapImage(await internalImageToUrl(env, image));
-}
-
 async function postData(env, url, data, isPost) {
   const accountId = url.searchParams.get("accountId");
   const blockHeight = url.searchParams.get("blockHeight");
@@ -198,11 +121,7 @@ async function profileData(env, url, data) {
   data.description =
     profile?.description || `Profile of ${accountId} on Near Social`;
   data.image = await imageToUrl(env, profile?.image);
-  data.authorImage =
-    data.image ||
-    wrapImage(
-      "https://ipfs.near.social/ipfs/bafkreibmiy4ozblcgv3fm3gc6q62s55em33vconbavfd2ekkuliznaq3zm"
-    );
+  data.authorImage = data.image || wrapImage(DefaultProfileImage);
   data.title = name
     ? `${name} (${accountId}) | Near Social`
     : `${accountId} | Near Social`;
