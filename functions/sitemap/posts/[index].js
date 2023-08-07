@@ -3,19 +3,16 @@ import { socialIndex } from "../../common";
 const Limit = 50000;
 
 export const generateSitemapPosts = async (env, offset) => {
-  const posts = await socialIndex("post", "main", {
-    from: offset,
-    limit: Limit,
-  });
-  return posts
-    .map(
-      (post) =>
-        `  <url>
+  const posts = await socialIndex("post", "main", {});
+  const urls = posts.map(
+    (post) =>
+      `  <url>
     <loc>https://near.social/mob.near/widget/MainPage.Post.Page?accountId=${post.accountId}&amp;blockHeight=${post.blockHeight}</loc>
     <changefreq>never</changefreq>
   </url>`
-    )
-    .join("\n");
+  );
+  console.log("urls count", urls.length);
+  return urls.slice(offset, offset + Limit).join("\n");
 };
 
 export async function onRequest({ request, env, next }) {

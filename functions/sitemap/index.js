@@ -12,7 +12,10 @@ export async function onRequest({ request, next, env }) {
         <loc>https://near.social/sitemap/profiles/</loc>
     </sitemap>
     <sitemap>
-        <loc>https://near.social/sitemap/sources/</loc>
+        <loc>https://near.social/sitemap/sources/0</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://near.social/sitemap/sources/50000</loc>
     </sitemap>
 </sitemapindex>`,
     {
