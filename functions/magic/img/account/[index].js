@@ -16,5 +16,9 @@ export async function onRequest({ request, next, env }) {
   const destinationURL =
     (await internalImageToUrl(env, image)) || DefaultProfileImage;
 
-  return new Response(destinationURL);
+  return new Response(destinationURL, {
+    headers: {
+      "content-type": "text/plain;charset=UTF-8",
+    },
+  });
 }
