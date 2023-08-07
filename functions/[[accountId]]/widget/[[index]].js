@@ -1,4 +1,9 @@
-import { socialGet, imageToUrl, wrapImage } from "../../common";
+import {
+  socialGet,
+  imageToUrl,
+  wrapImage,
+  DefaultProfileImage,
+} from "../../common";
 
 class MetaTitleInjector {
   constructor({ title }) {

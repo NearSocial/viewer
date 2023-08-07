@@ -16,5 +16,5 @@ export async function onRequest({ request, next, env }) {
   const destinationURL =
     (await internalImageToUrl(env, image)) || DefaultProfileImage;
 
-  return Response.redirect(destinationURL, 301);
+  return await fetch(destinationURL);
 }
