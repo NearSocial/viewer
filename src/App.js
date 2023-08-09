@@ -81,7 +81,7 @@ function App(props) {
           },
         },
         config: {
-          defaultFinality: NetworkId === "Mainnet" ? "final" : undefined,
+          defaultFinality: NetworkId === "mainnet" ? "final" : undefined,
         },
       });
   }, [initNear]);
