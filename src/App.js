@@ -80,6 +80,9 @@ function App(props) {
             return <Link {...props} />;
           },
         },
+        config: {
+          defaultFinality: NetworkId === "mainnet" ? "final" : undefined,
+        },
       });
   }, [initNear]);
 
