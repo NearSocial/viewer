@@ -158,7 +158,7 @@ async function sourceData(env, url, data) {
   ]);
 
   data.raw = source;
-  data.description = source;
+  data.description = source || "The source code is not available.";
   data.image = null;
   data.authorImage = await imageToUrl(env, image);
   data.title = `Source code of ${key} at block height ${blockHeight} | Near Social`;
