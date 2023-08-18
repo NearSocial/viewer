@@ -13,8 +13,14 @@ export async function onRequest({ request, next, env }) {
   const accountId = parts[4];
   const image = await socialGet(`${accountId}/profile/image/**`);
 
-  const destinationURL =
-    (await internalImageToUrl(env, image)) || DefaultProfileImage;
+  const destinationURL = await internalImageToUrl(env, image);
+
+  if (!destinationURL) {
+    // return status 404
+    return new Response(null, {
+      status: 404,
+    });
+  }
 
   return new Response(destinationURL, {
     headers: {

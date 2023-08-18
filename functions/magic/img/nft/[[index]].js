@@ -22,5 +22,7 @@ export async function onRequest({ request, next, env }) {
           "content-type": "text/plain;charset=UTF-8",
         },
       })
-    : next();
+    : new Response(null, {
+        status: 404,
+      });
 }
