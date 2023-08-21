@@ -8,7 +8,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { merge } = require("webpack-merge");
 const loadPreset = require("./config/presets/loadPreset");
 const loadConfig = (mode) => require(`./config/webpack.${mode}.js`)(mode);
-
+//test
 module.exports = function (env) {
   const { mode = "production" } = env || {};
   return merge(
