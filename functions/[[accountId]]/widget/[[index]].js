@@ -189,7 +189,7 @@ async function generateData(env, url) {
 
 export async function onRequest({ request, next, env }) {
   const url = new URL(request.url);
-  if (url.pathname.split("/").length < 4) {
+  if (url.pathname.split("/").length < 4 || url.pathname.endsWith(".bundle.js"))
     return next();
   }
   const data = await generateData(env, url);
