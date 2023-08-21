@@ -1,3 +1,1 @@
-/:account/widget/*.bundle.js /:splat.bundle.js 200
-/:account/widget/:widget/*.bundle.js /:splat.bundle.js 200
 /*    /index.html   200
