@@ -16,6 +16,7 @@ import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
+import { setupNightly } from "@near-wallet-selector/nightly";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
 import { sanitizeUrl } from "@braintree/sanitize-url";
@@ -57,6 +58,7 @@ function App(props) {
         selector: setupWalletSelector({
           network: NetworkId,
           modules: [
+            setupNightly(),
             setupNearWallet(),
             setupMyNearWallet(),
             setupSender(),
