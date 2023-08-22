@@ -58,7 +58,6 @@ function App(props) {
         selector: setupWalletSelector({
           network: NetworkId,
           modules: [
-            setupNightly(),
             setupNearWallet(),
             setupMyNearWallet(),
             setupSender(),
@@ -68,6 +67,7 @@ function App(props) {
               gas: "300000000000000",
               bundle: false,
             }),
+              setupNightly(),
           ],
         }),
         customElements: {
