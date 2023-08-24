@@ -11,7 +11,9 @@ export default function ViewPage(props) {
   const query = useQuery();
   const [widgetProps, setWidgetProps] = useState({});
 
-  const src = widgetSrc || props.widgets.default;
+  const src =
+    widgetSrc || window?.InjectedConfig?.defaultWidget || props.widgets.default;
+  const showMenu = !window?.InjectedConfig?.hideMenu;
   const setWidgetSrc = props.setWidgetSrc;
   const viewSourceWidget = props.widgets.viewSource;
 
@@ -35,7 +37,7 @@ export default function ViewPage(props) {
     }, 1);
   }, [src, query, setWidgetSrc, viewSourceWidget]);
 
-  return (
+  return showMenu ? (
     <div className="container-xl">
       <div className="row">
         <div
@@ -45,9 +47,11 @@ export default function ViewPage(props) {
             paddingTop: "var(--body-top-padding)",
           }}
         >
-          <Widget key={src} src={src} props={widgetProps} />{" "}
+          <Widget key={src} src={src} props={widgetProps} />
         </div>
       </div>
     </div>
+  ) : (
+    <Widget key={src} src={src} props={widgetProps} />
   );
 }
