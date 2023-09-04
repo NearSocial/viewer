@@ -143,6 +143,18 @@ function App(props) {
     );
   }, [account]);
 
+  useEffect(() => {
+    const addContractConnection = async () => {
+      const wallet = await (await near.selector).wallet();
+      const queryParams = new URLSearchParams(window.location.search);
+      if(queryParams.has('transactionHashes')) {
+        // if detecting redirect from wallet, add contract connection to prevent further wallet confirmations
+        // TODO: check what contract that was actually invoked instead of the hardcoding below ( which is just a PoC )
+        wallet.addContractConnection('devgovgigs.petersalomonsen.near', []);
+      }      
+    }
+    addContractConnection();
+  }, [near]);
   const passProps = {
     refreshAllowance: () => refreshAllowance(),
     setWidgetSrc,
