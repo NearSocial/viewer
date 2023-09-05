@@ -214,8 +214,20 @@ export const onboard = init({
     {
       id: 8453,
       token: "ETH",
-      label: "Base Mainnet",
+      label: "Base",
       rpcUrl: "https://mainnet.base.org",
+    },
+    {
+      id: 5001,
+      token: "MNT",
+      label: "Mantle Testnet",
+      rpcUrl: "https://rpc.testnet.mantle.xyz",
+    },
+    {
+      id: 5000,
+      token: "MNT",
+      label: "Mantle",
+      rpcUrl: "https://rpc.mantle.xyz",
     },
   ],
   appMetadata: {
