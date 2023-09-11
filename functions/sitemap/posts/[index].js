@@ -7,8 +7,8 @@ export const generateSitemapPosts = async (env, offset) => {
   const urls = posts.map(
     (post) =>
       `  <url>
-    <loc>https://near.social/mob.near/widget/MainPage.Post.Page?accountId=${post.accountId}&amp;blockHeight=${post.blockHeight}</loc>
-    <changefreq>never</changefreq>
+    <loc>https://near.social/mob.near/widget/MainPage.N.Post.Page?accountId=${post.accountId}&amp;blockHeight=${post.blockHeight}</loc>
+    <changefreq>monthly</changefreq>
   </url>`
   );
   console.log("urls count", urls.length);
