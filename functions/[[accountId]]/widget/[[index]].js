@@ -168,9 +168,16 @@ async function sourceData(env, url, data) {
 async function generateData(env, url) {
   const data = defaultData();
   try {
-    if (url.pathname === "/mob.near/widget/MainPage.Post.Page") {
+    if (
+      url.pathname === "/mob.near/widget/MainPage.Post.Page" ||
+      url.pathname === "/mob.near/widget/MainPage.N.Post.Page" ||
+      url.pathname === "/near/widget/PostPage"
+    ) {
       await postData(env, url, data, true);
-    } else if (url.pathname === "/mob.near/widget/MainPage.Comment.Page") {
+    } else if (
+      url.pathname === "/mob.near/widget/MainPage.Comment.Page" ||
+      url.pathname === "/mob.near/widget/MainPage.N.Comment.Page"
+    ) {
       await postData(env, url, data, false);
     } else if (url.pathname === "/mob.near/widget/ProfilePage") {
       await profileData(env, url, data);
