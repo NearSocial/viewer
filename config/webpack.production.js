@@ -47,6 +47,13 @@ module.exports = () => {
             {
               // compiles Sass to CSS
               loader: "sass-loader",
+              options: {
+                // Prefer `dart-sass`
+                implementation: require("sass"),
+                sassOptions: {
+                  quietDeps: true,
+                },
+              },
             },
           ],
         },
