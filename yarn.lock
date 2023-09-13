@@ -7074,11 +7074,6 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-lodash.clonedeep@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
-  integrity sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==
-
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -7915,9 +7910,9 @@ near-seed-phrase@0.2.0:
     near-hd-key "^1.2.1"
     tweetnacl "^1.0.2"
 
-"near-social-vm@git+https://github.com/NearSocial/VM.git#react-use-state":
-  version "2.3.2"
-  resolved "git+https://github.com/NearSocial/VM.git#837c9f7af8edf577b8d87f38c71ad916ae58463d"
+"near-social-vm@git+https://github.com/NearSocial/VM.git#2.4.0":
+  version "2.4.0"
+  resolved "git+https://github.com/NearSocial/VM.git#9f8acccceda49a27efc3af423121a4ac741032a7"
   dependencies:
     "@braintree/sanitize-url" "6.0.0"
     "@radix-ui/react-accordion" "^1.1.1"
@@ -7960,7 +7955,7 @@ near-seed-phrase@0.2.0:
     idb "^7.1.1"
     iframe-resizer-react "^1.1.0"
     local-storage "^2.0.0"
-    lodash.clonedeep "^4.5.0"
+    lodash "^4.17.21"
     mdast-util-find-and-replace "^2.0.0"
     nanoid "^4.0.1"
     prettier "^2.7.1"
