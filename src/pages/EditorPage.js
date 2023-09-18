@@ -26,6 +26,7 @@ import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
 const WidgetPropsKey = LsKey + "widgetProps:";
+const EditorUncommittedPreviewsKey = LsKey + "editorUncommittedPreviews:";
 
 const DefaultEditorCode = "return <div>Hello World</div>;";
 
@@ -55,6 +56,10 @@ export default function EditorPage(props) {
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [showOpenModal, setShowOpenModal] = useState(false);
   const [allSaved, setAllSaved] = useState({});
+  const [uncommittedPreviews, setUncommittedPreviews] = useState(
+    ls.get(EditorUncommittedPreviewsKey) ?? false
+  );
+  const [widgetConfig, setWidgetConfig] = useState(undefined);
 
   const [renderCode, setRenderCode] = useState(code);
   const [widgetProps, setWidgetProps] = useState(
@@ -181,9 +186,9 @@ export default function EditorPage(props) {
     [updateCode, addToFiles]
   );
 
-  const updateSaved = useCallback((jp, saved) => {
+  const updateSaved = useCallback((jp, saved, localCode) => {
     setAllSaved((allSaved) => {
-      return Object.assign({}, allSaved, { [jp]: saved });
+      return Object.assign({}, allSaved, { [jp]: saved || localCode });
     });
   }, []);
 
@@ -321,8 +326,8 @@ export default function EditorPage(props) {
   const closeCommitted = useCallback(
     (path, allSaved) => {
       setFiles((files) => {
-        files = files.filter((file) => !allSaved[JSON.stringify(file)]);
-        if (allSaved[JSON.stringify(path)]) {
+        files = files.filter((file) => allSaved[JSON.stringify(file)] !== true);
+        if (allSaved[JSON.stringify(path)] === true) {
           if (files.length > 0) {
             openFile(files[files.length - 1], undefined);
           } else {
@@ -346,6 +351,36 @@ export default function EditorPage(props) {
       setLayout(layout);
     },
     [setLayout, tab, setTab]
+  );
+
+  const pathToSrc = useCallback(
+    (path) => {
+      return `${accountId}/${path?.type}/${path?.name}`;
+    },
+    [accountId]
+  );
+
+  const generateWidgetConfig = useCallback(
+    (uncommittedPreviews) => {
+      return uncommittedPreviews
+        ? {
+            redirectMap: Object.fromEntries(
+              Object.entries(allSaved)
+                .filter(([jpath, code]) => code !== true)
+                .map(([jpath, code]) => {
+                  const path = JSON.parse(jpath);
+                  return [
+                    pathToSrc(path),
+                    {
+                      code,
+                    },
+                  ];
+                })
+            ),
+          }
+        : undefined;
+    },
+    [allSaved, pathToSrc]
   );
 
   const widgetName = path?.name;
@@ -549,6 +584,9 @@ export default function EditorPage(props) {
                       }`}
                       aria-current="page"
                       onClick={() => {
+                        setWidgetConfig(
+                          generateWidgetConfig(uncommittedPreviews)
+                        );
                         setRenderCode(code);
                         setTab(Tab.Widget);
                       }}
@@ -575,6 +613,9 @@ export default function EditorPage(props) {
                   <button
                     className="btn btn-success"
                     onClick={() => {
+                      setWidgetConfig(
+                        generateWidgetConfig(uncommittedPreviews)
+                      );
                       setRenderCode(code);
                       if (layout === Layout.Tabs) {
                         setTab(Tab.Widget);
@@ -596,6 +637,7 @@ export default function EditorPage(props) {
                   </button>
                   {path && accountId && (
                     <a
+                      key="open-comp"
                       className="btn btn-outline-primary"
                       href={`/${widgetPath}`}
                       target="_blank"
@@ -604,6 +646,24 @@ export default function EditorPage(props) {
                       Open Component in a new tab
                     </a>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const v = !uncommittedPreviews;
+                      ls.set(EditorUncommittedPreviewsKey, v);
+                      setUncommittedPreviews(v);
+                      setWidgetConfig(generateWidgetConfig(v));
+                    }}
+                    className={`btn btn-outline-secondary ${
+                      uncommittedPreviews ? "active" : ""
+                    }`}
+                    data-toggle="button"
+                    aria-pressed={uncommittedPreviews}
+                    title="When enabled, the preview uses uncommitted code from all opened files"
+                  >
+                    <i className="bi bi-asterisk"></i> Multi-file previews (
+                    {uncommittedPreviews ? "ON" : "OFF"})
+                  </button>
                 </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
@@ -659,6 +719,7 @@ export default function EditorPage(props) {
                     {renderCode ? (
                       <Widget
                         key={`preview-${jpath}`}
+                        config={widgetConfig}
                         code={renderCode}
                         props={parsedWidgetProps}
                       />
