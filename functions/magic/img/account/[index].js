@@ -16,9 +16,9 @@ export async function onRequest({ request, next, env }) {
   const destinationURL = await internalImageToUrl(env, image);
 
   if (!destinationURL) {
-    // return status 404
-    return new Response(null, {
-      status: 404,
+    // return status 203, which means "non-authoritative information"
+    return new Response(DefaultProfileImage, {
+      status: 203,
     });
   }
 
