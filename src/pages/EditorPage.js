@@ -659,6 +659,7 @@ export default function EditorPage(props) {
                     }`}
                     data-toggle="button"
                     aria-pressed={uncommittedPreviews}
+                    title="When ON, the preview uses uncommitted code from all opened files"
                   >
                     <i className="bi bi-asterisk"></i> Multi-file previews (
                     {uncommittedPreviews ? "ON" : "OFF"})
