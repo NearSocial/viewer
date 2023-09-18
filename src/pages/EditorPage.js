@@ -660,7 +660,7 @@ export default function EditorPage(props) {
                     data-toggle="button"
                     aria-pressed={uncommittedPreviews}
                   >
-                    <i className="bi bi-asterisk"></i> Uncommitted previews (
+                    <i className="bi bi-asterisk"></i> Multi-file previews (
                     {uncommittedPreviews ? "ON" : "OFF"})
                   </button>
                 </div>
