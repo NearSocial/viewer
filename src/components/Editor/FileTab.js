@@ -82,8 +82,8 @@ export function FileTab(props) {
   }, [localCode, chainCode]);
 
   useEffect(() => {
-    updateSaved && updateSaved(jp, !saved);
-  }, [saved, updateSaved]);
+    updateSaved && updateSaved(jp, !saved, localCode);
+  }, [saved, updateSaved, localCode]);
 
   return (
     <Nav.Item>
