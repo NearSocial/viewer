@@ -3,7 +3,7 @@ import ls from "local-storage";
 import prettier from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
-import Editor from "@monaco-editor/react";
+import Editor, { useMonaco } from "@monaco-editor/react";
 import {
   Widget,
   useCache,
@@ -22,6 +22,7 @@ import {
   toPath,
 } from "../components/Editor/FileTab";
 import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
+import vmTypesDeclaration from "raw-loader!near-social-vm-types";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -76,6 +77,18 @@ export default function EditorPage(props) {
   const [layout, setLayoutState] = useState(
     ls.get(EditorLayoutKey) || Layout.Tabs
   );
+
+  const monaco = useMonaco();
+
+  useEffect(() => {
+    if (monaco) {
+      console.log("here is the monaco instance:", monaco);
+      monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+      monaco.languages.typescript.javascriptDefaults.addExtraLib(
+        vmTypesDeclaration
+      );
+    }
+  }, [monaco]);
 
   const setLayout = useCallback(
     (layout) => {
