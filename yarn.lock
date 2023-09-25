@@ -7920,9 +7920,9 @@ near-social-vm-types@^1.0.0:
   resolved "https://registry.yarnpkg.com/near-social-vm-types/-/near-social-vm-types-1.0.0.tgz#721494a863d2c0d64da2a43d80224e4080b690db"
   integrity sha512-K5CxfiiKc7evzFb/1BGBOD2x4QqnEBuVaHkgRsRTGv02ctLkxA/Xf892SornWSkD75Hf0s9j/jeM5PpMfXcM9A==
 
-"near-social-vm@git+https://github.com/NearSocial/VM.git#2.4.2":
+"near-social-vm@git+https://github.com/NearSocial/VM.git#global-inject":
   version "2.4.2"
-  resolved "git+https://github.com/NearSocial/VM.git#a6ed652ff5ea296321e8a0eba09239da160cfa7b"
+  resolved "git+https://github.com/NearSocial/VM.git#6ad83eee4331cd059dd5de504bda1ac2745ef8a1"
   dependencies:
     "@braintree/sanitize-url" "6.0.0"
     "@radix-ui/react-accordion" "^1.1.1"
