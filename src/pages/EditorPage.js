@@ -77,12 +77,12 @@ export default function EditorPage(props) {
   const [layout, setLayoutState] = useState(
     ls.get(EditorLayoutKey) || Layout.Tabs
   );
+  const [previewKey, setPreviewKey] = useState("");
 
   const monaco = useMonaco();
 
   useEffect(() => {
     if (monaco) {
-      console.log("here is the monaco instance:", monaco);
       monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
       monaco.languages.typescript.javascriptDefaults.addExtraLib(
         vmTypesDeclaration
@@ -419,6 +419,12 @@ export default function EditorPage(props) {
   const widgetPath = `${accountId}/${path?.type}/${path?.name}`;
   const jpath = JSON.stringify(path);
 
+  const renderPreview = (code) => {
+    setWidgetConfig(generateWidgetConfig(uncommittedPreviews));
+    setRenderCode(code);
+    setPreviewKey(`preview-${Date.now()}`);
+  };
+
   return (
     <div className="container-fluid mt-1">
       <RenameModal
@@ -597,10 +603,7 @@ export default function EditorPage(props) {
                       }`}
                       aria-current="page"
                       onClick={() => {
-                        setWidgetConfig(
-                          generateWidgetConfig(uncommittedPreviews)
-                        );
-                        setRenderCode(code);
+                        renderPreview(code);
                         setTab(Tab.Widget);
                       }}
                     >
@@ -626,10 +629,7 @@ export default function EditorPage(props) {
                   <button
                     className="btn btn-success"
                     onClick={() => {
-                      setWidgetConfig(
-                        generateWidgetConfig(uncommittedPreviews)
-                      );
-                      setRenderCode(code);
+                      renderPreview(code);
                       if (layout === Layout.Tabs) {
                         setTab(Tab.Widget);
                       }
@@ -731,7 +731,7 @@ export default function EditorPage(props) {
                   <div className="d-inline-block position-relative overflow-hidden">
                     {renderCode ? (
                       <Widget
-                        key={`preview-${jpath}`}
+                        key={`${previewKey}-${jpath}`}
                         config={widgetConfig}
                         code={renderCode}
                         props={parsedWidgetProps}
