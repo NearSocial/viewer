@@ -1,5 +1,9 @@
 @import "bootstrap";
 
+body {
+  overflow-y: scroll;
+}
+
 body, html {
   -webkit-font-smoothing: antialiased;
 }
