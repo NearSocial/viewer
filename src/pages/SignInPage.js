@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useAccount } from "near-social-vm";
-import { Widget } from "../../../VM";
+import { Widget } from "near-social-vm";
 import { useHistory } from "react-router-dom";
 import * as nearAPI from "near-api-js";
 import { NetworkId } from "../data/widgets";
@@ -19,7 +18,6 @@ const WalletSelectorAuthKey = "near_app_wallet_auth_key";
 
 export default function SignInPage(props) {
   const [params, setParams] = useState({});
-  const account = useAccount();
   const history = useHistory();
 
   useEffect(() => {
