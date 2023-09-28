@@ -8,6 +8,8 @@ import { NavLink } from "react-router-dom";
 import PretendModal from "../PretendModal";
 import { Pretend } from "../../icons/Pretend";
 import { StopPretending } from "../../icons/StopPretending";
+import { QR } from "../../icons/QR";
+import MobileQRModal from "../MobileQRModal";
 
 const StyledDropdown = styled.div`
   button,
@@ -101,6 +103,7 @@ export function UserDropdown(props) {
   }, [near]);
 
   const [showPretendModal, setShowPretendModal] = React.useState(false);
+  const [showMobileQR, setShowMobileQR] = React.useState(false);
 
   return (
     <>
@@ -155,7 +158,7 @@ export function UserDropdown(props) {
             </button>
           </li>
           {account.pretendAccountId ? (
-            <li>
+            <li key="pretend">
               <button
                 className="dropdown-item"
                 type="button"
@@ -167,7 +170,7 @@ export function UserDropdown(props) {
               </button>
             </li>
           ) : (
-            <li>
+            <li key="stop-pretend">
               <button
                 className="dropdown-item"
                 type="button"
@@ -178,6 +181,16 @@ export function UserDropdown(props) {
               </button>
             </li>
           )}
+          <li>
+            <button
+              className="dropdown-item"
+              type="button"
+              onClick={() => setShowMobileQR(true)}
+            >
+              <QR />
+              Show QR for mobile signin
+            </button>
+          </li>
           <li>
             <button
               className="dropdown-item"
@@ -194,6 +207,10 @@ export function UserDropdown(props) {
         show={showPretendModal}
         onHide={() => setShowPretendModal(false)}
         widgets={props.widgets}
+      />
+      <MobileQRModal
+        show={showMobileQR}
+        onHide={() => setShowMobileQR(false)}
       />
     </>
   );
