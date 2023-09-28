@@ -31,6 +31,7 @@
     "near-social-vm": "git+https://github.com/NearSocial/VM.git#2.4.2",
     "near-social-vm-types": "^1.0.0",
     "prettier": "^2.7.1",
+    "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-bootstrap-typeahead": "^6.1.2",

@@ -14,6 +14,7 @@ const TestnetWidgets = {
   profileImage: "eugenethedream/widget/ProfileImage",
   profilePage: "eugenethedream/widget/Profile",
   profileName: "eugenethedream/widget/ProfileName",
+  profileInlineBlock: "eugenethedream/widget/Profile",
   notificationButton: "eugenethedream/widget/NotificationButton",
 };
 

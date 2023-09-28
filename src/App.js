@@ -31,6 +31,7 @@ import Big from "big.js";
 import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
+import SignInPage from "./pages/SignInPage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -67,7 +68,7 @@ function App(props) {
               gas: "300000000000000",
               bundle: false,
             }),
-              setupNightly(),
+            setupNightly(),
           ],
         }),
         customElements: {
@@ -164,6 +165,10 @@ function App(props) {
       <EthersProviderContext.Provider value={ethersProviderContext}>
         <Router basename={process.env.PUBLIC_URL}>
           <Switch>
+            <Route path={"/signin"}>
+              <NavigationWrapper {...passProps} />
+              <SignInPage {...passProps} />
+            </Route>
             <Route path={"/embed/:widgetSrc*"}>
               <EmbedPage {...passProps} />
             </Route>
