@@ -188,7 +188,7 @@ export function UserDropdown(props) {
               onClick={() => setShowMobileQR(true)}
             >
               <QR />
-              Show QR for mobile signin
+              Mobile Sign-in QR
             </button>
           </li>
           <li>
