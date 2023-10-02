@@ -86,17 +86,23 @@ export async function viewCall({ contractId, method, args }) {
 
 export async function nftToImageUrl({ contractId, tokenId }) {
   const [token, nftMetadata] = await Promise.all([
-    viewCall({
-      contractId,
-      method: "nft_token",
-      args: { token_id: tokenId },
-    }),
+    tokenId
+      ? viewCall({
+          contractId,
+          method: "nft_token",
+          args: { token_id: tokenId },
+        })
+      : Promise.resolve(null),
     viewCall({
       contractId,
       method: "nft_metadata",
       args: {},
     }),
   ]);
+
+  if (!tokenId) {
+    return nftMetadata.icon;
+  }
 
   const tokenMetadata = token?.metadata || {};
   const tokenMedia = tokenMetadata.media || "";
@@ -146,12 +152,13 @@ export async function internalImageToUrl(env, image) {
     try {
       const { contractId, tokenId } = image.nft;
       const NftKV = env.NftKV;
+      const path = tokenId ? `${contractId}/${tokenId}` : contractId;
 
-      let imageUrl = await NftKV.get(`${contractId}/${tokenId}`);
+      let imageUrl = await NftKV.get(path);
       if (!imageUrl) {
         imageUrl = await nftToImageUrl({ contractId, tokenId });
         if (imageUrl) {
-          await NftKV.put(`${contractId}/${tokenId}`, imageUrl);
+          await NftKV.put(path, imageUrl);
         }
       }
       return imageUrl;

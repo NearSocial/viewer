@@ -3,7 +3,7 @@ import { internalImageToUrl } from "../../../common";
 export async function onRequest({ request, next, env }) {
   const url = new URL(request.url);
   const parts = url.pathname.split("/");
-  if (parts.length !== 6) {
+  if (parts.length !== 5 && parts.length !== 6) {
     return next();
   }
   const contractId = parts[4];
