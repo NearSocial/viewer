@@ -64,7 +64,13 @@ export function DesktopNavigation(props) {
   return (
     <StyledNavigation>
       <div className="container">
-        <Link to="/" className="logo-link">
+        <Link
+          to="/"
+          className="logo-link"
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
           <Logotype />
         </Link>
         <div className="navigation-section">

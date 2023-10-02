@@ -42,11 +42,11 @@
   "scripts": {
     "serve": "webpack serve",
     "webpack": "webpack",
-    "dev": "npm run serve -- --env mode=development",
-    "prod": "npm run webpack -- --env mode=production",
-    "prod:analyze": "npm run prod -- --env presets=analyze",
-    "build": "npm run prod",
-    "start": "npm run dev"
+    "dev": "yarn run serve -- --env mode=development",
+    "prod": "yarn run webpack -- --env mode=production",
+    "prod:analyze": "yarn run prod -- --env presets=analyze",
+    "build": "yarn run prod",
+    "start": "yarn run dev"
   },
   "eslintConfig": {
     "extends": [
