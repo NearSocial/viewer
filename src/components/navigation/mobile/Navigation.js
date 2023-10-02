@@ -48,7 +48,13 @@ export function Navigation(props) {
         onClick={props.onClickShowMenu}
         currentPage={props.currentPage}
       />
-      <Link to="/" className="logo-link">
+      <Link
+        to="/"
+        className="logo-link"
+        onClick={() => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+      >
         <NearSocialLogo />
       </Link>
       {props.signedIn ? (
