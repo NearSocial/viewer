@@ -27,6 +27,7 @@
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.9.0",
     "collections": "^5.1.12",
+    "emmet-monaco-es": "^5.3.0",
     "error-polyfill": "^0.1.2",
     "local-storage": "^2.0.0",
     "monaco-jsx-highlighter": "^2.0.4",

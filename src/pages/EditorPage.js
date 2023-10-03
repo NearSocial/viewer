@@ -23,6 +23,7 @@ import {
 } from "../components/Editor/FileTab";
 import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import vmTypesDeclaration from "raw-loader!near-social-vm-types";
+import { emmetJSX } from "emmet-monaco-es";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -493,6 +494,7 @@ export default function EditorPage(props) {
 
   const handleMount = useCallback((monacoEditor, monaco) => {
     activateMonacoJSXHighlighter(monacoEditor, monaco);
+    emmetJSX(monaco);
   }, []);
 
 
