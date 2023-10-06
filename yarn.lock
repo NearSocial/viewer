@@ -7922,7 +7922,7 @@ near-social-vm-types@^1.0.0:
 
 "near-social-vm@git+https://github.com/NearSocial/VM.git#dev":
   version "2.4.2"
-  resolved "git+https://github.com/NearSocial/VM.git#b89a1488e4532ceec2f9ce251072b52a71815d5b"
+  resolved "git+https://github.com/NearSocial/VM.git#def485944376b119a399ec39934888d15f5374e2"
   dependencies:
     "@braintree/sanitize-url" "6.0.0"
     "@radix-ui/react-accordion" "^1.1.1"
