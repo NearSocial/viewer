@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useAccount } from "near-social-vm";
 import { QRCodeSVG } from "qrcode.react";
-import { NetworkId } from "../../data/widgets";
-import * as nearAPI from "near-api-js";
+import { getSocialKeyPair } from "../../data/near";
 
 export default function MobileQRModal(props) {
   const account = useAccount();
@@ -15,8 +14,7 @@ export default function MobileQRModal(props) {
   useEffect(() => {
     (async () => {
       const domain = new URL(window.location.href).origin;
-      const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
-      const keyPair = await keyStore.getKey(NetworkId, account.accountId);
+      const keyPair = await getSocialKeyPair(account.accountId);
       return `${domain}/signin#?a=${account.accountId}&k=${keyPair.toString()}`;
     })().then(setUrl);
   }, [account]);
