@@ -32,6 +32,7 @@ import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
+import { wrapWalletSelector } from "./data/wrappedSelector";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -56,21 +57,23 @@ function App(props) {
     initNear &&
       initNear({
         networkId: NetworkId,
-        selector: setupWalletSelector({
-          network: NetworkId,
-          modules: [
-            setupNearWallet(),
-            setupMyNearWallet(),
-            setupSender(),
-            setupHereWallet(),
-            setupMeteorWallet(),
-            setupNeth({
-              gas: "300000000000000",
-              bundle: false,
-            }),
-            setupNightly(),
-          ],
-        }),
+        selector: wrapWalletSelector(
+          setupWalletSelector({
+            network: NetworkId,
+            modules: [
+              setupNearWallet(),
+              setupMyNearWallet(),
+              setupSender(),
+              setupHereWallet(),
+              setupMeteorWallet(),
+              setupNeth({
+                gas: "300000000000000",
+                bundle: false,
+              }),
+              setupNightly(),
+            ],
+          })
+        ),
         customElements: {
           Link: (props) => {
             if (!props.to && props.href) {
