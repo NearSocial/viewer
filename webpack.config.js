@@ -72,12 +72,7 @@ module.exports = function (env) {
               from: paths.publicPath,
               to: "./",
               globOptions: {
-                ignore: [
-                  "**/*.DS_Store",
-                  "**/index.html",
-                  "**/favicon.png",
-                  "**/manifest.json",
-                ],
+                ignore: ["**/*.DS_Store", "**/index.html", "**/favicon.png"],
               },
               noErrorOnMissing: true,
             },
@@ -93,7 +88,7 @@ module.exports = function (env) {
           process: "process/browser",
           Buffer: [require.resolve("buffer/"), "Buffer"],
         }),
-        new ManifestPlugin.WebpackManifestPlugin(),
+        // new ManifestPlugin.WebpackManifestPlugin(),
       ],
     },
     loadConfig(mode),
