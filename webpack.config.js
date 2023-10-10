@@ -70,9 +70,14 @@ module.exports = function (env) {
           patterns: [
             {
               from: paths.publicPath,
-              to: "assets",
+              to: "./",
               globOptions: {
-                ignore: ["*.DS_Store"],
+                ignore: [
+                  "**/*.DS_Store",
+                  "**/index.html",
+                  "**/favicon.png",
+                  "**/manifest.json",
+                ],
               },
               noErrorOnMissing: true,
             },
@@ -81,7 +86,6 @@ module.exports = function (env) {
         new HTMLWebpackPlugin({
           template: `${paths.publicPath}/index.html`,
           favicon: `${paths.publicPath}/favicon.png`,
-          robots: `${paths.publicPath}/robots.txt`,
           publicPath: "/",
         }),
         new webpack.ProgressPlugin(),
