@@ -1,6 +1,6 @@
 {
-  "short_name": "Near Social",
-  "name": "Near Social",
+  "short_name": "BDAO",
+  "name": "Build DAO",
   "icons": [
     {
       "src": "app.png",
@@ -9,6 +9,6 @@
     }
   ],
   "display": "standalone",
-  "theme_color": "#151718",
+  "theme_color": "#000000",
   "background_color": "#ffffff"
 }

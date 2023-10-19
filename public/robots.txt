@@ -1,4 +1,4 @@
 # https://www.robotstxt.org/robotstxt.html
-Sitemap: https://near.social/sitemap/
+Sitemap: https://nearbuilders.org/sitemap/
 User-agent: *
 Disallow: /magic/

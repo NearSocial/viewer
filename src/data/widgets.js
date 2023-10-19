@@ -18,15 +18,16 @@ const TestnetWidgets = {
   notificationButton: "eugenethedream/widget/NotificationButton",
 };
 
+
 const MainnetWidgets = {
   image: "mob.near/widget/Image",
-  default: "mob.near/widget/Homepage",
+  default: "build.sputnik-dao.near/widget/community",
   viewSource: "mob.near/widget/WidgetSource",
   widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
   widgetMetadata: "mob.near/widget/WidgetMetadata",
   profileImage: "mob.near/widget/ProfileImage",
   notificationButton: "mob.near/widget/NotificationButton",
-  profilePage: "mob.near/widget/ProfilePage",
+  profilePage: "near/widget/ProfilePage",
   profileName: "patrick.near/widget/ProfileName",
   editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
   profileInlineBlock: "mob.near/widget/Profile.InlineBlock",

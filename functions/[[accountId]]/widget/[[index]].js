@@ -76,10 +76,10 @@ class NoscriptDescriptionInjector {
 }
 
 function defaultData() {
-  const image = "https://near.social/assets/logo.png";
-  const title = "Near Social";
+  const image = "https://nearbuilders.org/assets/logo.png";
+  const title = "Build DAO";
   const description =
-    "Decentralized Customizable Social Network on NEAR Protocol";
+    "Support Systems for Open Web Developers";
   return {
     image,
     title,

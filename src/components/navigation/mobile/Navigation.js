@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { MobileMenuButton } from "./MobileMenuButton";
-import { NearSocialLogo } from "../../icons/NearSocialLogo";
+import { Logotype } from "../Logotype";
 import { NotificationWidget } from "../NotificationWidget";
 import { SignInButton } from "../SignInButton";
 
@@ -55,7 +55,7 @@ export function Navigation(props) {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }}
       >
-        <NearSocialLogo />
+        <Logotype />
       </Link>
       {props.signedIn ? (
         <NotificationWidget

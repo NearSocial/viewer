@@ -7,7 +7,7 @@ export const generateSitemapWidgets = async (env) => {
       Object.keys(widget.widget).map(
         (widgetId) =>
           `  <url>
-    <loc>https://near.social/${accountId}/widget/${widgetId}</loc>
+    <loc>https://nearbuilders.org/${accountId}/widget/${widgetId}</loc>
     <changefreq>monthly</changefreq>
   </url>`
       )

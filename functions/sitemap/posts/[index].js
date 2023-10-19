@@ -7,7 +7,7 @@ export const generateSitemapPosts = async (env, offset) => {
   const urls = posts.map(
     (post) =>
       `  <url>
-    <loc>https://near.social/mob.near/widget/MainPage.N.Post.Page?accountId=${post.accountId}&amp;blockHeight=${post.blockHeight}</loc>
+    <loc>https://nearbuilders.org/mob.near/widget/MainPage.N.Post.Page?accountId=${post.accountId}&amp;blockHeight=${post.blockHeight}</loc>
     <changefreq>monthly</changefreq>
   </url>`
   );

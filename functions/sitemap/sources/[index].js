@@ -16,7 +16,7 @@ export const generateSitemapSources = async (env, offset) => {
             .map(
               (blockHeight) =>
                 `  <url>
-    <loc>https://near.social/mob.near/widget/WidgetSource?src=${accountId}/widget/${widgetId}&amp;blockHeight=${blockHeight}</loc>
+    <loc>https://nearbuilders.org/mob.near/widget/WidgetSource?src=${accountId}/widget/${widgetId}&amp;blockHeight=${blockHeight}</loc>
     <changefreq>never</changefreq>
   </url>`
             )
