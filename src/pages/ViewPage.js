@@ -41,7 +41,7 @@ export default function ViewPage(props) {
     <div className="container-xl">
       <div className="row">
         <div
-          className="d-inline-block position-relative overflow-hidden"
+          className="position-relative"
           style={{
             "--body-top-padding": "24px",
             paddingTop: "var(--body-top-padding)",
