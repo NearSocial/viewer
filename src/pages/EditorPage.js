@@ -76,7 +76,7 @@ export default function EditorPage(props) {
 
   const [tab, setTab] = useState(Tab.Editor);
   const [layout, setLayoutState] = useState(
-    ls.get(EditorLayoutKey) || Layout.Tabs
+    ls.get(EditorLayoutKey) || Layout.Split
   );
   const [previewKey, setPreviewKey] = useState("");
 
