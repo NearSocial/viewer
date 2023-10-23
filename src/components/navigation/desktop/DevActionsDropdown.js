@@ -30,7 +30,7 @@ const StyledDropdown = styled.div`
       justify-content: space-evenly;
   
       div {
-        background-color: var(--slate-dark-11);;
+        background-color: var(--slate-dark-11);
         height: 2px;
         width: 100%;
         border-radius: 30px;
