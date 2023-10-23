@@ -4,10 +4,8 @@ import { Link } from "react-router-dom";
 import { Logotype } from "../Logotype";
 import { NavigationButton } from "../NavigationButton";
 import { ArrowUpRight } from "../../icons/ArrowUpRight";
-import { SignInButton } from "../SignInButton";
-import { UserDropdown } from "./UserDropdown";
 import { DevActionsDropdown } from "./DevActionsDropdown";
-import { NotificationWidget } from "../NotificationWidget";
+import { Widget } from "near-social-vm";
 
 const StyledNavigation = styled.div`
   position: sticky;
@@ -15,9 +13,14 @@ const StyledNavigation = styled.div`
   left: 0;
   right: 0;
   width: 100%;
-  background-color: var(--slate-dark-1);
   z-index: 1000;
   padding: 12px 0;
+  background: linear-gradient(
+      252.46deg,
+      rgba(82, 0, 255, 0.32) 6.76%,
+      rgba(255, 0, 154, 0) 94.32%
+    ),
+    #000;
 
   .user-section {
     margin-left: auto;
@@ -26,7 +29,7 @@ const StyledNavigation = styled.div`
     }
   }
 
-  .container {
+  .container-fluid {
     display: flex;
     align-items: center;
 
@@ -63,7 +66,7 @@ const StyledNavigation = styled.div`
 export function DesktopNavigation(props) {
   return (
     <StyledNavigation>
-      <div className="container">
+      <div className="container-fluid">
         <Link
           to="/"
           className="logo-link"
@@ -83,17 +86,7 @@ export function DesktopNavigation(props) {
         </div>
         <div className="user-section">
           <DevActionsDropdown {...props} />
-          {!props.signedIn && (
-            <SignInButton onSignIn={() => props.requestSignIn()} />
-          )}
-          {props.signedIn && (
-            <>
-              <NotificationWidget
-                notificationButtonSrc={props.widgets.notificationButton}
-              />
-              <UserDropdown {...props} />
-            </>
-          )}
+          <Widget code="return <Web3Connect/>" />
         </div>
       </div>
     </StyledNavigation>

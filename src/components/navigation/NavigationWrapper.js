@@ -3,23 +3,10 @@ import { DesktopNavigation } from "./desktop/DesktopNavigation";
 import { MobileNavigation } from "./mobile/MobileNavigation";
 
 export function NavigationWrapper(props) {
-  const hideMenu = !!window?.InjectedConfig?.hideMenu;
-
-  const [matches, setMatches] = useState(
-    window.matchMedia("(min-width: 992px)").matches
-  );
-
-  useEffect(() => {
-    window
-      .matchMedia("(min-width: 992px)")
-      .addEventListener("change", (e) => setMatches(e.matches));
-  }, []);
-  return hideMenu ? (
-    <></>
-  ) : (
+  return (
     <>
-      {matches && <DesktopNavigation {...props} />}
-      {!matches && <MobileNavigation {...props} />}
+      <DesktopNavigation {...props} />
+      <div style={{ height: "70px" }} />
     </>
   );
 }

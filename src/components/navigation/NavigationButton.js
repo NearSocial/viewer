@@ -9,6 +9,7 @@ const StyledNavigationButton = styled.div`
     padding: 10px;
     border-radius: 8px;
     font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
     height: 40px;
     display: flex;
     align-items: center;
