@@ -86,7 +86,9 @@ export function DesktopNavigation(props) {
         </div>
         <div className="user-section">
           <DevActionsDropdown {...props} />
-          <Widget code="return <Web3Connect/>" />
+          <Widget
+            code={`return <Web3Connect connectLabel="Connect Wallet" disconnectLabel="Disconnect"/>`}
+          />
         </div>
       </div>
     </StyledNavigation>

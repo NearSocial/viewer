@@ -13,7 +13,7 @@
 
   /* For web3 onboard */
   --account-center-z-index: 999;
-  --account-center-position-top: 64px;
+  --account-center-position-top: -10px;
   --account-center-position-right: -10px;
 }
 

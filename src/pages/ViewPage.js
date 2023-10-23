@@ -37,21 +37,5 @@ export default function ViewPage(props) {
     }, 1);
   }, [src, query, setWidgetSrc, viewSourceWidget]);
 
-  return showMenu ? (
-    <div className="container-xl">
-      <div className="row">
-        <div
-          className="d-inline-block position-relative overflow-hidden"
-          style={{
-            "--body-top-padding": "24px",
-            paddingTop: "var(--body-top-padding)",
-          }}
-        >
-          <Widget key={src} src={src} props={widgetProps} />
-        </div>
-      </div>
-    </div>
-  ) : (
-    <Widget key={src} src={src} props={widgetProps} />
-  );
+  return <Widget key={src} src={src} props={widgetProps} />;
 }
