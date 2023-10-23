@@ -90,7 +90,7 @@ export function DevActionsDropdown(props) {
 
   if (props.widgetSrc?.edit || props.widgetSrc?.view) {
     return (
-      <StyledDropdown className="dropdown">
+      <StyledDropdown className="dropdown me-3">
         <button
           className="dropdown-toggle"
           type="button"
@@ -106,7 +106,7 @@ export function DevActionsDropdown(props) {
         </button>
         <ul className="dropdown-menu" aria-labelledby="dropdownMenu2222">
           {props.widgetSrc?.edit && (
-            <li>
+            <li className="text-nowrap">
               <Link to={`/edit/${props.widgetSrc?.edit}`}>
                 <Fork />
                 {props.widgetSrc.edit.startsWith(`${account.accountId}/widget/`)
@@ -116,7 +116,7 @@ export function DevActionsDropdown(props) {
             </li>
           )}
           {props.widgetSrc?.view && (
-            <li>
+            <li className="text-nowrap">
               <Link
                 to={`/${props.widgets.viewSource}?src=${props.widgetSrc?.view}`}
               >

@@ -3,6 +3,8 @@ const TestnetDomains = {
   "127.0.0.1": true,
 };
 
+export const ForcedTag = "ethdenver2023";
+
 export const NetworkId =
   window.location.hostname in TestnetDomains ? "testnet" : "mainnet";
 const TestnetWidgets = {
@@ -20,9 +22,9 @@ const TestnetWidgets = {
 
 const MainnetWidgets = {
   image: "mob.near/widget/Image",
-  default: "mob.near/widget/Homepage",
+  default: "ethden.near/widget/BosHomepage",
   viewSource: "mob.near/widget/WidgetSource",
-  widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
+  widgetMetadataEditor: "zavodil.near/widget/WidgetMetadataEditor",
   widgetMetadata: "mob.near/widget/WidgetMetadata",
   profileImage: "mob.near/widget/ProfileImage",
   notificationButton: "mob.near/widget/NotificationButton",

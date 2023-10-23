@@ -23,6 +23,8 @@ import {
 } from "../components/Editor/FileTab";
 import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import vmTypesDeclaration from "raw-loader!near-social-vm-types";
+import EditorSignIn from "../components/navigation/desktop/EditorSignIn";
+import { ForcedTag } from "../data/widgets";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -75,7 +77,7 @@ export default function EditorPage(props) {
 
   const [tab, setTab] = useState(Tab.Editor);
   const [layout, setLayoutState] = useState(
-    ls.get(EditorLayoutKey) || Layout.Tabs
+    ls.get(EditorLayoutKey) || Layout.Split
   );
   const [previewKey, setPreviewKey] = useState("");
 
@@ -412,7 +414,7 @@ export default function EditorPage(props) {
         },
       }}
     >
-      Save Widget
+      Save
     </CommitButton>
   );
 
@@ -635,7 +637,7 @@ export default function EditorPage(props) {
                       }
                     }}
                   >
-                    Render preview
+                    Preview
                   </button>
                   {!path?.unnamed && commitButton}
                   <button
@@ -646,7 +648,7 @@ export default function EditorPage(props) {
                       setShowRenameModal(true);
                     }}
                   >
-                    Rename {path?.type}
+                    Rename
                   </button>
                   {path && accountId && (
                     <a
@@ -656,7 +658,7 @@ export default function EditorPage(props) {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Open Component in a new tab
+                      Open Component
                     </a>
                   )}
                   <button
@@ -678,11 +680,15 @@ export default function EditorPage(props) {
                     {uncommittedPreviews ? "ON" : "OFF"})
                   </button>
                 </div>
+                <div className="mb-3">
+                  <EditorSignIn {...props} />
+                </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
                 <div className="form-control" style={{ height: "70vh" }}>
                   <Editor
                     value={widgetProps}
+                    theme="vs-dark"
                     defaultLanguage="json"
                     onChange={(props) => setWidgetProps(props)}
                     wrapperProps={{
@@ -710,6 +716,7 @@ export default function EditorPage(props) {
                       () => ({
                         widgetPath,
                         onChange: setMetadata,
+                        forcedTag: ForcedTag,
                       }),
                       [widgetPath]
                     )}
@@ -726,22 +733,16 @@ export default function EditorPage(props) {
                   : "visually-hidden"
               }`}
             >
-              <div className="container">
-                <div className="row">
-                  <div className="d-inline-block position-relative overflow-hidden">
-                    {renderCode ? (
-                      <Widget
-                        key={`${previewKey}-${jpath}`}
-                        config={widgetConfig}
-                        code={renderCode}
-                        props={parsedWidgetProps}
-                      />
-                    ) : (
-                      'Click "Render preview" button to render the widget'
-                    )}
-                  </div>
-                </div>
-              </div>
+              {renderCode ? (
+                <Widget
+                  key={`${previewKey}-${jpath}`}
+                  config={widgetConfig}
+                  code={renderCode}
+                  props={parsedWidgetProps}
+                />
+              ) : (
+                'Click "Preview" button to render the widget'
+              )}
             </div>
             <div
               className={`${

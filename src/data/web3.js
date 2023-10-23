@@ -6,7 +6,6 @@ import walletConnectModule from "@web3-onboard/walletconnect";
 import ledgerModule from "@web3-onboard/ledger";
 import { ethers } from "ethers";
 import ls from "local-storage";
-import icon from "../images/near_social_icon.svg";
 
 const web3onboardKey = "web3-onboard:connectedWallets";
 
@@ -231,9 +230,9 @@ export const onboard = init({
     },
   ],
   appMetadata: {
-    name: "NEAR Social",
-    icon,
-    description: "NEAR Social",
+    name: "BOS",
+    icon: '<svg width="30" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="logotype"><path d="M9.55396 20.518L2 13.009L9.55396 5.5" stroke="#3D7FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M19.536 5.5L27 13.009L19.536 20.518" stroke="#3D7FFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></path></svg>',
+    description: "Blockchain Operating System",
   },
   theme: "dark",
   containerElements: {
