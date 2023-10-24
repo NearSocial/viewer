@@ -5,6 +5,7 @@ import { MobileMenuButton } from "./MobileMenuButton";
 import { NearSocialLogo } from "../../icons/NearSocialLogo";
 import { NotificationWidget } from "../NotificationWidget";
 import { SignInButton } from "../SignInButton";
+import { StarButton } from "../StarButton";
 
 const StyledNavigation = styled.div`
   position: sticky;
@@ -58,9 +59,12 @@ export function Navigation(props) {
         <NearSocialLogo />
       </Link>
       {props.signedIn ? (
-        <NotificationWidget
-          notificationButtonSrc={props.widgets.notificationButton}
-        />
+        <div className="d-flex">
+          <StarButton {...props} />
+          <NotificationWidget
+            notificationButtonSrc={props.widgets.notificationButton}
+          />
+        </div>
       ) : (
         <SignInButton onSignIn={() => props.requestSignIn()} />
       )}

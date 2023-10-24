@@ -8,6 +8,7 @@ import { SignInButton } from "../SignInButton";
 import { UserDropdown } from "./UserDropdown";
 import { DevActionsDropdown } from "./DevActionsDropdown";
 import { NotificationWidget } from "../NotificationWidget";
+import { StarButton } from "../StarButton";
 
 const StyledNavigation = styled.div`
   position: sticky;
@@ -82,6 +83,7 @@ export function DesktopNavigation(props) {
           </NavigationButton>
         </div>
         <div className="user-section">
+          <StarButton {...props} />
           <DevActionsDropdown {...props} />
           {!props.signedIn && (
             <SignInButton onSignIn={() => props.requestSignIn()} />
