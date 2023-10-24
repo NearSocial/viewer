@@ -34,7 +34,7 @@ import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 
 export const refreshAllowanceObj = {};
-const documentationHref = "https://docs.bos.gg";
+const documentationHref = "https://docs.near.org/bos";
 
 function App(props) {
   const [connected, setConnected] = useState(false);

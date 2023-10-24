@@ -3,7 +3,7 @@ const TestnetDomains = {
   "127.0.0.1": true,
 };
 
-export const ForcedTag = "ethdenver2023";
+export const ForcedTag = "bos-gg";
 
 export const NetworkId =
   window.location.hostname in TestnetDomains ? "testnet" : "mainnet";
