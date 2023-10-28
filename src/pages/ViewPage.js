@@ -17,9 +17,16 @@ export default function ViewPage(props) {
   const setWidgetSrc = props.setWidgetSrc;
   const viewSourceWidget = props.widgets.viewSource;
 
+  const injectedProps = window?.InjectedConfig?.props;
+
   useEffect(() => {
-    setWidgetProps(Object.fromEntries([...query.entries()]));
-  }, [query]);
+    setWidgetProps(
+      Object.assign(
+        injectedProps || {},
+        Object.fromEntries([...query.entries()])
+      )
+    );
+  }, [query, injectedProps]);
 
   useEffect(() => {
     setTimeout(() => {
