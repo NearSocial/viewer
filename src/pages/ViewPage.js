@@ -12,14 +12,24 @@ export default function ViewPage(props) {
   const [widgetProps, setWidgetProps] = useState({});
 
   const src =
-    widgetSrc || window?.InjectedConfig?.defaultWidget || props.widgets.default;
+    window?.InjectedConfig?.forcedWidget ||
+    widgetSrc ||
+    window?.InjectedConfig?.defaultWidget ||
+    props.widgets.default;
   const showMenu = !window?.InjectedConfig?.hideMenu;
   const setWidgetSrc = props.setWidgetSrc;
   const viewSourceWidget = props.widgets.viewSource;
 
+  const injectedProps = window?.InjectedConfig?.props;
+
   useEffect(() => {
-    setWidgetProps(Object.fromEntries([...query.entries()]));
-  }, [query]);
+    setWidgetProps(
+      Object.assign(
+        injectedProps || {},
+        Object.fromEntries([...query.entries()])
+      )
+    );
+  }, [query, injectedProps]);
 
   useEffect(() => {
     setTimeout(() => {
