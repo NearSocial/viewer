@@ -12,14 +12,24 @@ export default function ViewPage(props) {
   const [widgetProps, setWidgetProps] = useState({});
 
   const src =
-    widgetSrc || window?.InjectedConfig?.defaultWidget || props.widgets.default;
+    window?.InjectedConfig?.forcedWidget ||
+    widgetSrc ||
+    window?.InjectedConfig?.defaultWidget ||
+    props.widgets.default;
   const showMenu = !window?.InjectedConfig?.hideMenu;
   const setWidgetSrc = props.setWidgetSrc;
   const viewSourceWidget = props.widgets.viewSource;
 
+  const injectedProps = window?.InjectedConfig?.props;
+
   useEffect(() => {
-    setWidgetProps(Object.fromEntries([...query.entries()]));
-  }, [query]);
+    setWidgetProps(
+      Object.assign(
+        injectedProps || {},
+        Object.fromEntries([...query.entries()])
+      )
+    );
+  }, [query, injectedProps]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -41,7 +51,7 @@ export default function ViewPage(props) {
     <div className="container-xl">
       <div className="row">
         <div
-          className="d-inline-block position-relative overflow-hidden"
+          className="position-relative"
           style={{
             "--body-top-padding": "24px",
             paddingTop: "var(--body-top-padding)",

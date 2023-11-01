@@ -13,8 +13,14 @@ export default function MobileQRModal(props) {
 
   useEffect(() => {
     (async () => {
+      if (!account || !account.accountId) {
+        return;
+      }
       const domain = new URL(window.location.href).origin;
       const keyPair = await getSocialKeyPair(account.accountId);
+      if (!keyPair) {
+        return "";
+      }
       return `${domain}/signin#?a=${account.accountId}&k=${keyPair.toString()}`;
     })().then(setUrl);
   }, [account]);

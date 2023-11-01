@@ -23,6 +23,7 @@ import {
 } from "../components/Editor/FileTab";
 import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import vmTypesDeclaration from "raw-loader!near-social-vm-types";
+import styled from "styled-components";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -58,7 +59,7 @@ export default function EditorPage(props) {
   const [showOpenModal, setShowOpenModal] = useState(false);
   const [allSaved, setAllSaved] = useState({});
   const [uncommittedPreviews, setUncommittedPreviews] = useState(
-    ls.get(EditorUncommittedPreviewsKey) ?? false
+    ls.get(EditorUncommittedPreviewsKey) ?? true
   );
   const [widgetConfig, setWidgetConfig] = useState(undefined);
 
@@ -75,7 +76,7 @@ export default function EditorPage(props) {
 
   const [tab, setTab] = useState(Tab.Editor);
   const [layout, setLayoutState] = useState(
-    ls.get(EditorLayoutKey) || Layout.Tabs
+    ls.get(EditorLayoutKey) || Layout.Split
   );
   const [previewKey, setPreviewKey] = useState("");
 
@@ -400,7 +401,7 @@ export default function EditorPage(props) {
 
   const commitButton = (
     <CommitButton
-      className="btn btn-primary"
+      className="btn btn-outline-primary"
       disabled={!widgetName}
       near={near}
       data={{
@@ -412,7 +413,7 @@ export default function EditorPage(props) {
         },
       }}
     >
-      Save Widget
+      Save
     </CommitButton>
   );
 
@@ -424,6 +425,17 @@ export default function EditorPage(props) {
     setRenderCode(code);
     setPreviewKey(`preview-${Date.now()}`);
   };
+
+  const Buttons = styled.div`
+    display: flex;
+    align-items: center;
+    .btn {
+      border-radius: 2em;
+      flex-grow: 1;
+      flex-basis: 0;
+      white-space: nowrap;
+    }
+  `;
 
   return (
     <div className="container-fluid mt-1">
@@ -499,7 +511,7 @@ export default function EditorPage(props) {
                       placement="auto"
                       overlay={
                         <Tooltip>
-                          Open "{widgetName}" component in the editor
+                          Open "${widgetName}" component in the editor
                         </Tooltip>
                       }
                     >
@@ -607,93 +619,120 @@ export default function EditorPage(props) {
                         setTab(Tab.Widget);
                       }}
                     >
-                      Widget Preview
+                      Preview
                     </button>
                   </li>
                 )}
               </ul>
 
               <div className={`${tab === Tab.Editor ? "" : "visually-hidden"}`}>
-                <div className="form-control mb-3" style={{ height: "70vh" }}>
-                  <Editor
-                    value={code}
-                    path={widgetPath}
-                    defaultLanguage="javascript"
-                    onChange={(code) => updateCode(path, code)}
-                    wrapperProps={{
-                      onBlur: () => reformat(path, code),
-                    }}
-                  />
-                </div>
-                <div className="mb-3 d-flex gap-2 flex-wrap">
-                  <button
-                    className="btn btn-success"
-                    onClick={() => {
-                      renderPreview(code);
-                      if (layout === Layout.Tabs) {
-                        setTab(Tab.Widget);
-                      }
-                    }}
+                <div
+                  className="d-flex flex-column overflow-hidden"
+                  style={{ height: "80vh" }}
+                >
+                  <div
+                    className="mb-2 flex-grow-1 border"
+                    style={{ minHeight: 1 }}
                   >
-                    Render preview
-                  </button>
-                  {!path?.unnamed && commitButton}
-                  <button
-                    className={`btn ${
-                      path?.unnamed ? "btn-primary" : "btn-secondary"
-                    }`}
-                    onClick={() => {
-                      setShowRenameModal(true);
-                    }}
-                  >
-                    Rename {path?.type}
-                  </button>
-                  {path && accountId && (
-                    <a
-                      key="open-comp"
+                    <Editor
+                      value={code}
+                      path={widgetPath}
+                      defaultLanguage="javascript"
+                      onChange={(code) => updateCode(path, code)}
+                      wrapperProps={{
+                        onBlur: () => reformat(path, code),
+                      }}
+                    />
+                  </div>
+                  <Buttons className="mb-3 d-flex gap-2 flex-wrap">
+                    <button
                       className="btn btn-outline-primary"
-                      href={`/${widgetPath}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      onClick={() => {
+                        renderPreview(code);
+                        if (layout === Layout.Tabs) {
+                          setTab(Tab.Widget);
+                        }
+                      }}
                     >
-                      Open Component in a new tab
-                    </a>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const v = !uncommittedPreviews;
-                      ls.set(EditorUncommittedPreviewsKey, v);
-                      setUncommittedPreviews(v);
-                      setWidgetConfig(generateWidgetConfig(v));
-                    }}
-                    className={`btn btn-outline-secondary ${
-                      uncommittedPreviews ? "active" : ""
-                    }`}
-                    data-toggle="button"
-                    aria-pressed={uncommittedPreviews}
-                    title="When enabled, the preview uses uncommitted code from all opened files"
-                  >
-                    <i className="bi bi-asterisk"></i> Multi-file previews (
-                    {uncommittedPreviews ? "ON" : "OFF"})
-                  </button>
+                      Preview
+                    </button>
+                    {!path?.unnamed && commitButton}
+                    <button
+                      className={`btn ${
+                        path?.unnamed ? "btn-primary" : "btn-outline-secondary"
+                      }`}
+                      onClick={() => {
+                        setShowRenameModal(true);
+                      }}
+                    >
+                      Rename
+                    </button>
+                    {path && accountId && (
+                      <a
+                        key="open-comp"
+                        className="btn btn-outline-secondary"
+                        href={`/${widgetPath}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Open Component
+                      </a>
+                    )}
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-outline-secondary flex-shrink-1"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i className="bi bi-sliders" />
+                      </button>
+                      <ul className="dropdown-menu">
+                        <li>
+                          <button
+                            onClick={() => {
+                              const v = !uncommittedPreviews;
+                              ls.set(EditorUncommittedPreviewsKey, v);
+                              setUncommittedPreviews(v);
+                              setWidgetConfig(generateWidgetConfig(v));
+                            }}
+                            className={`dropdown-item text-nowrap`}
+                            data-toggle="button"
+                            aria-pressed={uncommittedPreviews}
+                            title="When enabled, the preview uses uncommitted code from all opened files"
+                          >
+                            <i className="bi bi-asterisk" /> Multi-file preview
+                            ({uncommittedPreviews ? "ON" : "OFF"})
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </Buttons>
                 </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
-                <div className="form-control" style={{ height: "70vh" }}>
-                  <Editor
-                    value={widgetProps}
-                    defaultLanguage="json"
-                    onChange={(props) => setWidgetProps(props)}
-                    wrapperProps={{
-                      onBlur: () => reformatProps(widgetProps),
-                    }}
-                  />
+                <div
+                  className="d-flex flex-column overflow-hidden"
+                  style={{ height: "80vh" }}
+                >
+                  <div
+                    className="mb-2 flex-grow-1 border"
+                    style={{ minHeight: 1 }}
+                  >
+                    <Editor
+                      value={widgetProps}
+                      defaultLanguage="json"
+                      onChange={(props) => setWidgetProps(props)}
+                      wrapperProps={{
+                        onBlur: () => reformatProps(widgetProps),
+                      }}
+                    />
+                  </div>
+                  <div className=" mb-3">^^ Props for debugging (in JSON)</div>
+                  {propsError && (
+                    <pre className="alert alert-danger">{propsError}</pre>
+                  )}{" "}
                 </div>
-                <div className=" mb-3">^^ Props for debugging (in JSON)</div>
-                {propsError && (
-                  <pre className="alert alert-danger">{propsError}</pre>
-                )}
               </div>
               <div
                 className={`${
@@ -728,7 +767,7 @@ export default function EditorPage(props) {
             >
               <div className="container">
                 <div className="row">
-                  <div className="d-inline-block position-relative overflow-hidden">
+                  <div className="position-relative">
                     {renderCode ? (
                       <Widget
                         key={`${previewKey}-${jpath}`}
@@ -737,7 +776,7 @@ export default function EditorPage(props) {
                         props={parsedWidgetProps}
                       />
                     ) : (
-                      'Click "Render preview" button to render the widget'
+                      'Click "Preview" button to render the widget'
                     )}
                   </div>
                 </div>
@@ -750,7 +789,7 @@ export default function EditorPage(props) {
             >
               <div className="container">
                 <div className="row">
-                  <div className="d-inline-block position-relative overflow-hidden">
+                  <div className="position-relative">
                     <Widget
                       key={`metadata-${jpath}`}
                       src={props.widgets.widgetMetadata}

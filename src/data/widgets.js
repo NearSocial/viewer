@@ -31,6 +31,7 @@ const MainnetWidgets = {
   editorComponentSearch: "mob.near/widget/Editor.ComponentSearch",
   profileInlineBlock: "mob.near/widget/Profile.InlineBlock",
   viewHistory: "bozon.near/widget/WidgetHistory",
+  starButton: "mob.near/widget/N.StarButton",
 };
 
 export const Widgets =

@@ -170,27 +170,29 @@ export function UserDropdown(props) {
               </button>
             </li>
           ) : (
-            <li key="stop-pretend">
-              <button
-                className="dropdown-item"
-                type="button"
-                onClick={() => setShowPretendModal(true)}
-              >
-                <Pretend />
-                Pretend to be another account
-              </button>
-            </li>
+            <>
+              <li key="stop-pretend">
+                <button
+                  className="dropdown-item"
+                  type="button"
+                  onClick={() => setShowPretendModal(true)}
+                >
+                  <Pretend />
+                  Pretend to be another account
+                </button>
+              </li>
+              <li>
+                <button
+                  className="dropdown-item"
+                  type="button"
+                  onClick={() => setShowMobileQR(true)}
+                >
+                  <QR />
+                  Mobile Sign-in QR
+                </button>
+              </li>
+            </>
           )}
-          <li>
-            <button
-              className="dropdown-item"
-              type="button"
-              onClick={() => setShowMobileQR(true)}
-            >
-              <QR />
-              Mobile Sign-in QR
-            </button>
-          </li>
           <li>
             <button
               className="dropdown-item"
@@ -203,15 +205,21 @@ export function UserDropdown(props) {
           </li>
         </ul>
       </StyledDropdown>
-      <PretendModal
-        show={showPretendModal}
-        onHide={() => setShowPretendModal(false)}
-        widgets={props.widgets}
-      />
-      <MobileQRModal
-        show={showMobileQR}
-        onHide={() => setShowMobileQR(false)}
-      />
+      {showPretendModal && (
+        <PretendModal
+          key="pretend-modal"
+          show={showPretendModal}
+          onHide={() => setShowPretendModal(false)}
+          widgets={props.widgets}
+        />
+      )}
+      {showMobileQR && (
+        <MobileQRModal
+          key="mobile-qr-modal"
+          show={showMobileQR}
+          onHide={() => setShowMobileQR(false)}
+        />
+      )}
     </>
   );
 }

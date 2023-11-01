@@ -19,7 +19,7 @@ const StyledDropdown = styled.div`
     height: 40px;
 
     &:after {
-      display none;
+      display: none;
     }
 
     .menu {
@@ -28,9 +28,9 @@ const StyledDropdown = styled.div`
       display: flex;
       flex-direction: column;
       justify-content: space-evenly;
-  
+
       div {
-        background-color: var(--slate-dark-11);;
+        background-color: var(--slate-dark-11);
         height: 2px;
         width: 100%;
         border-radius: 30px;
