@@ -17,3 +17,8 @@
   --account-center-position-right: -10px;
 }
 
+*, *:before, *:after {
+  box-sizing: border-box;
+  font-family: Helvetica Neue; /* 1 */
+}
+
