@@ -17,6 +17,7 @@ const StyledNavigation = styled.div`
   right: 0;
   width: 100%;
   background-color: var(--slate-dark-1);
+  // background: transparent;
   z-index: 1000;
   padding: 12px 0;
 
@@ -34,7 +35,15 @@ const StyledNavigation = styled.div`
     .navigation-section {
       margin-left: 50px;
       display: flex;
-
+      color: #fff;
+      gap: 0.7rem;
+      // margin-top: 10px;
+      a {
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
       > div {
         > a {
           margin-right: 20px;
@@ -75,24 +84,25 @@ export function DesktopNavigation(props) {
           <Logotype />
         </Link>
         <div className="navigation-section">
-          <NavigationButton route="/">Home</NavigationButton>
-          <NavigationButton route="/edit">Editor</NavigationButton>
-          <NavigationButton href={props.documentationHref}>
-            Docs
+          <NavigationButton route="/explore">NFTs</NavigationButton>
+          <NavigationButton route="/communities">Communities</NavigationButton>
+          <NavigationButton route="/feed">Feed</NavigationButton>
+          <NavigationButton href={props.documentationHref} disabled>
+            Funding
             <ArrowUpRight />
           </NavigationButton>
         </div>
         <div className="user-section">
-          <StarButton {...props} />
+          {/* <StarButton {...props} />
           <DevActionsDropdown {...props} />
           {!props.signedIn && (
             <SignInButton onSignIn={() => props.requestSignIn()} />
-          )}
+          )} */}
           {props.signedIn && (
             <>
-              <NotificationWidget
+              {/* <NotificationWidget
                 notificationButtonSrc={props.widgets.notificationButton}
-              />
+              /> */}
               <UserDropdown {...props} />
             </>
           )}
