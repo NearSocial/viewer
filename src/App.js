@@ -1,42 +1,45 @@
-import React, { useCallback, useEffect, useState } from "react";
-import "error-polyfill";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import "@near-wallet-selector/modal-ui/styles.css";
-import "react-bootstrap-typeahead/css/Typeahead.css";
-import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
-import "bootstrap/dist/js/bootstrap.bundle";
-import "App.scss";
-import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
-import EditorPage from "./pages/EditorPage";
-import ViewPage from "./pages/ViewPage";
+import { sanitizeUrl } from "@braintree/sanitize-url";
 import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupNearWallet } from "@near-wallet-selector/near-wallet";
-import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
-import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import { setupModal } from "@near-wallet-selector/modal-ui";
+import "@near-wallet-selector/modal-ui/styles.css";
+import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
+import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
-import { setupModal } from "@near-wallet-selector/modal-ui";
-import EmbedPage from "./pages/EmbedPage";
-import { sanitizeUrl } from "@braintree/sanitize-url";
+import { setupSender } from "@near-wallet-selector/sender";
+import "App.scss";
+import Big from "big.js";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "bootstrap/dist/js/bootstrap.bundle";
+import "error-polyfill";
 import {
+  EthersProviderContext,
   useAccount,
   useInitNear,
   useNear,
   utils,
-  EthersProviderContext,
 } from "near-social-vm";
-import Big from "big.js";
+import React, { useCallback, useEffect, useState } from "react";
+import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+import { Link, Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { BosLoaderBanner } from "./components/BosLoaderBanner";
 import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
-import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
+import { NetworkId, Widgets } from "./data/widgets";
+import { useBosLoaderInitializer } from "./hooks/useBosLoaderInitializer";
+import EditorPage from "./pages/EditorPage";
+import EmbedPage from "./pages/EmbedPage";
+import Flags from "./pages/Flags";
 import SignInPage from "./pages/SignInPage";
+import ViewPage from "./pages/ViewPage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://github.com/NearBuilders/docs";
 
-function App(props) {
+function App() {
   const [connected, setConnected] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [signedAccountId, setSignedAccountId] = useState(null);
@@ -45,6 +48,8 @@ function App(props) {
   const [widgetSrc, setWidgetSrc] = useState(null);
 
   const ethersProviderContext = useEthersProviderContext();
+
+  useBosLoaderInitializer();
 
   const { initNear } = useInitNear();
   const near = useNear();
@@ -165,6 +170,9 @@ function App(props) {
       <EthersProviderContext.Provider value={ethersProviderContext}>
         <Router basename={process.env.PUBLIC_URL}>
           <Switch>
+            <Route path={"/flags"}>
+              <Flags {...passProps} />
+            </Route>
             <Route path={"/signin"}>
               <NavigationWrapper {...passProps} />
               <SignInPage {...passProps} />
@@ -177,6 +185,7 @@ function App(props) {
               <EditorPage {...passProps} />
             </Route>
             <Route path={"/:widgetSrc*"}>
+              <BosLoaderBanner />
               <NavigationWrapper {...passProps} />
               <ViewPage {...passProps} />
             </Route>

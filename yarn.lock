@@ -4965,6 +4965,11 @@ clone-deep@^4.0.1:
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
 
+clsx@^1.1.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
+
 collections@^5.1.12:
   version "5.1.13"
   resolved "https://registry.yarnpkg.com/collections/-/collections-5.1.13.tgz#eee204a93b67473c8e74e00e934a997cc2817585"
@@ -9609,6 +9614,14 @@ react-dom@18.2.0, react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
+react-draggable@^4.4.6:
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.4.6.tgz#63343ee945770881ca1256a5b6fa5c9f5983fe1e"
+  integrity sha512-LtY5Xw1zTPqHkVmtM3X8MUOxNDOUhv/khTgBgrUvwaS064bwVvxT+q5El0uUFNx5IEPKXuRejr7UqLwBIg5pdw==
+  dependencies:
+    clsx "^1.1.1"
+    prop-types "^15.8.1"
+
 react-error-boundary@^3.1.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.4.tgz#255db92b23197108757a888b01e5b729919abde0"
@@ -11673,6 +11686,13 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zustand@^4.4.6:
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.4.6.tgz#03c78e3e2686c47095c93714c0c600b72a6512bd"
+  integrity sha512-Rb16eW55gqL4W2XZpJh0fnrATxYEG3Apl2gfHTyDSE965x/zxslTikpNch0JgNjJA9zK6gEFW8Fl6d1rTZaqgg==
+  dependencies:
+    use-sync-external-store "1.2.0"
 
 zwitch@^2.0.0:
   version "2.0.4"

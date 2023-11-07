@@ -36,8 +36,10 @@
     "react-bootstrap": "^2.5.0",
     "react-bootstrap-typeahead": "^6.1.2",
     "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.6",
     "react-router-dom": "^5.2.0",
-    "styled-components": "^5.3.6"
+    "styled-components": "^5.3.6",
+    "zustand": "^4.4.6"
   },
   "scripts": {
     "serve": "webpack serve",
