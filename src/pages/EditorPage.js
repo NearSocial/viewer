@@ -23,6 +23,7 @@ import {
 } from "../components/Editor/FileTab";
 import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import vmTypesDeclaration from "raw-loader!near-social-vm-types";
+import styled from "styled-components";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -30,6 +31,31 @@ const WidgetPropsKey = LsKey + "widgetProps:";
 const EditorUncommittedPreviewsKey = LsKey + "editorUncommittedPreviews:";
 
 const DefaultEditorCode = "return <div>Hello World</div>;";
+
+const NavPill = styled.button`
+  all: unset;
+
+  display: flex;
+  padding: 10px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-radius: 8px;
+  background: var(--bg-2, #23242b);
+
+  color: var(--white-100, #fff);
+
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+`;
+
+const Container = styled.div`
+  background: #0b0c14;
+  color: #fff;
+`;
 
 const Tab = {
   Editor: "Editor",
@@ -224,7 +250,7 @@ export default function EditorPage(props) {
           c
         );
         if (code) {
-          const name = widgetSrc.split("/").slice(2).join("/");
+          // const name = widgetSrc.split("/").slice(2).join("/");
           openFile(toPath(Filetype.Widget, widgetSrc), code);
         }
       };
@@ -353,7 +379,7 @@ export default function EditorPage(props) {
     [openFile, createFile]
   );
 
-  const layoutClass = layout === Layout.Split ? "col-lg-6" : "";
+  const layoutClass = layout === Layout.Split ? "w-50" : "";
 
   const onLayoutChange = useCallback(
     (e) => {
@@ -426,7 +452,7 @@ export default function EditorPage(props) {
   };
 
   return (
-    <div className="container-fluid mt-1">
+    <Container>
       <RenameModal
         key={`rename-modal-${jpath}`}
         show={showRenameModal}
@@ -444,11 +470,19 @@ export default function EditorPage(props) {
         }
         onHide={() => setShowOpenModal(false)}
       />
-      <div className="mb-3">
+      <div
+        className="d-flex flex-row-reverse justify-content-between align-items-center"
+        style={{
+          padding: "0.75rem 3rem",
+          borderBottom:
+            "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
+        }}
+      >
         <Nav
-          variant="pills mb-1"
+          variant="pills"
           activeKey={jpath}
           onSelect={(key) => openFile(JSON.parse(key))}
+          className="gap-3"
         >
           {files?.map((p, idx) => {
             const jp = JSON.stringify(p);
@@ -472,24 +506,28 @@ export default function EditorPage(props) {
             );
           })}
           <Nav.Item>
-            <Nav.Link
-              className="text-decoration-none"
+            <NavPill
+              className="text-decoration-none d-flex align-items-center gap-2"
               onClick={() => setShowOpenModal(true)}
             >
-              <i className="bi bi-file-earmark-plus"></i> Add
-            </Nav.Link>
+              <i
+                className="bi bi-file-earmark-plus"
+                style={{ fontSize: "0.75rem" }}
+              ></i>{" "}
+              Add
+            </NavPill>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link
+            <NavPill
               className="text-decoration-none"
               onClick={() => closeCommitted(path, allSaved)}
             >
-              <i className="bi bi-x-lg"></i> Close unchanged
-            </Nav.Link>
+              <i className="bi bi-x"></i> Close unchanged
+            </NavPill>
           </Nav.Item>
         </Nav>
         {props.widgets.editorComponentSearch && (
-          <div>
+          <div style={{ marginBottom: "-0.5rem" }}>
             <Widget
               src={props.widgets.editorComponentSearch}
               props={useMemo(
@@ -499,7 +537,7 @@ export default function EditorPage(props) {
                       placement="auto"
                       overlay={
                         <Tooltip>
-                          Open "{widgetName}" component in the editor
+                          {`Open "${widgetName}" component in the editor`}
                         </Tooltip>
                       }
                     >
@@ -523,7 +561,11 @@ export default function EditorPage(props) {
         )}
       </div>
       <div className="d-flex align-content-start">
-        <div className="me-2">
+        <div
+          style={{
+            margin: "4rem 1rem",
+          }}
+        >
           <div
             className="btn-group-vertical"
             role="group"
@@ -561,12 +603,36 @@ export default function EditorPage(props) {
           </div>
         </div>
         <div className="flex-grow-1">
-          <div className="row">
-            <div className={layoutClass}>
-              <ul className={`nav nav-tabs mb-2`}>
+          <div
+            // className="row"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              borderLeft:
+                "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
+              height: "100%",
+            }}
+          >
+            <div
+              className={layoutClass}
+              style={{
+                paddingTop: "1rem",
+              }}
+            >
+              <ul
+                className={`nav nav-tabs`}
+                style={{ margin: "0 0 0 1.5rem", border: 0 }}
+              >
                 <li className="nav-item">
                   <button
                     className={`nav-link ${tab === Tab.Editor ? "active" : ""}`}
+                    style={{
+                      background: `${
+                        tab === Tab.Editor ? "#23242b" : "#0b0c14"
+                      }`,
+                      color: "white",
+                      border: "none",
+                    }}
                     aria-current="page"
                     onClick={() => setTab(Tab.Editor)}
                   >
@@ -576,6 +642,13 @@ export default function EditorPage(props) {
                 <li className="nav-item">
                   <button
                     className={`nav-link ${tab === Tab.Props ? "active" : ""}`}
+                    style={{
+                      background: `${
+                        tab === Tab.Props ? "#23242b" : "#0b0c14"
+                      }`,
+                      color: "white",
+                      border: "none",
+                    }}
                     aria-current="page"
                     onClick={() => setTab(Tab.Props)}
                   >
@@ -585,6 +658,13 @@ export default function EditorPage(props) {
                 {props.widgets.widgetMetadataEditor && (
                   <li className="nav-item">
                     <button
+                      style={{
+                        background: `${
+                          tab === Tab.Metadata ? "#23242b" : "#0b0c14"
+                        }`,
+                        color: "white",
+                        border: "none",
+                      }}
                       className={`nav-link ${
                         tab === Tab.Metadata ? "active" : ""
                       }`}
@@ -598,6 +678,13 @@ export default function EditorPage(props) {
                 {layout === Layout.Tabs && (
                   <li className="nav-item">
                     <button
+                      style={{
+                        background: `${
+                          tab === Tab.Widget ? "#23242b" : "#0b0c14"
+                        }`,
+                        color: "white",
+                        border: "none",
+                      }}
                       className={`nav-link ${
                         tab === Tab.Widget ? "active" : ""
                       }`}
@@ -614,7 +701,10 @@ export default function EditorPage(props) {
               </ul>
 
               <div className={`${tab === Tab.Editor ? "" : "visually-hidden"}`}>
-                <div className="form-control mb-3" style={{ height: "70vh" }}>
+                <div
+                  className="border rounded-3 overflow-hidden mb-3"
+                  style={{ height: "70vh" }}
+                >
                   <Editor
                     value={code}
                     path={widgetPath}
@@ -702,7 +792,14 @@ export default function EditorPage(props) {
                     : "visually-hidden"
                 }`}
               >
-                <div className="mb-3">
+                <div
+                  className="mb-3 rounded-3"
+                  style={{
+                    background: "#23242b",
+                    padding: 24,
+                    color: "#000",
+                  }}
+                >
                   <Widget
                     src={props.widgets.widgetMetadataEditor}
                     key={`metadata-editor-${jpath}`}
@@ -726,7 +823,7 @@ export default function EditorPage(props) {
                   : "visually-hidden"
               }`}
             >
-              <div className="container">
+              <div className="container mt-4">
                 <div className="row">
                   <div className="d-inline-block position-relative overflow-hidden">
                     {renderCode ? (
@@ -750,7 +847,7 @@ export default function EditorPage(props) {
             >
               <div className="container">
                 <div className="row">
-                  <div className="d-inline-block position-relative overflow-hidden">
+                  <div className="d-inline-block position-relative overflow-hidden mt-4">
                     <Widget
                       key={`metadata-${jpath}`}
                       src={props.widgets.widgetMetadata}
@@ -766,6 +863,6 @@ export default function EditorPage(props) {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }
