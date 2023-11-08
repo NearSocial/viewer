@@ -7,8 +7,14 @@ const leftBlur =
 const rightBlur =
   "https://ipfs.near.social/ipfs/bafkreierwhnzytfajagidxim5mzdphu5fopjmlrxehatywzuy6ahr5q7pe";
 
-const HeroContainer = styled.div`
+const CTAContainer = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+
   position: relative;
 
   padding: 6.25rem 3rem;
@@ -35,7 +41,7 @@ const LeftBlur = styled.img`
 const RightBlur = styled.img`
   position: absolute;
   right: 0;
-  top: 100%;
+  top: 75%;
   transform: translateY(-50%);
   object-fit: cover;
   width: 25%;
@@ -56,52 +62,81 @@ const Grid = styled.img`
   height: 100%;
 `;
 
-const Logo = styled.img`
-  height: 54px;
-  object-fit: cover;
-`;
-
-const Tagline = styled.h1`
-  max-width: 700px;
-
-  text-align: center;
-  font-size: 3rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 120%; /* 57.6px */
-  margin: 0;
-
-  span.muted {
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  @media screen and (max-width: 768px) {
-    font-size: 2rem;
-  }
-`;
-
-const Content = styled.div`
+const Card = styled.div`
   z-index: 2;
   display: flex;
+  max-width: 37.5rem;
+  padding: 2.5rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 2.5rem;
 
-  margin: 0 auto;
+  border-radius: 16px;
+  border: 1px solid #51b6ff;
+  background: #000;
+  box-shadow: 4px 24px 48px 0px rgba(255, 189, 52, 0.1);
+
+  h1 {
+    color: #fff;
+    text-align: center;
+
+    /* H1/large */
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 120%; /* 57.6px */
+    margin: 0;
+  }
+
+  a {
+    display: flex;
+    padding: 10px 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    border-radius: 8px;
+    background: #ffaf51;
+
+    color: #000;
+    margin: 0;
+
+    /* Other/Button_text */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+
+    text-decoration: none;
+    transition: all 300ms;
+
+    &:hover {
+      background: #c98a40;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+  }
+`;
+
+const Logo = styled.img`
+  height: 2.875rem;
+  object-fit: cover;
 `;
 
 return (
-  <HeroContainer>
-    <Content>
+  <CTAContainer>
+    <Card>
       <Logo src={logoLink} />
-      <Tagline>
-        Designed to connect and empower builders in a{" "}
-        <span className="muted">multi-chain ecosystem</span>
-      </Tagline>
-    </Content>
+      <h1>Together, we can build a better future.</h1>
+      <a href="#">Join Now</a>
+    </Card>
     <Grid src={gridLink} />
     <LeftBlur src={leftBlur} />
     <RightBlur src={rightBlur} />
-  </HeroContainer>
+  </CTAContainer>
 );
