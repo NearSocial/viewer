@@ -64,6 +64,7 @@ const CustomSearch = styled.div`
   .form-control {
     background: #23242b;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
   }
   input::placeholder {
     color: #c7c7c7;
@@ -104,7 +105,6 @@ const Layout = {
 };
 
 export default function EditorPage(props) {
-  console.log("props", props);
   useHashRouterLegacy();
   const { widgetSrc } = useParams();
   const history = useHistory();
