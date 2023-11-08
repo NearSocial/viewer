@@ -13,7 +13,10 @@ const sections = ["hero", "goals", "join", "governance", "cta", "footer"];
 return (
   <Root>
     {sections.map((section) => (
-      <Widget src={`${ownerId}/widget/section.${section}`} />
+      <Widget
+        src={`${ownerId}/widget/section.${section}`}
+        key={`Home-Section-${section}`}
+      />
     ))}
   </Root>
 );

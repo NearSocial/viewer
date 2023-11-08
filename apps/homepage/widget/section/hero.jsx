@@ -81,7 +81,6 @@ const Tagline = styled.h1`
 `;
 
 const Content = styled.div`
-  z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;

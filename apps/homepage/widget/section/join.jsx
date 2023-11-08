@@ -36,30 +36,30 @@ const MagicIcon = (
     viewBox="0 0 13 13"
     fill="none"
   >
-    <g clip-path="url(#clip0_1459_190)">
+    <g clipPath="url(#clip0_1459_190)">
       <path
         d="M3.5 11.25L11 3.75L9.5 2.25L2 9.75L3.5 11.25Z"
         stroke="#51FFEA"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M8 3.75L9.5 5.25"
         stroke="#51FFEA"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M5 2.25C5 2.51522 5.10536 2.76957 5.29289 2.95711C5.48043 3.14464 5.73478 3.25 6 3.25C5.73478 3.25 5.48043 3.35536 5.29289 3.54289C5.10536 3.73043 5 3.98478 5 4.25C5 3.98478 4.89464 3.73043 4.70711 3.54289C4.51957 3.35536 4.26522 3.25 4 3.25C4.26522 3.25 4.51957 3.14464 4.70711 2.95711C4.89464 2.76957 5 2.51522 5 2.25Z"
         stroke="#51FFEA"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 7.25C10 7.51522 10.1054 7.76957 10.2929 7.95711C10.4804 8.14464 10.7348 8.25 11 8.25C10.7348 8.25 10.4804 8.35536 10.2929 8.54289C10.1054 8.73043 10 8.98478 10 9.25C10 8.98478 9.89464 8.73043 9.70711 8.54289C9.51957 8.35536 9.26522 8.25 9 8.25C9.26522 8.25 9.51957 8.14464 9.70711 7.95711C9.89464 7.76957 10 7.51522 10 7.25Z"
         stroke="#51FFEA"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </g>
     <defs>
