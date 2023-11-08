@@ -166,7 +166,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App" style={{ height: "100vh" }}>
       <EthersProviderContext.Provider value={ethersProviderContext}>
         <Router basename={process.env.PUBLIC_URL}>
           <Switch>

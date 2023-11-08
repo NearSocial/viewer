@@ -106,7 +106,7 @@ export function FileTab(props) {
     border-radius: 8px;
     background: var(--Blue, #51b6ff);
 
-    ${active && "box-shadow:0px 0px 0px 2px #000 inset;"}
+    ${active && "box-shadow:0px 0px 0px 2px #fff inset;"}
   `;
 
   const CloseButton = styled.button`
@@ -131,12 +131,12 @@ export function FileTab(props) {
   `;
 
   return (
-    <Button>
-      <Nav.Link
-        className="text-decoration-none d-flex align-items-center"
-        style={{ all: "unset" }}
-        eventKey={jp}
-      >
+    <Nav.Link
+      className="text-decoration-none d-flex align-items-center"
+      style={{ all: "unset" }}
+      eventKey={jp}
+    >
+      <Button>
         {p.name}
         {saved && (
           <sup key="unsaved">
@@ -166,7 +166,7 @@ export function FileTab(props) {
         >
           <i className="bi bi-x text-black"></i>
         </CloseButton>
-      </Nav.Link>
-    </Button>
+      </Button>
+    </Nav.Link>
   );
 }

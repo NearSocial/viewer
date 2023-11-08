@@ -24,6 +24,7 @@ import {
 import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import vmTypesDeclaration from "raw-loader!near-social-vm-types";
 import styled from "styled-components";
+import { useBosLoaderStore } from "../stores/bos-loader";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -55,6 +56,39 @@ const NavPill = styled.button`
 const Container = styled.div`
   background: #0b0c14;
   color: #fff;
+
+  min-height: 100%;
+`;
+
+const CustomSearch = styled.div`
+  .form-control {
+    background: #23242b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  input::placeholder {
+    color: #c7c7c7;
+  }
+`;
+
+const Button = styled.button`
+  all: unset;
+
+  display: flex;
+  padding: 10px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+
+  /* Other/Button_text */
+  font-family: Satoshi;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+
+  border-radius: 8px;
+  background: #51b6ff;
+  color: black;
 `;
 
 const Tab = {
@@ -70,9 +104,11 @@ const Layout = {
 };
 
 export default function EditorPage(props) {
+  console.log("props", props);
   useHashRouterLegacy();
   const { widgetSrc } = useParams();
   const history = useHistory();
+  const redirectMapStore = useBosLoaderStore();
   const setWidgetSrc = props.setWidgetSrc;
 
   const [loading, setLoading] = useState(false);
@@ -426,7 +462,17 @@ export default function EditorPage(props) {
 
   const commitButton = (
     <CommitButton
-      className="btn btn-primary"
+      style={{
+        all: "unset",
+        backgroundColor: "#51b6ff",
+        color: "black",
+        padding: "10px 20px",
+        borderRadius: 8,
+        fontFamily: "Satoshi",
+        fontWeight: "500",
+        fontSize: "0.875rem",
+      }}
+      className="ms-3"
       disabled={!widgetName}
       near={near}
       data={{
@@ -471,7 +517,7 @@ export default function EditorPage(props) {
         onHide={() => setShowOpenModal(false)}
       />
       <div
-        className="d-flex flex-row-reverse justify-content-between align-items-center"
+        className="d-flex flex-column-reverse gap-3 mt-2 mt-md-0 flex-md-row-reverse justify-content-between align-items-center"
         style={{
           padding: "0.75rem 3rem",
           borderBottom:
@@ -527,7 +573,7 @@ export default function EditorPage(props) {
           </Nav.Item>
         </Nav>
         {props.widgets.editorComponentSearch && (
-          <div style={{ marginBottom: "-0.5rem" }}>
+          <CustomSearch style={{ marginBottom: "-0.5rem" }}>
             <Widget
               src={props.widgets.editorComponentSearch}
               props={useMemo(
@@ -557,7 +603,7 @@ export default function EditorPage(props) {
                 [loadFile]
               )}
             />
-          </div>
+          </CustomSearch>
         )}
       </div>
       <div className="d-flex align-content-start">
@@ -573,7 +619,7 @@ export default function EditorPage(props) {
           >
             <input
               type="radio"
-              className="btn-check"
+              className="btn-check p-3"
               name="layout-radio"
               id="layout-tabs"
               autoComplete="off"
@@ -583,7 +629,18 @@ export default function EditorPage(props) {
               title={"Set layout to Tabs mode"}
             />
             <label className="btn btn-outline-secondary" htmlFor="layout-tabs">
-              <i className="bi bi-square" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M21 3C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H21ZM20 5H4V19H20V5ZM18 7V9H6V7H18Z"
+                  fill="white"
+                />
+              </svg>
             </label>
 
             <input
@@ -598,7 +655,18 @@ export default function EditorPage(props) {
               onChange={onLayoutChange}
             />
             <label className="btn btn-outline-secondary" htmlFor="layout-split">
-              <i className="bi bi-layout-split" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"
+                  fill="white"
+                />
+              </svg>
             </label>
           </div>
         </div>
@@ -608,6 +676,7 @@ export default function EditorPage(props) {
             style={{
               display: "flex",
               flexWrap: "wrap",
+              flexDirection: `${layout === Layout.Split ? "row" : "column"}`,
               borderLeft:
                 "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
               height: "100%",
@@ -617,6 +686,8 @@ export default function EditorPage(props) {
               className={layoutClass}
               style={{
                 paddingTop: "1rem",
+                borderRight:
+                  "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
               }}
             >
               <ul
@@ -701,11 +772,9 @@ export default function EditorPage(props) {
               </ul>
 
               <div className={`${tab === Tab.Editor ? "" : "visually-hidden"}`}>
-                <div
-                  className="border rounded-3 overflow-hidden mb-3"
-                  style={{ height: "70vh" }}
-                >
+                <div className="mb-3" style={{ height: "70vh" }}>
                   <Editor
+                    theme="vs-dark"
                     value={code}
                     path={widgetPath}
                     defaultLanguage="javascript"
@@ -715,9 +784,9 @@ export default function EditorPage(props) {
                     }}
                   />
                 </div>
-                <div className="mb-3 d-flex gap-2 flex-wrap">
-                  <button
-                    className="btn btn-success"
+                <div className="ms-4 mb-3 d-flex gap-3 flex-wrap">
+                  <Button
+                    // className="btn btn-success"
                     onClick={() => {
                       renderPreview(code);
                       if (layout === Layout.Tabs) {
@@ -725,20 +794,25 @@ export default function EditorPage(props) {
                       }
                     }}
                   >
-                    Render preview
-                  </button>
+                    Render Preview
+                  </Button>
                   {!path?.unnamed && commitButton}
-                  <button
-                    className={`btn ${
-                      path?.unnamed ? "btn-primary" : "btn-secondary"
-                    }`}
+                  <Button
+                    style={{
+                      color: "white",
+                      background: "#0b0c14",
+                      border: "1px solid white",
+                    }}
+                    // className={`btn ${
+                    //   path?.unnamed ? "btn-primary" : "btn-secondary"
+                    // }`}
                     onClick={() => {
                       setShowRenameModal(true);
                     }}
                   >
                     Rename {path?.type}
-                  </button>
-                  {path && accountId && (
+                  </Button>
+                  {/* {path && accountId && (
                     <a
                       key="open-comp"
                       className="btn btn-outline-primary"
@@ -748,8 +822,8 @@ export default function EditorPage(props) {
                     >
                       Open Component in a new tab
                     </a>
-                  )}
-                  <button
+                  )} */}
+                  {/* <button
                     type="button"
                     onClick={() => {
                       const v = !uncommittedPreviews;
@@ -766,12 +840,13 @@ export default function EditorPage(props) {
                   >
                     <i className="bi bi-asterisk"></i> Multi-file previews (
                     {uncommittedPreviews ? "ON" : "OFF"})
-                  </button>
+                  </button> */}
                 </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
-                <div className="form-control" style={{ height: "70vh" }}>
+                <div className="mb-3" style={{ height: "70vh" }}>
                   <Editor
+                    theme="vs-dark"
                     value={widgetProps}
                     defaultLanguage="json"
                     onChange={(props) => setWidgetProps(props)}
@@ -793,7 +868,7 @@ export default function EditorPage(props) {
                 }`}
               >
                 <div
-                  className="mb-3 rounded-3"
+                  className="mb-3"
                   style={{
                     background: "#23242b",
                     padding: 24,
@@ -803,6 +878,9 @@ export default function EditorPage(props) {
                   <Widget
                     src={props.widgets.widgetMetadataEditor}
                     key={`metadata-editor-${jpath}`}
+                    config={{
+                      redirectMap: redirectMapStore.redirectMap,
+                    }}
                     props={useMemo(
                       () => ({
                         widgetPath,
@@ -851,6 +929,9 @@ export default function EditorPage(props) {
                     <Widget
                       key={`metadata-${jpath}`}
                       src={props.widgets.widgetMetadata}
+                      config={{
+                        redirectMap: redirectMapStore.redirectMap,
+                      }}
                       props={useMemo(
                         () => ({ metadata, accountId, widgetName }),
                         [metadata, accountId, widgetName]
