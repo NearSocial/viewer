@@ -354,7 +354,7 @@ return (
           <br />
           3. Fulfill contribution requirements
         </p>
-        <a href="#">Join Now</a>
+        <a href="/join">Join Now</a>
       </CTAContent>
     </CTAContainer>
   </JoinContainer>
