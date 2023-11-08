@@ -35,6 +35,8 @@ import EmbedPage from "./pages/EmbedPage";
 import Flags from "./pages/Flags";
 import SignInPage from "./pages/SignInPage";
 import ViewPage from "./pages/ViewPage";
+import JoinPage from "./pages/JoinPage";
+import ProposePage from "./pages/ProposePage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://github.com/NearBuilders/docs";
@@ -166,7 +168,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App" style={{ height: "100vh" }}>
       <EthersProviderContext.Provider value={ethersProviderContext}>
         <Router basename={process.env.PUBLIC_URL}>
           <Switch>
@@ -176,6 +178,12 @@ function App() {
             <Route path={"/signin"}>
               <NavigationWrapper {...passProps} />
               <SignInPage {...passProps} />
+            </Route>
+            <Route path={"/join"}>
+              <JoinPage {...passProps} />
+            </Route>
+            <Route path={"/propose"}>
+              <ProposePage {...passProps} />
             </Route>
             <Route path={"/embed/:widgetSrc*"}>
               <EmbedPage {...passProps} />

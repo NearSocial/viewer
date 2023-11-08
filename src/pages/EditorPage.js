@@ -23,6 +23,8 @@ import {
 } from "../components/Editor/FileTab";
 import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import vmTypesDeclaration from "raw-loader!near-social-vm-types";
+import styled from "styled-components";
+import { useBosLoaderStore } from "../stores/bos-loader";
 
 const LsKey = "social.near:v01:";
 const EditorLayoutKey = LsKey + "editorLayout:";
@@ -30,6 +32,65 @@ const WidgetPropsKey = LsKey + "widgetProps:";
 const EditorUncommittedPreviewsKey = LsKey + "editorUncommittedPreviews:";
 
 const DefaultEditorCode = "return <div>Hello World</div>;";
+
+const NavPill = styled.button`
+  all: unset;
+
+  display: flex;
+  padding: 10px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  border-radius: 8px;
+  background: var(--bg-2, #23242b);
+
+  color: var(--white-100, #fff);
+
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+`;
+
+const Container = styled.div`
+  background: #0b0c14;
+  color: #fff;
+
+  min-height: 100%;
+`;
+
+const CustomSearch = styled.div`
+  .form-control {
+    background: #23242b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+  input::placeholder {
+    color: #c7c7c7;
+  }
+`;
+
+const Button = styled.button`
+  all: unset;
+
+  display: flex;
+  padding: 10px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+
+  /* Other/Button_text */
+  font-family: Satoshi;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+
+  border-radius: 8px;
+  background: #51b6ff;
+  color: black;
+`;
 
 const Tab = {
   Editor: "Editor",
@@ -47,6 +108,7 @@ export default function EditorPage(props) {
   useHashRouterLegacy();
   const { widgetSrc } = useParams();
   const history = useHistory();
+  const redirectMapStore = useBosLoaderStore();
   const setWidgetSrc = props.setWidgetSrc;
 
   const [loading, setLoading] = useState(false);
@@ -224,7 +286,7 @@ export default function EditorPage(props) {
           c
         );
         if (code) {
-          const name = widgetSrc.split("/").slice(2).join("/");
+          // const name = widgetSrc.split("/").slice(2).join("/");
           openFile(toPath(Filetype.Widget, widgetSrc), code);
         }
       };
@@ -353,7 +415,7 @@ export default function EditorPage(props) {
     [openFile, createFile]
   );
 
-  const layoutClass = layout === Layout.Split ? "col-lg-6" : "";
+  const layoutClass = layout === Layout.Split ? "w-50" : "";
 
   const onLayoutChange = useCallback(
     (e) => {
@@ -400,7 +462,17 @@ export default function EditorPage(props) {
 
   const commitButton = (
     <CommitButton
-      className="btn btn-primary"
+      style={{
+        all: "unset",
+        backgroundColor: "#51b6ff",
+        color: "black",
+        padding: "10px 20px",
+        borderRadius: 8,
+        fontFamily: "Satoshi",
+        fontWeight: "500",
+        fontSize: "0.875rem",
+      }}
+      className="ms-3"
       disabled={!widgetName}
       near={near}
       data={{
@@ -426,7 +498,7 @@ export default function EditorPage(props) {
   };
 
   return (
-    <div className="container-fluid mt-1">
+    <Container>
       <RenameModal
         key={`rename-modal-${jpath}`}
         show={showRenameModal}
@@ -444,11 +516,19 @@ export default function EditorPage(props) {
         }
         onHide={() => setShowOpenModal(false)}
       />
-      <div className="mb-3">
+      <div
+        className="d-flex flex-column-reverse gap-3 mt-2 mt-md-0 flex-md-row-reverse justify-content-between align-items-center"
+        style={{
+          padding: "0.75rem 3rem",
+          borderBottom:
+            "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
+        }}
+      >
         <Nav
-          variant="pills mb-1"
+          variant="pills"
           activeKey={jpath}
           onSelect={(key) => openFile(JSON.parse(key))}
+          className="gap-3"
         >
           {files?.map((p, idx) => {
             const jp = JSON.stringify(p);
@@ -472,24 +552,28 @@ export default function EditorPage(props) {
             );
           })}
           <Nav.Item>
-            <Nav.Link
-              className="text-decoration-none"
+            <NavPill
+              className="text-decoration-none d-flex align-items-center gap-2"
               onClick={() => setShowOpenModal(true)}
             >
-              <i className="bi bi-file-earmark-plus"></i> Add
-            </Nav.Link>
+              <i
+                className="bi bi-file-earmark-plus"
+                style={{ fontSize: "0.75rem" }}
+              ></i>{" "}
+              Add
+            </NavPill>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link
+            <NavPill
               className="text-decoration-none"
               onClick={() => closeCommitted(path, allSaved)}
             >
-              <i className="bi bi-x-lg"></i> Close unchanged
-            </Nav.Link>
+              <i className="bi bi-x"></i> Close unchanged
+            </NavPill>
           </Nav.Item>
         </Nav>
         {props.widgets.editorComponentSearch && (
-          <div>
+          <CustomSearch style={{ marginBottom: "-0.5rem" }}>
             <Widget
               src={props.widgets.editorComponentSearch}
               props={useMemo(
@@ -499,7 +583,7 @@ export default function EditorPage(props) {
                       placement="auto"
                       overlay={
                         <Tooltip>
-                          Open "{widgetName}" component in the editor
+                          {`Open "${widgetName}" component in the editor`}
                         </Tooltip>
                       }
                     >
@@ -519,11 +603,15 @@ export default function EditorPage(props) {
                 [loadFile]
               )}
             />
-          </div>
+          </CustomSearch>
         )}
       </div>
       <div className="d-flex align-content-start">
-        <div className="me-2">
+        <div
+          style={{
+            margin: "4rem 1rem",
+          }}
+        >
           <div
             className="btn-group-vertical"
             role="group"
@@ -531,7 +619,7 @@ export default function EditorPage(props) {
           >
             <input
               type="radio"
-              className="btn-check"
+              className="btn-check p-3"
               name="layout-radio"
               id="layout-tabs"
               autoComplete="off"
@@ -541,7 +629,18 @@ export default function EditorPage(props) {
               title={"Set layout to Tabs mode"}
             />
             <label className="btn btn-outline-secondary" htmlFor="layout-tabs">
-              <i className="bi bi-square" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M21 3C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H21ZM20 5H4V19H20V5ZM18 7V9H6V7H18Z"
+                  fill="white"
+                />
+              </svg>
             </label>
 
             <input
@@ -556,17 +655,55 @@ export default function EditorPage(props) {
               onChange={onLayoutChange}
             />
             <label className="btn btn-outline-secondary" htmlFor="layout-split">
-              <i className="bi bi-layout-split" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M11 5H5V19H11V5ZM13 5V19H19V5H13ZM4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3Z"
+                  fill="white"
+                />
+              </svg>
             </label>
           </div>
         </div>
         <div className="flex-grow-1">
-          <div className="row">
-            <div className={layoutClass}>
-              <ul className={`nav nav-tabs mb-2`}>
+          <div
+            // className="row"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              flexDirection: `${layout === Layout.Split ? "row" : "column"}`,
+              borderLeft:
+                "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
+              height: "100%",
+            }}
+          >
+            <div
+              className={layoutClass}
+              style={{
+                paddingTop: "1rem",
+                borderRight:
+                  "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
+              }}
+            >
+              <ul
+                className={`nav nav-tabs`}
+                style={{ margin: "0 0 0 1.5rem", border: 0 }}
+              >
                 <li className="nav-item">
                   <button
                     className={`nav-link ${tab === Tab.Editor ? "active" : ""}`}
+                    style={{
+                      background: `${
+                        tab === Tab.Editor ? "#23242b" : "#0b0c14"
+                      }`,
+                      color: "white",
+                      border: "none",
+                    }}
                     aria-current="page"
                     onClick={() => setTab(Tab.Editor)}
                   >
@@ -576,6 +713,13 @@ export default function EditorPage(props) {
                 <li className="nav-item">
                   <button
                     className={`nav-link ${tab === Tab.Props ? "active" : ""}`}
+                    style={{
+                      background: `${
+                        tab === Tab.Props ? "#23242b" : "#0b0c14"
+                      }`,
+                      color: "white",
+                      border: "none",
+                    }}
                     aria-current="page"
                     onClick={() => setTab(Tab.Props)}
                   >
@@ -585,6 +729,13 @@ export default function EditorPage(props) {
                 {props.widgets.widgetMetadataEditor && (
                   <li className="nav-item">
                     <button
+                      style={{
+                        background: `${
+                          tab === Tab.Metadata ? "#23242b" : "#0b0c14"
+                        }`,
+                        color: "white",
+                        border: "none",
+                      }}
                       className={`nav-link ${
                         tab === Tab.Metadata ? "active" : ""
                       }`}
@@ -598,6 +749,13 @@ export default function EditorPage(props) {
                 {layout === Layout.Tabs && (
                   <li className="nav-item">
                     <button
+                      style={{
+                        background: `${
+                          tab === Tab.Widget ? "#23242b" : "#0b0c14"
+                        }`,
+                        color: "white",
+                        border: "none",
+                      }}
                       className={`nav-link ${
                         tab === Tab.Widget ? "active" : ""
                       }`}
@@ -614,8 +772,9 @@ export default function EditorPage(props) {
               </ul>
 
               <div className={`${tab === Tab.Editor ? "" : "visually-hidden"}`}>
-                <div className="form-control mb-3" style={{ height: "70vh" }}>
+                <div className="mb-3" style={{ height: "70vh" }}>
                   <Editor
+                    theme="vs-dark"
                     value={code}
                     path={widgetPath}
                     defaultLanguage="javascript"
@@ -625,9 +784,9 @@ export default function EditorPage(props) {
                     }}
                   />
                 </div>
-                <div className="mb-3 d-flex gap-2 flex-wrap">
-                  <button
-                    className="btn btn-success"
+                <div className="ms-4 mb-3 d-flex gap-3 flex-wrap">
+                  <Button
+                    // className="btn btn-success"
                     onClick={() => {
                       renderPreview(code);
                       if (layout === Layout.Tabs) {
@@ -635,20 +794,25 @@ export default function EditorPage(props) {
                       }
                     }}
                   >
-                    Render preview
-                  </button>
+                    Render Preview
+                  </Button>
                   {!path?.unnamed && commitButton}
-                  <button
-                    className={`btn ${
-                      path?.unnamed ? "btn-primary" : "btn-secondary"
-                    }`}
+                  <Button
+                    style={{
+                      color: "white",
+                      background: "#0b0c14",
+                      border: "1px solid white",
+                    }}
+                    // className={`btn ${
+                    //   path?.unnamed ? "btn-primary" : "btn-secondary"
+                    // }`}
                     onClick={() => {
                       setShowRenameModal(true);
                     }}
                   >
                     Rename {path?.type}
-                  </button>
-                  {path && accountId && (
+                  </Button>
+                  {/* {path && accountId && (
                     <a
                       key="open-comp"
                       className="btn btn-outline-primary"
@@ -658,8 +822,8 @@ export default function EditorPage(props) {
                     >
                       Open Component in a new tab
                     </a>
-                  )}
-                  <button
+                  )} */}
+                  {/* <button
                     type="button"
                     onClick={() => {
                       const v = !uncommittedPreviews;
@@ -676,12 +840,13 @@ export default function EditorPage(props) {
                   >
                     <i className="bi bi-asterisk"></i> Multi-file previews (
                     {uncommittedPreviews ? "ON" : "OFF"})
-                  </button>
+                  </button> */}
                 </div>
               </div>
               <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
-                <div className="form-control" style={{ height: "70vh" }}>
+                <div className="mb-3" style={{ height: "70vh" }}>
                   <Editor
+                    theme="vs-dark"
                     value={widgetProps}
                     defaultLanguage="json"
                     onChange={(props) => setWidgetProps(props)}
@@ -702,10 +867,20 @@ export default function EditorPage(props) {
                     : "visually-hidden"
                 }`}
               >
-                <div className="mb-3">
+                <div
+                  className="mb-3"
+                  style={{
+                    background: "#23242b",
+                    padding: 24,
+                    color: "#000",
+                  }}
+                >
                   <Widget
                     src={props.widgets.widgetMetadataEditor}
                     key={`metadata-editor-${jpath}`}
+                    config={{
+                      redirectMap: redirectMapStore.redirectMap,
+                    }}
                     props={useMemo(
                       () => ({
                         widgetPath,
@@ -726,7 +901,7 @@ export default function EditorPage(props) {
                   : "visually-hidden"
               }`}
             >
-              <div className="container">
+              <div className="container mt-4">
                 <div className="row">
                   <div className="d-inline-block position-relative overflow-hidden">
                     {renderCode ? (
@@ -750,10 +925,13 @@ export default function EditorPage(props) {
             >
               <div className="container">
                 <div className="row">
-                  <div className="d-inline-block position-relative overflow-hidden">
+                  <div className="d-inline-block position-relative overflow-hidden mt-4">
                     <Widget
                       key={`metadata-${jpath}`}
                       src={props.widgets.widgetMetadata}
+                      config={{
+                        redirectMap: redirectMapStore.redirectMap,
+                      }}
                       props={useMemo(
                         () => ({ metadata, accountId, widgetName }),
                         [metadata, accountId, widgetName]
@@ -766,6 +944,6 @@ export default function EditorPage(props) {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

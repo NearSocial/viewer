@@ -18,13 +18,12 @@ const TestnetWidgets = {
   notificationButton: "eugenethedream/widget/NotificationButton",
 };
 
-
 const MainnetWidgets = {
   image: "mob.near/widget/Image",
   default: "builddao.near/widget/home",
   viewSource: "mob.near/widget/WidgetSource",
-  widgetMetadataEditor: "mob.near/widget/WidgetMetadataEditor",
-  widgetMetadata: "mob.near/widget/WidgetMetadata",
+  widgetMetadataEditor: "builddao.near/widget/WidgetMetadataEditor",
+  widgetMetadata: "builddao.near/widget/WidgetMetadata",
   profileImage: "mob.near/widget/ProfileImage",
   notificationButton: "mob.near/widget/NotificationButton",
   profilePage: "near/widget/ProfilePage",
