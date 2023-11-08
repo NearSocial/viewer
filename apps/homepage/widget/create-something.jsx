@@ -1,3 +1,5 @@
+const [isMember, setIsMember] = useState(false);
+
 if (!context.accountId) {
   return "Login to continue...";
 }
@@ -65,7 +67,9 @@ const CTASection = styled.div`
     line-height: 140%; /* 28px */
   }
 
-  a {
+  a,
+  button {
+    all: unset;
     display: flex;
     padding: 10px 20px;
     justify-content: center;
@@ -74,6 +78,9 @@ const CTASection = styled.div`
 
     &:hover {
       text-decoration: none;
+      color: #000 !important;
+      cursor: pointer;
+      background: var(--Yellow, #ffaf51);
     }
 
     border-radius: 8px;
@@ -87,14 +94,117 @@ const CTASection = styled.div`
     font-weight: 500;
     line-height: normal;
   }
+
+  span.pending {
+    display: flex;
+    padding: 4px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    border-radius: 8px;
+    border: 1px solid rgba(81, 182, 255, 0.2);
+    background: rgba(81, 182, 255, 0.2);
+
+    color: var(--Blue, #51b6ff);
+
+    /* Other/Button_text */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  span.joined {
+    display: flex;
+    padding: 4px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    border-radius: 8px;
+    border: 1px solid rgba(81, 255, 234, 0.2);
+    background: rgba(81, 255, 234, 0.2);
+
+    color: var(--Sea-Blue, #51ffea);
+
+    /* Other/Button_text */
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
 `;
 
 const userWidgets = Social.keys(`${context.accountId}/widget/**`) || [];
+
+const daoId = "build.sputnik-dao.near";
+const accountId = context.accountId;
+
+// get DAO policy, deposit, and group
+const policy = Near.view(daoId, "get_policy");
+
+if (policy === null) {
+  return "";
+}
+
+const deposit = policy.proposal_bond;
+const roleId = "community";
+const group = policy.roles
+  .filter((role) => role.name === roleId)
+  .map((role) => role.kind.Group);
+
+const handleJoin = () => {
+  Near.call([
+    {
+      contractName: daoId,
+      methodName: "add_proposal",
+      args: {
+        proposal: {
+          description: `add ${accountId} to the ${roleId} group`,
+          kind: {
+            AddMemberToRole: {
+              member_id: accountId,
+              role: roleId,
+            },
+          },
+        },
+      },
+      gas: 219000000000000,
+      deposit: deposit,
+    },
+  ]);
+};
+
+const proposalId = Near.view(daoId, "get_last_proposal_id") - 1;
+
+// get data from last proposal
+const proposal = Near.view(daoId, "get_proposal", {
+  id: proposalId,
+});
+
+if (proposal === null) {
+  return "";
+}
+
+// check if the potential member submitted last proposal
+const canJoin = accountId && accountId !== proposal.proposer;
+
+const groupMembers = group.join(", ");
+
+const checkMembership = (groupMembers) => {
+  if (groupMembers.indexOf(accountId) !== -1) {
+    return setIsMember(true);
+  }
+};
+
+const validMember = checkMembership(groupMembers);
 
 const CreateSomethingView = (props) => {
   return (
     <JoinContainer>
       <Card>
+        {" "}
         <img src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya" />
         <h1>
           Designed to connect and empower builders in a multi-chain ecosystem
@@ -120,21 +230,54 @@ const CreateSomethingView = (props) => {
               </a>
             </>
           ) : (
-            <a href="#">
-              Join Build DAO{" "}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="17"
-                viewBox="0 0 16 17"
-                fill="none"
-              >
-                <path
-                  d="M10.7809 7.83327L7.2049 4.25726L8.1477 3.31445L13.3332 8.49993L8.1477 13.6853L7.2049 12.7425L10.7809 9.1666H2.6665V7.83327H10.7809Z"
-                  fill="black"
-                />
-              </svg>
-            </a>
+            <>
+              {canJoin ? (
+                <button onClick={handleJoin}>
+                  Join Build DAO{" "}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="17"
+                    viewBox="0 0 16 17"
+                    fill="none"
+                  >
+                    <path
+                      d="M10.7809 7.83327L7.2049 4.25726L8.1477 3.31445L13.3332 8.49993L8.1477 13.6853L7.2049 12.7425L10.7809 9.1666H2.6665V7.83327H10.7809Z"
+                      fill="black"
+                    />
+                  </svg>
+                </button>
+              ) : (
+                <>
+                  <span className={!validMember ? "pending" : "joined"}>
+                    {!validMember ? "Pending..." : "Joined"}
+                  </span>
+                  <a
+                    href={
+                      !validMember
+                        ? "/edit"
+                        : "/edit/build.sputnik-dao.near/widget/home"
+                    }
+                  >
+                    {!validMember
+                      ? "Propose new homepage"
+                      : "Propose changes to this homepage"}{" "}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="17"
+                      viewBox="0 0 16 17"
+                      fill="none"
+                    >
+                      <path
+                        d="M10.7809 7.83327L7.2049 4.25726L8.1477 3.31445L13.3332 8.49993L8.1477 13.6853L7.2049 12.7425L10.7809 9.1666H2.6665V7.83327H10.7809Z"
+                        fill="black"
+                      />
+                    </svg>
+                  </a>
+                </>
+              )}
+            </>
           )}{" "}
         </CTASection>
       </Card>

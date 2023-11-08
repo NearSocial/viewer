@@ -36,6 +36,7 @@ import Flags from "./pages/Flags";
 import SignInPage from "./pages/SignInPage";
 import ViewPage from "./pages/ViewPage";
 import JoinPage from "./pages/JoinPage";
+import ProposePage from "./pages/ProposePage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://github.com/NearBuilders/docs";
@@ -179,7 +180,10 @@ function App() {
               <SignInPage {...passProps} />
             </Route>
             <Route path={"/join"}>
-              <JoinPage {...passProps} {...passProps} />
+              <JoinPage {...passProps} />
+            </Route>
+            <Route path={"/propose"}>
+              <ProposePage {...passProps} />
             </Route>
             <Route path={"/embed/:widgetSrc*"}>
               <EmbedPage {...passProps} />
