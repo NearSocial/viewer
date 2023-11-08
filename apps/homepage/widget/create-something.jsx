@@ -252,16 +252,8 @@ const CreateSomethingView = (props) => {
                   <span className={!validMember ? "pending" : "joined"}>
                     {!validMember ? "Pending..." : "Joined"}
                   </span>
-                  <a
-                    href={
-                      !validMember
-                        ? "/edit"
-                        : "/edit/build.sputnik-dao.near/widget/home"
-                    }
-                  >
-                    {!validMember
-                      ? "Propose new homepage"
-                      : "Propose changes to this homepage"}{" "}
+                  <a href={"/propose"}>
+                    Propose Changes{" "}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
