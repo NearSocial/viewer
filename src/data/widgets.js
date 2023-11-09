@@ -20,7 +20,7 @@ const TestnetWidgets = {
 
 const MainnetWidgets = {
   image: "mob.near/widget/Image",
-  default: "builddao.near/widget/home",
+  default: "buildhub.near/widget/home",
   viewSource: "mob.near/widget/WidgetSource",
   widgetMetadataEditor: "builddao.near/widget/WidgetMetadataEditor",
   widgetMetadata: "builddao.near/widget/WidgetMetadata",
