@@ -11,10 +11,10 @@ const HeroContainer = styled.div`
   width: 100%;
   position: relative;
 
-  padding: 6.25rem 3rem;
+  padding: 9.375rem 3rem;
 
   @media screen and (max-width: 768px) {
-    padding: 6.25rem 1.5rem;
+    padding: 9.375rem 1.5rem;
   }
 `;
 
@@ -25,6 +25,7 @@ const LeftBlur = styled.img`
   transform: translateY(-50%);
   object-fit: cover;
   width: 25%;
+  pointer-events: none;
 
   @media screen and (max-width: 768px) {
     width: 50%;
@@ -39,6 +40,7 @@ const RightBlur = styled.img`
   transform: translateY(-50%);
   object-fit: cover;
   width: 25%;
+  pointer-events: none;
 
   @media screen and (max-width: 768px) {
     width: 50%;
@@ -54,6 +56,7 @@ const Grid = styled.img`
   object-fit: cover;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 `;
 
 const Logo = styled.img`

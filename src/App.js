@@ -26,7 +26,6 @@ import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { Link, Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { BosLoaderBanner } from "./components/BosLoaderBanner";
-import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { useEthersProviderContext } from "./data/web3";
 import { NetworkId, Widgets } from "./data/widgets";
 import { useBosLoaderInitializer } from "./hooks/useBosLoaderInitializer";
@@ -37,6 +36,7 @@ import SignInPage from "./pages/SignInPage";
 import ViewPage from "./pages/ViewPage";
 import JoinPage from "./pages/JoinPage";
 import ProposePage from "./pages/ProposePage";
+import { Navbar } from "./components/navigation/Navbar";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://github.com/NearBuilders/docs";
@@ -176,7 +176,7 @@ function App() {
               <Flags {...passProps} />
             </Route>
             <Route path={"/signin"}>
-              <NavigationWrapper {...passProps} />
+              <Navbar {...passProps} />
               <SignInPage {...passProps} />
             </Route>
             <Route path={"/join"}>
@@ -189,12 +189,12 @@ function App() {
               <EmbedPage {...passProps} />
             </Route>
             <Route path={"/edit/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
+              <Navbar {...passProps} />
               <EditorPage {...passProps} />
             </Route>
             <Route path={"/:widgetSrc*"}>
               <BosLoaderBanner />
-              <NavigationWrapper {...passProps} />
+              <Navbar {...passProps} />
               <ViewPage {...passProps} />
             </Route>
           </Switch>
