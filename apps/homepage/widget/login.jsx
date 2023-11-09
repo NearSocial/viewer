@@ -50,7 +50,8 @@ const LoginContainer = styled.div`
       line-height: 100%; /* 32px */
     }
 
-    a {
+    button {
+      all: unset;
       display: flex;
       padding: 16px 20px;
       justify-content: center;
@@ -84,7 +85,7 @@ const LoginView = () => {
         <h1>
           Designed to connect and empower builders in a multi-chain ecosystem
         </h1>
-        <a href="/signin">Login</a>
+        <button onClick={props.requestSignIn}>Login</button>
       </div>
       <img src="https://ipfs.near.social/ipfs/bafybeibqnkvafyflci4iap73prugmjw4wlwmrazbiudvnsyr34yzmk75i4" />
     </LoginContainer>
