@@ -157,7 +157,7 @@ return (
       {view === "selection" ? (
         <>
           <h1>What would you like to do?</h1>
-          <div className="d-flex gap-4">
+          <div className="d-flex flex-wrap align-items-center justify-content-center gap-4">
             <SelectionBox
               title={"Make changes to the existing page"}
               selected={selection === 1}

@@ -48,7 +48,7 @@ export default function SignInPage(props) {
   }, [params.accountId, params.privateKey]);
 
   return (
-    <div className="container-xl">
+    <div className="container-xl text-white">
       <div className="row">
         <div
           className="d-inline-block position-relative overflow-hidden"

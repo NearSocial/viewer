@@ -25,6 +25,7 @@ const LeftBlur = styled.img`
   transform: translateY(-50%);
   object-fit: cover;
   width: 25%;
+  pointer-events: none;
 
   @media screen and (max-width: 768px) {
     width: 50%;
@@ -39,6 +40,7 @@ const RightBlur = styled.img`
   transform: translateY(-50%);
   object-fit: cover;
   width: 25%;
+  pointer-events: none;
 
   @media screen and (max-width: 768px) {
     width: 50%;
@@ -54,6 +56,7 @@ const Grid = styled.img`
   object-fit: cover;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 `;
 
 const Logo = styled.img`
