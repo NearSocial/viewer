@@ -54,6 +54,10 @@ const Button = styled.a`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+
+  @media screen and (max-width: 768px) {
+    flex: 1 1 0;
+  }
 `;
 
 const Container = styled.div`
@@ -63,6 +67,9 @@ const Container = styled.div`
   @media screen and (max-width: 768px) {
     margin: 0;
     width: 100%;
+
+    display: flex;
+    justify-content: center;
   }
 `;
 
