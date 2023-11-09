@@ -133,7 +133,7 @@ return (
     <Card>
       <Logo src={logoLink} />
       <h1>Together, we can build a better future.</h1>
-      <a href="#">Join Now</a>
+      <a href="/join">Join Now</a>
     </Card>
     <Grid src={gridLink} />
     <LeftBlur src={leftBlur} />
