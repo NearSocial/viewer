@@ -145,109 +145,116 @@ export function Navbar(props) {
   }, []);
 
   return (
-    <StyledNavbar className="container-xl position-relative">
-      <div className="logo">
-        <a href="/" style={{ all: "unset", cursor: "pointer" }}>
-          <img src={logoLink} />
-        </a>
-      </div>
-      <div className="d-none flex-grow-1 justify-content-center d-md-flex align-items-center gap-3">
-        <NavLink
-          href="/"
-          className={`${
-            window.location.href === `${window.location.origin}/` && "active"
-          }`}
-        >
-          Home
-        </NavLink>
-        <NavLink
-          href="/edit"
-          className={`${
-            window.location.href === `${window.location.origin}/edit` &&
-            "active"
-          }`}
-        >
-          Editor
-        </NavLink>
-        <NavLink href={props.documentationHref}>Docs</NavLink>
-      </div>
-      <div className="d-none d-md-block flex-grow-1" style={{ flexBasis: 0 }}>
-        {!props.signedIn && (
-          <button
-            className="sign-in"
-            style={{ width: "max-content", marginLeft: "auto" }}
-            onClick={props.requestSignIn}
+    <div
+      style={{
+        borderBottom:
+          "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
+      }}
+    >
+      <StyledNavbar className="container-xl position-relative">
+        <div className="logo">
+          <a href="/" style={{ all: "unset", cursor: "pointer" }}>
+            <img src={logoLink} />
+          </a>
+        </div>
+        <div className="d-none flex-grow-1 justify-content-center d-md-flex align-items-center gap-3">
+          <NavLink
+            href="/"
+            className={`${
+              window.location.href === `${window.location.origin}/` && "active"
+            }`}
           >
-            Sign In
-          </button>
-        )}
-        {props.signedIn && (
-          <div>
-            <Widget
-              src="buildhub.near/widget/components.button.join-now"
-              config={{
-                redirectMap: redirectStore.redirectMap,
-              }}
-              props={{
-                children: <UserDropdown {...props} />,
-              }}
-            />
-          </div>
-        )}
-      </div>
-      <div className="d-block d-md-none">
-        <MobileDropdownButton onClick={toggleDropdown}>
-          <i className={`bi ${dropdown ? "bi-x" : "bi-list"}`}></i>
-        </MobileDropdownButton>
-      </div>
-      <div
-        className={`d-md-none ${
-          dropdown ? "d-flex" : "d-none"
-        } w-100 flex-column gap-3 text-white position-absolute start-50 top-100 shadow`}
-        style={{
-          transform: "translateX(-50%)",
-          background: "#0b0c14",
-          padding: "24px 48px",
-          zIndex: 5,
-        }}
-      >
-        <MobileLink
-          href="/"
-          className={`${
-            window.location.href === `${window.location.origin}/` && "active"
-          }`}
+            Home
+          </NavLink>
+          <NavLink
+            href="/edit"
+            className={`${
+              window.location.href === `${window.location.origin}/edit` &&
+              "active"
+            }`}
+          >
+            Editor
+          </NavLink>
+          <NavLink href={props.documentationHref}>Docs</NavLink>
+        </div>
+        <div className="d-none d-md-block flex-grow-1" style={{ flexBasis: 0 }}>
+          {!props.signedIn && (
+            <button
+              className="sign-in"
+              style={{ width: "max-content", marginLeft: "auto" }}
+              onClick={props.requestSignIn}
+            >
+              Sign In
+            </button>
+          )}
+          {props.signedIn && (
+            <div>
+              <Widget
+                src="buildhub.near/widget/components.button.join-now"
+                config={{
+                  redirectMap: redirectStore.redirectMap,
+                }}
+                props={{
+                  children: <UserDropdown {...props} />,
+                }}
+              />
+            </div>
+          )}
+        </div>
+        <div className="d-block d-md-none">
+          <MobileDropdownButton onClick={toggleDropdown}>
+            <i className={`bi ${dropdown ? "bi-x" : "bi-list"}`}></i>
+          </MobileDropdownButton>
+        </div>
+        <div
+          className={`d-md-none ${
+            dropdown ? "d-flex" : "d-none"
+          } w-100 flex-column gap-3 text-white position-absolute start-50 top-100 shadow`}
+          style={{
+            transform: "translateX(-50%)",
+            background: "#0b0c14",
+            padding: "24px 48px",
+            zIndex: 5,
+          }}
         >
-          Home
-        </MobileLink>
-        <MobileLink
-          href="/edit"
-          className={`${
-            window.location.href === `${window.location.origin}/edit` &&
-            "active"
-          }`}
-        >
-          Editor
-        </MobileLink>
-        <MobileLink href={props.documentationHref}>Docs</MobileLink>
-        {!props.signedIn && (
-          <button className="sign-in my-3" onClick={props.requestSignIn}>
-            Sign In
-          </button>
-        )}
-        {props.signedIn && (
-          <div>
-            <Widget
-              src="buildhub.near/widget/components.button.join-now"
-              config={{
-                redirectMap: redirectStore.redirectMap,
-              }}
-              props={{
-                children: <UserDropdown {...props} />,
-              }}
-            />
-          </div>
-        )}
-      </div>
-    </StyledNavbar>
+          <MobileLink
+            href="/"
+            className={`${
+              window.location.href === `${window.location.origin}/` && "active"
+            }`}
+          >
+            Home
+          </MobileLink>
+          <MobileLink
+            href="/edit"
+            className={`${
+              window.location.href === `${window.location.origin}/edit` &&
+              "active"
+            }`}
+          >
+            Editor
+          </MobileLink>
+          <MobileLink href={props.documentationHref}>Docs</MobileLink>
+          {!props.signedIn && (
+            <button className="sign-in my-3" onClick={props.requestSignIn}>
+              Sign In
+            </button>
+          )}
+          {props.signedIn && (
+            <div>
+              <Widget
+                src="buildhub.near/widget/components.button.join-now"
+                config={{
+                  redirectMap: redirectStore.redirectMap,
+                }}
+                props={{
+                  children: <UserDropdown {...props} />,
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </StyledNavbar>
+    </div>
   );
 }
