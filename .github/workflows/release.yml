@@ -23,7 +23,7 @@ jobs:
       
       - name: Install bos-workspace from dev branch
         run: |
-          npm install https://github.com/NEARBuilders/bos-workspace.git#dev
+          npm install bos-workspace
   
       - name: Build the workspaces
         run: |
