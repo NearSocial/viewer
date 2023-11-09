@@ -7,7 +7,7 @@ export default function ProposePage(props) {
   return (
     <div className="h-100">
       <Widget
-        src="builddao.near/widget/propose"
+        src="buildhub.near/widget/propose"
         props={{
           ...props,
         }}

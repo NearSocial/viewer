@@ -7,8 +7,9 @@ export default function JoinPage(props) {
   const redirectMapStore = useBosLoaderStore();
 
   const CurrentView = props.signedIn
-    ? "builddao.near/widget/create-something"
-    : "builddao.near/widget/login";
+    ? "buildhub.near/widget/create-something"
+    : "buildhub.near/widget/login";
+    
   return (
     <div className="h-100">
       {props.signedIn && (
