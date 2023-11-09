@@ -39,7 +39,7 @@ import ProposePage from "./pages/ProposePage";
 import { Navbar } from "./components/navigation/Navbar";
 
 export const refreshAllowanceObj = {};
-const documentationHref = "https://github.com/NearBuilders/docs";
+const documentationHref = "https://docs.near.org/bos";
 
 function App() {
   const [connected, setConnected] = useState(false);

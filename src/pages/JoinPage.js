@@ -9,7 +9,7 @@ export default function JoinPage(props) {
   const CurrentView = props.signedIn
     ? "buildhub.near/widget/create-something"
     : "buildhub.near/widget/login";
-    
+
   return (
     <div className="h-100">
       {props.signedIn && (
