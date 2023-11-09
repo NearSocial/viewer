@@ -10,7 +10,7 @@ if (metadata === null) {
 return (
   <Widget
     key={widgetPath}
-    src="builddao.near/widget/MetadataEditor"
+    src="/*__@appAccount__*//widget/builddao.MetadataEditor"
     props={{
       initialMetadata: metadata,
       onChange,

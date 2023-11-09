@@ -1,0 +1,35 @@
+name: Deploy Components to Testnet
+on:
+  push:
+    branches: [feature/testnet-deploy]
+jobs:
+  deploy-widgets:
+    runs-on: ubuntu-latest
+    name: Deploy widgets to social.near (testnet)
+    env:
+      BOS_DEPLOY_ACCOUNT_ID: ${{ vars.TESTNET_DEPLOY_ACCOUNT_ID }}
+      BOS_SIGNER_ACCOUNT_ID: ${{ vars.TESTNET_SIGNER_ACCOUNT_ID }}
+      BOS_SIGNER_PUBLIC_KEY: ${{ vars.TESTNET_SIGNER_PUBLIC_KEY }}
+      BOS_SIGNER_PRIVATE_KEY: ${{ secrets.TESTNET_SIGNER_PRIVATE_KEY }}
+      NETWORK_ID: testnet
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install near-social CLI
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/FroVolod/bos-cli-rs/releases/download/v0.3.1/bos-cli-v0.3.1-installer.sh | sh
+
+      - name: Install bos-workspace from dev branch
+        run: |
+          npm install https://github.com/NEARBuilders/bos-workspace.git#dev
+
+      - name: Build the workspaces
+        run: |
+          npm run bosworkspace build
+
+      - name: Deploy widgets
+        working-directory: ./build/canvas
+        run: |
+          bos components deploy "$BOS_DEPLOY_ACCOUNT_ID" sign-as "$BOS_SIGNER_ACCOUNT_ID" network-config testnet sign-with-plaintext-private-key --signer-public-key "$BOS_SIGNER_PUBLIC_KEY" --signer-private-key "$BOS_SIGNER_PRIVATE_KEY" send

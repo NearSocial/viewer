@@ -191,7 +191,7 @@ return (
           </span>
         </>
       ) : (
-        <Widget src="builddao.near/widget/propose-widget" />
+        <Widget src="/*__@appAccount__*//widget/propose-widget" />
       )}
     </Card>
   </Container>

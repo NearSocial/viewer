@@ -1,0 +1,35 @@
+name: Deploy Components to Mainnet
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy-widgets:
+    runs-on: ubuntu-latest
+    name: Deploy widgets to social.near (mainnet)
+    env:
+      BOS_DEPLOY_ACCOUNT_ID: ${{ vars.BOS_DEPLOY_ACCOUNT_ID }}
+      BOS_SIGNER_ACCOUNT_ID: ${{ vars.BOS_SIGNER_ACCOUNT_ID }}
+      BOS_SIGNER_PUBLIC_KEY: ${{ vars.BOS_SIGNER_PUBLIC_KEY }}
+      BOS_SIGNER_PRIVATE_KEY: ${{ secrets.BOS_SIGNER_PRIVATE_KEY }}
+      NETWORK_ID: mainnet
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install near-social CLI
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/FroVolod/bos-cli-rs/releases/download/v0.3.1/bos-cli-v0.3.1-installer.sh | sh
+      
+      - name: Install bos-workspace from dev branch
+        run: |
+          npm install https://github.com/NEARBuilders/bos-workspace.git#dev
+  
+      - name: Build the workspaces
+        run: |
+          npm run bosworkspace build
+
+      - name: Deploy widgets
+        working-directory: ./build/homepage
+        run: |
+          bos components deploy "$BOS_DEPLOY_ACCOUNT_ID" sign-as "$BOS_SIGNER_ACCOUNT_ID" network-config mainnet sign-with-plaintext-private-key --signer-public-key "$BOS_SIGNER_PUBLIC_KEY" --signer-private-key "$BOS_SIGNER_PRIVATE_KEY" send

@@ -1,4 +1,4 @@
-const ownerId = "builddao.near";
+const ownerId = "/*__@appAccount__*/";
 
 const Root = styled.div`
   background-color: #0b0c14;
