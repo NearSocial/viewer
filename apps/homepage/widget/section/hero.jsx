@@ -11,10 +11,10 @@ const HeroContainer = styled.div`
   width: 100%;
   position: relative;
 
-  padding: 6.25rem 3rem;
+  padding: 9.375rem 3rem;
 
   @media screen and (max-width: 768px) {
-    padding: 6.25rem 1.5rem;
+    padding: 9.375rem 1.5rem;
   }
 `;
 
