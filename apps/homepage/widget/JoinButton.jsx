@@ -51,14 +51,14 @@ const handleJoin = () => {
       gas: 219000000000000,
       deposit: deposit,
     },
-    {
-      contractName: "social.near",
-      methodName: "set",
-      deposit: Big(JSON.stringify(connectData).length * 16).mul(
-        Big(10).pow(20)
-      ),
-      args: { data: connectData },
-    },
+    // {
+    //   contractName: "social.near",
+    //   methodName: "set",
+    //   deposit: Big(JSON.stringify(connectData).length * 16).mul(
+    //     Big(10).pow(20)
+    //   ),
+    //   args: { data: connectData },
+    // },
   ]);
 };
 
