@@ -154,54 +154,6 @@ const group = policy.roles
   .filter((role) => role.name === roleId)
   .map((role) => role.kind.Group);
 
-const handleJoin = () => {
-
-  const connectData = {
-    graph: {
-      connect: {
-        [daoId]: ""
-      }
-    },
-    index: {
-      graph: JSON.stringify({
-        key: "connect",
-        value: {
-          type: "connect",
-          accountId: daoId,
-        },
-      }),
-    }
-  };
-
-  Near.call([
-    {
-      contractName: daoId,
-      methodName: "add_proposal",
-      args: {
-        proposal: {
-          description: `add ${accountId} to the ${roleId} group`,
-          kind: {
-            AddMemberToRole: {
-              member_id: accountId,
-              role: roleId,
-            },
-          },
-        },
-      },
-      gas: 219000000000000,
-      deposit: deposit,
-    },
-    {
-      contractName: "social.near",
-      methodName: "set",
-      deposit: Big(JSON.stringify(connectData).length * 16).mul(
-        Big(10).pow(20),
-      ),
-      args: { connectData },
-    }
-  ]);
-};
-
 const proposalId = Near.view(daoId, "get_last_proposal_id") - 1;
 
 // get data from last proposal
@@ -258,21 +210,28 @@ const CreateSomethingView = (props) => {
           ) : (
             <>
               {canJoin ? (
-                <button onClick={handleJoin}>
-                  Join Build DAO{" "}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="17"
-                    viewBox="0 0 16 17"
-                    fill="none"
-                  >
-                    <path
-                      d="M10.7809 7.83327L7.2049 4.25726L8.1477 3.31445L13.3332 8.49993L8.1477 13.6853L7.2049 12.7425L10.7809 9.1666H2.6665V7.83327H10.7809Z"
-                      fill="black"
-                    />
-                  </svg>
-                </button>
+                <Widget
+                  src="/*__@appAccount__*//widget/JoinButton"
+                  props={{
+                    children: (
+                      <>
+                        Join Build DAO{" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="17"
+                          viewBox="0 0 16 17"
+                          fill="none"
+                        >
+                          <path
+                            d="M10.7809 7.83327L7.2049 4.25726L8.1477 3.31445L13.3332 8.49993L8.1477 13.6853L7.2049 12.7425L10.7809 9.1666H2.6665V7.83327H10.7809Z"
+                            fill="black"
+                          />
+                        </svg>
+                      </>
+                    ),
+                  }}
+                />
               ) : (
                 <>
                   <span className={!validMember ? "pending" : "joined"}>
