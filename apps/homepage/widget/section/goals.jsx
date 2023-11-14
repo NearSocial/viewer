@@ -229,7 +229,7 @@ return (
         isFirst
       />
       <GridItem
-        title="Learn Togeter"
+        title="Learn Together"
         tag="Education"
         description="We are cultivating a worldwide community of builders who are motivated to help others. Members can earn badges and get necessary resources for training potential contributors."
         image="https://ipfs.near.social/ipfs/bafkreigdor4dtdj5sfq6g2m6wvsfihx72psb7sc5wtx6mbp7g7kxetrpsi"
