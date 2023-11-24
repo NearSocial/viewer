@@ -78,7 +78,9 @@ function App(props) {
               delete props.href;
             }
             if (props.to) {
-              props.to = sanitizeUrl(props.to);
+              props.to = sanitizeUrl(
+                typeof props.to === "string" ? props.to : ""
+              );
             }
             return <Link {...props} />;
           },
