@@ -144,6 +144,10 @@ const ContentContainer = styled.div`
   }
 `;
 
+const Image = styled.img`
+  max-width: 1200px;
+`;
+
 return (
   <GovernanceContainer>
     <ContentContainer>
@@ -157,6 +161,6 @@ return (
         of builders, by builders, for builders.
       </p>
     </ContentContainer>
-    <img src={imageLink} />
+    <Image src={imageLink} />
   </GovernanceContainer>
 );
