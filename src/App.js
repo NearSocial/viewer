@@ -19,7 +19,6 @@ import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
-import { sanitizeUrl } from "@braintree/sanitize-url";
 import {
   useAccount,
   useInitNear,
@@ -32,6 +31,7 @@ import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
+import { isValidAttribute } from "dompurify";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -78,9 +78,9 @@ function App(props) {
               delete props.href;
             }
             if (props.to) {
-              props.to = sanitizeUrl(
-                typeof props.to === "string" ? props.to : ""
-              );
+              props.to = isValidAttribute("a", "href", props.to)
+                ? props.to
+                : "about:blank";
             }
             return <Link {...props} />;
           },
