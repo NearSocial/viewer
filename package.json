@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.18.4",
+  "version": "0.18.5",
   "homepage": "/",
   "private": true,
   "dependencies": {
@@ -28,7 +28,7 @@
     "error-polyfill": "^0.1.2",
     "local-storage": "^2.0.0",
     "near-api-js": "^2.1.3",
-    "near-social-vm": "git+https://github.com/NearSocial/VM.git#8fc244fdf9ae10d8a48fdea5595c0c26a9d90bdf",
+    "near-social-vm": "git+https://github.com/NearSocial/VM.git#d4176930eeae95879e0f836c11d64384faafaab1",
     "near-social-vm-types": "^1.0.0",
     "prettier": "^2.7.1",
     "qrcode.react": "^3.1.0",
