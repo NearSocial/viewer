@@ -176,6 +176,15 @@ export function Navbar(props) {
             Editor
           </NavLink>
           <NavLink href={props.documentationHref}>Docs</NavLink>
+          <NavLink
+            href="/feed"
+            className={`${
+              window.location.href === `${window.location.origin}/feed` &&
+              "active"
+            }`}
+          >
+            Feed
+          </NavLink>
         </div>
         <div className="d-none d-md-block flex-grow-1" style={{ flexBasis: 0 }}>
           {!props.signedIn && (
