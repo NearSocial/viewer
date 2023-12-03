@@ -37,6 +37,7 @@ import ViewPage from "./pages/ViewPage";
 import JoinPage from "./pages/JoinPage";
 import ProposePage from "./pages/ProposePage";
 import { Navbar } from "./components/navigation/Navbar";
+import FeedPage from "./pages/FeedPage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos";
@@ -184,6 +185,10 @@ function App() {
             </Route>
             <Route path={"/propose"}>
               <ProposePage {...passProps} />
+            </Route>
+            <Route path={"/feed"}>
+              <Navbar {...passProps} />
+              <FeedPage {...passProps} />
             </Route>
             <Route path={"/embed/:widgetSrc*"}>
               <EmbedPage {...passProps} />
