@@ -1,5 +1,3 @@
-import context from "react-bootstrap/esm/AccordionContext";
-
 const { Feed } = VM.require("devs.near/widget/Module.Feed");
 
 Feed = Feed || (() => <></>); // make sure you have this or else it can break
@@ -8,7 +6,7 @@ const profile =
   props.profile || Social.get(`${context.accountId}/profile/**`, "final") || {};
 
 const StyledPost = styled.div`
-  margin: 1rem 0;
+  margin-bottom: 1rem;
   .post {
     border-radius: 16px;
     border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
@@ -87,6 +85,7 @@ const NewPost = styled.div`
   align-items: center;
   gap: 24px;
   align-self: stretch;
+  margin-bottom: 1rem;
 
   border-radius: 12px;
   background: var(--bg-2, #23242b);
