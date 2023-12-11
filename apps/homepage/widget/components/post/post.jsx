@@ -189,13 +189,6 @@ return (
     }
   >
     <div className={`post ${props.reposted ? "reposted" : ""}`}>
-      <div className="left">
-        <Widget
-          loading=""
-          src="mob.near/widget/MainPage.N.Post.Left"
-          props={{ accountId, groupId }}
-        />
-      </div>
       <div className="right d-flex flex-column gap-3">
         <Widget
           loading={<div className="post-header" />}
@@ -280,21 +273,23 @@ return (
     {props.customComments
       ? props.customComments
       : !props.hideComments && (
-          <Widget
-            key="comments"
-            loading={false}
-            src="mob.near/widget/MainPage.N.Comment.Feed"
-            props={{
-              item,
-              highlightComment: props.highlightComment,
-              limit: props.commentsLimit,
-              subscribe,
-              raw,
-              accounts: props.commentAccounts,
-              groupId,
-              permissions,
-            }}
-          />
+          <div className="ms-5 my-3">
+            <Widget
+              key="comments"
+              loading={false}
+              src="mob.near/widget/MainPage.N.Comment.Feed"
+              props={{
+                item,
+                highlightComment: props.highlightComment,
+                limit: props.commentsLimit,
+                subscribe,
+                raw,
+                accounts: props.commentAccounts,
+                groupId,
+                permissions,
+              }}
+            />
+          </div>
         )}
   </Wrapper>
 );

@@ -75,45 +75,54 @@ const Button = styled.div`
 return (
   <div className="d-flex flex-row align-items-center post-header">
     <div className="flex-grow-1" style={{ minWidth: 0, overflow: "hidden" }}>
-      <div className="d-flex flex-column">
-        <div className="d-flex flex-shrink-1 overflow-hidden">
-          {name && (
-            <Overlay>
-              <div className="text-truncate fw-bold">{name}</div>
-            </Overlay>
-          )}
-          <div className="flex-shrink-0">
-            <Widget
-              loading={""}
-              src="mob.near/widget/Checkmark"
-              props={{ isPremium, accountId }}
-            />
-          </div>
+      <div className="d-flex">
+        <div className="left">
+          <Widget
+            loading=""
+            src="mob.near/widget/MainPage.N.Post.Left"
+            props={{ accountId, groupId }}
+          />
         </div>
-        <div
-          className="d-flex flex-column flex-shrink-1 overflow-hidden mw-100"
-          style={{ marginLeft: "2px" }}
-        >
-          <div className="flex-shrink-1 overflow-hidden">
-            <Overlay>
-              <div className="text-truncate text-muted">@{accountId}</div>
-            </Overlay>
-          </div>
-          {!pinned && (
-            <div className="text-nowrap text-muted flex-shrink-0">
-              {blockHeight === "now" ? (
-                "now"
-              ) : (
-                <a className="text-muted" href={link}>
-                  <Widget
-                    loading=""
-                    src="mob.near/widget/TimeAgo"
-                    props={{ blockHeight }}
-                  />
-                </a>
-              )}
+        <div className="d-flex flex-column">
+          <div className="d-flex flex flex-shrink-1 overflow-hidden">
+            {name && (
+              <Overlay>
+                <div className="text-truncate fw-bold">{name}</div>
+              </Overlay>
+            )}
+            <div className="flex-shrink-0">
+              <Widget
+                loading={""}
+                src="mob.near/widget/Checkmark"
+                props={{ isPremium, accountId }}
+              />
             </div>
-          )}
+          </div>
+          <div
+            className="d-flex flex-column flex-shrink-1 overflow-hidden mw-100"
+            style={{ marginLeft: "2px" }}
+          >
+            <div className="flex-shrink-1 overflow-hidden">
+              <Overlay>
+                <div className="text-truncate text-muted">@{accountId}</div>
+              </Overlay>
+            </div>
+            {!pinned && (
+              <div className="text-nowrap text-muted flex-shrink-0">
+                {blockHeight === "now" ? (
+                  "now"
+                ) : (
+                  <a className="text-muted" href={link}>
+                    <Widget
+                      loading=""
+                      src="mob.near/widget/TimeAgo"
+                      props={{ blockHeight }}
+                    />
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
