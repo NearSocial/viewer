@@ -1,3 +1,5 @@
+import context from "react-bootstrap/esm/AccordionContext";
+
 const { Feed } = VM.require("devs.near/widget/Module.Feed");
 
 Feed = Feed || (() => <></>); // make sure you have this or else it can break
@@ -209,25 +211,27 @@ return (
       />
     </Aside>
     <MainContent>
-      <NewPost className="w-100">
-        <Widget
-          src="mob.near/widget/Image"
-          props={{
-            image: profile.image,
-            alt: profile.name,
-            style: {
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              objectFit: "cover",
-            },
-            fallbackUrl:
-              "https://ipfs.near.social/ipfs/bafkreibiyqabm3kl24gcb2oegb7pmwdi6wwrpui62iwb44l7uomnn3lhbi",
-          }}
-        />
-        <textarea placeholder="What do you have in mind?" />
-        <button className="post">Create Updates</button>
-      </NewPost>
+      {context.accountId && (
+        <NewPost className="w-100">
+          <Widget
+            src="mob.near/widget/Image"
+            props={{
+              image: profile.image,
+              alt: profile.name,
+              style: {
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                objectFit: "cover",
+              },
+              fallbackUrl:
+                "https://ipfs.near.social/ipfs/bafkreibiyqabm3kl24gcb2oegb7pmwdi6wwrpui62iwb44l7uomnn3lhbi",
+            }}
+          />
+          <textarea placeholder="What do you have in mind?" />
+          <button className="post">Create Updates</button>
+        </NewPost>
+      )}
       {feed()}
     </MainContent>
   </Container>
