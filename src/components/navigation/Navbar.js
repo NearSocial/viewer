@@ -160,28 +160,25 @@ export function Navbar(props) {
         <div className="d-none flex-grow-1 justify-content-center d-md-flex align-items-center gap-3">
           <NavLink
             href="/"
-            className={`${
-              window.location.href === `${window.location.origin}/` && "active"
-            }`}
+            className={`${window.location.href === `${window.location.origin}/` && "active"
+              }`}
           >
             Home
           </NavLink>
           <NavLink
             href="/edit"
-            className={`${
-              window.location.href === `${window.location.origin}/edit` &&
+            className={`${window.location.href === `${window.location.origin}/edit` &&
               "active"
-            }`}
+              }`}
           >
             Editor
           </NavLink>
           <NavLink href={props.documentationHref}>Docs</NavLink>
           <NavLink
             href="/feed"
-            className={`${
-              window.location.href === `${window.location.origin}/feed` &&
+            className={`${window.location.href === `${window.location.origin}/feed` &&
               "active"
-            }`}
+              }`}
           >
             Feed
           </NavLink>
@@ -216,32 +213,38 @@ export function Navbar(props) {
           </MobileDropdownButton>
         </div>
         <div
-          className={`d-md-none ${
-            dropdown ? "d-flex" : "d-none"
-          } w-100 flex-column gap-3 text-white position-absolute start-50 top-100 shadow`}
+          className={`d-md-none ${dropdown ? "d-flex" : "d-none"
+            } w-100 flex-column gap-3 text-white position-absolute start-50 top-100 shadow`}
           style={{
             transform: "translateX(-50%)",
             background: "#0b0c14",
             padding: "24px 48px",
             zIndex: 5,
+            borderBottom: "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))"
           }}
         >
           <MobileLink
             href="/"
-            className={`${
-              window.location.href === `${window.location.origin}/` && "active"
-            }`}
+            className={`${window.location.href === `${window.location.origin}/` && "active"
+              }`}
           >
             Home
           </MobileLink>
           <MobileLink
             href="/edit"
-            className={`${
-              window.location.href === `${window.location.origin}/edit` &&
+            className={`${window.location.href === `${window.location.origin}/edit` &&
               "active"
-            }`}
+              }`}
           >
             Editor
+          </MobileLink>
+          <MobileLink
+            href="/feed"
+            className={`${window.location.href === `${window.location.origin}/feed` &&
+              "active"
+              }`}
+          >
+            Feed
           </MobileLink>
           <MobileLink href={props.documentationHref}>Docs</MobileLink>
           {!props.signedIn && (

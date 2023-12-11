@@ -10,7 +10,7 @@ export default function FeedPage(props) {
   const src = props.widgets.feed;
 
   return (
-    <div style={{ backgroundColor: "lightgray" }}>
+    <div className="container-xl mt-3" style={{ backgroundColor: "#0b0c14" }}>
       <Widget
         key={src}
         src={src}

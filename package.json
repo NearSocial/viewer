@@ -24,6 +24,7 @@
     "bn.js": "^5.1.1",
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.9.0",
+    "bos-workspace": "^0.0.1-alpha.4",
     "collections": "^5.1.12",
     "concurrently": "^8.2.1",
     "error-polyfill": "^0.1.2",
