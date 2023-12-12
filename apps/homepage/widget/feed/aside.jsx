@@ -61,6 +61,7 @@ const Container = styled.div`
   @media screen and (max-width: 768px) {
     border: 0px;
     flex-direction: row;
+    overflow-x: auto;
   }
 `;
 

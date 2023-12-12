@@ -79,58 +79,6 @@ const StyledPost = styled.div`
   }
 `;
 
-const NewPost = styled.div`
-  display: flex;
-  padding: 12px 16px;
-  align-items: center;
-  gap: 24px;
-  align-self: stretch;
-  margin-bottom: 1rem;
-
-  border-radius: 12px;
-  background: var(--bg-2, #23242b);
-
-  img.logo {
-    width: 40px;
-    height: 40px;
-
-    border-radius: 40px;
-    background: lightgray 50% / cover no-repeat;
-  }
-
-  textarea {
-    flex: 1 1 0;
-    border: 0;
-    background-color: #23242b;
-    width: 100%;
-  }
-
-  button.post {
-    all: unset;
-    display: flex;
-    padding: 10px 20px;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-
-    border-radius: 8px;
-    background: var(--Yellow, #ffaf51);
-
-    color: var(--black-100, #000);
-
-    /* Other/Button_text */
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-  }
-
-  @media screen and (max-width: 768px) {
-    flex-direction: column;
-    align-items: start;
-  }
-`;
-
 const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -211,25 +159,7 @@ return (
     </Aside>
     <MainContent>
       {context.accountId && (
-        <NewPost className="w-100">
-          <Widget
-            src="mob.near/widget/Image"
-            props={{
-              image: profile.image,
-              alt: profile.name,
-              style: {
-                width: 40,
-                height: 40,
-                borderRadius: "50%",
-                objectFit: "cover",
-              },
-              fallbackUrl:
-                "https://ipfs.near.social/ipfs/bafkreibiyqabm3kl24gcb2oegb7pmwdi6wwrpui62iwb44l7uomnn3lhbi",
-            }}
-          />
-          <textarea placeholder="What do you have in mind?" />
-          <button className="post">Create Updates</button>
-        </NewPost>
+        <Widget src="buildhub.near/widget/feed.post.post-creator" />
       )}
       {feed()}
     </MainContent>
