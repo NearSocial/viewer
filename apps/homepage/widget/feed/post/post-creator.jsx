@@ -166,9 +166,6 @@ return (
       >
         <p className="fw-bold m-0">{name}</p>
         <p className="m-0">@{context.accountId}</p>
-        <p className="m-0">
-          {view === "editor" ? "Post Editor" : "Post Preview"}
-        </p>
       </div>
     </div>
 
