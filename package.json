@@ -46,13 +46,10 @@
   "scripts": {
     "serve": "webpack serve",
     "webpack": "webpack",
-    "bosworkspace": "bos-workspace",
     "dev": "concurrently \"bos-workspace dev\" \"npm run serve -- --env mode=development\"",
-    "bosdev": "npm run bosworkspace dev",
-    "bosbuild": "npm run bosworkspace build",
     "prod": "npm run webpack -- --env mode=production",
     "prod:analyze": "npm run prod -- --env presets=analyze",
-    "build": "npm run prod",
+    "build": "concurrently \"bos-workspace build\" \"npm run prod\"",
     "start": "npm run dev",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
