@@ -134,7 +134,7 @@ const feed = () => {
           <StyledPost>
             <Widget
               loading={<div className="w-100" style={{ height: "200px" }} />}
-              src="buildhub.near/widget/components.post.post"
+              src="/*__@appAccount__*//widget/components.post.post"
               props={{
                 accountId: p.accountId,
                 blockHeight: p.blockHeight,
@@ -153,13 +153,13 @@ return (
   <Container>
     <Aside>
       <Widget
-        src="buildhub.near/widget/feed.aside"
+        src="/*__@appAccount__*//widget/feed.aside"
         props={{ currentFeed: currentFeed, setCurrentFeed: setCurrentFeed }}
       />
     </Aside>
     <MainContent>
       {context.accountId && (
-        <Widget src="buildhub.near/widget/feed.post.post-creator" />
+        <Widget src="/*__@appAccount__*//widget/feed.post.post-creator" />
       )}
       {feed()}
     </MainContent>
