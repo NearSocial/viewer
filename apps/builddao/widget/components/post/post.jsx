@@ -192,7 +192,7 @@ return (
       <div className="right d-flex flex-column gap-3">
         <Widget
           loading={<div className="post-header" />}
-          src="buildhub.near/widget/components.post.post-header"
+          src="/*__@appAccount__*//widget/components.post.post-header"
           props={{
             accountId,
             blockHeight,
