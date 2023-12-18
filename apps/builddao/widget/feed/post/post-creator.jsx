@@ -3,6 +3,7 @@ const [postContent, setPostContent] = useState("What do you have in mind?");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
 
+// todo: temporary — need to convert to org standard UID
 function BDaoUID () {
   const randomDigit = () => 0 + Math.floor(Math.random()*(10 - 0.1))
   return 'XXXXXXX'.replaceAll('X', randomDigit)
