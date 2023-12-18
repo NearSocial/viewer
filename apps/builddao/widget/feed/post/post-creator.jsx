@@ -3,7 +3,47 @@ const [postContent, setPostContent] = useState("What do you have in mind?");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
 
-const name = Social.get(`${context.accountId}/profile/name`);
+function BDaoUID () {
+  const randomDigit = () => 0 + Math.floor(Math.random()*(10 - 0.1))
+  return 'XXXXXXX'.replaceAll('X', randomDigit)
+}
+
+const postToCustomFeed = ({ feed, text }) => {
+  const postId = BDaoUID()
+  return Social.set({
+    "update": {
+      [postId]: {
+        content: JSON.stringify({
+          type: "md",
+          text,
+        }),
+        "metadata": {
+          type: feed
+        },
+      },
+    },
+    "post": {
+      "main": JSON.stringify({
+        type: "md",
+        text: `[EMBED](${context.accountId}/${feed}/${postId})`,
+      }),
+    },
+    "index": {
+      "post": JSON.stringify([
+        { key: "main", value: { type: "md" }},
+        { key: feed, value: { type: "md" }},
+      ])
+    }
+  }, {
+    force: true,
+    onCommit: () => {
+      console.log(`Commited ${feed}: #${postId}`)
+    },
+    onCancel: () => {
+      console.log(`Cancelled ${feed}: #${postId}`)
+    },
+  });
+}
 
 const PostCreator = styled.div`
   display: flex;
@@ -239,7 +279,7 @@ return (
           </>
         )}
       </SecondaryButton>
-      <Button>Post Update</Button>
+      <Button onClick={() => postToCustomFeed({ feed: 'update', text: postContent })}>Post Update</Button>
     </div>
   </PostCreator>
 );
