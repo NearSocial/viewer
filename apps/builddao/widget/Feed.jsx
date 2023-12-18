@@ -100,53 +100,64 @@ const MainContent = styled.div`
 
 const [currentFeed, setCurrentFeed] = useState("updates");
 
+const CustomFeed = (name) => {
+  name = !!name ? name : 'main'
+  return (
+    <Feed
+      index={[
+        {
+          action: "post",
+          key: name,
+          options: {
+            limit: 10,
+            order: "desc",
+            accountId: props.accounts,
+          },
+          cacheOptions: {
+            ignoreCache: true,
+          },
+        },
+        {
+          action: "repost",
+          key: name,
+          options: {
+            limit: 10,
+            order: "desc",
+            accountId: props.accounts,
+          },
+          cacheOptions: {
+            ignoreCache: true,
+          },
+        },
+      ]}
+      Item={(p) => (
+        <StyledPost>
+          <Widget
+            loading={<div className="w-100" style={{ height: "200px" }} />}
+            src="/*__@appAccount__*//widget/components.post.post"
+            props={{
+              accountId: p.accountId,
+              blockHeight: p.blockHeight,
+              noBorder: true,
+            }}
+          />
+        </StyledPost>
+      )}
+    />
+  );
+}
+
+const nameToKey = (name) => ({
+  "updates": "update",
+  "bugs": "bug",
+  "resources": "resource",
+})[name]
+
 const feed = () => {
-  if (currentFeed === "updates")
-    return (
-      <Feed
-        index={[
-          {
-            action: "post",
-            key: "main",
-            options: {
-              limit: 10,
-              order: "desc",
-              accountId: props.accounts,
-            },
-            cacheOptions: {
-              ignoreCache: true,
-            },
-          },
-          {
-            action: "repost",
-            key: "main",
-            options: {
-              limit: 10,
-              order: "desc",
-              accountId: props.accounts,
-            },
-            cacheOptions: {
-              ignoreCache: true,
-            },
-          },
-        ]}
-        Item={(p) => (
-          <StyledPost>
-            <Widget
-              loading={<div className="w-100" style={{ height: "200px" }} />}
-              src="/*__@appAccount__*//widget/components.post.post"
-              props={{
-                accountId: p.accountId,
-                blockHeight: p.blockHeight,
-                noBorder: true,
-              }}
-            />
-          </StyledPost>
-        )}
-      />
-    );
-  else if (currentFeed === "bugs") return "Bugs Feed";
-  else if (currentFeed === "resources") return "Resource Feed";
+  if (!!nameToKey(currentFeed)) {
+    return CustomFeed(nameToKey(currentFeed))
+  }
+  return CustomFeed('main')
 };
 
 return (
@@ -159,7 +170,10 @@ return (
     </Aside>
     <MainContent>
       {context.accountId && (
-        <Widget src="/*__@appAccount__*//widget/feed.post.post-creator" />
+        <Widget 
+          src="/*__@appAccount__*//widget/feed.post.post-creator"
+          props={{ key: nameToKey(currentFeed) }}
+        />
       )}
       {feed()}
     </MainContent>

@@ -9,14 +9,16 @@ function BDaoUID () {
   return 'XXXXXXX'.replaceAll('X', randomDigit)
 }
 
-const postToCustomFeed = ({ feed, text }) => {
+const postToCustomFeed = ({ feed, text, labels }) => {
   const postId = BDaoUID()
+  if (!labels) labels = []
   return Social.set({
     "update": {
       [postId]: {
         content: JSON.stringify({
           type: "md",
           text,
+          labels,
         }),
         "metadata": {
           type: feed
@@ -280,7 +282,7 @@ return (
           </>
         )}
       </SecondaryButton>
-      <Button onClick={() => postToCustomFeed({ feed: 'update', text: postContent })}>Post Update</Button>
+      <Button onClick={() => postToCustomFeed({ feed: props.key, text: postContent, labels })}>Post Update</Button>
     </div>
   </PostCreator>
 );
