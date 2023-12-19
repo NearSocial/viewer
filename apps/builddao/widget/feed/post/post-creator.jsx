@@ -4,13 +4,14 @@ const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
 
 // todo: temporary — need to convert to org standard UID
-function BDaoUID () {
-  const randomDigit = () => 0 + Math.floor(Math.random()*(10 - 0.1))
-  return 'XXXXXXX'.replaceAll('X', randomDigit)
+function generateUID() {
+  const maxHex = 0xffffffff;
+  const randomNumber = Math.floor(Math.random() * maxHex);
+  return randomNumber.toString(16).padStart(8, '0');
 }
 
 const postToCustomFeed = ({ feed, text, labels }) => {
-  const postId = BDaoUID()
+  const postId = generateUID()
   if (!labels) labels = []
   return Social.set({
     "update": {
