@@ -74,6 +74,8 @@ const Tagline = styled.h1`
   line-height: 120%; /* 57.6px */
   margin: 0;
 
+  text-wrap: balance;
+
   span.muted {
     color: rgba(255, 255, 255, 0.7);
   }

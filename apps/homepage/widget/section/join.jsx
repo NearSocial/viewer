@@ -107,6 +107,8 @@ const ContentContainer = styled.div`
     font-weight: 500;
     line-height: 120%; /* 48px */
     margin: 0;
+
+    text-wrap: balance;
   }
 
   span.blue {
