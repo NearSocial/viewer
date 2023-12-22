@@ -3,7 +3,6 @@ const [postContent, setPostContent] = useState("What do you have in mind?");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
 
-// todo: temporary — need to convert to org standard UID
 function generateUID() {
   const maxHex = 0xffffffff;
   const randomNumber = Math.floor(Math.random() * maxHex);
@@ -16,7 +15,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   return Social.set({
     "update": {
       [postId]: {
-        content: JSON.stringify({
+        "content": JSON.stringify({
           type: "md",
           text,
           labels,
