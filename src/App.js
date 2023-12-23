@@ -78,9 +78,11 @@ function App(props) {
               delete props.href;
             }
             if (props.to) {
-              props.to = isValidAttribute("a", "href", props.to)
-                ? props.to
-                : "about:blank";
+              props.to =
+                typeof props.to === "string" &&
+                isValidAttribute("a", "href", props.to)
+                  ? props.to
+                  : "about:blank";
             }
             return <Link {...props} />;
           },
