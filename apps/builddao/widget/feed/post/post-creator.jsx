@@ -32,8 +32,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
       }),
     },
     "index": {
-      "post": JSON.stringify([
-        { key: "main", value: { type: "md" }},
+      "every": JSON.stringify([
         { key: feed, value: { type: "md" }},
       ])
     }

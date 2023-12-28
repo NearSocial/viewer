@@ -106,19 +106,7 @@ const CustomFeed = (name) => {
     <Feed
       index={[
         {
-          action: "post",
-          key: name,
-          options: {
-            limit: 10,
-            order: "desc",
-            accountId: props.accounts,
-          },
-          cacheOptions: {
-            ignoreCache: true,
-          },
-        },
-        {
-          action: "repost",
+          action: "every",
           key: name,
           options: {
             limit: 10,
