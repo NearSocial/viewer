@@ -2,7 +2,7 @@
 // get the nested content using its URI and pass it's contents to a "normal" post content widget
 
 const href = props.href;
-const content = JSON.parse(Social.get(`${href}/content`, "final") || {});
+const content = JSON.parse(Social.get(href, "final") || {});
 
 return (
   <Widget

@@ -15,7 +15,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   return Social.set({
     "update": {
       [postId]: {
-        "content": JSON.stringify({
+        "": JSON.stringify({
           type: "md",
           text,
           labels,
