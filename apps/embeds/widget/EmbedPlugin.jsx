@@ -1,8 +1,10 @@
 const { accountId, name, type, metadata, plugin } = props;
 
 const installedEmbeds = JSON.parse(
-  Social.get(`${accountId}/settings/every/embed`, "final") || "null"
+  Social.get(`${context.accountId}/settings/every/embed`, "final") || "null"
 );
+
+console.log("installedEmbeds", installedEmbeds);
 
 if (plugin) {
   return (
