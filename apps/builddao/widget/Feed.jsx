@@ -2,9 +2,6 @@ const { Feed } = VM.require("devs.near/widget/Module.Feed");
 
 Feed = Feed || (() => <></>); // make sure you have this or else it can break
 
-const profile =
-  props.profile || Social.get(`${context.accountId}/profile/**`, "final") || {};
-
 const StyledPost = styled.div`
   margin-bottom: 1rem;
   .post {
@@ -102,7 +99,7 @@ const [currentFeed, setCurrentFeed] = useState("updates");
 const [template, setTemplate] = useState("What did you have in mind?");
 
 const CustomFeed = ({ name }) => {
-  name = !!name ? name : 'main'
+  name = !!name ? name : 'update'
   return (
     <Feed
       index={[
@@ -161,7 +158,6 @@ const feed = () => {
   if (!!feedsDict[currentFeed]) {
     return CustomFeed(feedsDict[currentFeed])
   }
-  return CustomFeed('main')
 };
 
 return (
@@ -175,7 +171,7 @@ return (
     <MainContent>
       {context.accountId && (
         <Widget 
-          src="/*__@appAccount__*//widget/compose"
+          src="/*__@appAccount__*//widget/Compose"
           props={{ key: feedsDict[currentFeed], template: feedsDict[currentFeed].template }}
         />
       )}

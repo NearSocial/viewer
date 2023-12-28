@@ -6,54 +6,59 @@ const [labels, setLabels] = useState([]);
 function generateUID() {
   const maxHex = 0xffffffff;
   const randomNumber = Math.floor(Math.random() * maxHex);
-  return randomNumber.toString(16).padStart(8, '0');
+  return randomNumber.toString(16).padStart(8, "0");
 }
 
-function tagsFromLabels (labels) {
-  return labels.reduce((newLabels, label) => ({
-    ...newLabels,
-    [label]: "",
-  }), {})
+function tagsFromLabels(labels) {
+  return labels.reduce(
+    (newLabels, label) => ({
+      ...newLabels,
+      [label]: "",
+    }),
+    {}
+  );
 }
 
 const postToCustomFeed = ({ feed, text, labels }) => {
-  const postId = generateUID()
-  if (!labels) labels = []
-  return Social.set({
-    "update": {
-      [postId]: {
-        "": JSON.stringify({
-          type: "md",
-          text,
-          labels,
-        }),
-        "metadata": {
-          type: feed,
-          tags: tagsFromLabels(labels),
+  const postId = generateUID();
+  if (!labels) labels = [];
+  return Social.set(
+    {
+      update: {
+        [postId]: {
+          "": JSON.stringify({
+            type: "md",
+            text,
+            labels,
+          }),
+          metadata: {
+            type: feed,
+            tags: tagsFromLabels(labels),
+          },
         },
       },
+      post: {
+        main: JSON.stringify({
+          type: "md",
+          text: `[EMBED](${context.accountId}/${feed}/${postId})`,
+        }),
+      },
+      index: {
+        post: JSON.stringify({ key: "main", value: { type: "md" } }),
+        every: JSON.stringify({ key: feed, value: { type: "md" } }),
+      },
     },
-    "post": {
-      "main": JSON.stringify({
-        type: "md",
-        text: `[EMBED](${context.accountId}/${feed}/${postId})`,
-      }),
-    },
-    "index": {
-      "every": JSON.stringify([
-        { key: feed, value: { type: "md" }},
-      ])
+    {
+      force: true,
+      onCommit: () => {
+        console.log(`Commited ${feed}: #${postId}`);
+      },
+      onCancel: () => {
+        console.log(`Cancelled ${feed}: #${postId}`);
+      },
     }
-  }, {
-    force: true,
-    onCommit: () => {
-      console.log(`Commited ${feed}: #${postId}`)
-    },
-    onCancel: () => {
-      console.log(`Cancelled ${feed}: #${postId}`)
-    },
-  });
-}
+  );
+};
 
 const PostCreator = styled.div`
   display: flex;
@@ -289,7 +294,13 @@ return (
           </>
         )}
       </SecondaryButton>
-      <Button onClick={() => postToCustomFeed({ feed: props.key, text: postContent, labels })}>Post Update</Button>
+      <Button
+        onClick={() =>
+          postToCustomFeed({ feed: props.key, text: postContent, labels })
+        }
+      >
+        Post Update
+      </Button>
     </div>
   </PostCreator>
 );
