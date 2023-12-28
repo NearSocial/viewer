@@ -17,10 +17,6 @@ const EmbedMap = new Map([
     "mob.near/widget/MainPage.N.Post.Embed",
     "mob.near/widget/MainPage.N.Post.Embed",
   ],
-  [
-    "**/update/**",
-    "embeds.near/widget/Post.EditableContent",
-  ],
 ]);
 
 if (accountId) {
