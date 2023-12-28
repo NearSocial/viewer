@@ -168,14 +168,14 @@ return (
   <Container>
     <Aside>
       <Widget
-        src="/*__@appAccount__*//widget/feed.aside"
+        src="/*__@appAccount__*//widget/aside"
         props={{ currentFeed: currentFeed, setCurrentFeed: setCurrentFeed, feeds }}
       />
     </Aside>
     <MainContent>
       {context.accountId && (
         <Widget 
-          src="/*__@appAccount__*//widget/feed.post.post-creator"
+          src="/*__@appAccount__*//widget/compose"
           props={{ key: feedsDict[currentFeed], template: feedsDict[currentFeed].template }}
         />
       )}
