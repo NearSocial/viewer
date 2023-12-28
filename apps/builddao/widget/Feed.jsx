@@ -99,8 +99,9 @@ const MainContent = styled.div`
 `;
 
 const [currentFeed, setCurrentFeed] = useState("updates");
+const [template, setTemplate] = useState("What did you have in mind?");
 
-const CustomFeed = (name) => {
+const CustomFeed = ({ name }) => {
   name = !!name ? name : 'main'
   return (
     <Feed
@@ -135,15 +136,30 @@ const CustomFeed = (name) => {
   );
 }
 
-const nameToKey = (name) => ({
-  "updates": "update",
-  "bugs": "bug",
-  "resources": "resource",
-})[name]
+const feedsDict = {
+  "updates": {
+    key: "updates",
+    name: "update",
+    template: 
+`🔔 DAILY UPDATE:  TODAY's DATE
+
+📆 YESTERDAY:
+- yesterday I did this (hyperlink proof)
+- I also did this
+
+💻 WHAT I AM DOING TODAY:
+- task 1
+
+🛑  BLOCKERS: 
+- @anyone that is causing a blocker or outline any blockers in general`,
+  },
+}
+
+const feeds = Object.keys(feedsDict)
 
 const feed = () => {
-  if (!!nameToKey(currentFeed)) {
-    return CustomFeed(nameToKey(currentFeed))
+  if (!!feedsDict[currentFeed]) {
+    return CustomFeed(feedsDict[currentFeed])
   }
   return CustomFeed('main')
 };
@@ -153,14 +169,14 @@ return (
     <Aside>
       <Widget
         src="/*__@appAccount__*//widget/feed.aside"
-        props={{ currentFeed: currentFeed, setCurrentFeed: setCurrentFeed }}
+        props={{ currentFeed: currentFeed, setCurrentFeed: setCurrentFeed, feeds }}
       />
     </Aside>
     <MainContent>
       {context.accountId && (
         <Widget 
           src="/*__@appAccount__*//widget/feed.post.post-creator"
-          props={{ key: nameToKey(currentFeed) }}
+          props={{ key: feedsDict[currentFeed], template: feedsDict[currentFeed].template }}
         />
       )}
       {feed()}

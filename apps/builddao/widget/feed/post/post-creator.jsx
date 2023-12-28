@@ -1,5 +1,5 @@
 const [view, setView] = useState("editor");
-const [postContent, setPostContent] = useState("What do you have in mind?");
+const [postContent, setPostContent] = useState(props.template);
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
 

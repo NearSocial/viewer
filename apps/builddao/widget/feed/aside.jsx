@@ -111,25 +111,22 @@ const TabButton = styled.button`
   }
 `;
 
+function capitalize (s) {
+  return s
+    .split(' ')
+    .map(word => `${word.slice(0,1).toUpperCase()}${word.slice(1)}`)
+    .reduce((phrase, word) => `${phrase} ${word}`)
+}
+
 return (
   <Container>
-    <TabButton
-      className={props.currentFeed === "updates" && "active"}
-      onClick={() => props.setCurrentFeed("updates")}
-    >
-      {UpdateIcon} Updates
-    </TabButton>
-    <TabButton
-      className={props.currentFeed === "bugs" && "active"}
-      onClick={() => props.setCurrentFeed("bugs")}
-    >
-      {BugIcon} Bugs
-    </TabButton>
-    <TabButton
-      className={props.currentFeed === "resources" && "active"}
-      onClick={() => props.setCurrentFeed("resources")}
-    >
-      {ResourceIcon} Resources
-    </TabButton>
+    { props.feeds.map((name) => (
+      <TabButton
+        className={props.currentFeed === name && "active"}
+        onClick={() => props.setCurrentFeed(name)}
+      >
+        {UpdateIcon} {capitalize(name)}
+      </TabButton>
+    ))}
   </Container>
 );
