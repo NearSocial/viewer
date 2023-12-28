@@ -9,6 +9,13 @@ function generateUID() {
   return randomNumber.toString(16).padStart(8, '0');
 }
 
+function tagsFromLabels (labels) {
+  return labels.reduce((newLabels, label) => ({
+    ...newLabels,
+    [label]: "",
+  }), {})
+}
+
 const postToCustomFeed = ({ feed, text, labels }) => {
   const postId = generateUID()
   if (!labels) labels = []
@@ -21,7 +28,8 @@ const postToCustomFeed = ({ feed, text, labels }) => {
           labels,
         }),
         "metadata": {
-          type: feed
+          type: feed,
+          tags: tagsFromLabels(labels),
         },
       },
     },
