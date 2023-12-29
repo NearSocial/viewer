@@ -24,28 +24,28 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   if (!labels) labels = [];
   return Social.set(
     {
-      // update: {
-      //   [postId]: {
-      //     "": JSON.stringify({
-      //       type: "md",
-      //       text,
-      //       labels,
-      //     }),
-      //     metadata: {
-      //       type: feed,
-      //       tags: tagsFromLabels(labels),
-      //     },
-      //   },
-      // },
+      update: {
+        [postId]: {
+          "": JSON.stringify({
+            type: "md",
+            text,
+            labels,
+          }),
+          metadata: {
+            type: feed.name,
+            tags: tagsFromLabels(labels),
+          },
+        },
+      },
       post: {
         main: JSON.stringify({
           type: "md",
-          text,
+          text: `[EMBED](${context.accountId}/${feed.name}/${postId})`,
         }),
       },
       index: {
         post: JSON.stringify({ key: "main", value: { type: "md" } }),
-        every: JSON.stringify({ key: feed, value: { type: "md" } }),
+        every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
       },
     },
     {
