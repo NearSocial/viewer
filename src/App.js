@@ -1,4 +1,3 @@
-import { sanitizeUrl } from "@braintree/sanitize-url";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
@@ -38,6 +37,7 @@ import JoinPage from "./pages/JoinPage";
 import ProposePage from "./pages/ProposePage";
 import { Navbar } from "./components/navigation/Navbar";
 import FeedPage from "./pages/FeedPage";
+import { isValidAttribute } from "dompurify";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos";
@@ -86,7 +86,11 @@ function App() {
               delete props.href;
             }
             if (props.to) {
-              props.to = sanitizeUrl(props.to);
+              props.to =
+                typeof props.to === "string" &&
+                isValidAttribute("a", "href", props.to)
+                  ? props.to
+                  : "about:blank";
             }
             return <Link {...props} />;
           },
