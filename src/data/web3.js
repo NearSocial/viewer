@@ -256,7 +256,7 @@ export const useEthersProviderContext = singletonHook(
     useEffect(() => {
       (async () => {
         const walletsSub = onboard.state.select("wallets");
-        const { unsubscribe } = walletsSub.subscribe((wallets) => {
+        walletsSub.subscribe((wallets) => {
           const connectedWallets = wallets.map(({ label }) => label);
           ls.set(web3onboardKey, connectedWallets);
         });
