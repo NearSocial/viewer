@@ -1,4 +1,3 @@
-import { sanitizeUrl } from "@braintree/sanitize-url";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
@@ -13,6 +12,7 @@ import "App.scss";
 import Big from "big.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/js/bootstrap.bundle";
+import { isValidAttribute } from "dompurify";
 import "error-polyfill";
 import {
   EthersProviderContext,
@@ -26,17 +26,17 @@ import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { Link, Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { BosLoaderBanner } from "./components/BosLoaderBanner";
+import { Navbar } from "./components/navigation/Navbar";
 import { useEthersProviderContext } from "./data/web3";
 import { NetworkId, Widgets } from "./data/widgets";
 import { useBosLoaderInitializer } from "./hooks/useBosLoaderInitializer";
 import EditorPage from "./pages/EditorPage";
 import EmbedPage from "./pages/EmbedPage";
+import FeedPage from "./pages/FeedPage";
 import Flags from "./pages/Flags";
-import SignInPage from "./pages/SignInPage";
-import ViewPage from "./pages/ViewPage";
 import JoinPage from "./pages/JoinPage";
 import ProposePage from "./pages/ProposePage";
-import { Navbar } from "./components/navigation/Navbar";
+import ViewPage from "./pages/ViewPage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos";
@@ -85,7 +85,11 @@ function App() {
               delete props.href;
             }
             if (props.to) {
-              props.to = sanitizeUrl(props.to);
+              props.to =
+                typeof props.to === "string" &&
+                isValidAttribute("a", "href", props.to)
+                  ? props.to
+                  : "about:blank";
             }
             return <Link {...props} />;
           },
@@ -175,15 +179,15 @@ function App() {
             <Route path={"/flags"}>
               <Flags {...passProps} />
             </Route>
-            <Route path={"/signin"}>
-              <Navbar {...passProps} />
-              <SignInPage {...passProps} />
-            </Route>
             <Route path={"/join"}>
               <JoinPage {...passProps} />
             </Route>
             <Route path={"/propose"}>
               <ProposePage {...passProps} />
+            </Route>
+            <Route path={"/feed"}>
+              <Navbar {...passProps} />
+              <FeedPage {...passProps} />
             </Route>
             <Route path={"/embed/:widgetSrc*"}>
               <EmbedPage {...passProps} />

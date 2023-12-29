@@ -1,7 +1,6 @@
 const webpack = require("webpack");
 const paths = require("./config/paths");
 const path = require("path");
-const ManifestPlugin = require("webpack-manifest-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -83,7 +82,6 @@ module.exports = function (env) {
           favicon: `${paths.publicPath}/favicon.png`,
           publicPath: "/",
         }),
-        new webpack.ProgressPlugin(),
         new webpack.ProvidePlugin({
           process: "process/browser",
           Buffer: [require.resolve("buffer/"), "Buffer"],

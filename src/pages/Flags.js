@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
-import { useClearCurrentComponent } from "../hooks/useClearCurrentComponent";
-import { useFlags } from "../hooks/useFlags";
 import React, { useState } from "react";
+import { useFlags } from "../hooks/useFlags";
 
 const Container = styled.div`
   display: flex;
@@ -32,8 +31,6 @@ const InputGrid = styled.div`
 export default function Flags() {
   const [flags, setFlags] = useFlags();
   const [url, setUrl] = useState(flags?.bosLoaderUrl || "");
-
-  useClearCurrentComponent();
 
   return (
     <Container className="container-xl">
