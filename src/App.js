@@ -32,9 +32,47 @@ import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
+import { Engine } from "mutable-web-engine";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
+
+const selectorPromise = setupWalletSelector({
+  network: NetworkId,
+  modules: [
+    setupNearWallet(),
+    setupMyNearWallet(),
+    setupSender(),
+    setupHereWallet(),
+    setupMeteorWallet(),
+    setupNeth({
+      gas: "300000000000000",
+      bundle: false,
+    }),
+    setupNightly(),
+  ],
+});
+
+async function initializeEngine() {
+  const selector = await selectorPromise;
+
+  const engine = new Engine({
+    networkId: NetworkId,
+    selector: selector,
+  });
+
+  await engine.start();
+
+  return engine;
+}
+
+initializeEngine()
+  .then((engine) => {
+    console.log("Mutable Web Engine started!", engine);
+  })
+  .catch((e) => {
+    console.error("Mutable Web Engine failed to start!", e);
+  });
 
 function App(props) {
   const [connected, setConnected] = useState(false);
@@ -56,21 +94,7 @@ function App(props) {
     initNear &&
       initNear({
         networkId: NetworkId,
-        selector: setupWalletSelector({
-          network: NetworkId,
-          modules: [
-            setupNearWallet(),
-            setupMyNearWallet(),
-            setupSender(),
-            setupHereWallet(),
-            setupMeteorWallet(),
-            setupNeth({
-              gas: "300000000000000",
-              bundle: false,
-            }),
-            setupNightly(),
-          ],
-        }),
+        selector: selectorPromise,
         customElements: {
           Link: (props) => {
             if (!props.to && props.href) {
@@ -89,6 +113,10 @@ function App(props) {
         },
         config: {
           defaultFinality: undefined,
+        },
+        features: {
+          enableComponentPropsDataKey: true,
+          enableComponentSrcDataKey: true,
         },
       });
   }, [initNear]);
