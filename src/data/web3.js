@@ -1,24 +1,22 @@
-import { singletonHook } from "react-singleton-hook";
-import { useEffect, useState } from "react";
-import { init, useConnectWallet } from "@web3-onboard/react";
 import injectedModule from "@web3-onboard/injected-wallets";
-import walletConnectModule from "@web3-onboard/walletconnect";
 import ledgerModule from "@web3-onboard/ledger";
-import { ethers } from "ethers";
+import { init, useConnectWallet } from "@web3-onboard/react";
+import walletConnectModule from "@web3-onboard/walletconnect";
 import ls from "local-storage";
+import { useEffect, useState } from "react";
+import { singletonHook } from "react-singleton-hook";
 import icon from "../images/build_dao_icon.svg";
 
 const web3onboardKey = "web3-onboard:connectedWallets";
 
-const wcV1InitOptions = {
-  qrcodeModalOptions: {
-    mobileLinks: ["metamask", "argent", "trust"],
-  },
-  connectFirstChainId: true,
+const wcV2InitOptions = {
+  version: 2,
+  projectId: "f5f4d212d26f7cf2a7546a5bc3afeb40",
+  dappUrl: window.location.origin,
 };
 
-const walletConnect = walletConnectModule(wcV1InitOptions);
-const ledger = ledgerModule();
+const walletConnect = walletConnectModule(wcV2InitOptions);
+const ledger = ledgerModule(wcV2InitOptions);
 const injected = injectedModule();
 
 // initialize Onboard
