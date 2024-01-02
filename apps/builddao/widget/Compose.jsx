@@ -19,33 +19,60 @@ function tagsFromLabels(labels) {
   );
 }
 
+function checkAndAppendHashtag(input, target) {
+  if (input.toLowerCase().includes(`#${target.toLowerCase()}`)) {
+    return input;
+  } else {
+    return input + ` #${target}`;
+  }
+}
+
 const postToCustomFeed = ({ feed, text, labels }) => {
   const postId = generateUID();
   if (!labels) labels = [];
+
+  labels = labels.map((label) => label.toLowerCase());
+  labels.push(feed.name.toLowerCase());
+
+  const requiredHashtags = ["build"];
+  requiredHashtags.push((feed.hashtag || feed.name).toLowerCase());
+
+  requiredHashtags.forEach((hashtag) => {
+    text = checkAndAppendHashtag(text, hashtag);
+  });
+
   return Social.set(
     {
-      update: {
-        [postId]: {
-          "": JSON.stringify({
-            type: "md",
-            text,
-            labels,
-          }),
-          metadata: {
-            type: feed.name,
-            tags: tagsFromLabels(labels),
-          },
-        },
-      },
+      // update: {
+      //   [postId]: {
+      //     "": JSON.stringify({
+      //       type: "md",
+      //       text,
+      //       labels,
+      //     }),
+      //     metadata: {
+      //       type: feed.name,
+      //       tags: tagsFromLabels(labels),
+      //     },
+      //   },
+      // },
       post: {
         main: JSON.stringify({
           type: "md",
-          text: `[EMBED](${context.accountId}/${feed.name}/${postId})`,
+          text,
+          // tags: tagsFromLabels(labels),
+          // postType: feed.name,
         }),
       },
       index: {
         post: JSON.stringify({ key: "main", value: { type: "md" } }),
-        every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
+        // every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
+        hashtag: JSON.stringify(
+          labels.map((label) => ({
+            key: label,
+            value: { type: "social", path: `${context.accountId}/post/main` },
+          }))
+        ),
       },
     },
     {
@@ -70,6 +97,69 @@ const PostCreator = styled.div`
   border-radius: 12px;
 
   margin-bottom: 1rem;
+`;
+
+const TextareaWrapper = styled.div`
+  display: grid;
+  vertical-align: top;
+  align-items: center;
+  position: relative;
+  align-items: stretch;
+
+  textarea {
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+
+  textarea::placeholder {
+    padding-top: 4px;
+    font-size: 20px;
+  }
+
+  textarea:focus::placeholder {
+    font-size: inherit;
+    padding-top: 0px;
+  }
+
+  &::after,
+  textarea,
+  iframe {
+    width: 100%;
+    min-width: 1em;
+    height: unset;
+    min-height: 3em;
+    font: inherit;
+    margin: 0;
+    resize: none;
+    background: none;
+    appearance: none;
+    border: 0px solid #eee;
+    grid-area: 1 / 1;
+    overflow: hidden;
+    outline: none;
+  }
+
+  iframe {
+    padding: 0;
+  }
+
+  textarea:focus,
+  textarea:not(:empty) {
+    border-bottom: 1px solid #eee;
+    min-height: 5em;
+  }
+
+  &::after {
+    content: attr(data-value) " ";
+    visibility: hidden;
+    white-space: pre-wrap;
+  }
+  &.markdown-editor::after {
+    padding-top: 66px;
+    font-family: monospace;
+    font-size: 14px;
+  }
 `;
 
 const MarkdownEditor = `
@@ -116,6 +206,12 @@ const MarkdownEditor = `
     i {
       color: #cdd0d5;
     }
+  }
+
+  .rc-md-editor .editor-container .sec-md .input {
+    overflow-y: auto;
+    padding: 8px !important;
+    line-height: normal;
   }
 `;
 
@@ -226,25 +322,27 @@ return (
 
     <div style={{ border: "none" }}>
       {view === "editor" ? (
-        <Widget
-          src="mob.near/widget/MarkdownEditorIframe"
-          props={{
-            initialText: postContent,
-            embedCss: MarkdownEditor,
-            onChange: setPostContent,
-          }}
-        />
+        <TextareaWrapper className="markdown-editor" data-value={postContent || ""} key={props.feed.key}>
+          <Widget
+            src="mob.near/widget/MarkdownEditorIframe"
+            props={{
+              initialText: props.template,
+              embedCss: MarkdownEditor,
+              onChange: setPostContent,
+            }}
+          />
+        </TextareaWrapper>
       ) : (
         <MarkdownPreview>
           <Widget
             src="devhub.near/widget/devhub.components.molecule.MarkdownViewer"
-            props={{ text: postContent } }
+            props={{ text: postContent }}
           />
         </MarkdownPreview>
       )}
     </div>
 
-    {view === "editor" && (
+    {/* {view === "editor" && (
       <div style={{ color: "white" }}>
         <div
           className="d-flex justify-content-between align-items-center"
@@ -278,7 +376,7 @@ return (
           />
         </LabelSelect>
       </div>
-    )}
+    )} */}
 
     <div className="d-flex gap-3 align-self-end">
       <SecondaryButton
@@ -296,10 +394,10 @@ return (
       </SecondaryButton>
       <Button
         onClick={() =>
-          postToCustomFeed({ feed: props.key, text: postContent, labels })
+          postToCustomFeed({ feed: props.feed, text: postContent, labels })
         }
       >
-        Post Update
+        Post {props.feed.name}
       </Button>
     </div>
   </PostCreator>

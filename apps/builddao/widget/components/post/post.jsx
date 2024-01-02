@@ -241,7 +241,7 @@ const contentWidget = (
         style={{ minHeight: "100px" }}
       />
     }
-    src="embeds.near/widget/Post.Content"
+    src="mob.near/widget/MainPage.N.Post.Content"
     props={{
       content,
       raw,

@@ -21,17 +21,16 @@ const MainContent = styled.div`
   grid-column: span 4 / span 4;
 `;
 
-const [currentFeed, setCurrentFeed] = useState("updates");
+const [currentFeed, setCurrentFeed] = useState("resolutions");
 const [template, setTemplate] = useState("What did you have in mind?");
 
-const CustomFeed = ({ name }) => {
-  name = !!name ? name : "update";
+const CustomFeed = ({ name, hashtag }) => {
   return (
     <Feed
       index={[
         {
-          action: "every",
-          key: name,
+          action: "hashtag",
+          key: hashtag || name,
           options: {
             limit: 10,
             order: "desc",
@@ -63,17 +62,39 @@ function formatDate(date) {
 }
 
 const feedsDict = {
+  resolutions: {
+    key: "resolutions",
+    label: "📆 Resolutions",
+    name: "resolution",
+    hashtag: "nearyearresolutions2024",
+    template: `🎉 NEAR YEAR RESOLUTIONS: 2024
+
+🌟 REFLECTIONS ON THE PAST YEAR:
+- [Highlight 1 from the past year]
+- [Highlight 2 from the past year]
+
+🎯 NEW YEAR'S RESOLUTIONS:
+- [Resolution 1]
+- [Resolution 2]
+
+📊 MEASURING SUCCESS:
+- [Metric 1 for Success]
+- [Metric 2 for Success]
+`,
+  },
   updates: {
     key: "updates",
+    label: "🔔 Updates",
     name: "update",
     template: `🔔 DAILY UPDATE:  ${formatDate(new Date())}
 
 📆 YESTERDAY:
-- yesterday I did this (hyperlink proof)
-- I also did this
+- [Task 1, hyperlink proof]
+- [Task 2, hyperlink proof]
 
 💻 WHAT I AM DOING TODAY:
-- task 1
+- [Task 1]
+- [Task 2]
 
 🛑  BLOCKERS: 
 - @anyone that is causing a blocker or outline any blockers in general`,
@@ -96,7 +117,8 @@ return (
         props={{
           currentFeed: currentFeed,
           setCurrentFeed: setCurrentFeed,
-          feeds,
+          feeds: feedsDict,
+          feedsDict,
         }}
       />
     </Aside>
@@ -105,7 +127,7 @@ return (
         <Widget
           src="/*__@appAccount__*//widget/Compose"
           props={{
-            key: feedsDict[currentFeed],
+            feed: feedsDict[currentFeed],
             template: feedsDict[currentFeed].template,
           }}
         />
