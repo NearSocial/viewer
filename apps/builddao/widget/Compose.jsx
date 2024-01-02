@@ -1,5 +1,12 @@
+const draftKey = "draft";
+const draft = Storage.privateGet(draftKey);
+
+if (draft === null) {
+  return "";
+}
+
 const [view, setView] = useState("editor");
-const [postContent, setPostContent] = useState(props.template);
+const [postContent, setPostContent] = useState(draft || props.template);
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
 
@@ -322,13 +329,20 @@ return (
 
     <div style={{ border: "none" }}>
       {view === "editor" ? (
-        <TextareaWrapper className="markdown-editor" data-value={postContent || ""} key={props.feed.key}>
+        <TextareaWrapper
+          className="markdown-editor"
+          data-value={postContent || ""}
+          key={props.feed.key}
+        >
           <Widget
             src="mob.near/widget/MarkdownEditorIframe"
             props={{
-              initialText: props.template,
+              initialText: postContent,
               embedCss: MarkdownEditor,
-              onChange: setPostContent,
+              onChange: (v) => {
+                setPostContent(v);
+                Storage.privateSet(draftKey, v || "");
+              },
             }}
           />
         </TextareaWrapper>
