@@ -237,8 +237,8 @@ const CreateSomethingView = (props) => {
                   <span className={!validMember ? "pending" : "joined"}>
                     {!validMember ? "Pending..." : "Joined"}
                   </span>
-                  <a href={"/propose"}>
-                    Propose Changes{" "}
+                  <a href={"/feed"}>
+                    View Activiy{" "}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
