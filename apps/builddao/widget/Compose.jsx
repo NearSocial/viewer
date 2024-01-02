@@ -1,4 +1,4 @@
-const draftKey = "draft";
+const draftKey = props.feed.key || "draft";
 const draft = Storage.privateGet(draftKey);
 
 if (draft === null) {
