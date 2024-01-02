@@ -70,8 +70,8 @@ const feedsDict = {
     template: `🎉 NEAR YEAR RESOLUTIONS: 2024
 
 🌟 REFLECTIONS ON THE PAST YEAR:
-- [Highlight 1 from the past year]
-- [Highlight 2 from the past year]
+- [Reflection 1 from the past year]
+- [Reflection 2 from the past year]
 
 🎯 NEW YEAR'S RESOLUTIONS:
 - [Resolution 1]
