@@ -44,7 +44,7 @@ const CustomFeed = ({ name, hashtag }) => {
       Item={(p) => (
         <Widget
           loading={<div className="w-100" style={{ height: "200px" }} />}
-          src="/*__@appAccount__*//widget/components.post.post"
+          src="/*__@appAccount__*//widget/Post"
           props={{
             accountId: p.accountId,
             blockHeight: p.blockHeight,
