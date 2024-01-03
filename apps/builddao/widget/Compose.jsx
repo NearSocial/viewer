@@ -52,7 +52,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
 
   return Social.set(
     {
-      // update: {
+      // [feed.name]: {
       //   [postId]: {
       //     "": JSON.stringify({
       //       type: "md",
@@ -77,8 +77,8 @@ const postToCustomFeed = ({ feed, text, labels }) => {
         post: JSON.stringify({ key: "main", value: { type: "md" } }),
         // every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
         hashtag: JSON.stringify(
-          labels.map((label) => ({
-            key: label,
+          requiredHashtags.map((hashtag) => ({
+            key: hashtag,
             value: { type: "social", path: `${context.accountId}/post/main` },
           }))
         ),
