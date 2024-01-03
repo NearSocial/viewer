@@ -4,10 +4,19 @@ const { ProgressState } = VM.require(
   "buildhub.near/widget/components.progress-state"
 );
 const { Step } = VM.require("buildhub.near/widget/components.step");
+const { InputField } = VM.require(
+  "buildhub.near/widget/components.input-field"
+);
+const { PasswordField } = VM.require(
+  "buildhub.near/widget/components.password-field"
+);
 
 const Heading = styled.h2`
   color: white;
 `;
+
+const [value, setValue] = useState("");
+const [password, setPassword] = useState("");
 
 return (
   <div className="container-xl">
@@ -59,6 +68,23 @@ return (
           <Step totalSteps={5} currentStep={1} />
           <Step totalSteps={4} currentStep={2} />
           <Step totalSteps={3} currentStep={3} currentStatus={"error"} />
+        </div>
+      </div>
+      <div className="d-flex flex-column gap-3">
+        <Heading>Input Field</Heading>
+        <div className="d-flex flex-column gap-3">
+          <InputField
+            label={"Label"}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder={"Placeholder"}
+          />
+          <PasswordField
+            label={"Password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={"Password"}
+          />
         </div>
       </div>
     </div>

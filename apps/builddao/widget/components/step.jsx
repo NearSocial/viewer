@@ -31,7 +31,10 @@ function Step(props) {
   `;
 
   return (
-    <Container className="d-flex align-items-center justify-content-between col-3">
+    <Container
+      className="d-flex align-items-center justify-content-between"
+      style={{ maxWidth: "360px" }}
+    >
       {Array.from({ length: totalSteps }).map((_, i) => (
         <ProgressState
           className="z-1"
