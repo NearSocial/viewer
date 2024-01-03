@@ -46,7 +46,7 @@ const StyledButton = styled.button`
     props.variant === "outline" ? "1px solid rgba(255, 255, 255, 0.20)" : ""};
 `;
 
-function Button({ id, children, variant, type, className, style }) {
+function Button({ id, children, variant, type, onClick, className, style }) {
   return (
     <StyledButton
       id={id}
@@ -54,6 +54,7 @@ function Button({ id, children, variant, type, className, style }) {
       variant={variant}
       type={type}
       style={style}
+      onClick={onClick}
     >
       {children}
     </StyledButton>

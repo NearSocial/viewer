@@ -15,6 +15,9 @@ const { TextBox } = VM.require("buildhub.near/widget/components.text-box");
 const { TextEditor } = VM.require(
   "buildhub.near/widget/components.text-editor"
 );
+const { UploadField } = VM.require(
+  "buildhub.near/widget/components.upload-field"
+);
 
 const Heading = styled.h2`
   color: white;
@@ -109,6 +112,13 @@ return (
             value={textEditor}
             onChange={(e) => setTextEditor(e.target.value)}
           />
+        </div>
+      </div>
+      <div className="d-flex flex-column gap-3">
+        <Heading>Upload Field</Heading>
+        <div className="d-flex flex-column gap-3">
+          <UploadField />
+          <UploadField background />
         </div>
       </div>
     </div>
