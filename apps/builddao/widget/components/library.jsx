@@ -3,6 +3,7 @@ const { Pagination } = VM.require("buildhub.near/widget/components.pagination");
 const { ProgressState } = VM.require(
   "buildhub.near/widget/components.progress-state"
 );
+const { Step } = VM.require("buildhub.near/widget/components.step");
 
 const Heading = styled.h2`
   color: white;
@@ -48,10 +49,16 @@ return (
         <div className="d-flex align-items-center gap-3">
           <ProgressState status="default">1</ProgressState>
           <ProgressState status="focused">1</ProgressState>
-          <ProgressState status="error">
-            <i className="bi bi-x"></i>
-          </ProgressState>
+          <ProgressState status="error">1</ProgressState>
           <ProgressState status="completed">1</ProgressState>
+        </div>
+      </div>
+      <div className="d-flex flex-column gap-3">
+        <Heading>Step</Heading>
+        <div className="d-flex flex-column gap-3">
+          <Step totalSteps={5} currentStep={1} />
+          <Step totalSteps={4} currentStep={2} />
+          <Step totalSteps={3} currentStep={3} currentStatus={"error"} />
         </div>
       </div>
     </div>

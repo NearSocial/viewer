@@ -24,9 +24,9 @@ const Progress = styled.div`
   background: ${(props) => {
     switch (props.status) {
       case "focused":
-        return "rgba(255, 189, 52, 0.15)";
+        return "#2f2619";
       case "error":
-        return "rgba(253, 42, 92, 0.15)";
+        return "#2f101f";
       case "completed":
         return "#FFAF51";
       default:
@@ -49,7 +49,17 @@ const Progress = styled.div`
 `;
 
 function ProgressState({ children, status }) {
-  return <Progress status={status}>{children}</Progress>;
+  return (
+    <Progress status={status}>
+      {status === "completed" ? (
+        <i className="bi bi-check"></i>
+      ) : status === "error" ? (
+        <i className="bi bi-x"></i>
+      ) : (
+        children
+      )}
+    </Progress>
+  );
 }
 
 return { ProgressState };
