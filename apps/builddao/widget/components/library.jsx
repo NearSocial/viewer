@@ -10,6 +10,7 @@ const { InputField } = VM.require(
 const { PasswordField } = VM.require(
   "buildhub.near/widget/components.password-field"
 );
+const { Checkbox } = VM.require("buildhub.near/widget/components.checkbox");
 
 const Heading = styled.h2`
   color: white;
@@ -17,6 +18,7 @@ const Heading = styled.h2`
 
 const [value, setValue] = useState("");
 const [password, setPassword] = useState("");
+const [checked, setChecked] = useState(false);
 
 return (
   <div className="container-xl">
@@ -84,6 +86,11 @@ return (
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={"Password"}
+          />
+          <Checkbox
+            value={checked}
+            onChange={() => setChecked(!checked)}
+            label="Checkbox"
           />
         </div>
       </div>
