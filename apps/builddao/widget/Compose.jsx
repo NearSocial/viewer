@@ -6,9 +6,11 @@ if (draft === null) {
 }
 
 const [view, setView] = useState("editor");
-const [postContent, setPostContent] = useState(draft || props.template);
+const [postContent, setPostContent] = useState("");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
+
+setPostContent(draft || props.template);
 
 function generateUID() {
   const maxHex = 0xffffffff;
