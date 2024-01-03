@@ -64,7 +64,8 @@ function formatDate(date) {
 const feedsDict = {
   resolutions: {
     key: "resolutions",
-    label: "📆 Resolutions",
+    label: "Resolutions",
+    icon: "bi-calendar3",
     name: "resolution",
     hashtag: "nearyearresolutions2024",
     template: `🎉 NEAR YEAR RESOLUTIONS: 2024
@@ -84,7 +85,8 @@ const feedsDict = {
   },
   updates: {
     key: "updates",
-    label: "🔔 Updates",
+    label: "Updates",
+    icon: "bi-bell",
     name: "update",
     template: `🔔 DAILY UPDATE:  ${formatDate(new Date())}
 

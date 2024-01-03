@@ -72,6 +72,7 @@ return (
         className={props.currentFeed === feed && "active"}
         onClick={() => props.setCurrentFeed(feed)}
       >
+        <i className={`bi ${props.feedsDict[feed].icon}`}></i>
         {props.feedsDict[feed].label}
       </TabButton>
     ))}
