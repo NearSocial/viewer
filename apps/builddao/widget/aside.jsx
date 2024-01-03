@@ -21,6 +21,7 @@ const Container = styled.div`
 const TabButton = styled.button`
   all: unset;
   display: flex;
+  flex-shrink: 0;
   padding: 8px 12px;
   align-items: center;
   gap: 10px;
@@ -66,7 +67,7 @@ const TabButton = styled.button`
 
 return (
   <Container>
-    { Object.keys(props.feeds || {}).map((feed) => (
+    {Object.keys(props.feeds || {}).map((feed) => (
       <TabButton
         className={props.currentFeed === feed && "active"}
         onClick={() => props.setCurrentFeed(feed)}
