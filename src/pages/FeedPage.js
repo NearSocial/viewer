@@ -17,6 +17,7 @@ export default function FeedPage(props) {
         config={{
           redirectMap: redirectMapStore.redirectMap,
         }}
+        props={props}
       />
     </div>
   );
