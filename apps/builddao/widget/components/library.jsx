@@ -11,6 +11,7 @@ const { PasswordField } = VM.require(
   "buildhub.near/widget/components.password-field"
 );
 const { Checkbox } = VM.require("buildhub.near/widget/components.checkbox");
+const { TextBox } = VM.require("buildhub.near/widget/components.text-box");
 
 const Heading = styled.h2`
   color: white;
@@ -92,6 +93,7 @@ return (
             onChange={() => setChecked(!checked)}
             label="Checkbox"
           />
+          <TextBox label={"Label"} placeholder={"Placeholder"} />
         </div>
       </div>
     </div>
