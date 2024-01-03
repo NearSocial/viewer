@@ -33,7 +33,7 @@ function TextBox({ label, value, onChange, placeholder, maxWidth }) {
   return (
     <div
       className="d-flex flex-column gap-1 w-100"
-      style={{ maxWidth: maxWidth ? maxWidth : "500px" }}
+      style={{ maxWidth: maxWidth ? maxWidth : "550px" }}
     >
       <Label>{label}</Label>
       <TextArea placeholder={placeholder} value={value} onChange={onChange} />
