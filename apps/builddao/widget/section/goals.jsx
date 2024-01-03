@@ -135,10 +135,8 @@ const GridItem = ({ tag, title, description, image, isFirst }) => {
     ${isFirst && "flex-direction: row-reverse;"}
 
     border-radius: 16px;
-    border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
     background: var(--bg-2, #23242b);
-
-    ${isFirst && "border: 1px solid #51FFEA;"}
+    border: 1px solid #51ffea;
 
     div {
       flex: 0 1 auto;
