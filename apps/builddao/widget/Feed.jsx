@@ -30,7 +30,7 @@ const CustomFeed = ({ name, hashtag }) => {
       index={[
         {
           action: "hashtag",
-          key: hashtag || name,
+          key: name,
           options: {
             limit: 10,
             order: "desc",

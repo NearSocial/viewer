@@ -44,7 +44,10 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   labels.push(feed.name.toLowerCase());
 
   const requiredHashtags = ["build"];
-  requiredHashtags.push((feed.hashtag || feed.name).toLowerCase());
+  requiredHashtags.push((feed.hashtag).toLowerCase());
+  requiredHashtags.push((feed.name).toLowerCase());
+
+  text = text + `\n\n`;
 
   requiredHashtags.forEach((hashtag) => {
     text = checkAndAppendHashtag(text, hashtag);
