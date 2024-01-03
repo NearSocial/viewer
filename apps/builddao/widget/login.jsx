@@ -52,6 +52,7 @@ const LoginContainer = styled.div`
 
     button {
       all: unset;
+      cursor: pointer;
       display: flex;
       padding: 16px 20px;
       justify-content: center;
