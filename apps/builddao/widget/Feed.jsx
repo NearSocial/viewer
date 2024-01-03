@@ -68,17 +68,17 @@ const feedsDict = {
     icon: "bi-calendar3",
     name: "resolution",
     hashtag: "nearyearresolutions2024",
-    template: `## 🎉 NEAR YEAR RESOLUTIONS: 2024
+    template: `### 🎉 NEAR YEAR RESOLUTIONS: 2024
 
-### 🌟 REFLECTIONS ON THE PAST YEAR:
+**🌟 REFLECTIONS ON THE PAST YEAR:**
 - [Reflection 1 from the past year]
 - [Reflection 2 from the past year]
 
-### 🎯 NEW YEAR'S RESOLUTIONS:
+**🎯 NEW YEAR'S RESOLUTIONS:**
 - [Resolution 1]
 - [Resolution 2]
 
-### 📊 MEASURING SUCCESS:
+**📊 MEASURING SUCCESS:**
 - [Metric 1 for Success]
 - [Metric 2 for Success]
 `,
@@ -88,17 +88,17 @@ const feedsDict = {
     label: "Updates",
     icon: "bi-bell",
     name: "update",
-    template: `## 🔔 DAILY UPDATE:  ${formatDate(new Date())}
+    template: `### 🔔 DAILY UPDATE:  ${formatDate(new Date())}
 
-### 📆 YESTERDAY:
+**📆 YESTERDAY:**
 - [Task 1, hyperlink proof]
 - [Task 2, hyperlink proof]
 
-### 💻 WHAT I AM DOING TODAY:
+**💻 WHAT I AM DOING TODAY:**
 - [Task 1]
 - [Task 2]
 
-### 🛑  BLOCKERS: 
+**🛑 BLOCKERS: **
 - @anyone that is causing a blocker or outline any blockers in general`,
   },
 };

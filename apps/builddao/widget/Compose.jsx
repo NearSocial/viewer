@@ -28,6 +28,50 @@ function tagsFromLabels(labels) {
   );
 }
 
+const extractMentions = (text) => {
+  const mentionRegex =
+    /@((?:(?:[a-z\d]+[-_])*[a-z\d]+\.)*(?:[a-z\d]+[-_])*[a-z\d]+)/gi;
+  mentionRegex.lastIndex = 0;
+  const accountIds = new Set();
+  for (const match of text.matchAll(mentionRegex)) {
+    if (
+      !/[\w`]/.test(match.input.charAt(match.index - 1)) &&
+      !/[/\w`]/.test(match.input.charAt(match.index + match[0].length)) &&
+      match[1].length >= 2 &&
+      match[1].length <= 64
+    ) {
+      accountIds.add(match[1].toLowerCase());
+    }
+  }
+  return [...accountIds];
+};
+
+const extractHashtags = (text) => {
+  const hashtagRegex = /#(\w+)/gi;
+  hashtagRegex.lastIndex = 0;
+  const hashtags = new Set();
+  for (const match of text.matchAll(hashtagRegex)) {
+    if (
+      !/[\w`]/.test(match.input.charAt(match.index - 1)) &&
+      !/[/\w`]/.test(match.input.charAt(match.index + match[0].length))
+    ) {
+      hashtags.add(match[1].toLowerCase());
+    }
+  }
+  return [...hashtags];
+};
+
+const extractMentionNotifications = (text, item) =>
+  extractMentions(text || "")
+    .filter((accountId) => accountId !== context.accountId)
+    .map((accountId) => ({
+      key: accountId,
+      value: {
+        type: "mention",
+        item,
+      },
+    }));
+
 function checkAndAppendHashtag(input, target) {
   if (input.toLowerCase().includes(`#${target.toLowerCase()}`)) {
     return input;
@@ -44,8 +88,8 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   labels.push(feed.name.toLowerCase());
 
   const requiredHashtags = ["build"];
-  requiredHashtags.push((feed.hashtag).toLowerCase());
-  requiredHashtags.push((feed.name).toLowerCase());
+  requiredHashtags.push(feed.hashtag.toLowerCase());
+  requiredHashtags.push(feed.name.toLowerCase());
 
   text = text + `\n\n`;
 
@@ -53,50 +97,67 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     text = checkAndAppendHashtag(text, hashtag);
   });
 
-  return Social.set(
-    {
-      // [feed.name]: {
-      //   [postId]: {
-      //     "": JSON.stringify({
-      //       type: "md",
-      //       text,
-      //       labels,
-      //     }),
-      //     metadata: {
-      //       type: feed.name,
-      //       tags: tagsFromLabels(labels),
-      //     },
-      //   },
-      // },
-      post: {
-        main: JSON.stringify({
-          type: "md",
-          text,
-          // tags: tagsFromLabels(labels),
-          // postType: feed.name,
-        }),
-      },
-      index: {
-        post: JSON.stringify({ key: "main", value: { type: "md" } }),
-        // every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
-        hashtag: JSON.stringify(
-          requiredHashtags.map((hashtag) => ({
-            key: hashtag,
-            value: { type: "social", path: `${context.accountId}/post/main` },
-          }))
-        ),
-      },
+  const data = {
+    // [feed.name]: {
+    //   [postId]: {
+    //     "": JSON.stringify({
+    //       type: "md",
+    //       text,
+    //       labels,
+    //     }),
+    //     metadata: {
+    //       type: feed.name,
+    //       tags: tagsFromLabels(labels),
+    //     },
+    //   },
+    // },
+    post: {
+      main: JSON.stringify({
+        type: "md",
+        text,
+        // tags: tagsFromLabels(labels),
+        // postType: feed.name,
+      }),
     },
-    {
-      force: true,
-      onCommit: () => {
-        console.log(`Commited ${feed}: #${postId}`);
-      },
-      onCancel: () => {
-        console.log(`Cancelled ${feed}: #${postId}`);
-      },
-    }
-  );
+    index: {
+      post: JSON.stringify({ key: "main", value: { type: "md" } }),
+      // every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
+    },
+  };
+
+  const item = {
+    type: "social",
+    path: `${context.accountId}/post/main`,
+  };
+
+  const notifications = extractMentionNotifications(text, item);
+
+  if (notifications.length) {
+    data.index.notify = JSON.stringify(
+      notifications.length > 1 ? notifications : notifications[0]
+    );
+  }
+
+  const hashtags = extractHashtags(text);
+
+  if (hashtags.length) {
+    data.index.hashtag = JSON.stringify(
+      hashtags.map((hashtag) => ({
+        key: hashtag,
+        value: item,
+      }))
+    );
+  }
+
+  return Social.set(data, {
+    force: true,
+    onCommit: () => {
+      // console.log(`Commited ${feed}: #${postId}`);
+    },
+    onCancel: () => {
+      // console.log(`Cancelled ${feed}: #${postId}`);
+    },
+  });
 };
 
 const PostCreator = styled.div`
