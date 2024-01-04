@@ -22,7 +22,6 @@ const Container = styled.a`
   cursor: pointer;
   padding: 1.125rem;
   border: 1px solid #313538;
-  background: white;
   border-radius: 50%;
   display: flex;
   justify-content: center;
