@@ -1,9 +1,9 @@
 {
-  "short_name": "Near Social",
-  "name": "Near Social",
+  "short_name": "Potlock",
+  "name": "Potlock",
   "icons": [
     {
-      "src": "app.png",
+      "src": "preview.png",
       "sizes": "1024x1024",
       "type": "image/png"
     }

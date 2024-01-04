@@ -11,17 +11,18 @@ import { NotificationWidget } from "../NotificationWidget";
 import { StarButton } from "../StarButton";
 
 const StyledNavigation = styled.div`
-  position: sticky;
-  top: 0;
+  position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  background-color: var(--slate-dark-1);
+  background-color: white;
+  box-shadow: 0px 4px 84px -21px rgba(145, 145, 145, 1);
   z-index: 1000;
   padding: 12px 0;
 
   .user-section {
-    margin-left: auto;
+    margin-right: auto;
     > button {
       font-size: 14px;
     }
@@ -65,7 +66,7 @@ export function DesktopNavigation(props) {
   return (
     <StyledNavigation>
       <div className="container">
-        <Link
+        {/* <Link
           to="/"
           className="logo-link"
           onClick={() => {
@@ -81,10 +82,10 @@ export function DesktopNavigation(props) {
             Docs
             <ArrowUpRight />
           </NavigationButton>
-        </div>
+        </div> */}
         <div className="user-section">
-          <StarButton {...props} />
-          <DevActionsDropdown {...props} />
+          {/* <StarButton {...props} /> */}
+          {/* <DevActionsDropdown {...props} /> */}
           {!props.signedIn && (
             <SignInButton onSignIn={() => props.requestSignIn()} />
           )}
