@@ -27,7 +27,7 @@ const Heading = styled.h2`
 
 return (
   <div className="container-xl">
-    <div className="d-flex flex-column gap-3">
+    <div className="d-flex flex-column gap-3 mb-3">
       <Heading>Buttons</Heading>
       <div className="d-flex align-items-center gap-3">
         <Button>Normal</Button>
@@ -57,30 +57,30 @@ return (
         </Button>
       </div>
     </div>
-    <div className="d-flex flex-column gap-3">
+    <div className="d-flex flex-column gap-3 mb-3">
       <Heading>Pagination</Heading>
       <Pagination totalPages={4} selectedPage={1} />
     </div>
-    <div className="d-flex flex-column gap-3">
+    <div className="d-flex flex-column gap-3 mb-3">
       <Heading>Progress State</Heading>
-      <div className="d-flex align-items-center gap-3">
+      <div className="d-flex align-items-center gap-3 mb-3">
         <ProgressState status="default">1</ProgressState>
         <ProgressState status="focused">1</ProgressState>
         <ProgressState status="error">1</ProgressState>
         <ProgressState status="completed">1</ProgressState>
       </div>
     </div>
-    <div className="d-flex flex-column gap-3">
+    <div className="d-flex flex-column gap-3 mb-3">
       <Heading>Step</Heading>
-      <div className="d-flex flex-column gap-3">
+      <div className="d-flex flex-column gap-3 mb-3">
         <Step totalSteps={5} currentStep={1} />
         <Step totalSteps={4} currentStep={2} />
         <Step totalSteps={3} currentStep={3} currentStatus={"error"} />
       </div>
     </div>
-    <div className="d-flex flex-column gap-3">
+    <div className="d-flex flex-column gap-3 mb-3">
       <Heading>Input Field</Heading>
-      <div className="d-flex flex-column gap-3">
+      <div className="d-flex flex-column gap-3 mb-3">
         <InputField
           key={"Input-Label"}
           label={"Label"}
@@ -101,23 +101,27 @@ return (
         <TextEditor />
       </div>
     </div>
-    <div className="d-flex flex-column gap-3">
+    <div className="d-flex flex-column gap-3 mb-3">
       <Heading>Upload Field</Heading>
-      <div className="d-flex flex-column gap-3">
+      <div className="d-flex flex-column gap-3 mb-3">
         <UploadField />
         <UploadField background />
       </div>
     </div>
-    <div className="d-flex flex-column gap-3">
+    <div className="d-flex flex-column gap-3 mb-3">
       <Heading>User</Heading>
-      <div className="d-flex flex-column gap-3">
+      <div className="d-flex flex-column gap-3 mb-3">
         <User accountId={"itexpert120-contra.near"} timeAgo={"1m"} />
-        <User accountId={"theori.near"} variant="mobile" timeAgo={"2s"} />
+        <User
+          accountId={"build.sputnik-dao.near"}
+          variant="mobile"
+          timeAgo={"2s"}
+        />
       </div>
       <Heading>Avatar</Heading>
-      <div className="d-flex flex-column gap-3">
+      <div className="d-flex flex-column gap-3 mb-3">
         <Avatar />
-        <Avatar variant={"mobile"} accountId={"theori.near"} />
+        <Avatar variant={"mobile"} accountId={"build.sputnik-dao.near"} />
       </div>
     </div>
   </div>
