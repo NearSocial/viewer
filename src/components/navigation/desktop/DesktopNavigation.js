@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { SignInButton } from "../SignInButton";
 import { UserDropdown } from "./UserDropdown";
 import { NotificationWidget } from "../NotificationWidget";
+import Feedback from "./Feedback";
 import { DevActionsDropdown } from "./DevActionsDropdown";
 
 const StyledNavigation = styled.div`
@@ -15,11 +16,11 @@ const StyledNavigation = styled.div`
       font-size: 14px;
     }
   }
-
   .container {
     display: flex;
     align-items: center;
-
+    flex-wrap: wrap-reverse;
+    gap: 1rem;
     .navigation-section {
       margin-left: 50px;
       display: flex;
@@ -73,7 +74,9 @@ export function DesktopNavigation(props) {
         </div> */}
         <div className="user-section">
           {/* <StarButton {...props} /> */}
+
           <DevActionsDropdown {...props} />
+
           {!props.signedIn && (
             <SignInButton onSignIn={() => props.requestSignIn()} />
           )}
@@ -86,6 +89,7 @@ export function DesktopNavigation(props) {
             </>
           )}
         </div>
+        <Feedback />
       </div>
     </StyledNavigation>
   );
