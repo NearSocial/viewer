@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { SignInButton } from "../SignInButton";
 import { UserDropdown } from "./UserDropdown";
 import { NotificationWidget } from "../NotificationWidget";
+import { DevActionsDropdown } from "./DevActionsDropdown";
 
 const StyledNavigation = styled.div`
   width: 100%;
@@ -72,7 +73,7 @@ export function DesktopNavigation(props) {
         </div> */}
         <div className="user-section">
           {/* <StarButton {...props} /> */}
-          {/* <DevActionsDropdown {...props} /> */}
+          <DevActionsDropdown {...props} />
           {!props.signedIn && (
             <SignInButton onSignIn={() => props.requestSignIn()} />
           )}
