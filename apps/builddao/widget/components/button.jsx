@@ -50,6 +50,7 @@ function Button({ id, children, variant, type, onClick, className, style }) {
   return (
     <StyledButton
       id={id}
+      key={`Button-${type ?? "Normal"}-${variant ?? "Default"}`}
       className={className}
       variant={variant}
       type={type}

@@ -34,6 +34,7 @@ function Step(props) {
     <Container
       className="d-flex align-items-center justify-content-between"
       style={{ maxWidth: "360px" }}
+      key={`Step-${currentStep}-${currentStatus ?? "default"}`}
     >
       {Array.from({ length: totalSteps }).map((_, i) => (
         <ProgressState

@@ -66,7 +66,7 @@ const getPageNumber = (index) =>
 return (
   <Pagination>
     <div
-      className={`arrow ${currentPageSet === 1 && "disabled"}`}
+      className={`arrow ${currentPageSet === 1 ? "disabled" : undefined}`}
       onClick={() => handleArrowClick("left")}
     >
       <i className="bi bi-arrow-left"></i>
@@ -76,7 +76,7 @@ return (
       return (
         <div
           key={pageNumber}
-          className={pageNumber === selectedPage && "selected"}
+          className={pageNumber === selectedPage ? "selected" : undefined}
           onClick={() => handlePageClick(pageNumber)}
         >
           {pageNumber}
@@ -85,7 +85,9 @@ return (
     })}
     <div
       className={`arrow ${
-        currentPageSet === Math.ceil(totalPages / maxVisiblePages) && "disabled"
+        currentPageSet === Math.ceil(totalPages / maxVisiblePages)
+          ? "disabled"
+          : undefined
       }`}
       onClick={() => handleArrowClick("right")}
     >

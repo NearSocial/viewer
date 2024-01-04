@@ -7,28 +7,23 @@ const { Step } = VM.require("buildhub.near/widget/components.step");
 const { InputField } = VM.require(
   "buildhub.near/widget/components.input-field"
 );
-const { PasswordField } = VM.require(
-  "buildhub.near/widget/components.password-field"
-);
 const { Checkbox } = VM.require("buildhub.near/widget/components.checkbox");
 const { TextBox } = VM.require("buildhub.near/widget/components.text-box");
 const { TextEditor } = VM.require(
   "buildhub.near/widget/components.text-editor"
 );
+
 const { UploadField } = VM.require(
   "buildhub.near/widget/components.upload-field"
 );
+const { User } = VM.require("buildhub.near/widget/components.user");
+const { Avatar } = VM.require("buildhub.near/widget/components.avatar");
+
+const [checked, setChecked] = useState(false);
 
 const Heading = styled.h2`
   color: white;
 `;
-
-const [value, setValue] = useState("");
-const [password, setPassword] = useState("");
-const [checked, setChecked] = useState(false);
-const [textBox, setTextBox] = useState("");
-const [textEditor, setTextEditor] = useState("");
-const [showPassword, setShowPassword] = useState(false);
 
 return (
   <div className="container-xl">
@@ -61,65 +56,68 @@ return (
           <i className="bi bi-arrow-right"></i>
         </Button>
       </div>
-      <div className="d-flex flex-column gap-3">
-        <Heading>Pagination</Heading>
-        <Pagination totalPages={4} selectedPage={1} />
+    </div>
+    <div className="d-flex flex-column gap-3">
+      <Heading>Pagination</Heading>
+      <Pagination totalPages={4} selectedPage={1} />
+    </div>
+    <div className="d-flex flex-column gap-3">
+      <Heading>Progress State</Heading>
+      <div className="d-flex align-items-center gap-3">
+        <ProgressState status="default">1</ProgressState>
+        <ProgressState status="focused">1</ProgressState>
+        <ProgressState status="error">1</ProgressState>
+        <ProgressState status="completed">1</ProgressState>
       </div>
+    </div>
+    <div className="d-flex flex-column gap-3">
+      <Heading>Step</Heading>
       <div className="d-flex flex-column gap-3">
-        <Heading>Progress State</Heading>
-        <div className="d-flex align-items-center gap-3">
-          <ProgressState status="default">1</ProgressState>
-          <ProgressState status="focused">1</ProgressState>
-          <ProgressState status="error">1</ProgressState>
-          <ProgressState status="completed">1</ProgressState>
-        </div>
+        <Step totalSteps={5} currentStep={1} />
+        <Step totalSteps={4} currentStep={2} />
+        <Step totalSteps={3} currentStep={3} currentStatus={"error"} />
       </div>
+    </div>
+    <div className="d-flex flex-column gap-3">
+      <Heading>Input Field</Heading>
       <div className="d-flex flex-column gap-3">
-        <Heading>Step</Heading>
-        <div className="d-flex flex-column gap-3">
-          <Step totalSteps={5} currentStep={1} />
-          <Step totalSteps={4} currentStep={2} />
-          <Step totalSteps={3} currentStep={3} currentStatus={"error"} />
-        </div>
+        <InputField
+          key={"Input-Label"}
+          label={"Label"}
+          placeholder={"Placeholder"}
+        />
+        <InputField
+          key={"Input-Password"}
+          label={"Password"}
+          placeholder={"Password"}
+          type={"password"}
+        />
+        <Checkbox
+          label="Checkbox"
+          value={checked}
+          onChange={(e) => setChecked(!checked)}
+        />
+        <TextBox label={"Label"} placeholder={"Placeholder"} />
+        <TextEditor />
       </div>
+    </div>
+    <div className="d-flex flex-column gap-3">
+      <Heading>Upload Field</Heading>
       <div className="d-flex flex-column gap-3">
-        <Heading>Input Field</Heading>
-        <div className="d-flex flex-column gap-3">
-          <InputField
-            label={"Label"}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder={"Placeholder"}
-          />
-          <PasswordField
-            label={"Password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder={"Password"}
-          />
-          <Checkbox
-            value={checked}
-            onChange={() => setChecked(!checked)}
-            label="Checkbox"
-          />
-          <TextBox
-            label={"Label"}
-            placeholder={"Placeholder"}
-            value={textBox}
-            onChange={(e) => setTextBox(e.target.value)}
-          />
-          <TextEditor
-            value={textEditor}
-            onChange={(e) => setTextEditor(e.target.value)}
-          />
-        </div>
+        <UploadField />
+        <UploadField background />
       </div>
+    </div>
+    <div className="d-flex flex-column gap-3">
+      <Heading>User</Heading>
       <div className="d-flex flex-column gap-3">
-        <Heading>Upload Field</Heading>
-        <div className="d-flex flex-column gap-3">
-          <UploadField />
-          <UploadField background />
-        </div>
+        <User accountId={"itexpert120-contra.near"} timeAgo={"1m"} />
+        <User accountId={"theori.near"} variant="mobile" timeAgo={"2s"} />
+      </div>
+      <Heading>Avatar</Heading>
+      <div className="d-flex flex-column gap-3">
+        <Avatar />
+        <Avatar variant={"mobile"} accountId={"theori.near"} />
       </div>
     </div>
   </div>

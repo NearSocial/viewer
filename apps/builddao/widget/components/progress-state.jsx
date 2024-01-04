@@ -50,7 +50,10 @@ const Progress = styled.div`
 
 function ProgressState({ children, status }) {
   return (
-    <Progress status={status}>
+    <Progress
+      status={status}
+      key={`ProgressState-${status ?? "default"}-${children}`}
+    >
       {status === "completed" ? (
         <i className="bi bi-check"></i>
       ) : status === "error" ? (

@@ -17,7 +17,7 @@ const Label = styled.label`
 
 function Checkbox({ value, onChange, label }) {
   return (
-    <div>
+    <div key={`Checkbox-${label ?? "No-label"}`}>
       <Label>
         <Input type="checkbox" checked={value} onChange={onChange} />
         {value ? (
