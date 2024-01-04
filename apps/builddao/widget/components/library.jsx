@@ -111,11 +111,16 @@ return (
     <div className="d-flex flex-column gap-3 mb-3">
       <Heading>User</Heading>
       <div className="d-flex flex-column gap-3 mb-3">
-        <User accountId={"itexpert120-contra.near"} timeAgo={"1m"} />
+        <User
+          accountId={"itexpert120-contra.near"}
+          isPremium={true}
+          blockHeight={"now"}
+        />
         <User
           accountId={"build.sputnik-dao.near"}
           variant="mobile"
-          timeAgo={"2s"}
+          blockHeight={"now"}
+          pinned={true}
         />
       </div>
       <Heading>Avatar</Heading>

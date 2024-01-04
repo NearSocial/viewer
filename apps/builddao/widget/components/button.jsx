@@ -7,6 +7,7 @@ const StyledButton = styled.button`
   gap: 4px;
   border-radius: 8px;
   font: 500 14px / normal;
+  transition: all 300ms;
 
   ${(props) =>
     props.type === "icon" &&
@@ -44,6 +45,20 @@ const StyledButton = styled.button`
 
   border: ${(props) =>
     props.variant === "outline" ? "1px solid rgba(255, 255, 255, 0.20)" : ""};
+
+  /* Hover states */
+  &:hover {
+    background: ${(props) => {
+      switch (props.variant) {
+        case "primary":
+          return "#e49b48";
+        case "outline":
+          return "rgba(255, 255, 255, 0.20)";
+        default:
+          return "#17181c";
+      }
+    }};
+  }
 `;
 
 function Button({ id, children, variant, type, onClick, className, style }) {
