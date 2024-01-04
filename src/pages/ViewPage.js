@@ -50,13 +50,7 @@ export default function ViewPage(props) {
   return showMenu ? (
     <div className="container-xl">
       <div className="row">
-        <div
-          className="position-relative"
-          style={{
-            "--body-top-padding": "24px",
-            paddingTop: "var(--body-top-padding)",
-          }}
-        >
+        <div className="position-relative">
           <Widget key={src} src={src} props={widgetProps} />
         </div>
       </div>
