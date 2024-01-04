@@ -71,7 +71,7 @@ const Wrapper = styled.div`
       font-weight: 700;
       height: 18px;
       width: auto;
-      right: 0;
+      right: 12px;
       fill: white;
       transition: all 100ms ease-in;
       :hover {
@@ -97,8 +97,8 @@ const BannerText = styled.div`
   margin-left: 8px;
 
   @media screen and (max-width: 768px) {
-    font-size: 12px;
-    margin-left: 4px;
+    font-size: 10px;
+    margin-left: 2px;
   }
 `;
 const BannerLinkContainer = styled.a`
@@ -119,7 +119,7 @@ const BannerLinkContainer = styled.a`
     transform: rotate(45deg);
   }
   @media screen and (max-width: 768px) {
-    font-size: 12px;
+    font-size: 10px;
     margin-left: 8px;
     gap: 4px;
   }
