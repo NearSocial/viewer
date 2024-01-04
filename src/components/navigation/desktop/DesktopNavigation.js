@@ -1,24 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { Logotype } from "../Logotype";
-import { NavigationButton } from "../NavigationButton";
-import { ArrowUpRight } from "../../icons/ArrowUpRight";
 import { SignInButton } from "../SignInButton";
 import { UserDropdown } from "./UserDropdown";
-import { DevActionsDropdown } from "./DevActionsDropdown";
 import { NotificationWidget } from "../NotificationWidget";
-import { StarButton } from "../StarButton";
 
 const StyledNavigation = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   width: 100%;
-  background-color: white;
-  box-shadow: 0px 4px 84px -21px rgba(145, 145, 145, 1);
-  z-index: 1000;
   padding: 12px 0;
 
   .user-section {
