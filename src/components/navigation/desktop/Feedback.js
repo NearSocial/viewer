@@ -1,8 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-const Feedback = () => {
+const Feedback = ({ tooltipRef }) => {
   return (
-    <Container href="https://www.potlock.org/feedback" target="_blank">
+    <Container
+      id="feedback-btn"
+      onClick={() =>
+        tooltipRef.current.isOpen ? tooltipRef.current.close() : ""
+      }
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="16"
@@ -17,10 +22,10 @@ const Feedback = () => {
 };
 
 const Container = styled.a`
-  width: 4rem;
-  height: 4rem;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
-  padding: 1.125rem;
+  padding: 0.6rem;
   border: 1px solid #313538;
   border-radius: 50%;
   display: flex;
@@ -29,6 +34,7 @@ const Container = styled.a`
   position: relative;
   overflow: hidden;
   margin-left: auto;
+  background: white;
   &:after {
     content: "";
     position: absolute;
@@ -42,6 +48,9 @@ const Container = styled.a`
     background: #313538;
     z-index: -1;
     transition: transform 0.25s ease;
+  }
+  &:hover {
+    background: transparent;
   }
   &:hover::after {
     transform: scale(1, 1);

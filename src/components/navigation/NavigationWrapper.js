@@ -9,7 +9,10 @@ export function NavigationWrapper(props) {
   const [matches, setMatches] = useState(
     window.matchMedia("(min-width: 992px)").matches
   );
-  const [showBanner, setShowbanner] = useState(true);
+  const [showBanner, setShowbanner] = useState(
+    sessionStorage.getItem("BannerToggle") || "true"
+  );
+  console.log(JSON.parse(showBanner));
   useEffect(() => {
     window
       .matchMedia("(min-width: 992px)")
@@ -20,7 +23,7 @@ export function NavigationWrapper(props) {
   ) : (
     <Container>
       <DesktopNavigation {...props} />
-      {showBanner && <Banner setShowbanner={setShowbanner} />}
+      {JSON.parse(showBanner) && <Banner setShowbanner={setShowbanner} />}
       {/* {!matches && <MobileNavigation {...props} />} */}
     </Container>
   );
