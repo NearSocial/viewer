@@ -238,7 +238,7 @@ const CreateSomethingView = (props) => {
                     {!validMember ? "Pending..." : "Joined"}
                   </span>
                   <a href={"/feed"}>
-                    View Activiy{" "}
+                    View Activity{" "}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
