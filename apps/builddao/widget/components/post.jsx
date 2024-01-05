@@ -11,12 +11,12 @@ const StyledPost = styled.div`
     transition: all 300ms;
 
     &:hover {
-      background-color: #171929 !important;
+      background-color: #1c1f33 !important;
       .expand-post {
         background-image: linear-gradient(
           to bottom,
-          rgb(23, 25, 41, 0),
-          rgb(23, 25, 41, 1) 25%
+          rgba(28, 31, 51, 0),
+          rgba(28, 31, 51, 1) 25%
         ) !important;
       }
     }
@@ -36,8 +36,8 @@ const StyledPost = styled.div`
     .expand-post {
       background-image: linear-gradient(
         to bottom,
-        rgb(11, 12, 20, 0),
-        rgb(11, 12, 20, 1) 25%
+        rgba(35, 36, 43, 0),
+        rgba(35, 36, 43, 1) 25%
       ) !important;
     }
   }
@@ -203,6 +203,21 @@ const Wrapper = styled.div`
   }
 `;
 
+const RepostWidgetDesktop = styled.div`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const RepostWidgetMobile = styled.div`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+`;
+
 function Post(props) {
   const accountId = props.accountId;
   if (!accountId) {
@@ -236,22 +251,38 @@ function Post(props) {
     `/mob.near/widget/MainPage.N.Post.Page?accountId=${accountId}&blockHeight=${blockHeight}`;
 
   const contentWidget = (
-    <Widget
-      key="content"
-      loading={
-        <div
-          className="overflow-hidden w-100 placeholder-glow"
-          style={{ minHeight: "100px" }}
+    <>
+      <Widget
+        key="content"
+        loading={
+          <div
+            className="overflow-hidden w-100 placeholder-glow"
+            style={{ minHeight: "100px" }}
+          />
+        }
+        src="mob.near/widget/MainPage.N.Post.Content"
+        props={{
+          content,
+          raw,
+          truncateContent: props.truncateContent,
+          noEmbed: props.noEmbed,
+        }}
+      />
+      <RepostWidgetMobile>
+        <Widget
+          loading=""
+          src="mob.near/widget/N.RepostButton"
+          props={{
+            disable: permissions.disableRepost,
+            notifyAccountId,
+            item,
+            // indexKey,
+            // groupId,
+          }}
         />
-      }
-      src="mob.near/widget/MainPage.N.Post.Content"
-      props={{
-        content,
-        raw,
-        truncateContent: props.truncateContent,
-        noEmbed: props.noEmbed,
-      }}
-    />
+        <span>Repost Feed</span>
+      </RepostWidgetMobile>
+    </>
   );
 
   return (
@@ -302,22 +333,31 @@ function Post(props) {
                       State.update({ showReply: !state.showReply }),
                   }}
                 />
-                <Widget
-                  loading=""
-                  src="mob.near/widget/N.RepostButton"
-                  props={{
-                    disable: permissions.disableRepost,
-                    notifyAccountId,
-                    item,
-                    // indexKey,
-                    // groupId,
-                  }}
-                />
+                <RepostWidgetDesktop>
+                  <Widget
+                    loading=""
+                    src="mob.near/widget/N.RepostButton"
+                    props={{
+                      disable: permissions.disableRepost,
+                      notifyAccountId,
+                      item,
+                      // indexKey,
+                      // groupId,
+                    }}
+                  />
+                </RepostWidgetDesktop>
                 <Widget
                   loading=""
                   src="mob.near/widget/N.LikeButton"
                   props={{
                     notifyAccountId,
+                    item,
+                  }}
+                />
+                <Widget
+                  loading=""
+                  src="buildhub.near/widget/components.post.bookmark-button"
+                  props={{
                     item,
                   }}
                 />

@@ -135,11 +135,7 @@ return (
     <div className="d-flex flex-column gap-3 mb-3">
       <Heading>Post</Heading>
       <div className="d-flex flex-column gap-3">
-        <Post
-          accountId={"pichtran.near"}
-          blockHeight={109572965}
-          noBorder={true}
-        />
+        <Post accountId={"efiz.near"} blockHeight={109505036} noBorder={true} />
         <Post
           accountId={"itexpert120-contra.near"}
           blockHeight={109609914}
