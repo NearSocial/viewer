@@ -182,6 +182,14 @@ export function Navbar(props) {
           >
             Feed
           </NavLink>
+          <NavLink
+            href="/resources"
+            className={`${window.location.href === `${window.location.origin}/resources` &&
+              "active"
+              }`}
+          >
+            Resources
+          </NavLink>
         </div>
         <div className="d-none d-md-block flex-grow-1" style={{ flexBasis: 0 }}>
           {!props.signedIn && (
@@ -245,6 +253,14 @@ export function Navbar(props) {
               }`}
           >
             Feed
+          </MobileLink>
+          <MobileLink
+            href="/resources"
+            className={`${window.location.href === `${window.location.origin}/resources` &&
+              "active"
+              }`}
+          >
+            Resources
           </MobileLink>
           <MobileLink href={props.documentationHref}>Docs</MobileLink>
           {!props.signedIn && (
