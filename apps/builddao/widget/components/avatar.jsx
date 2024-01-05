@@ -13,6 +13,17 @@ const ImageWrapper = styled.div`
     width: auto !important;
     height: auto !important;
   }
+
+  @media screen and (max-width: 768px) {
+    ${(props) =>
+      !props.variant &&
+      `
+      img {
+        width: 40px !important;
+        height: 40px !important;
+      }
+    `}
+  }
 `;
 
 function Avatar(props) {

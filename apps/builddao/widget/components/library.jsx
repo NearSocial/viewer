@@ -18,6 +18,7 @@ const { UploadField } = VM.require(
 );
 const { User } = VM.require("buildhub.near/widget/components.user");
 const { Avatar } = VM.require("buildhub.near/widget/components.avatar");
+const { Post } = VM.require("buildhub.near/widget/components.post");
 
 const [checked, setChecked] = useState(false);
 
@@ -113,8 +114,10 @@ return (
       <div className="d-flex flex-column gap-3 mb-3">
         <User
           accountId={"itexpert120-contra.near"}
+          variant={"desktop"}
           isPremium={true}
-          blockHeight={"now"}
+          blockHeight={1231231231}
+          hideMenu={true}
         />
         <User
           accountId={"build.sputnik-dao.near"}
@@ -125,8 +128,23 @@ return (
       </div>
       <Heading>Avatar</Heading>
       <div className="d-flex flex-column gap-3 mb-3">
-        <Avatar />
+        <Avatar variant={"desktop"} />
         <Avatar variant={"mobile"} accountId={"build.sputnik-dao.near"} />
+      </div>
+    </div>
+    <div className="d-flex flex-column gap-3 mb-3">
+      <Heading>Post</Heading>
+      <div className="d-flex flex-column gap-3">
+        <Post
+          accountId={"pichtran.near"}
+          blockHeight={109572965}
+          noBorder={true}
+        />
+        <Post
+          accountId={"itexpert120-contra.near"}
+          blockHeight={109609914}
+          noBorder={true}
+        />
       </div>
     </div>
   </div>
