@@ -54,6 +54,7 @@ a {
   display: flex;
   flex-direction: column;
   max-width: 120px;
+  z-index: 1001;
   width: 100% !important;
   padding: 8px 0 !important;
   background: var(--slate-dark-5) !important;
