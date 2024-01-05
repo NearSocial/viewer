@@ -1,3 +1,5 @@
+const { User, Button } = VM.require("buildhub.near/widget/components");
+
 const draftKey = props.feed.name || "draft";
 const draft = Storage.privateGet(draftKey);
 
@@ -236,13 +238,18 @@ const TextareaWrapper = styled.div`
 `;
 
 const MarkdownEditor = `
+  html {
+    background: #23242b;
+  }
+
   * {
     border: none !important;
   }
 
   .rc-md-editor {
     background: #4f5055;
-    border-top: 1px solid #4f5055 !important; 
+    border-top: 1px solid #4f5055 !important;
+    border-radius: 8px;
   }
 
   .editor-container {
@@ -268,6 +275,7 @@ const MarkdownEditor = `
 
     border: 1px solid #4f5055 !important;
     border-top: 0 !important;
+    border-radius: 0 0 8px 8px;
   }
 
   .rc-md-navigation {
@@ -275,63 +283,22 @@ const MarkdownEditor = `
     border: 1px solid #4f5055 !important;
     border-top: 0 !important;
     border-bottom: 0 !important;
+    border-radius: 8px 8px 0 0;
   
     i {
       color: #cdd0d5;
     }
   }
 
+  .editor-container {
+    border-radius: 0 0 8px 8px;
+  }
+
   .rc-md-editor .editor-container .sec-md .input {
     overflow-y: auto;
     padding: 8px !important;
     line-height: normal;
-  }
-`;
-
-const Button = styled.button`
-  all: unset;
-  display: flex;
-  padding: 10px 20px;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-
-  border-radius: 8px;
-  background: var(--Yellow, #ffaf51);
-
-  color: var(--black-100, #000);
-
-  /* Other/Button_text */
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-`;
-
-const SecondaryButton = styled.button`
-  all: unset;
-  display: flex;
-  padding: 10px 20px;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-
-  border-radius: 8px;
-  border: 1px solid var(--white-100, #fff);
-  background: transparent;
-  color: var(--white-100, #fff);
-
-  /* Other/Button_text */
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-
-  transition: all 300ms;
-
-  &:hover {
-    background: #fff;
-    color: #000;
+    border-radius: 0 0 8px 8px;
   }
 `;
 
@@ -374,23 +341,7 @@ const LabelSelect = styled.div`
 return (
   <PostCreator>
     <div className="d-flex gap-3">
-      <Widget
-        src="mob.near/widget/ProfileImage"
-        props={{
-          accountId: context.accountId,
-          tooltip: false,
-          link: true,
-          style: imgWrapperStyle,
-          imageClassName: "rounded-circle w-100 h-100",
-        }}
-      />
-      <div
-        className="d-flex flex-column"
-        style={{ color: "white", fontSize: 16 }}
-      >
-        <p className="fw-bold m-0">{name}</p>
-        <p className="m-0">@{context.accountId}</p>
-      </div>
+      <User accountId={context.accountId} blockHeight={"now"} />
     </div>
 
     <div style={{ border: "none" }}>
@@ -422,44 +373,9 @@ return (
       )}
     </div>
 
-    {/* {view === "editor" && (
-      <div style={{ color: "white" }}>
-        <div
-          className="d-flex justify-content-between align-items-center"
-          onClick={() => setHideAdvanced(!hideAdvanced)}
-          style={{ cursor: "pointer" }}
-        >
-          <h6 className="fw-bold">Advanced</h6>
-          <i className={`bi bi-chevron-${hideAdvanced ? "up" : "down"}`}></i>
-        </div>
-
-        <LabelSelect
-          className={`d-${hideAdvanced ? "none" : "flex"} flex-column mt-3`}
-        >
-          <Widget
-            src="discover.near/widget/Inputs.MultiSelect"
-            props={{
-              label: "Labels",
-              placeholder: "Near.social, Widget, NEP, Standard, Protocol, Tool",
-              options: [
-                "Near.social",
-                "Widget",
-                "NEP",
-                "Standard",
-                "Protocol",
-                "Tool",
-              ],
-              labelKey: "labels",
-              value: labels,
-              onChange: setLabels,
-            }}
-          />
-        </LabelSelect>
-      </div>
-    )} */}
-
     <div className="d-flex gap-3 align-self-end">
-      <SecondaryButton
+      <Button
+        variant="outline"
         onClick={() => setView(view === "editor" ? "preview" : "editor")}
       >
         {view === "editor" ? (
@@ -471,8 +387,9 @@ return (
             Edit <i className="bi bi-pencil-square"></i>
           </>
         )}
-      </SecondaryButton>
+      </Button>
       <Button
+        variant="primary"
         onClick={() =>
           postToCustomFeed({ feed: props.feed, text: postContent, labels })
         }

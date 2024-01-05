@@ -8,6 +8,9 @@ const { type, hashtag } = props;
 type = hashtag;
 hashtag = type;
 
+const { Post } = VM.require("buildhub.near/widget/components.post");
+Post = Post || (() => <></>);
+
 const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));

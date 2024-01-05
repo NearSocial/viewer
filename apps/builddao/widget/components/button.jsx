@@ -26,7 +26,7 @@ const StyledButton = styled.button`
       case "primary":
         return "#FFAF51";
       case "outline":
-        return "#0b0c14";
+        return "transparent";
       default:
         return "#23242B";
     }
