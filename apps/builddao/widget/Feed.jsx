@@ -9,7 +9,6 @@ type = hashtag;
 hashtag = type;
 
 const { Post } = VM.require("buildhub.near/widget/components.post");
-
 Post = Post || (() => <></>);
 
 const Container = styled.div`
