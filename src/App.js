@@ -37,6 +37,7 @@ import Flags from "./pages/Flags";
 import JoinPage from "./pages/JoinPage";
 import ProposePage from "./pages/ProposePage";
 import ViewPage from "./pages/ViewPage";
+import ResourcesPage from "./pages/ResourcesPage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos";
@@ -87,7 +88,7 @@ function App() {
             if (props.to) {
               props.to =
                 typeof props.to === "string" &&
-                isValidAttribute("a", "href", props.to)
+                  isValidAttribute("a", "href", props.to)
                   ? props.to
                   : "about:blank";
             }
@@ -188,6 +189,10 @@ function App() {
             <Route path={"/feed"}>
               <Navbar {...passProps} />
               <FeedPage {...passProps} />
+            </Route>
+            <Route path={"/resources"}>
+              <Navbar {...passProps} />
+              <ResourcesPage {...passProps} />
             </Route>
             <Route path={"/embed/:widgetSrc*"}>
               <EmbedPage {...passProps} />
