@@ -22,6 +22,7 @@ const MainnetWidgets = {
   image: "mob.near/widget/Image",
   default: "buildhub.near/widget/home",
   feed: "buildhub.near/widget/Feed",
+  resources: "buildhub.near/widget/Resources",
   viewSource: "mob.near/widget/WidgetSource",
   widgetMetadataEditor: "buildhub.near/widget/WidgetMetadataEditor",
   widgetMetadata: "buildhub.near/widget/WidgetMetadata",
