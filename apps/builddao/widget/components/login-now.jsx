@@ -1,5 +1,3 @@
-console.log(props);
-
 const Container = styled.div`
   background-color: #23242b;
   color: #ffffff;
@@ -11,6 +9,8 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  margin-bottom: 1rem;
 
   button {
     all: unset;
