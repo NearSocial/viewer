@@ -377,6 +377,7 @@ return (
       <Button
         variant="outline"
         onClick={() => setView(view === "editor" ? "preview" : "editor")}
+        style={{ fontSize: 14 }}
       >
         {view === "editor" ? (
           <>
@@ -390,6 +391,7 @@ return (
       </Button>
       <Button
         variant="primary"
+        style={{ fontSize: 14 }}
         onClick={() =>
           postToCustomFeed({ feed: props.feed, text: postContent, labels })
         }
