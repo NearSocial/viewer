@@ -7,7 +7,7 @@ const StyledPost = styled.div`
     border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
     color: #b6b6b8;
     padding: 24px !important;
-    background-color: #0b0c14;
+    background-color: #23242b;
     transition: all 300ms;
 
     &:hover {
