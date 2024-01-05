@@ -17,7 +17,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   display: flex;
-  max-width: ${(props) => maxWidth ?? "390px"};
+  max-width: ${(props) => props.maxWidth ?? "390px"};
   width: 100%;
   padding: 16px 12px;
   align-items: flex-start;
