@@ -69,6 +69,7 @@ const feedsDict = {
     name: "resolution",
     hashtag: "nearyearresolutions2024",
     template: `### 🎉 NEAR YEAR RESOLUTIONS: 2024
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed))
 
 **🌟 REFLECTIONS ON THE PAST YEAR:**
 - [Reflection 1 from the past year]
@@ -89,6 +90,7 @@ const feedsDict = {
     icon: "bi-bell",
     name: "update",
     template: `### 🔔 DAILY UPDATE:  ${formatDate(new Date())}
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed))
 
 **📆 YESTERDAY:**
 - [Task 1, hyperlink proof]
