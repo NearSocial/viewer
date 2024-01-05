@@ -1,5 +1,3 @@
-const content = "asdasdasdasd";
-
 const TextareaWrapper = styled.div`
   display: grid;
   vertical-align: top;
