@@ -1,5 +1,6 @@
 import { Widget } from "near-social-vm";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "../hooks/useQuery";
 import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import { useBosLoaderStore } from "../stores/bos-loader";
 
@@ -9,6 +10,14 @@ export default function FeedPage(props) {
 
   const src = props.widgets.feed;
 
+  const query = useQuery();
+  const [widgetProps, setWidgetProps] = useState({});
+
+  useEffect(() => {
+    setWidgetProps(Object.fromEntries([...query.entries()]));
+  }, [query]);
+
+
   return (
     <div className="container-xl mt-3" style={{ backgroundColor: "#0b0c14" }}>
       <Widget
@@ -17,7 +26,7 @@ export default function FeedPage(props) {
         config={{
           redirectMap: redirectMapStore.redirectMap,
         }}
-        props={props}
+        props={widgetProps}
       />
     </div>
   );

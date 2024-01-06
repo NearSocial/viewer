@@ -2,6 +2,8 @@ const { Feed } = VM.require("devs.near/widget/Module.Feed");
 
 Feed = Feed || (() => <></>); // make sure you have this or else it can break
 
+const v = props.v;
+
 const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -21,7 +23,7 @@ const MainContent = styled.div`
   grid-column: span 4 / span 4;
 `;
 
-const [currentFeed, setCurrentFeed] = useState("resolutions");
+const [currentFeed, setCurrentFeed] = useState(v || "resolutions");
 const [template, setTemplate] = useState("What did you have in mind?");
 
 const CustomFeed = ({ name, hashtag }) => {
