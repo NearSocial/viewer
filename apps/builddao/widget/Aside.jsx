@@ -1,6 +1,6 @@
-const { Button } = VM.require("buildhub.near/widget/components.button");
+const { Button } = VM.require("buildhub.near/widget/components");
 
-const Container = styled.div`
+const AsideContainer = styled.div`
   border-radius: 16px;
   border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
   background: var(--bg-1, #0b0c14);
@@ -21,7 +21,7 @@ const Container = styled.div`
 `;
 
 return (
-  <Container>
+  <AsideContainer>
     {Object.keys(props.feeds || {}).map((feed) => (
       <Button
         variant={props.currentFeed === feed ? "primary" : "outline"}
@@ -35,5 +35,5 @@ return (
         {props.feedsDict[feed].label}
       </Button>
     ))}
-  </Container>
+  </AsideContainer>
 );

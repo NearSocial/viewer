@@ -1,30 +1,18 @@
 // Buttons/Navigation
-const { Button } = VM.require("buildhub.near/widget/components.button");
-const { Pagination } = VM.require("buildhub.near/widget/components.pagination");
-const { ProgressState } = VM.require(
-  "buildhub.near/widget/components.progress-state"
-);
-const { Step } = VM.require("buildhub.near/widget/components.step");
-
-// Inputs
-const { InputField } = VM.require(
-  "buildhub.near/widget/components.input-field"
-);
-const { Checkbox } = VM.require("buildhub.near/widget/components.checkbox");
-const { TextBox } = VM.require("buildhub.near/widget/components.text-box");
-const { TextEditor } = VM.require(
-  "buildhub.near/widget/components.text-editor"
-);
-const { UploadField } = VM.require(
-  "buildhub.near/widget/components.upload-field"
-);
-
-// Modals
-const { Post } = VM.require("buildhub.near/widget/components.post");
-
-// Avatars/Users
-const { User } = VM.require("buildhub.near/widget/components.user");
-const { Avatar } = VM.require("buildhub.near/widget/components.avatar");
+const {
+  Button,
+  Pagination,
+  ProgressState,
+  Step,
+  Post,
+  InputField,
+  UploadField,
+  TextBox,
+  TextEditor,
+  User,
+  Avatar,
+  Checkbox
+} = VM.require("buildhub.near/widget/components");
 
 // states
 const [checked, setChecked] = useState(false);
@@ -65,7 +53,7 @@ const components = [
   {
     name: "Button",
     category: "Buttons/Navigation",
-    widgetSrc: "buildhub.near/widget/components.button",
+    widgetSrc: "buildhub.near/widget/components",
     description:
       "Button component with three different variants, and icon support.",
     requiredProps: {
@@ -81,7 +69,7 @@ const components = [
     },
     preview: ButtonPreview,
     embedCode: `
-  const { Button } = VM.require("buildhub.near/widget/components.button");
+  const { Button } = VM.require("buildhub.near/widget/components.
 
   return (
     <div>
@@ -118,7 +106,7 @@ const components = [
   {
     name: "Pagination",
     category: "Buttons/Navigation",
-    widgetSrc: "buildhub.near/widget/components.pagination",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Pagination component for page switching.",
     requiredProps: {
       totalPages: "Total pages",
@@ -130,7 +118,7 @@ const components = [
     },
     preview: <Pagination totalPages={4} selectedPage={1} />,
     embedCode: `
-  const { Pagination } = VM.require("buildhub.near/widget/components.pagination");
+  const { Pagination } = VM.require("buildhub.near/widget/components.
 
   return (
     <Pagination totalPages={4} selectedPage={1} />
@@ -139,7 +127,7 @@ const components = [
   {
     name: "Progress State",
     category: "Buttons/Navigation",
-    widgetSrc: "buildhub.near/widget/components.progress-state",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Progress state for step component.",
     requiredProps: {
       children: "Children to render",
@@ -156,7 +144,7 @@ const components = [
       </>
     ),
     embedCode: `
-  const { ProgressState } = VM.require("buildhub.near/widget/components.progress-state");
+  const { ProgressState } = VM.require("buildhub.near/widget/components");
 
   return (
     <div className="d-flex align-items-center gap-3 mb-3">
@@ -170,7 +158,7 @@ const components = [
   {
     name: "Step",
     category: "Buttons/Navigation",
-    widgetSrc: "buildhub.near/widget/components.step",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Step component to show progress between steps.",
     requiredProps: {
       totalSteps: "Total number of steps",
@@ -190,7 +178,7 @@ const components = [
       </>
     ),
     embedCode: `
-  const { Step } = VM.require("buildhub.near/widget/components.step");
+  const { Step } = VM.require("buildhub.near/widget/components");
 
   return (
     <div className="d-flex flex-column gap-3 mb-3">
@@ -203,7 +191,7 @@ const components = [
   {
     name: "Input Field",
     category: "Fields",
-    widgetSrc: "buildhub.near/widget/components.input-field",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Input field for text input",
     requiredProps: {
       value: "Current Value of input",
@@ -234,7 +222,7 @@ const components = [
       </>
     ),
     embedCode: `
-  const { InputField } = VM.require("buildhub.near/widget/components.input-field");
+  const { InputField } = VM.require("buildhub.near/widget/components");
 
   const [value, setValue] = useState("");
   const [password, setPassword] = useState("");
@@ -262,7 +250,7 @@ const components = [
   {
     name: "Checkbox",
     category: "Fields",
-    widgetSrc: "buildhub.near/widget/components.checkbox",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Checkbox input for toggles",
     requiredProps: {
       value: "Current Value of checkbox",
@@ -283,7 +271,7 @@ const components = [
       </>
     ),
     embedCode: `
-  const { Checkbox } = VM.require("buildhub.near/widget/components.checkbox");
+  const { Checkbox } = VM.require("buildhub.near/widget/components");
 
   const [checked, setChecked] = useState(false);
 
@@ -300,7 +288,7 @@ const components = [
   {
     name: "Textbox",
     category: "Fields",
-    widgetSrc: "buildhub.near/widget/components.text-box",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Textbox for text input",
     requiredProps: {
       value: "Current Value of text box",
@@ -315,7 +303,7 @@ const components = [
       </>
     ),
     embedCode: `
-  const { TextBox } = VM.require("buildhub.near/widget/components.text-box");
+  const { TextBox } = VM.require("buildhub.near/widget/components");
 
   const [value, setValue] = useState("");
 
@@ -333,7 +321,7 @@ const components = [
   {
     name: "Text Editor",
     category: "Fields",
-    widgetSrc: "buildhub.near/widget/components.text-editor",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Text editor for markdown input",
     requiredProps: {
       value: "Current Value of checkbox",
@@ -348,7 +336,7 @@ const components = [
       </>
     ),
     embedCode: `
-  const { TextEditor } = VM.require("buildhub.near/widget/components.text-editor");
+  const { TextEditor } = VM.require("buildhub.near/widget/components");
 
   const [value, setValue] = useState("");
 
@@ -364,7 +352,7 @@ const components = [
   {
     name: "Upload Field",
     category: "Fields",
-    widgetSrc: "buildhub.near/widget/components.upload-field",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Component for file uploads",
     optionalProps: {
       background: "Background color of upload filed (default true)",
@@ -376,7 +364,7 @@ const components = [
       </div>
     ),
     embedCode: `
-  const { UploadField } = VM.require("buildhub.near/widget/components.upload-field");
+  const { UploadField } = VM.require("buildhub.near/widget/components");
 
   return (
     <div className="d-flex flex-column gap-3 mb-3">
@@ -388,7 +376,7 @@ const components = [
   {
     name: "Post",
     category: "Modals",
-    widgetSrc: "buildhub.near/widget/components.post",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Post preview component",
     requiredProps: {
       accountId: "AccountId of post creator",
@@ -417,7 +405,7 @@ const components = [
       </div>
     ),
     embedCode: `
-  const { Post } = VM.require("buildhub.near/widget/components.post");
+  const { Post } = VM.require("buildhub.near/widget/components");
 
   return (
     <div className="d-flex flex-column gap-3 mb-3">
@@ -432,7 +420,7 @@ const components = [
   {
     name: "User",
     category: "Avatars/Users",
-    widgetSrc: "buildhub.near/widget/components.user",
+    widgetSrc: "buildhub.near/widget/components",
     description: "User component for user profile",
     requiredProps: {
       accountId: "AccountId of post creator",
@@ -464,7 +452,7 @@ const components = [
       </div>
     ),
     embedCode: `
-  const { User } = VM.require("buildhub.near/widget/components.user");
+  const { User } = VM.require("buildhub.near/widget/components");
 
   return (
     <div className="d-flex flex-column gap-3 mb-3">
@@ -487,7 +475,7 @@ const components = [
   {
     name: "Avatar",
     category: "Avatars/Users",
-    widgetSrc: "buildhub.near/widget/components.avatar",
+    widgetSrc: "buildhub.near/widget/components",
     description: "Show user avatar",
     requiredProps: {
       accountId: "AccountId of post creator",
@@ -502,7 +490,7 @@ const components = [
       </div>
     ),
     embedCode: `
-  const { Avatar } = VM.require("buildhub.near/widget/components.avatar");
+  const { Avatar } = VM.require("buildhub.near/widget/components");
 
   return (
     <div className="d-flex flex-column gap-3 mb-3">
@@ -512,6 +500,7 @@ const components = [
   );`,
   },
 ];
+
 
 const renderProps = (props, optional) => {
   return Object.entries(props || {}).map(([key, desc]) => {
@@ -704,6 +693,8 @@ const Grid = styled.div`
     grid-column: span 1 / span 1;
   }
 `;
+
+// return <p style={{ color: "white" }}>Hello World</p>;
 
 return (
   <Grid className="container-xl">
