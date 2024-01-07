@@ -1,4 +1,3 @@
-// Buttons/Navigation
 const {
   Button,
   Pagination,
@@ -13,9 +12,6 @@ const {
   Avatar,
   Checkbox
 } = VM.require("buildhub.near/widget/components");
-
-// states
-const [checked, setChecked] = useState(false);
 
 const ButtonPreview = (
   <div>
@@ -69,7 +65,7 @@ const components = [
     },
     preview: ButtonPreview,
     embedCode: `
-  const { Button } = VM.require("buildhub.near/widget/components.
+  const { Button } = VM.require("buildhub.near/widget/components");
 
   return (
     <div>
@@ -135,12 +131,12 @@ const components = [
     },
     preview: (
       <>
-        <div className="d-flex align-items-center gap-3 mb-3">
+        {/* <div className="d-flex align-items-center gap-3 mb-3">
           <ProgressState status="default">1</ProgressState>
           <ProgressState status="focused">1</ProgressState>
           <ProgressState status="error">1</ProgressState>
           <ProgressState status="completed">1</ProgressState>
-        </div>
+        </div> */}
       </>
     ),
     embedCode: `
@@ -264,8 +260,6 @@ const components = [
         <div className="d-flex flex-column gap-3 mb-3">
           <Checkbox
             label="Checkbox"
-            value={checked}
-            onChange={(e) => setChecked(!checked)}
           />
         </div>
       </>
