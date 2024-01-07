@@ -91,19 +91,21 @@ const feedsDict = {
     label: "Updates",
     icon: "bi-bell",
     name: "update",
-    template: `### 🔔 DAILY UPDATE:  ${formatDate(new Date())}
+    template: `### BUILDER UPDATE:  ${formatDate(new Date())}
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed))
 
-**📆 YESTERDAY:**
-- [Task 1, hyperlink proof]
-- [Task 2, hyperlink proof]
+**✅ DONE**
+- [what'd you do]
+- [link proof]
 
-**💻 WHAT I AM DOING TODAY:**
-- [Task 1]
-- [Task 2]
+**⏩ NEXT**
+- [what's next?]
+- [what are you thinking about?]
 
-**🛑 BLOCKERS: **
-- @anyone that is causing a blocker or outline any blockers in general`,
+**🛑 BLOCKERS**
+- [what's blocking you?]
+- [how can someone help?]
+`,
   },
   documentation: {
     key: "documentation",
