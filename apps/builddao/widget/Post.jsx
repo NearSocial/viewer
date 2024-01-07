@@ -16,6 +16,7 @@ const groupId = props.groupId ?? content.groupId;
 const indexKey = props.indexKey;
 const permissions = props.permissions;
 const fullPostLink = props.fullPostLink;
+const postPage = props.postPage ?? "mob.near/widget/MainPage.N.Post.Page";
 
 const notifyAccountId = accountId;
 const item = {
@@ -27,7 +28,7 @@ const item = {
 const link =
   props.link ??
   props.fullPostLink ??
-  `/mob.near/widget/MainPage.N.Post.Page?accountId=${accountId}&blockHeight=${blockHeight}`;
+  `/${postPage}?accountId=${accountId}&blockHeight=${blockHeight}`;
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;
