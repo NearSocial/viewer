@@ -18,26 +18,26 @@ const AsideContainer = styled.div`
   }
 `;
 
-function Aside({ routes, active, setActiveRoute }) {
-  const { Button } = VM.require("buildhub.near/widget/components.Button") || (() => {});
-  return (
-    <AsideContainer>
-      {Object.keys(routes || {}).map((route) => (
-        <Button
-          key={route}
-          variant={active === route ? "primary" : "outline"}
-          onClick={() => setActiveRoute(route)}
-          className={
-            "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
-          }
-          style={{ fontSize: "14px" }}
-        >
-          <i className={`bi ${routes[route].icon}`}></i>
-          {routes[route].label}
-        </Button>
-      ))}
-    </AsideContainer>
-  );
-}
+const { Button } =
+  VM.require("buildhub.near/widget/components.Button") || (() => {});
 
-return { Aside };
+const { routes, active, setActiveRoute } = props;
+
+return (
+  <AsideContainer key="aside">
+    {Object.keys(routes || {}).map((route) => (
+      <Button
+        id={route}
+        variant={active === route ? "primary" : "outline"}
+        onClick={() => setActiveRoute(route)}
+        className={
+          "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
+        }
+        style={{ fontSize: "14px" }}
+      >
+        <i className={`bi ${routes[route].icon}`}></i>
+        {routes[route].label}
+      </Button>
+    ))}
+  </AsideContainer>
+);

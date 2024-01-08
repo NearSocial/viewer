@@ -1,8 +1,6 @@
 const { Feed } = VM.require("devs.near/widget/Module.Feed");
-const { Aside } = VM.require("buildhub.near/widget/Aside");
 
 Feed = Feed || (() => <></>); // ensure it's defined or set to a default component
-Aside = Aside || (() => <></>); // ensure it's defined or set to a default component
 
 const { type, hashtag } = props;
 type = hashtag;
@@ -149,10 +147,13 @@ const [template, setTemplate] = useState("What did you have in mind?");
 return (
   <Container>
     <StyledAside key={JSON.stringify(feeds)}>
-      <Aside
-        active={activeFeed}
-        setActiveRoute={setActiveFeed}
-        routes={feeds}
+      <Widget
+        src="buildhub.near/widget/Aside"
+        props={{
+          active: activeFeed,
+          setActiveRoute: setActiveFeed,
+          routes: feeds,
+        }}
       />
     </StyledAside>
     <MainContent>
