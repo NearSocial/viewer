@@ -7720,9 +7720,9 @@ near-social-vm-types@^1.0.0:
   resolved "https://registry.yarnpkg.com/near-social-vm-types/-/near-social-vm-types-1.0.0.tgz#721494a863d2c0d64da2a43d80224e4080b690db"
   integrity sha512-K5CxfiiKc7evzFb/1BGBOD2x4QqnEBuVaHkgRsRTGv02ctLkxA/Xf892SornWSkD75Hf0s9j/jeM5PpMfXcM9A==
 
-"near-social-vm@git+https://github.com/NearSocial/VM.git#1344e8650e8f9a1b5781271183536bcfc815493f":
-  version "2.5.4"
-  resolved "git+https://github.com/NearSocial/VM.git#1344e8650e8f9a1b5781271183536bcfc815493f"
+"near-social-vm@git+https://github.com/NearSocial/VM.git#2.5.5":
+  version "2.5.5"
+  resolved "git+https://github.com/NearSocial/VM.git#d8eb1674cca9aa3350583d40b8a46a74dbbc4ac6"
   dependencies:
     "@radix-ui/react-accordion" "^1.1.1"
     "@radix-ui/react-alert-dialog" "^1.0.3"
