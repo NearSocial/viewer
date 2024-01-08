@@ -1,8 +1,10 @@
 const { Feed } = VM.require("devs.near/widget/Module.Feed");
+const { Aside } = VM.require("buildhub.near/widget/Aside");
 
-Feed = Feed || (() => <></>); // make sure you have this or else it can break
+Feed = Feed || (() => <></>); // ensure it's defined or set to a default component
+Aside = Aside || (() => <></>); // ensure it's defined or set to a default component
 
-const v = props.hashtag;
+const hashtag = props.hashtag;
 
 const Container = styled.div`
   display: grid;
@@ -15,7 +17,7 @@ const Container = styled.div`
   }
 `;
 
-const Aside = styled.div`
+const StyledAside = styled.div`
   grid-column: span 1 / span 1;
 `;
 
@@ -23,49 +25,16 @@ const MainContent = styled.div`
   grid-column: span 4 / span 4;
 `;
 
-const [currentFeed, setCurrentFeed] = useState(v || "resolutions");
+const [activeFeed, setActiveFeed] = useState(hashtag || "resolutions");
 const [template, setTemplate] = useState("What did you have in mind?");
-
-const CustomFeed = ({ name, hashtag }) => {
-  return (
-    <Feed
-      index={[
-        {
-          action: "hashtag",
-          key: name,
-          options: {
-            limit: 10,
-            order: "desc",
-            accountId: props.accounts,
-          },
-          cacheOptions: {
-            ignoreCache: true,
-          },
-        },
-      ]}
-      Item={(p) => (
-        <Widget
-          loading={<div className="w-100" style={{ height: "200px" }} />}
-          src="/*__@appAccount__*//widget/Post"
-          props={{
-            accountId: p.accountId,
-            blockHeight: p.blockHeight,
-            noBorder: true,
-          }}
-        />
-      )}
-    />
-  );
-};
 
 function formatDate(date) {
   const options = { year: "numeric", month: "short", day: "numeric" };
   return date.toLocaleDateString("en-US", options);
 }
 
-const feedsDict = {
+const feeds = {
   resolutions: {
-    key: "resolutions",
     label: "Resolutions",
     icon: "bi-calendar3",
     name: "resolution",
@@ -87,12 +56,11 @@ const feedsDict = {
 `,
   },
   updates: {
-    key: "updates",
     label: "Updates",
     icon: "bi-bell",
     name: "update",
     template: `### BUILDER UPDATE:  ${formatDate(new Date())}
-(posted via [Build DAO Gateway](https://nearbuilders.org/feed))
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=update))
 
 **✅ DONE**
 - [what'd you do]
@@ -108,12 +76,11 @@ const feedsDict = {
 `,
   },
   documentation: {
-    key: "documentation",
     label: "Documentation",
     icon: "bi-book",
     name: "documentation",
     template: `## TITLE
-(posted via [Build DAO Gateway](https://nearbuilders.org/feed))
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=documentation))
 
 **WHAT IS _____?**
 - [context]
@@ -129,47 +96,61 @@ const feedsDict = {
 `,
   },
   question: {
-    key: "question",
     label: "Question",
     icon: "bi-question",
     name: "question",
     template: `## what is your question?
-(posted via [Build DAO Gateway](https://nearbuilders.org/feed))
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=question))
 
 [what are you thinking about?]
 [why are you asking?]
 `,
-  }
-};
+  },
+  opportunity: {
+    label: "Opportunity",
+    icon: "bi-lightbulb",
+    name: "opportunity",
+    template: `## TITLE
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=opportunity))
 
-const feeds = Object.keys(feedsDict);
+[what is the opportunity?]
 
-const feed = () => {
-  if (!!feedsDict[currentFeed]) {
-    return CustomFeed(feedsDict[currentFeed]);
-  }
+[explain the motivation or reason]
+
+`,
+  },
+  task: {
+    label: "Task",
+    icon: "bi-check",
+    name: "task",
+    template: `## TASK TITLE
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=task))
+
+**What needs to be done?**
+- [Describe the task or action steps]
+
+**Context or additional information:**
+- [Provide any context or details]
+`,
+  },
 };
 
 return (
   <Container>
-    <Aside>
-      <Widget
-        src="/*__@appAccount__*//widget/aside"
-        props={{
-          currentFeed: currentFeed,
-          setCurrentFeed: setCurrentFeed,
-          feeds: feedsDict,
-          feedsDict,
-        }}
+    <StyledAside>
+      <Aside
+        active={activeFeed}
+        setActiveRoute={setActiveFeed}
+        routes={feeds}
       />
-    </Aside>
+    </StyledAside>
     <MainContent>
       {context.accountId ? (
         <Widget
           src="/*__@appAccount__*//widget/Compose"
           props={{
-            feed: feedsDict[currentFeed],
-            template: feedsDict[currentFeed].template,
+            feed: feeds[activeFeed],
+            template: feeds[activeFeed].template,
           }}
         />
       ) : (
@@ -178,7 +159,33 @@ return (
           props={props}
         />
       )}
-      {feed()}
+      <Feed
+        index={[
+          {
+            action: "hashtag",
+            key: feeds[activeFeed],
+            options: {
+              limit: 10,
+              order: "desc",
+              accountId: props.accounts,
+            },
+            cacheOptions: {
+              ignoreCache: true,
+            },
+          },
+        ]}
+        Item={(p) => (
+          <Widget
+            loading={<div className="w-100" style={{ height: "200px" }} />}
+            src="/*__@appAccount__*//widget/Post"
+            props={{
+              accountId: p.accountId,
+              blockHeight: p.blockHeight,
+              noBorder: true,
+            }}
+          />
+        )}
+      />
     </MainContent>
   </Container>
 );

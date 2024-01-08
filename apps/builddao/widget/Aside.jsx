@@ -65,16 +65,20 @@ const TabButton = styled.button`
   }
 `;
 
-return (
-  <Container>
-    {Object.keys(props.feeds || {}).map((feed) => (
-      <TabButton
-        className={props.currentFeed === feed && "active"}
-        onClick={() => props.setCurrentFeed(feed)}
-      >
-        <i className={`bi ${props.feedsDict[feed].icon}`}></i>
-        {props.feedsDict[feed].label}
-      </TabButton>
-    ))}
-  </Container>
-);
+const Aside = (props) => {
+  return (
+    <Container>
+      {Object.keys(props.routes || {}).map((route) => (
+        <TabButton
+          className={props.active === route && "active"}
+          onClick={() => props.setActiveRoute(route)}
+        >
+          <i className={`bi ${props.routes[route].icon}`}></i>
+          {props.routes[route].label}
+        </TabButton>
+      ))}
+    </Container>
+  );
+};
+
+return { Aside };

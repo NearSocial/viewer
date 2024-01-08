@@ -1,4 +1,4 @@
-const draftKey = props.feed.key || "draft";
+const draftKey = props.feed.name || "draft";
 const draft = Storage.privateGet(draftKey);
 
 if (draft === null) {
@@ -398,7 +398,7 @@ return (
         <TextareaWrapper
           className="markdown-editor"
           data-value={postContent || ""}
-          key={props.feed.key}
+          key={props.feed.name}
         >
           <Widget
             src="mob.near/widget/MarkdownEditorIframe"
