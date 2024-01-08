@@ -4,7 +4,9 @@ const { Aside } = VM.require("buildhub.near/widget/Aside");
 Feed = Feed || (() => <></>); // ensure it's defined or set to a default component
 Aside = Aside || (() => <></>); // ensure it's defined or set to a default component
 
-const hashtag = props.hashtag;
+const { type, hashtag } = props;
+type = hashtag;
+hashtag = type;
 
 const Container = styled.div`
   display: grid;
@@ -25,7 +27,7 @@ const MainContent = styled.div`
   grid-column: span 4 / span 4;
 `;
 
-const [activeFeed, setActiveFeed] = useState(hashtag || "resolutions");
+const [activeFeed, setActiveFeed] = useState(type || "resolutions");
 const [template, setTemplate] = useState("What did you have in mind?");
 
 function formatDate(date) {
