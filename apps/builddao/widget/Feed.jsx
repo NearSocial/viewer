@@ -108,7 +108,7 @@ const feeds = {
   },
   opportunity: {
     label: "Opportunity",
-    icon: "bi-lightbulb",
+    icon: "bi-suitcase-lg",
     name: "opportunity",
     template: `## TITLE
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=opportunity))
@@ -118,6 +118,12 @@ const feeds = {
 [explain the motivation or reason]
 
 `,
+  },
+  idea: {
+    label: "Idea",
+    icon: "bi-lightbulb",
+    name: "idea",
+    template: ``,
   },
   task: {
     label: "Task",
@@ -163,7 +169,7 @@ return (
         index={[
           {
             action: "hashtag",
-            key: feeds[activeFeed],
+            key: activeFeed,
             options: {
               limit: 10,
               order: "desc",
