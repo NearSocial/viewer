@@ -8,9 +8,8 @@ const { type, hashtag } = props;
 type = hashtag;
 hashtag = type;
 
-const { Post, Button } = VM.require("buildhub.near/widget/components");
+const { Post } = VM.require("buildhub.near/widget/components");
 Post = Post || (() => <></>);
-Button = Button || (() => <></>);
 
 function formatDate(date) {
   const options = { year: "numeric", month: "short", day: "numeric" };
@@ -154,7 +153,6 @@ return (
         active={activeFeed}
         setActiveRoute={setActiveFeed}
         routes={feeds}
-        Button={Button}
       />
     </StyledAside>
     <MainContent>

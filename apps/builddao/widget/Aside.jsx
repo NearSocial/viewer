@@ -1,5 +1,3 @@
-const { Button } = VM.require("buildhub.near/widget/components.Button");
-
 const AsideContainer = styled.div`
   border-radius: 16px;
   border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
@@ -20,13 +18,14 @@ const AsideContainer = styled.div`
   }
 `;
 
-function Aside({ Button, routes, active, setActiveRoute }) {
+function Aside({ routes, active, setActiveRoute }) {
+  const { Button } = VM.require("buildhub.near/widget/components.Button") || (() => {});
   return (
     <AsideContainer>
       {Object.keys(routes || {}).map((route) => (
         <Button
           key={route}
-          variant={active ? "primary" : "outline"}
+          variant={active === route ? "primary" : "outline"}
           onClick={() => setActiveRoute(route)}
           className={
             "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
