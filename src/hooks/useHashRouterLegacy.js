@@ -1,16 +1,23 @@
 import { useHistory } from "react-router-dom";
 import React, { useCallback, useEffect } from "react";
 
+function maybeRedirect(history, newURL) {
+  let url = new URL(newURL);
+  const hashFragment = url.hash.slice(1);
+  const prefixSlash = hashFragment.startsWith("/");
+  const numParts = hashFragment.split("/").length;
+
+  if (hashFragment && (prefixSlash || numParts >= 3)) {
+    history && history.replace(`${prefixSlash ? "" : "/"}${hashFragment}`);
+  }
+}
+
 export function useHashRouterLegacy() {
   const history = useHistory();
 
   const onHashChange = useCallback(
     (event) => {
-      let url = event.newURL.split("#").pop() ?? "/";
-
-      if (url[0] === "/") {
-        history && history.replace(url);
-      }
+      maybeRedirect(history, event.newURL);
     },
     [history]
   );
@@ -28,10 +35,6 @@ export function useHashRouterLegacy() {
       return;
     }
     const currentUrl = window.location.href;
-
-    if (currentUrl.includes("#")) {
-      const path = currentUrl.split("#")[1];
-      history.replace(path);
-    }
+    maybeRedirect(history, currentUrl);
   }, [history]);
 }
