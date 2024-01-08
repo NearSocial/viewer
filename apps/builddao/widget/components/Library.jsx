@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-// Buttons/Navigation
->>>>>>> 8eb2901 (condenses)
 const {
   Button,
   Pagination,
@@ -16,12 +12,9 @@ const {
   Avatar,
   Checkbox
 } = VM.require("buildhub.near/widget/components");
-<<<<<<< HEAD
-=======
 
 // states
 const [checked, setChecked] = useState(false);
->>>>>>> 8eb2901 (condenses)
 
 const ButtonPreview = (
   <div>
@@ -75,11 +68,7 @@ const components = [
     },
     preview: ButtonPreview,
     embedCode: `
-<<<<<<< HEAD
   const { Button } = VM.require("buildhub.near/widget/components");
-=======
-  const { Button } = VM.require("buildhub.near/widget/components.
->>>>>>> 8eb2901 (condenses)
 
   return (
     <div>

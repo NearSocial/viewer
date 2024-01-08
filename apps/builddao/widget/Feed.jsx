@@ -8,8 +8,14 @@ const { type, hashtag } = props;
 type = hashtag;
 hashtag = type;
 
-const { Post } = VM.require("buildhub.near/widget/components");
+const { Post, Button } = VM.require("buildhub.near/widget/components");
 Post = Post || (() => <></>);
+Button = Button || (() => <></>);
+
+function formatDate(date) {
+  const options = { year: "numeric", month: "short", day: "numeric" };
+  return date.toLocaleDateString("en-US", options);
+}
 
 const Container = styled.div`
   display: grid;
@@ -29,14 +35,6 @@ const StyledAside = styled.div`
 const MainContent = styled.div`
   grid-column: span 4 / span 4;
 `;
-
-const [activeFeed, setActiveFeed] = useState(type || "resolutions");
-const [template, setTemplate] = useState("What did you have in mind?");
-
-function formatDate(date) {
-  const options = { year: "numeric", month: "short", day: "numeric" };
-  return date.toLocaleDateString("en-US", options);
-}
 
 const feeds = {
   resolutions: {
@@ -146,13 +144,17 @@ const feeds = {
   },
 };
 
+const [activeFeed, setActiveFeed] = useState(type || "resolutions");
+const [template, setTemplate] = useState("What did you have in mind?");
+
 return (
   <Container>
-    <StyledAside>
+    <StyledAside key={JSON.stringify(feeds)}>
       <Aside
         active={activeFeed}
         setActiveRoute={setActiveFeed}
         routes={feeds}
+        Button={Button}
       />
     </StyledAside>
     <MainContent>

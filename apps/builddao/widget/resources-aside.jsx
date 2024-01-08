@@ -1,4 +1,4 @@
-const { Button } = VM.require("buildhub.near/widget/components.button");
+const { Button } = VM.require("buildhub.near/widget/components");
 
 const Container = styled.div`
   border-radius: 16px;

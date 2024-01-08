@@ -20,24 +20,25 @@ const AsideContainer = styled.div`
   }
 `;
 
-const Aside = (props) => {
+function Aside({ Button, routes, active, setActiveRoute }) {
   return (
     <AsideContainer>
-      {Object.keys(props.routes || {}).map((route) => (
+      {Object.keys(routes || {}).map((route) => (
         <Button
-          variant={props.active === route ? "primary" : "outline"}
-          onClick={() => props.setActiveRoute(route)}
+          key={route}
+          variant={active ? "primary" : "outline"}
+          onClick={() => setActiveRoute(route)}
           className={
             "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
           }
           style={{ fontSize: "14px" }}
         >
-          <i className={`bi ${props.routes[route].icon}`}></i>
-          {props.routes[route].label}
+          <i className={`bi ${routes[route].icon}`}></i>
+          {routes[route].label}
         </Button>
       ))}
     </AsideContainer>
   );
-};
+}
 
 return { Aside };
