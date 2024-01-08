@@ -8,7 +8,7 @@ const { type, hashtag } = props;
 type = hashtag;
 hashtag = type;
 
-const { Post } = VM.require("buildhub.near/widget/components.post");
+const { Post } = VM.require("buildhub.near/widget/components");
 Post = Post || (() => <></>);
 
 const Container = styled.div`
