@@ -2,7 +2,7 @@ const { Feed } = VM.require("devs.near/widget/Module.Feed");
 
 Feed = Feed || (() => <></>); // make sure you have this or else it can break
 
-const v = props.v;
+const v = props.hashtag;
 
 const Container = styled.div`
   display: grid;
@@ -126,6 +126,18 @@ const feedsDict = {
 **USAGE**
 - [where is it used?]
 - [how to use it]
+`,
+  },
+  question: {
+    key: "question",
+    label: "Question",
+    icon: "bi-question",
+    name: "question",
+    template: `## what is your question?
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed))
+
+[what are you thinking about?]
+[why are you asking?]
 `,
   }
 };
