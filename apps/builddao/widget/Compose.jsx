@@ -1,4 +1,4 @@
-const { User, Button } = VM.require("buildhub.near/widget/components");
+const { Avatar, Button } = VM.require("buildhub.near/widget/components");
 
 const draftKey = props.feed.name || "draft";
 const draft = Storage.privateGet(draftKey);
@@ -303,8 +303,70 @@ const MarkdownEditor = `
 `;
 
 const MarkdownPreview = styled.div`
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: 16px !important;
+  }
+  @media (max-width: 767px) {
+    font-size: 15px !important;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 15px !important;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  strong,
+  b {
+    font-weight: 500 !important;
+  }
+  ol,
+  ul,
+  dl {
+    margin-bottom: 0.5rem;
+    white-space: inherit;
+  }
+  p {
+    margin-bottom: 0.5rem;
+  }
+  hr {
+    display: none;
+  }
+  img {
+    border-radius: var(--bs-border-radius-lg);
+    max-height: 40em;
+  }
+  th {
+    min-width: 5em;
+  }
+
+  .table > :not(caption) > * > * {
+    padding: 0.3rem;
+  }
+
   * {
     color: #b6b6b8 !important;
+  }
+
+  a {
+    color: #0d6efd !important;
+
+    &:hover {
+      color: #0a58ca !important;
+    }
   }
 `;
 
@@ -340,8 +402,11 @@ const LabelSelect = styled.div`
 
 return (
   <PostCreator>
-    <div className="d-flex gap-3">
-      <User accountId={context.accountId} blockHeight={"now"} />
+    <div className="d-flex align-items-start gap-2">
+      <Avatar accountId={context.accountId} />
+      <div>
+        <p className="mb-0 text-white">{context.accountId}</p>
+      </div>
     </div>
 
     <div style={{ border: "none" }}>

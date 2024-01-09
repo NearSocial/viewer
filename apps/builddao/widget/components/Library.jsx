@@ -10,7 +10,7 @@ const {
   TextEditor,
   User,
   Avatar,
-  Checkbox
+  Checkbox,
 } = VM.require("buildhub.near/widget/components");
 
 // states
@@ -261,9 +261,7 @@ const components = [
     preview: (
       <>
         <div className="d-flex flex-column gap-3 mb-3">
-          <Checkbox
-            label="Checkbox"
-          />
+          <Checkbox label="Checkbox" />
         </div>
       </>
     ),
@@ -498,7 +496,6 @@ const components = [
   },
 ];
 
-
 const renderProps = (props, optional) => {
   return Object.entries(props || {}).map(([key, desc]) => {
     return (
@@ -689,9 +686,13 @@ const Grid = styled.div`
   .aside {
     grid-column: span 1 / span 1;
   }
-`;
 
-// return <p style={{ color: "white" }}>Hello World</p>;
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+`;
 
 return (
   <Grid className="container-xl">

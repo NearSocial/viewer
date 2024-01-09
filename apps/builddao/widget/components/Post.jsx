@@ -1,4 +1,4 @@
-const { User } = VM.require("buildhub.near/widget/components");
+const { User, BookmarkButton } = VM.require("buildhub.near/widget/components");
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;
@@ -258,7 +258,7 @@ const contentWidget = (
           style={{ minHeight: "100px" }}
         />
       }
-      src="mob.near/widget/MainPage.N.Post.Content"
+      src="buildhub.near/widget/components.post.Content"
       props={{
         content,
         raw,
@@ -353,7 +353,7 @@ return (
               />
               <Widget
                 loading=""
-                src="buildhub.near/widget/components.post.bookmark-button"
+                src="buildhub.near/widget/components.post.BookmarkButton"
                 props={{
                   item,
                 }}
