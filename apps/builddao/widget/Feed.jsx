@@ -1,12 +1,18 @@
 const { Feed } = VM.require("devs.near/widget/Module.Feed");
-const { Aside } = VM.require("buildhub.near/widget/Aside");
 
 Feed = Feed || (() => <></>); // ensure it's defined or set to a default component
-Aside = Aside || (() => <></>); // ensure it's defined or set to a default component
 
 const { type, hashtag } = props;
 type = hashtag;
 hashtag = type;
+
+const { Post } = VM.require("buildhub.near/widget/components");
+Post = Post || (() => <></>);
+
+function formatDate(date) {
+  const options = { year: "numeric", month: "short", day: "numeric" };
+  return date.toLocaleDateString("en-US", options);
+}
 
 const Container = styled.div`
   display: grid;
@@ -26,14 +32,6 @@ const StyledAside = styled.div`
 const MainContent = styled.div`
   grid-column: span 4 / span 4;
 `;
-
-const [activeFeed, setActiveFeed] = useState(type || "resolutions");
-const [template, setTemplate] = useState("What did you have in mind?");
-
-function formatDate(date) {
-  const options = { year: "numeric", month: "short", day: "numeric" };
-  return date.toLocaleDateString("en-US", options);
-}
 
 const feeds = {
   resolutions: {
@@ -99,7 +97,7 @@ const feeds = {
   },
   question: {
     label: "Question",
-    icon: "bi-question",
+    icon: "bi-question-lg",
     name: "question",
     template: `## what is your question?
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=question))
@@ -110,7 +108,7 @@ const feeds = {
   },
   opportunity: {
     label: "Opportunity",
-    icon: "bi-suitcase-lg",
+    icon: "bi-briefcase",
     name: "opportunity",
     template: `## TITLE
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=opportunity))
@@ -129,7 +127,7 @@ const feeds = {
   },
   task: {
     label: "Task",
-    icon: "bi-check",
+    icon: "bi-check-lg",
     name: "task",
     template: `## TASK TITLE
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=task))
@@ -143,13 +141,19 @@ const feeds = {
   },
 };
 
+const [activeFeed, setActiveFeed] = useState(type || "resolutions");
+const [template, setTemplate] = useState("What did you have in mind?");
+
 return (
   <Container>
-    <StyledAside>
-      <Aside
-        active={activeFeed}
-        setActiveRoute={setActiveFeed}
-        routes={feeds}
+    <StyledAside key={JSON.stringify(feeds)}>
+      <Widget
+        src="buildhub.near/widget/Aside"
+        props={{
+          active: activeFeed,
+          setActiveRoute: setActiveFeed,
+          routes: feeds,
+        }}
       />
     </StyledAside>
     <MainContent>
@@ -183,14 +187,10 @@ return (
           },
         ]}
         Item={(p) => (
-          <Widget
-            loading={<div className="w-100" style={{ height: "200px" }} />}
-            src="/*__@appAccount__*//widget/Post"
-            props={{
-              accountId: p.accountId,
-              blockHeight: p.blockHeight,
-              noBorder: true,
-            }}
+          <Post
+            accountId={p.accountId}
+            blockHeight={p.blockHeight}
+            noBorder={true}
           />
         )}
       />

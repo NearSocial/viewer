@@ -38,6 +38,7 @@ import JoinPage from "./pages/JoinPage";
 import ProposePage from "./pages/ProposePage";
 import ViewPage from "./pages/ViewPage";
 import ResourcesPage from "./pages/ResourcesPage";
+import LibraryPage from "./pages/LibraryPage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos";
@@ -185,6 +186,10 @@ function App() {
             </Route>
             <Route path={"/propose"}>
               <ProposePage {...passProps} />
+            </Route>
+            <Route path={"/library"}>
+              <Navbar {...passProps} />
+              <LibraryPage {...passProps} />
             </Route>
             <Route path={"/feed"}>
               <Navbar {...passProps} />

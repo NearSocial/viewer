@@ -1,34 +1,4 @@
-const accountId = props.accountId;
-if (!accountId) {
-  return "No accountId";
-}
-const blockHeight =
-  props.blockHeight === "now" ? "now" : parseInt(props.blockHeight);
-const pinned = !!props.pinned;
-const hideMenu = !!props.hideMenu;
-const hideButtons = !!props.hideButtons;
-const content =
-  props.content ??
-  JSON.parse(Social.get(`${accountId}/post/main`, blockHeight) ?? "null");
-const subscribe = !!props.subscribe;
-const raw = !!props.raw;
-const groupId = props.groupId ?? content.groupId;
-const indexKey = props.indexKey;
-const permissions = props.permissions;
-const fullPostLink = props.fullPostLink;
-const postPage = props.postPage ?? "mob.near/widget/MainPage.N.Post.Page";
-
-const notifyAccountId = accountId;
-const item = {
-  type: "social",
-  path: `${accountId}/post/main`,
-  blockHeight,
-};
-
-const link =
-  props.link ??
-  props.fullPostLink ??
-  `/${postPage}?accountId=${accountId}&blockHeight=${blockHeight}`;
+const { User, BookmarkButton } = VM.require("buildhub.near/widget/components");
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;
@@ -37,16 +7,16 @@ const StyledPost = styled.div`
     border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
     color: #b6b6b8;
     padding: 24px !important;
-    background-color: #0b0c14;
+    background-color: #23242b;
     transition: all 300ms;
 
     &:hover {
-      background-color: #171929 !important;
+      background-color: #1c1f33 !important;
       .expand-post {
         background-image: linear-gradient(
           to bottom,
-          rgb(23, 25, 41, 0),
-          rgb(23, 25, 41, 1) 25%
+          rgba(28, 31, 51, 0),
+          rgba(28, 31, 51, 1) 25%
         ) !important;
       }
     }
@@ -66,8 +36,8 @@ const StyledPost = styled.div`
     .expand-post {
       background-image: linear-gradient(
         to bottom,
-        rgb(11, 12, 20, 0),
-        rgb(11, 12, 20, 1) 25%
+        rgba(35, 36, 43, 0),
+        rgba(35, 36, 43, 1) 25%
       ) !important;
     }
   }
@@ -233,23 +203,84 @@ const Wrapper = styled.div`
   }
 `;
 
+const RepostWidgetDesktop = styled.div`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const RepostWidgetMobile = styled.div`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+`;
+const accountId = props.accountId;
+if (!accountId) {
+  return "No accountId";
+}
+const blockHeight =
+  props.blockHeight === "now" ? "now" : parseInt(props.blockHeight);
+const pinned = !!props.pinned;
+const hideMenu = !!props.hideMenu;
+const hideButtons = !!props.hideButtons;
+const content =
+  props.content ??
+  JSON.parse(Social.get(`${accountId}/post/main`, blockHeight) ?? "null");
+const subscribe = !!props.subscribe;
+const raw = !!props.raw;
+const groupId = props.groupId ?? content.groupId;
+const indexKey = props.indexKey;
+const permissions = props.permissions;
+const fullPostLink = props.fullPostLink;
+
+const notifyAccountId = accountId;
+const item = {
+  type: "social",
+  path: `${accountId}/post/main`,
+  blockHeight,
+};
+
+const link =
+  props.link ??
+  props.fullPostLink ??
+  `/mob.near/widget/MainPage.N.Post.Page?accountId=${accountId}&blockHeight=${blockHeight}`;
+
 const contentWidget = (
-  <Widget
-    key="content"
-    loading={
-      <div
-        className="overflow-hidden w-100 placeholder-glow"
-        style={{ minHeight: "100px" }}
+  <>
+    <Widget
+      key="content"
+      loading={
+        <div
+          className="overflow-hidden w-100 placeholder-glow"
+          style={{ minHeight: "100px" }}
+        />
+      }
+      src="buildhub.near/widget/components.post.Content"
+      props={{
+        content,
+        raw,
+        truncateContent: props.truncateContent,
+        noEmbed: props.noEmbed,
+      }}
+    />
+    <RepostWidgetMobile>
+      <Widget
+        loading=""
+        src="mob.near/widget/N.RepostButton"
+        props={{
+          disable: permissions.disableRepost,
+          notifyAccountId,
+          item,
+          // indexKey,
+          // groupId,
+        }}
       />
-    }
-    src="mob.near/widget/MainPage.N.Post.Content"
-    props={{
-      content,
-      raw,
-      truncateContent: props.truncateContent,
-      noEmbed: props.noEmbed,
-    }}
-  />
+      <span>Repost Feed</span>
+    </RepostWidgetMobile>
+  </>
 );
 
 return (
@@ -266,18 +297,14 @@ return (
     >
       <div className={`post ${props.reposted ? "reposted" : ""}`}>
         <div className="right d-flex flex-column gap-3">
-          <Widget
-            loading={<div className="post-header" />}
-            src="/*__@appAccount__*//widget/Post.Header"
-            props={{
-              accountId,
-              blockHeight,
-              pinned,
-              hideMenu,
-              link,
-              postType: "post",
-              flagItem: item,
-            }}
+          <User
+            accountId={accountId}
+            blockHeight={blockHeight}
+            pinned={pinned}
+            hideMenu={hideMenu}
+            link={link}
+            postType={"post"}
+            flagItem={item}
           />
           {fullPostLink ? (
             <a
@@ -303,22 +330,31 @@ return (
                   onClick: () => State.update({ showReply: !state.showReply }),
                 }}
               />
-              <Widget
-                loading=""
-                src="mob.near/widget/N.RepostButton"
-                props={{
-                  disable: permissions.disableRepost,
-                  notifyAccountId,
-                  item,
-                  // indexKey,
-                  // groupId,
-                }}
-              />
+              <RepostWidgetDesktop>
+                <Widget
+                  loading=""
+                  src="mob.near/widget/N.RepostButton"
+                  props={{
+                    disable: permissions.disableRepost,
+                    notifyAccountId,
+                    item,
+                    // indexKey,
+                    // groupId,
+                  }}
+                />
+              </RepostWidgetDesktop>
               <Widget
                 loading=""
                 src="mob.near/widget/N.LikeButton"
                 props={{
                   notifyAccountId,
+                  item,
+                }}
+              />
+              <Widget
+                loading=""
+                src="buildhub.near/widget/components.post.BookmarkButton"
+                props={{
                   item,
                 }}
               />
