@@ -26,7 +26,7 @@ export default function FeedPage(props) {
         config={{
           redirectMap: redirectMapStore.redirectMap,
         }}
-        props={widgetProps}
+        props={{ requestSignIn: props.requestSignIn, ...widgetProps }}
       />
     </div>
   );
