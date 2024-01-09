@@ -1,4 +1,6 @@
-const { User, BookmarkButton } = VM.require("buildhub.near/widget/components");
+const { User } = VM.require("buildhub.near/widget/components");
+
+User = User || (() => <></>);
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;

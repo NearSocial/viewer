@@ -1,4 +1,5 @@
-const { MarkdownView } = VM.require("buildhub.near/widget/md-view");
+const { MarkdownView } =
+  VM.require("buildhub.near/widget/md-view") || (() => <></>);
 
 const Container = styled.div`
   display: grid;
