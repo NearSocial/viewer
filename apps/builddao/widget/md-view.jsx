@@ -22,7 +22,9 @@ const MarkdownContainer = styled.div`
     line-height: 120%; /* 57.6px */
   }
 
-  p {
+  p,
+  ul,
+  li {
     color: var(--White-50, #cdd0d5);
     /* Body/14px */
     font-family: "Inter", sans-serif !important;
