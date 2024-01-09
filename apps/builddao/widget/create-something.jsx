@@ -234,9 +234,7 @@ const CreateSomethingView = (props) => {
                 />
               ) : (
                 <>
-                  <span className={!validMember ? "pending" : "joined"}>
-                    {!validMember ? "Pending..." : "Joined"}
-                  </span>
+                  <Widget src="rambo-dev.near/widget/BuildDAOBullet" props={{ text: !validMember ? "Pending": "Joined" }} />
                   <a href={"/feed"}>
                     View Activity{" "}
                     <svg
