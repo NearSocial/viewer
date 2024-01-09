@@ -1,5 +1,3 @@
-console.log(props);
-
 const Container = styled.div`
   background-color: #23242b;
   color: #ffffff;
