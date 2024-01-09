@@ -97,7 +97,7 @@ const feeds = {
   },
   question: {
     label: "Question",
-    icon: "bi-question",
+    icon: "bi-question-lg",
     name: "question",
     template: `## what is your question?
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=question))
@@ -108,7 +108,7 @@ const feeds = {
   },
   opportunity: {
     label: "Opportunity",
-    icon: "bi-suitcase-lg",
+    icon: "bi-briefcase",
     name: "opportunity",
     template: `## TITLE
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=opportunity))
@@ -127,7 +127,7 @@ const feeds = {
   },
   task: {
     label: "Task",
-    icon: "bi-check",
+    icon: "bi-check-lg",
     name: "task",
     template: `## TASK TITLE
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=task))
