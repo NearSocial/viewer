@@ -10,9 +10,6 @@ if (policy === null) {
 
 const alreadyJoinedRolesNames = ["community", "council"];
 
-const deposit = policy.proposal_bond;
-const roleId = "community";
-
 const group = policy.roles
   .filter((role) => alreadyJoinedRolesNames.includes(role.name))
   .map((role) => {
