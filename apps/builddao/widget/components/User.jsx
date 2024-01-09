@@ -1,4 +1,5 @@
-const { Avatar } = VM.require("buildhub.near/widget/components");
+const { Avatar } =
+  VM.require("buildhub.near/widget/components") || (() => <></>);
 
 const Button = styled.div`
   line-height: 20px;

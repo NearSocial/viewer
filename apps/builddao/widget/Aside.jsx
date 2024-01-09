@@ -20,7 +20,7 @@ const AsideContainer = styled.div`
 `;
 
 const { Button } =
-  VM.require("buildhub.near/widget/components.Button") || (() => {});
+  VM.require("buildhub.near/widget/components.Button") || (() => <></>);
 
 const { routes, active, setActiveRoute } = props;
 
