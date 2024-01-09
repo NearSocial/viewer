@@ -23,7 +23,6 @@ const fetchResources = () => {
   const res = fetch(
     "https://raw.githubusercontent.com/itexpert120/buildhub-resources/main/resources.json"
   );
-
   return JSON.parse(res.body);
 };
 
@@ -32,6 +31,8 @@ const resources = fetchResources();
 if (!resources) {
   return <div>Loading...</div>;
 }
+
+console.log(resources);
 
 const [currentResource, setCurrentResource] = useState(resources[0].name);
 

@@ -27,7 +27,7 @@ return (
         variant={
           props.currentResource === resource.name ? "primary" : "outline"
         }
-        onClick={() => props.setCurrentResource(resource)}
+        onClick={() => props.setCurrentResource(resource.name)}
         className={
           "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
         }
