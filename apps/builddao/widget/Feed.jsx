@@ -139,6 +139,11 @@ const feeds = {
 - [Provide any context or details]
 `,
   },
+  bookmarks: {
+    label: "Bookmarks",
+    icon: "bi-bookmark",
+    name: "bookmark",
+  },
 };
 
 const [activeFeed, setActiveFeed] = useState(type || "resolutions");
@@ -158,42 +163,48 @@ return (
     </StyledAside>
     <MainContent>
       {context.accountId ? (
-        <Widget
-          src="/*__@appAccount__*//widget/Compose"
-          props={{
-            feed: feeds[activeFeed],
-            template: feeds[activeFeed].template,
-          }}
-        />
+        activeFeed !== "bookmarks" ? (
+          <Widget
+            src="/*__@appAccount__*//widget/Compose"
+            props={{
+              feed: feeds[activeFeed],
+              template: feeds[activeFeed].template,
+            }}
+          />
+        ) : (
+          <Widget src="/*__@appAccount__*//widget/Bookmarks" />
+        )
       ) : (
         <Widget
           src="/*__@appAccount__*//widget/components.login-now"
           props={props}
         />
       )}
-      <Feed
-        index={[
-          {
-            action: "hashtag",
-            key: activeFeed,
-            options: {
-              limit: 10,
-              order: "desc",
-              accountId: props.accounts,
+      {activeFeed !== "bookmarks" && (
+        <Feed
+          index={[
+            {
+              action: "hashtag",
+              key: activeFeed,
+              options: {
+                limit: 10,
+                order: "desc",
+                accountId: props.accounts,
+              },
+              cacheOptions: {
+                ignoreCache: true,
+              },
             },
-            cacheOptions: {
-              ignoreCache: true,
-            },
-          },
-        ]}
-        Item={(p) => (
-          <Post
-            accountId={p.accountId}
-            blockHeight={p.blockHeight}
-            noBorder={true}
-          />
-        )}
-      />
+          ]}
+          Item={(p) => (
+            <Post
+              accountId={p.accountId}
+              blockHeight={p.blockHeight}
+              noBorder={true}
+            />
+          )}
+        />
+      )}
     </MainContent>
   </Container>
 );
