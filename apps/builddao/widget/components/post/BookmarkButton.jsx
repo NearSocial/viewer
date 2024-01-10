@@ -12,26 +12,27 @@ const bookmarks = Social.index("bookmark", item);
 
 const dataLoading = bookmarks === null;
 
-const bookmarksByUsers = {};
+const bookmarksByUser = {};
 
 (bookmarks || []).forEach((bookmark) => {
   if (bookmark.value.type === "bookmark") {
-    bookmarksByUsers[bookmark.accountId] = bookmark;
+    bookmarksByUser[bookmark.accountId] = bookmark;
   } else if (bookmark.value.type === "unbookmark") {
-    delete bookmarksByUsers[bookmark.accountId];
+    delete bookmarksByUser[bookmark.accountId];
   }
 });
+
 if (state.hasBookmark === true) {
-  bookmarksByUsers[context.accountId] = {
+  bookmarksByUser[context.accountId] = {
     accountId: context.accountId,
   };
 } else if (state.hasBookmark === false) {
-  delete bookmarksByUsers[context.accountId];
+  delete bookmarksByUser[context.accountId];
 }
 
-const accountsWithBookmarks = Object.keys(bookmarksByUsers);
-const likeCount = accountsWithBookmarks.length;
-const hasBookmark = context.accountId && !!bookmarksByUsers[context.accountId];
+const accountsWithBookmarks = Object.keys(bookmarksByUser);
+const bookmarkCount = accountsWithBookmarks.length;
+const hasBookmark = context.accountId && !!bookmarksByUser[context.accountId];
 
 const bookmarkSvg = (
   <svg
@@ -128,23 +129,49 @@ const BookmarkButton = styled.div`
   }
 `;
 
-const likeClick = () => {
+const bookmarkClick = () => {
   if (state.loading || dataLoading || !context.accountId) {
     return;
   }
   State.update({
     loading: true,
   });
+  const type = hasBookmark ? "unbookmark" : "bookmark";
   const data = {
     index: {
       bookmark: JSON.stringify({
         key: item,
         value: {
-          type: hasBookmark ? "unbookmark" : "bookmark",
+          type,
         },
       }),
     },
   };
+
+  if (item.type === "social" && typeof item.path === "string") {
+    const keys = item.path.split("/");
+    keys.push(item.blockHeight);
+    if (keys.length > 0) {
+      data.graph = {
+        bookmark: {},
+      };
+      let root = data.graph.bookmark;
+      keys.slice(0, -1).forEach((key) => {
+        root = root[key] = {};
+      });
+      root[keys[keys.length - 1]] = hasBookmark ? null : "";
+    }
+  }
+
+  if (!hasBookmark && props.notifyAccountId) {
+    data.index.notify = JSON.stringify({
+      key: props.notifyAccountId,
+      value: {
+        type,
+        item,
+      },
+    });
+  }
 
   Social.set(data, {
     onCommit: () => State.update({ loading: false, hasBookmark: !hasBookmark }),
@@ -152,14 +179,16 @@ const likeClick = () => {
   });
 };
 
-const title = hasBookmark ? "Unbookmark" : "Bookmark";
+const title = hasBookmark
+  ? props.titleUnbookmark ?? "Unbookmark"
+  : props.titleBookmark ?? "Bookmark";
 
-return (
+const inner = (
   <div className="d-inline-flex align-items-center">
     <BookmarkButton
       disabled={state.loading || dataLoading || !context.accountId}
-      title={title}
-      onClick={likeClick}
+      title={!props.tooltip ? title : undefined}
+      onClick={bookmarkClick}
     >
       <span
         className={`icon ${state.loading ? "loading " : ""}${
@@ -168,6 +197,26 @@ return (
       >
         {hasBookmark ? bookmarkFillSvg : bookmarkSvg}
       </span>
+      {bookmarkCount > 0 && (
+        <span className={`count ${hasBookmark ? "bookmarked" : ""}`}>
+          <Widget
+            loading={bookmarkCount || ""}
+            src="mob.near/widget/N.Overlay.Faces"
+            props={{ accounts: bookmarksByUser, limit: 10 }}
+          />
+        </span>
+      )}
     </BookmarkButton>
   </div>
+);
+
+return props.tooltip ? (
+  <OverlayTrigger
+    placement={props.overlayPlacement ?? "auto"}
+    overlay={<Tooltip>{title}</Tooltip>}
+  >
+    {inner}
+  </OverlayTrigger>
+) : (
+  inner
 );
