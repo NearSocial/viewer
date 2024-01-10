@@ -17,8 +17,4 @@ Storage.set("theme", { colors });
 
 const theme = Storage.get("theme");
 
-function ThemeProvider({ children }) {
-  return <div {...theme}>{children}</div>;
-}
-
-return { ThemeProvider, theme };
+return { theme };

@@ -138,6 +138,8 @@ const CTASection = styled.div`
 
 const userWidgets = Social.keys(`${context.accountId}/widget/**`) || [];
 
+const { Bullet } = VM.require("buildhub.near/widget/components.Bullet")
+
 const daoId = "build.sputnik-dao.near";
 const accountId = context.accountId;
 
@@ -147,12 +149,19 @@ const policy = Near.view(daoId, "get_policy");
 if (policy === null) {
   return "";
 }
+const alreadyJoinedRolesNames = ["community", "council"];
 
 const deposit = policy.proposal_bond;
-const roleId = "community";
+
 const group = policy.roles
-  .filter((role) => role.name === roleId)
-  .map((role) => role.kind.Group);
+  .filter((role) => alreadyJoinedRolesNames.includes(role.name))
+  .map((role) => {
+    return role.kind.Group;
+  });
+
+const accounts = new Set(group[0].concat(group[1]));
+
+const isCommunityOrCouncilMember = accounts.has(accountId);
 
 const proposalId = Near.view(daoId, "get_last_proposal_id") - 1;
 
@@ -165,8 +174,7 @@ if (proposal === null) {
   return "";
 }
 
-// check if the potential member submitted last proposal
-const canJoin = accountId && accountId !== proposal.proposer;
+const canJoin = accountId && accountId !== proposal.proposer && !isCommunityOrCouncilMember
 
 const groupMembers = group.join(", ");
 
@@ -234,9 +242,9 @@ const CreateSomethingView = (props) => {
                 />
               ) : (
                 <>
-                  <span className={!validMember ? "pending" : "joined"}>
+                  <Bullet variant={!validMember ? "default" : "light"}>
                     {!validMember ? "Pending..." : "Joined"}
-                  </span>
+                  </Bullet>
                   <a href={"/feed"}>
                     View Activity{" "}
                     <svg
