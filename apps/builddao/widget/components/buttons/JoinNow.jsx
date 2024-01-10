@@ -7,8 +7,9 @@ const policy = Near.view(daoId, "get_policy");
 if (policy === null) {
   return "";
 }
-
 const alreadyJoinedRolesNames = ["community", "council"];
+
+const deposit = policy.proposal_bond;
 
 const group = policy.roles
   .filter((role) => alreadyJoinedRolesNames.includes(role.name))
@@ -31,25 +32,7 @@ if (proposal === null) {
   return "";
 }
 
-// check if the potential member submitted last proposal
-const canJoin =
-  accountId && accountId !== proposal.proposer && !isCommunityOrCouncilMember;
-
-const Bullet = styled.div`
-  width: fit-content;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4px 12px;
-  background: rgba(81, 255, 234, 0.20);
-  color: rgba(81, 255, 234, 1);
-  border: 1px solid rgba(81, 255, 234, 0.20);
-  font-family: Satoshi, sans-serif;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 8px;
-`;
-
+const canJoin = accountId && accountId !== proposal.proposer && !isCommunityOrCouncilMember
 
 const Button = styled.a`
   width: max-content;

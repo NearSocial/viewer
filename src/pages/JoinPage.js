@@ -7,7 +7,7 @@ export default function JoinPage(props) {
   const redirectMapStore = useBosLoaderStore();
 
   const CurrentView = props.signedIn
-    ? "buildhub.near/widget/create-something"
+    ? "buildhub.near/widget/JoinSection"
     : "buildhub.near/widget/login";
 
   return (

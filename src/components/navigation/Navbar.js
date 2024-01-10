@@ -192,28 +192,15 @@ export function Navbar(props) {
           </NavLink>
         </div>
         <div className="d-none d-md-block flex-grow-1" style={{ flexBasis: 0 }}>
-          {!props.signedIn && (
-            <button
-              className="sign-in"
-              style={{ width: "max-content", marginLeft: "auto" }}
-              onClick={props.requestSignIn}
-            >
-              Sign In
-            </button>
-          )}
-          {props.signedIn && (
-            <div>
-              <Widget
-                src="buildhub.near/widget/components.button.join-now"
-                config={{
-                  redirectMap: redirectStore.redirectMap,
-                }}
-                props={{
-                  children: <UserDropdown {...props} />,
-                }}
-              />
-            </div>
-          )}
+          <Widget
+            src="buildhub.near/widget/components.buttons.JoinNow"
+            config={{
+              redirectMap: redirectStore.redirectMap,
+            }}
+            props={{
+              children: <UserDropdown {...props} />,
+            }}
+          />
         </div>
         <div className="d-block d-md-none">
           <MobileDropdownButton onClick={toggleDropdown}>
@@ -271,7 +258,7 @@ export function Navbar(props) {
           {props.signedIn && (
             <div>
               <Widget
-                src="buildhub.near/widget/components.button.join-now"
+                src="buildhub.near/widget/components.buttons.JoinNow"
                 config={{
                   redirectMap: redirectStore.redirectMap,
                 }}
