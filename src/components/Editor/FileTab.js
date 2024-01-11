@@ -1,25 +1,26 @@
-import { Nav } from "react-bootstrap";
-import React, { useEffect, useState } from "react";
-import { useAccountId, useCache, useNear } from "near-social-vm";
+import { Nav } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { useAccountId, useCache, useNear } from 'near-social-vm';
 
 export const Filetype = {
-  Widget: "widget",
-  Module: "module",
+  Widget: 'widget',
+  Module: 'module',
 };
 
 export const StorageDomain = {
-  page: "editor",
+  page: 'editor',
 };
 
 export const StorageType = {
-  Code: "code",
-  Files: "files",
+  Code: 'code',
+  Files: 'files',
+  forkDetails: 'forkDetails',
 };
 
 export function toPath(type, nameOrPath) {
   const name =
-    nameOrPath.indexOf("/") >= 0
-      ? nameOrPath.split("/").slice(2).join("/")
+    nameOrPath.indexOf('/') >= 0
+      ? nameOrPath.split('/').slice(2).join('/')
       : nameOrPath;
   return { type, name };
 }
@@ -96,7 +97,7 @@ export function FileTab(props) {
         )}
         <button
           className={`btn btn-sm border-0 py-0 px-1 ms-1 rounded-circle ${
-            active ? "btn-outline-light" : "btn-outline-secondary"
+            active ? 'btn-outline-light' : 'btn-outline-secondary'
           }`}
           onClick={(e) => {
             e.preventDefault();

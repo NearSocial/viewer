@@ -1,47 +1,48 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import ls from "local-storage";
-import prettier from "prettier";
-import parserBabel from "prettier/parser-babel";
-import { useHistory, useParams } from "react-router-dom";
-import Editor, { useMonaco } from "@monaco-editor/react";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import ls from 'local-storage';
+import prettier, { check } from 'prettier';
+import parserBabel from 'prettier/parser-babel';
+import { useHistory, useParams } from 'react-router-dom';
+import Editor, { useMonaco } from '@monaco-editor/react';
 import {
   Widget,
   useCache,
   useNear,
   CommitButton,
   useAccountId,
-} from "near-social-vm";
-import { Nav, OverlayTrigger, Tooltip } from "react-bootstrap";
-import RenameModal from "../components/Editor/RenameModal";
-import OpenModal from "../components/Editor/OpenModal";
+} from 'near-social-vm';
+import { Nav, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import RenameModal from '../components/Editor/RenameModal';
+import OpenModal from '../components/Editor/OpenModal';
 import {
   FileTab,
   Filetype,
   StorageDomain,
   StorageType,
   toPath,
-} from "../components/Editor/FileTab";
-import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
-import vmTypesDeclaration from "raw-loader!near-social-vm-types";
-import styled from "styled-components";
+} from '../components/Editor/FileTab';
+import { useHashRouterLegacy } from '../hooks/useHashRouterLegacy';
+import vmTypesDeclaration from 'raw-loader!near-social-vm-types';
+import styled from 'styled-components';
+import { get } from 'collections/shim-function';
 
-const LsKey = "social.near:v01:";
-const EditorLayoutKey = LsKey + "editorLayout:";
-const WidgetPropsKey = LsKey + "widgetProps:";
-const EditorUncommittedPreviewsKey = LsKey + "editorUncommittedPreviews:";
+const LsKey = 'social.near:v01:';
+const EditorLayoutKey = LsKey + 'editorLayout:';
+const WidgetPropsKey = LsKey + 'widgetProps:';
+const EditorUncommittedPreviewsKey = LsKey + 'editorUncommittedPreviews:';
 
-const DefaultEditorCode = "return <div>Hello World</div>;";
+const DefaultEditorCode = 'return <div>Hello World</div>;';
 
 const Tab = {
-  Editor: "Editor",
-  Props: "Props",
-  Metadata: "Metadata",
-  Widget: "Widget",
+  Editor: 'Editor',
+  Props: 'Props',
+  Metadata: 'Metadata',
+  Widget: 'Widget',
 };
 
 const Layout = {
-  Tabs: "Tabs",
-  Split: "Split",
+  Tabs: 'Tabs',
+  Split: 'Split',
 };
 
 export default function EditorPage(props) {
@@ -65,11 +66,12 @@ export default function EditorPage(props) {
 
   const [renderCode, setRenderCode] = useState(code);
   const [widgetProps, setWidgetProps] = useState(
-    ls.get(WidgetPropsKey) || "{}"
+    ls.get(WidgetPropsKey) || '{}'
   );
   const [parsedWidgetProps, setParsedWidgetProps] = useState({});
   const [propsError, setPropsError] = useState(null);
   const [metadata, setMetadata] = useState(undefined);
+  const [forkDetails, setForkDetails] = useState(undefined);
   const near = useNear();
   const cache = useCache();
   const accountId = useAccountId();
@@ -78,7 +80,7 @@ export default function EditorPage(props) {
   const [layout, setLayoutState] = useState(
     ls.get(EditorLayoutKey) || Layout.Split
   );
-  const [previewKey, setPreviewKey] = useState("");
+  const [previewKey, setPreviewKey] = useState('');
 
   const monaco = useMonaco();
 
@@ -99,11 +101,115 @@ export default function EditorPage(props) {
     [setLayoutState]
   );
 
+  const getForkDetails = async (path) => {
+    try {
+      if (
+        widgetSrc &&
+        !props?.widgetSrc?.view?.startsWith(`${props.signedAccountId}/widget/`)
+      ) {
+        const res = await fetch(`${near.config.apiUrl}/keys`, {
+          method: 'POST',
+          body: JSON.stringify({
+            keys: [widgetSrc],
+            options: { return_type: 'BlockHeight' },
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const sourceWidget = await res.json();
+
+        const srcArr = widgetSrc.split('/');
+        const forkOf =
+          widgetSrc + '@' + sourceWidget[srcArr[0]][srcArr[1]][srcArr[2]];
+
+        storeForkDetails(path, forkOf);
+        return;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const checkForForkDetails = useCallback(
+    async (path) => {
+      try {
+        const response = await cache.asyncLocalStorageGet(StorageDomain, {
+          path,
+          type: StorageType.forkDetails,
+        });
+
+        if (response) {
+          setForkDetails(response);
+          return response;
+        } else if (widgetSrc) {
+          getForkDetails(path);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [setForkDetails, getForkDetails]
+  );
+
+  const storeForkDetails = useCallback(
+    async (path, forkOf) => {
+      try {
+        const forkDetails = {
+          fork_of: forkOf,
+          time: Date.now(),
+        };
+
+        await cache.localStorageSet(
+          StorageDomain,
+          {
+            path,
+            type: StorageType.forkDetails,
+          },
+          forkDetails
+        );
+        setForkDetails(forkDetails);
+        return;
+      } catch (e) {
+        console.error(e);
+        return { error: e };
+      }
+    },
+    [setForkDetails]
+  );
+
+  useEffect(() => {
+    if (forkDetails) {
+      setMetadata({
+        ...metadata,
+        fork_of: forkDetails.fork_of,
+      });
+    }
+  }, [forkDetails]);
+
+  useEffect(() => {
+    if (path || (widgetSrc && path)) {
+      checkForForkDetails(path);
+    }
+  }, [widgetSrc, path]);
+
   useEffect(() => {
     setWidgetSrc({
       edit: null,
       view: widgetSrc,
     });
+
+    if (widgetSrc) {
+      checkForForkDetails(widgetSrc);
+      /*
+       1. check if there are any forkDetails in localStorage
+        -- if there are, grab them and set them to metadata
+       2. if there are not grab ForkDetails with request
+       3. set metadata to forkDetails
+       4. store forkDetails in localStorage 
+      */
+    }
   }, [widgetSrc, setWidgetSrc]);
 
   const updateCode = useCallback(
@@ -182,6 +288,7 @@ export default function EditorPage(props) {
       setRenderCode(null);
       if (code !== undefined) {
         updateCode(path, code);
+        checkForForkDetails(path);
       } else {
         setLoading(true);
         cache
@@ -191,6 +298,7 @@ export default function EditorPage(props) {
           })
           .then(({ code }) => {
             updateCode(path, code);
+            checkForForkDetails(path);
           })
           .finally(() => {
             setLoading(false);
@@ -212,9 +320,10 @@ export default function EditorPage(props) {
         return;
       }
       const widgetSrc =
-        nameOrPath.indexOf("/") >= 0
+        nameOrPath.indexOf('/') >= 0
           ? nameOrPath
           : `${accountId}/widget/${nameOrPath}`;
+
       const c = () => {
         const code = cache.socialGet(
           near,
@@ -225,7 +334,8 @@ export default function EditorPage(props) {
           c
         );
         if (code) {
-          const name = widgetSrc.split("/").slice(2).join("/");
+          const name = widgetSrc.split('/').slice(2).join('/');
+
           openFile(toPath(Filetype.Widget, widgetSrc), code);
         }
       };
@@ -259,34 +369,46 @@ export default function EditorPage(props) {
   );
 
   const renameFile = useCallback(
-    (newName, code) => {
-      const newPath = toPath(path.type, newName);
-      const jNewPath = JSON.stringify(newPath);
-      const jPath = JSON.stringify(path);
-      setFiles((files) => {
-        const newFiles = files.filter(
-          (file) => JSON.stringify(file) !== jNewPath
-        );
-        const i = newFiles.findIndex((file) => JSON.stringify(file) === jPath);
-        if (i >= 0) {
-          newFiles[i] = newPath;
-        }
-        return newFiles;
-      });
-      setLastPath(newPath);
-      setPath(newPath);
-      updateCode(newPath, code);
+    async (newName, code) => {
+      try {
+        const newPath = toPath(path.type, newName);
+        const jNewPath = JSON.stringify(newPath);
+        const jPath = JSON.stringify(path);
+        forkDetails?.fork_of
+          ? await storeForkDetails(newPath, forkDetails.fork_of)
+          : null;
+        setFiles((files) => {
+          const newFiles = files.filter(
+            (file) => JSON.stringify(file) !== jNewPath
+          );
+          const i = newFiles.findIndex(
+            (file) => JSON.stringify(file) === jPath
+          );
+          if (i >= 0) {
+            newFiles[i] = newPath;
+          }
+          return newFiles;
+        });
+        setLastPath(newPath);
+        setPath(newPath);
+        updateCode(newPath, code);
+      } catch (e) {
+        console.error(e);
+      }
     },
-    [path, toPath, updateCode]
+    [forkDetails, path, toPath, updateCode]
   );
 
   useEffect(() => {
     cache
       .asyncLocalStorageGet(StorageDomain, { type: StorageType.Files })
       .then((value) => {
-        const { files, lastPath } = value || {};
+        const { files, lastPath, forkDetails } = value || {};
         setFiles(files || []);
         setLastPath(lastPath);
+        if (forkDetails) {
+          setMetadata({ ...metadata, forkDetails });
+        }
       });
   }, [cache]);
 
@@ -295,7 +417,7 @@ export default function EditorPage(props) {
       return;
     }
     if (widgetSrc) {
-      if (widgetSrc === "new") {
+      if (widgetSrc === 'new') {
         createFile(Filetype.Widget);
       } else {
         loadFile(widgetSrc);
@@ -314,13 +436,12 @@ export default function EditorPage(props) {
     (path, code) => {
       try {
         const formattedCode = prettier.format(code, {
-          parser: "babel",
+          parser: 'babel',
           plugins: [parserBabel],
         });
         updateCode(path, formattedCode);
-      } catch (e) {
-        console.log(e);
-      }
+        checkForForkDetails(path);
+      } catch (e) {}
     },
     [updateCode]
   );
@@ -330,9 +451,7 @@ export default function EditorPage(props) {
       try {
         const formattedProps = JSON.stringify(JSON.parse(props), null, 2);
         setWidgetProps(formattedProps);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
     },
     [setWidgetProps]
   );
@@ -354,7 +473,7 @@ export default function EditorPage(props) {
     [openFile, createFile]
   );
 
-  const layoutClass = layout === Layout.Split ? "col-lg-6" : "";
+  const layoutClass = layout === Layout.Split ? 'col-lg-6' : '';
 
   const onLayoutChange = useCallback(
     (e) => {
@@ -407,7 +526,7 @@ export default function EditorPage(props) {
       data={{
         widget: {
           [widgetName]: {
-            "": code,
+            '': code,
             metadata,
           },
         },
@@ -550,7 +669,7 @@ export default function EditorPage(props) {
               checked={layout === Layout.Tabs}
               onChange={onLayoutChange}
               value={Layout.Tabs}
-              title={"Set layout to Tabs mode"}
+              title={'Set layout to Tabs mode'}
             />
             <label className="btn btn-outline-secondary" htmlFor="layout-tabs">
               <i className="bi bi-square" />
@@ -564,7 +683,7 @@ export default function EditorPage(props) {
               autoComplete="off"
               checked={layout === Layout.Split}
               value={Layout.Split}
-              title={"Set layout to Split mode"}
+              title={'Set layout to Split mode'}
               onChange={onLayoutChange}
             />
             <label className="btn btn-outline-secondary" htmlFor="layout-split">
@@ -578,7 +697,7 @@ export default function EditorPage(props) {
               <ul className={`nav nav-tabs mb-2`}>
                 <li className="nav-item">
                   <button
-                    className={`nav-link ${tab === Tab.Editor ? "active" : ""}`}
+                    className={`nav-link ${tab === Tab.Editor ? 'active' : ''}`}
                     aria-current="page"
                     onClick={() => setTab(Tab.Editor)}
                   >
@@ -587,7 +706,7 @@ export default function EditorPage(props) {
                 </li>
                 <li className="nav-item">
                   <button
-                    className={`nav-link ${tab === Tab.Props ? "active" : ""}`}
+                    className={`nav-link ${tab === Tab.Props ? 'active' : ''}`}
                     aria-current="page"
                     onClick={() => setTab(Tab.Props)}
                   >
@@ -598,7 +717,7 @@ export default function EditorPage(props) {
                   <li className="nav-item">
                     <button
                       className={`nav-link ${
-                        tab === Tab.Metadata ? "active" : ""
+                        tab === Tab.Metadata ? 'active' : ''
                       }`}
                       aria-current="page"
                       onClick={() => setTab(Tab.Metadata)}
@@ -611,7 +730,7 @@ export default function EditorPage(props) {
                   <li className="nav-item">
                     <button
                       className={`nav-link ${
-                        tab === Tab.Widget ? "active" : ""
+                        tab === Tab.Widget ? 'active' : ''
                       }`}
                       aria-current="page"
                       onClick={() => {
@@ -625,10 +744,10 @@ export default function EditorPage(props) {
                 )}
               </ul>
 
-              <div className={`${tab === Tab.Editor ? "" : "visually-hidden"}`}>
+              <div className={`${tab === Tab.Editor ? '' : 'visually-hidden'}`}>
                 <div
                   className="d-flex flex-column overflow-hidden"
-                  style={{ height: "80vh" }}
+                  style={{ height: '80vh' }}
                 >
                   <div
                     className="mb-2 flex-grow-1 border"
@@ -638,7 +757,10 @@ export default function EditorPage(props) {
                       value={code}
                       path={widgetPath}
                       defaultLanguage="javascript"
-                      onChange={(code) => updateCode(path, code)}
+                      onChange={(code) => {
+                        updateCode(path, code);
+                        checkForForkDetails(path);
+                      }}
                       wrapperProps={{
                         onBlur: () => reformat(path, code),
                       }}
@@ -659,7 +781,7 @@ export default function EditorPage(props) {
                     {!path?.unnamed && commitButton}
                     <button
                       className={`btn ${
-                        path?.unnamed ? "btn-primary" : "btn-outline-secondary"
+                        path?.unnamed ? 'btn-primary' : 'btn-outline-secondary'
                       }`}
                       onClick={() => {
                         setShowRenameModal(true);
@@ -702,7 +824,7 @@ export default function EditorPage(props) {
                             title="When enabled, the preview uses uncommitted code from all opened files"
                           >
                             <i className="bi bi-asterisk" /> Multi-file preview
-                            ({uncommittedPreviews ? "ON" : "OFF"})
+                            ({uncommittedPreviews ? 'ON' : 'OFF'})
                           </button>
                         </li>
                       </ul>
@@ -710,10 +832,10 @@ export default function EditorPage(props) {
                   </Buttons>
                 </div>
               </div>
-              <div className={`${tab === Tab.Props ? "" : "visually-hidden"}`}>
+              <div className={`${tab === Tab.Props ? '' : 'visually-hidden'}`}>
                 <div
                   className="d-flex flex-column overflow-hidden"
-                  style={{ height: "80vh" }}
+                  style={{ height: '80vh' }}
                 >
                   <div
                     className="mb-2 flex-grow-1 border"
@@ -731,14 +853,14 @@ export default function EditorPage(props) {
                   <div className=" mb-3">^^ Props for debugging (in JSON)</div>
                   {propsError && (
                     <pre className="alert alert-danger">{propsError}</pre>
-                  )}{" "}
+                  )}{' '}
                 </div>
               </div>
               <div
                 className={`${
                   tab === Tab.Metadata && props.widgets.widgetMetadataEditor
-                    ? ""
-                    : "visually-hidden"
+                    ? ''
+                    : 'visually-hidden'
                 }`}
               >
                 <div className="mb-3">
@@ -762,7 +884,7 @@ export default function EditorPage(props) {
                 tab === Tab.Widget ||
                 (layout === Layout.Split && tab !== Tab.Metadata)
                   ? layoutClass
-                  : "visually-hidden"
+                  : 'visually-hidden'
               }`}
             >
               <div className="container">
@@ -784,7 +906,7 @@ export default function EditorPage(props) {
             </div>
             <div
               className={`${
-                tab === Tab.Metadata ? layoutClass : "visually-hidden"
+                tab === Tab.Metadata ? layoutClass : 'visually-hidden'
               }`}
             >
               <div className="container">
