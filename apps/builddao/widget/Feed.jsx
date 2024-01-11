@@ -1,5 +1,7 @@
 const { Feed } = VM.require("devs.near/widget/Module.Feed");
+const { Button } = VM.require("buildhub.near/widget/components.Button");
 
+Button || (Button = () => <></>);
 Feed = Feed || (() => <></>); // ensure it's defined or set to a default component
 
 const { type, hashtag } = props;
@@ -13,25 +15,6 @@ function formatDate(date) {
   const options = { year: "numeric", month: "short", day: "numeric" };
   return date.toLocaleDateString("en-US", options);
 }
-
-const Container = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1rem;
-
-  @media screen and (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-  }
-`;
-
-const StyledAside = styled.div`
-  grid-column: span 1 / span 1;
-`;
-
-const MainContent = styled.div`
-  grid-column: span 4 / span 4;
-`;
 
 const feeds = {
   resolutions: {
@@ -53,7 +36,7 @@ const feeds = {
 **📊 MEASURING SUCCESS:**
 - [Metric 1 for Success]
 - [Metric 2 for Success]
-`,
+`
   },
   updates: {
     label: "Updates",
@@ -73,7 +56,7 @@ const feeds = {
 **🛑 BLOCKERS**
 - [what's blocking you?]
 - [how can someone help?]
-`,
+`
   },
   documentation: {
     label: "Documentation",
@@ -93,7 +76,7 @@ const feeds = {
 **USAGE**
 - [where is it used?]
 - [how to use it]
-`,
+`
   },
   question: {
     label: "Question",
@@ -104,7 +87,7 @@ const feeds = {
 
 [what are you thinking about?]
 [why are you asking?]
-`,
+`
   },
   opportunity: {
     label: "Opportunity",
@@ -117,13 +100,13 @@ const feeds = {
 
 [explain the motivation or reason]
 
-`,
+`
   },
   idea: {
     label: "Idea",
     icon: "bi-lightbulb",
     name: "idea",
-    template: ``,
+    template: ``
   },
   task: {
     label: "Task",
@@ -137,63 +120,75 @@ const feeds = {
 
 **Context or additional information:**
 - [Provide any context or details]
-`,
-  },
+`
+  }
 };
 
 const [activeFeed, setActiveFeed] = useState(type || "resolutions");
 const [template, setTemplate] = useState("What did you have in mind?");
 
 return (
-  <Container>
-    <StyledAside key={JSON.stringify(feeds)}>
-      <Widget
-        src="buildhub.near/widget/Aside"
-        props={{
-          active: activeFeed,
-          setActiveRoute: setActiveFeed,
-          routes: feeds,
-        }}
-      />
-    </StyledAside>
-    <MainContent>
-      {context.accountId ? (
-        <Widget
-          src="/*__@appAccount__*//widget/Compose"
-          props={{
-            feed: feeds[activeFeed],
-            template: feeds[activeFeed].template,
-          }}
-        />
-      ) : (
-        <Widget
-          src="/*__@appAccount__*//widget/components.login-now"
-          props={props}
-        />
-      )}
-      <Feed
-        index={[
-          {
-            action: "hashtag",
-            key: activeFeed,
-            options: {
-              limit: 10,
-              order: "desc",
-              accountId: props.accounts,
-            },
-            cacheOptions: {
-              ignoreCache: true,
-            },
-          },
-        ]}
-        Item={(p) => (
-          <Post
-            accountId={p.accountId}
-            blockHeight={p.blockHeight}
-            noBorder={true}
+  <Widget
+    src="/*__@appAccount__*//widget/components.AsideWithMainContent"
+    props={{
+      sideContent: Object.keys(feeds || {}).map((route) => {
+        const data = feeds[route];
+        return (
+          <Button
+            id={route}
+            variant={activeFeed === route ? "primary" : "outline"}
+            onClick={() => setActiveFeed(route)}
+            className={
+              "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
+            }
+            style={{ fontSize: "14px" }}
+          >
+            <i className={`bi ${data.icon} `}></i>
+            {data.label}
+          </Button>
+        );
+      }),
+      mainContent: (
+        <>
+          {context.accountId ? (
+            <Widget
+              src="/*__@appAccount__*//widget/Compose"
+              props={{
+                feed: feeds[activeFeed],
+                template: feeds[activeFeed].template
+              }}
+            />
+          ) : (
+            <Widget
+              src="/*__@appAccount__*//widget/components.login-now"
+              props={props}
+            />
+          )}
+          <Feed
+            index={[
+              {
+                action: "hashtag",
+                key: activeFeed,
+                options: {
+                  limit: 10,
+                  order: "desc",
+                  accountId: props.accounts
+                },
+                cacheOptions: {
+                  ignoreCache: true
+                }
+              }
+            ]}
+            Item={(p) => (
+              <Post
+                accountId={p.accountId}
+                blockHeight={p.blockHeight}
+                noBorder={true}
+              />
+            )}
           />
-        )}
-      />
-    </MainContent>
-  </Container>
+        </>
+      )
+    }}
+  />
 );
