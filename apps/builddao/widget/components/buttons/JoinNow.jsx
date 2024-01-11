@@ -1,14 +1,15 @@
 const daoId = "build.sputnik-dao.near";
 const accountId = context.accountId;
 const alreadyJoinedRolesNames = ["community", "council"];
+const searchRange = 100;
 
 const policy = Near.view(daoId, "get_policy");
 
 const lastProposalId = Near.view(daoId, "get_last_proposal_id") - 1;
 
 const lastProposals = Near.view(daoId, "get_proposals", {
-  from_index: lastProposalId - 99,
-  limit: lastProposalId,
+  from_index: lastProposalId - searchRange,
+  limit: searchRange,
 });
 
 const alreadyMadeAProposal =
@@ -82,10 +83,6 @@ const Container = styled.div`
 
 return (
   <Container>
-    {canJoin ? (
-      <Button href={"/join"}>Join Now</Button>
-    ) : (
-      <Bullet>Joined</Bullet>
-    )}
+    {canJoin ? <Button href={"/join"}>Join Now</Button> : props.children}
   </Container>
 );
