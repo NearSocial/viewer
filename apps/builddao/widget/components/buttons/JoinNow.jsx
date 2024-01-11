@@ -1,13 +1,24 @@
 const daoId = "build.sputnik-dao.near";
 const accountId = context.accountId;
+const alreadyJoinedRolesNames = ["community", "council"];
 
-// get DAO policy, deposit, and group
 const policy = Near.view(daoId, "get_policy");
+
+const lastProposalId = Near.view(daoId, "get_last_proposal_id") - 1;
+
+const lastProposals = Near.view(daoId, "get_proposals", {
+  from_index: lastProposalId - 99,
+  limit: lastProposalId,
+});
+
+const alreadyMadeAProposal =
+  lastProposals.filter((proposal) => {
+    return proposal.proposer === accountId;
+  }).length > 0;
 
 if (policy === null) {
   return "";
 }
-const alreadyJoinedRolesNames = ["community", "council"];
 
 const deposit = policy.proposal_bond;
 
@@ -21,18 +32,8 @@ const accounts = new Set(group[0].concat(group[1]));
 
 const isCommunityOrCouncilMember = accounts.has(accountId);
 
-const proposalId = Near.view(daoId, "get_last_proposal_id") - 1;
-
-// get data from last proposal
-const proposal = Near.view(daoId, "get_proposal", {
-  id: proposalId,
-});
-
-if (proposal === null) {
-  return "";
-}
-
-const canJoin = accountId && accountId !== proposal.proposer && !isCommunityOrCouncilMember
+const canJoin =
+  accountId && !alreadyMadeAProposal && !isCommunityOrCouncilMember;
 
 const Button = styled.a`
   width: max-content;
@@ -83,6 +84,8 @@ return (
   <Container>
     {canJoin ? (
       <Button href={"/join"}>Join Now</Button>
-    ) : <Bullet>Joined</Bullet>}
+    ) : (
+      <Bullet>Joined</Bullet>
+    )}
   </Container>
 );
