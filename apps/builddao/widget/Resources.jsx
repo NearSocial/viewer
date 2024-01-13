@@ -1,24 +1,8 @@
-const { MarkdownView } =
-  VM.require("buildhub.near/widget/md-view") || (() => <></>);
+const { MarkdownView } = VM.require("buildhub.near/widget/md-view");
+const { Button } = VM.require("buildhub.near/widget/components.Button");
 
-const Container = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1rem;
-
-  @media screen and (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-  }
-`;
-
-const Aside = styled.div`
-  grid-column: span 1 / span 1;
-`;
-
-const MainContent = styled.div`
-  grid-column: span 4 / span 4;
-`;
+Button || (Button = () => <></>);
+MarkdownView || (MarkdownView = () => <></>);
 
 const fetchResources = () => {
   const res = fetch(
@@ -33,34 +17,30 @@ if (!resources) {
   return <div>Loading...</div>;
 }
 
-console.log(resources);
-
-const [currentResource, setCurrentResource] = useState(resources[0].name);
-
-function getMdLinkByName(nameToFind) {
-  for (const item of resources) {
-    if (item.name === nameToFind) {
-      return item.mdLink;
-    }
-  }
-
-  return null;
-}
+const [currentResource, setCurrentResource] = useState(resources[0]);
 
 return (
-  <Container>
-    <Aside>
-      <Widget
-        src="/*__@appAccount__*//widget/resources-aside"
-        props={{
-          currentResource: currentResource,
-          setCurrentResource: setCurrentResource,
-          resources: resources,
-        }}
-      />
-    </Aside>
-    <MainContent>
-      <MarkdownView path={getMdLinkByName(currentResource)} />
-    </MainContent>
-  </Container>
+  <Widget
+    src="/*__@appAccount__*//widget/components.AsideWithMainContent"
+    props={{
+      sideContent: Object.keys(resources || {}).map((resource) => {
+        const data = resources[resource];
+        return (
+          <Button
+            id={resource}
+            variant={currentResource.name === data.name ? "primary" : "outline"}
+            onClick={() => setCurrentResource(data)}
+            className={
+              "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
+            }
+            style={{ fontSize: "14px" }}
+          >
+            <i className={`bi ${data.biIcon} `}></i>
+            {data.name}
+          </Button>
+        );
+      }),
+      mainContent: <MarkdownView path={currentResource.mdLink} />
+    }}
+  />
 );
