@@ -124,8 +124,6 @@ const feeds = {
   }
 };
 
-const Container = styled.d
-
 const [activeFeed, setActiveFeed] = useState(type || "resolutions");
 const [template, setTemplate] = useState("What did you have in mind?");
 
@@ -152,50 +150,49 @@ return (
       }),
       mainContent: (
         <>
-          
-        {context.accountId ? (
-          activeFeed !== "bookmarks" ? (
-            <Widget
-              src="/*__@appAccount__*//widget/Compose"
-              props={{
-                feed: feeds[activeFeed],
-                template: feeds[activeFeed].template,
-              }}
-            />
-          ) : (
-            <Widget src="/*__@appAccount__*//widget/Bookmarks" />
-          )
-        ) : (
-          <Widget
-            src="/*__@appAccount__*//widget/components.login-now"
-            props={props}
-          />
-        )}
-        {activeFeed !== "bookmarks" && (
-          <Feed
-            index={[
-              {
-                action: "hashtag",
-                key: activeFeed,
-                options: {
-                  limit: 10,
-                  order: "desc",
-                  accountId: props.accounts,
-                },
-                cacheOptions: {
-                  ignoreCache: true,
-                },
-              },
-            ]}
-            Item={(p) => (
-              <Post
-                accountId={p.accountId}
-                blockHeight={p.blockHeight}
-                noBorder={true}
+          {context.accountId ? (
+            activeFeed !== "bookmarks" ? (
+              <Widget
+                src="/*__@appAccount__*//widget/Compose"
+                props={{
+                  feed: feeds[activeFeed],
+                  template: feeds[activeFeed].template
+                }}
               />
-            )}
-          />
-        )}
+            ) : (
+              <Widget src="/*__@appAccount__*//widget/Bookmarks" />
+            )
+          ) : (
+            <Widget
+              src="/*__@appAccount__*//widget/components.login-now"
+              props={props}
+            />
+          )}
+          {activeFeed !== "bookmarks" && (
+            <Feed
+              index={[
+                {
+                  action: "hashtag",
+                  key: activeFeed,
+                  options: {
+                    limit: 10,
+                    order: "desc",
+                    accountId: props.accounts
+                  },
+                  cacheOptions: {
+                    ignoreCache: true
+                  }
+                }
+              ]}
+              Item={(p) => (
+                <Post
+                  accountId={p.accountId}
+                  blockHeight={p.blockHeight}
+                  noBorder={true}
+                />
+              )}
+            />
+          )}
         </>
       )
     }}
