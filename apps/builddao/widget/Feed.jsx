@@ -42,6 +42,7 @@ const feeds = {
     label: "Updates",
     icon: "bi-bell",
     name: "update",
+    hashtag: "update",
     template: `### BUILDER UPDATE:  ${formatDate(new Date())}
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=update))
 
@@ -62,6 +63,7 @@ const feeds = {
     label: "Documentation",
     icon: "bi-book",
     name: "documentation",
+    hashtag: "documentation",
     template: `## TITLE
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=documentation))
 
@@ -82,6 +84,7 @@ const feeds = {
     label: "Question",
     icon: "bi-question-lg",
     name: "question",
+    hashtag: "question",
     template: `## what is your question?
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=question))
 
@@ -93,6 +96,7 @@ const feeds = {
     label: "Opportunity",
     icon: "bi-briefcase",
     name: "opportunity",
+    hashtag: "opportunity",
     template: `## TITLE
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=opportunity))
 
@@ -106,6 +110,7 @@ const feeds = {
     label: "Idea",
     icon: "bi-lightbulb",
     name: "idea",
+    hashtag: "idea",
     template: ``
   },
   task: {
@@ -178,11 +183,11 @@ return (
               index={[
                 {
                   action: "hashtag",
-                  key: activeFeed,
+                  key: feeds[activeFeed].hashtag,
                   options: {
                     limit: 10,
                     order: "desc",
-                    accountId: props.accounts
+                    accountId: context.accountId
                   },
                   cacheOptions: {
                     ignoreCache: true
