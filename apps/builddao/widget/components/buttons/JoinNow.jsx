@@ -10,7 +10,7 @@ const lastProposalId = Near.view(daoId, "get_last_proposal_id") - 1;
 const lastProposals = Near.view(daoId, "get_proposals", {
   from_index: lastProposalId - searchRange,
   limit: searchRange,
-});
+}) || [];
 
 const alreadyMadeAProposal =
   lastProposals.filter((proposal) => {
