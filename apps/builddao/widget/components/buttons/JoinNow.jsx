@@ -1,32 +1,40 @@
 const daoId = "build.sputnik-dao.near";
 const accountId = context.accountId;
+const alreadyJoinedRolesNames = ["community", "council"];
+const searchRange = 100;
 
-// get DAO policy, deposit, and group
 const policy = Near.view(daoId, "get_policy");
+
+const lastProposalId = Near.view(daoId, "get_last_proposal_id") - 1;
+
+const lastProposals = Near.view(daoId, "get_proposals", {
+  from_index: lastProposalId - searchRange,
+  limit: searchRange,
+}) || [];
+
+const alreadyMadeAProposal =
+  lastProposals.filter((proposal) => {
+    return proposal.proposer === accountId;
+  }).length > 0;
 
 if (policy === null) {
   return "";
 }
 
 const deposit = policy.proposal_bond;
-const roleId = "community";
+
 const group = policy.roles
-  .filter((role) => role.name === roleId)
-  .map((role) => role.kind.Group);
+  .filter((role) => alreadyJoinedRolesNames.includes(role.name))
+  .map((role) => {
+    return role.kind.Group;
+  });
 
-const proposalId = Near.view(daoId, "get_last_proposal_id") - 1;
+const accounts = new Set(group[0].concat(group[1]));
 
-// get data from last proposal
-const proposal = Near.view(daoId, "get_proposal", {
-  id: proposalId,
-});
+const isCommunityOrCouncilMember = accounts.has(accountId);
 
-if (proposal === null) {
-  return "";
-}
-
-// check if the potential member submitted last proposal
-const canJoin = accountId && accountId !== proposal.proposer;
+const canJoin =
+  accountId && !alreadyMadeAProposal && !isCommunityOrCouncilMember;
 
 const Button = styled.a`
   width: max-content;
