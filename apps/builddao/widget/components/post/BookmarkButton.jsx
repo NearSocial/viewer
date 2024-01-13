@@ -12,54 +12,51 @@ const bookmarks = Social.index("bookmark", item);
 
 const dataLoading = bookmarks === null;
 
-const bookmarksByUsers = {};
+const bookmarksByUser = {};
 
 (bookmarks || []).forEach((bookmark) => {
   if (bookmark.value.type === "bookmark") {
-    bookmarksByUsers[bookmark.accountId] = bookmark;
+    bookmarksByUser[bookmark.accountId] = bookmark;
   } else if (bookmark.value.type === "unbookmark") {
-    delete bookmarksByUsers[bookmark.accountId];
+    delete bookmarksByUser[bookmark.accountId];
   }
 });
+
 if (state.hasBookmark === true) {
-  bookmarksByUsers[context.accountId] = {
+  bookmarksByUser[context.accountId] = {
     accountId: context.accountId,
   };
 } else if (state.hasBookmark === false) {
-  delete bookmarksByUsers[context.accountId];
+  delete bookmarksByUser[context.accountId];
 }
 
-const accountsWithBookmarks = Object.keys(bookmarksByUsers);
-const likeCount = accountsWithBookmarks.length;
-const hasBookmark = context.accountId && !!bookmarksByUsers[context.accountId];
+const accountsWithBookmarks = Object.keys(bookmarksByUser);
+const bookmarkCount = accountsWithBookmarks.length;
+const hasBookmark = context.accountId && !!bookmarksByUser[context.accountId];
 
 const bookmarkSvg = (
   <svg
-    width="20"
-    height="20"
-    viewBox="0 0 20 20"
-    fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    fill="currentColor"
+    class="bi bi-bookmark"
+    viewBox="0 0 16 16"
   >
-    <path
-      d="M4.16671 1.66667H15.8334C16.2936 1.66667 16.6667 2.03977 16.6667 2.50001V18.4528C16.6667 18.6828 16.4801 18.8695 16.25 18.8695C16.1718 18.8695 16.095 18.8473 16.0287 18.8058L10 15.0261L3.97137 18.8058C3.7764 18.928 3.51926 18.8691 3.39702 18.6741C3.35543 18.6078 3.33337 18.5311 3.33337 18.4528V2.50001C3.33337 2.03977 3.70647 1.66667 4.16671 1.66667ZM15 3.33334H5.00004V16.1937L10 13.0589L15 16.1937V3.33334Z"
-      fill="currentColor"
-    />
+    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
   </svg>
 );
 
 const bookmarkFillSvg = (
   <svg
-    width="20"
-    height="20"
-    viewBox="0 0 20 20"
-    fill="#FFAF51"
     xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    fill="currentColor"
+    class="bi bi-bookmark-fill"
+    viewBox="0 0 16 16"
   >
-    <path
-      d="M4.16671 1.66675H15.8334C16.2936 1.66675 16.6667 2.03985 16.6667 2.50008V18.4528C16.6667 18.6829 16.4801 18.8696 16.25 18.8696C16.1718 18.8696 16.095 18.8474 16.0287 18.8058L10 15.0262L3.97137 18.8058C3.7764 18.9281 3.51926 18.8692 3.39702 18.6742C3.35543 18.6078 3.33337 18.5312 3.33337 18.4528V2.50008C3.33337 2.03985 3.70647 1.66675 4.16671 1.66675ZM15 3.33341H5.00004V16.1937L10 13.059L15 16.1937V3.33341Z"
-      fill="#FFAF51"
-    />
+    <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2" />
   </svg>
 );
 
@@ -128,23 +125,49 @@ const BookmarkButton = styled.div`
   }
 `;
 
-const likeClick = () => {
+const bookmarkClick = () => {
   if (state.loading || dataLoading || !context.accountId) {
     return;
   }
   State.update({
     loading: true,
   });
+  const type = hasBookmark ? "unbookmark" : "bookmark";
   const data = {
     index: {
       bookmark: JSON.stringify({
         key: item,
         value: {
-          type: hasBookmark ? "unbookmark" : "bookmark",
+          type,
         },
       }),
     },
   };
+
+  if (item.type === "social" && typeof item.path === "string") {
+    const keys = item.path.split("/");
+    keys.push(item.blockHeight);
+    if (keys.length > 0) {
+      data.graph = {
+        bookmark: {},
+      };
+      let root = data.graph.bookmark;
+      keys.slice(0, -1).forEach((key) => {
+        root = root[key] = {};
+      });
+      root[keys[keys.length - 1]] = hasBookmark ? null : "";
+    }
+  }
+
+  if (!hasBookmark && props.notifyAccountId) {
+    data.index.notify = JSON.stringify({
+      key: props.notifyAccountId,
+      value: {
+        type,
+        item,
+      },
+    });
+  }
 
   Social.set(data, {
     onCommit: () => State.update({ loading: false, hasBookmark: !hasBookmark }),
@@ -152,14 +175,16 @@ const likeClick = () => {
   });
 };
 
-const title = hasBookmark ? "Unbookmark" : "Bookmark";
+const title = hasBookmark
+  ? props.titleUnbookmark ?? "Unbookmark"
+  : props.titleBookmark ?? "Bookmark";
 
-return (
+const inner = (
   <div className="d-inline-flex align-items-center">
     <BookmarkButton
       disabled={state.loading || dataLoading || !context.accountId}
-      title={title}
-      onClick={likeClick}
+      title={!props.tooltip ? title : undefined}
+      onClick={bookmarkClick}
     >
       <span
         className={`icon ${state.loading ? "loading " : ""}${
@@ -168,6 +193,26 @@ return (
       >
         {hasBookmark ? bookmarkFillSvg : bookmarkSvg}
       </span>
+      {bookmarkCount > 0 && (
+        <span className={`count ${hasBookmark ? "bookmarked" : ""}`}>
+          <Widget
+            loading={bookmarkCount || ""}
+            src="mob.near/widget/N.Overlay.Faces"
+            props={{ accounts: bookmarksByUser, limit: 10 }}
+          />
+        </span>
+      )}
     </BookmarkButton>
   </div>
+);
+
+return props.tooltip ? (
+  <OverlayTrigger
+    placement={props.overlayPlacement ?? "auto"}
+    overlay={<Tooltip>{title}</Tooltip>}
+  >
+    {inner}
+  </OverlayTrigger>
+) : (
+  inner
 );
