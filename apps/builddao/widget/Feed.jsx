@@ -121,6 +121,11 @@ const feeds = {
 **Context or additional information:**
 - [Provide any context or details]
 `
+  },
+  bookmarks: {
+    label: "Bookmarks",
+    icon: "bi-bookmark",
+    name: "bookmark"
   }
 };
 

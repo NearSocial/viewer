@@ -19,7 +19,6 @@ if (!resources) {
 
 const [currentResource, setCurrentResource] = useState(resources[0]);
 
-console.log(currentResource);
 return (
   <Widget
     src="/*__@appAccount__*//widget/components.AsideWithMainContent"
