@@ -187,7 +187,6 @@ return (
                   options: {
                     limit: 10,
                     order: "desc",
-                    accountId: context.accountId
                   },
                   cacheOptions: {
                     ignoreCache: true
