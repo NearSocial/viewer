@@ -17,6 +17,7 @@ import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
+import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
 import {
@@ -69,6 +70,7 @@ function App(props) {
               bundle: false,
             }),
             setupNightly(),
+            setupNearMobileWallet(),
           ],
         }),
         customElements: {
