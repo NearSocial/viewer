@@ -47,7 +47,7 @@ const Icon = styled.i`
     font-size: 24px;
 `;
 
-function Modal({ content, open, onOpenChange, toggle, toggleContainerProps }) {
+function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>
@@ -64,7 +64,7 @@ function Modal({ content, open, onOpenChange, toggle, toggleContainerProps }) {
                   </Button>
                 </CloseContainer>
               </Dialog.Trigger>
-              {content}
+              {children}
             </Content>
           </Dialog.Content>
         </Overlay>
