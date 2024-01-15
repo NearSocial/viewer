@@ -1,4 +1,3 @@
-const { theme } = VM.require("rambo-dev.near/widget/ThemeProvider");
 const { Button } = VM.require("buildhub.near/widget/components.Button");
 
 const toggle = props.toggle ?? <Button variant="primary">Open Modal</Button>;
@@ -23,7 +22,7 @@ const Content = styled.div`
   max-width: 1000px;
   padding: 24px;
   outline: none !important;
-  background: ${({ colors }) => `${colors.bg2}`};
+  background: #23242B;
   border-radius: 16px;
   color: white;
 `;
@@ -56,7 +55,7 @@ function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
       <Dialog.Overlay asChild>
         <Overlay>
           <Dialog.Content asChild>
-            <Content {...theme}>
+            <Content>
               <Dialog.Trigger asChild>
                 <CloseContainer>
                   <Button variant="outline" type="icon">
