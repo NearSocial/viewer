@@ -60,6 +60,7 @@ return (
         accountId={item.accountId}
         blockHeight={item.blockHeight}
         noBorder={true}
+        hideComments={true}
       />
     ))}
     {filteredArray.length === 0 && (
