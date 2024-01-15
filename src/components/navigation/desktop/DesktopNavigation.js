@@ -124,9 +124,13 @@ const StyledNavigation = styled.div`
       .nav-create-btn {
         margin-left: 10px;
       }
-
       .nav-sign-in-btn {
         margin-left: 10px;
+        transition: all 300ms ease-in-out;
+        animation: gelatine infinite ease-in-out 5s both;
+        filter: drop-shadow(0 0 1px var(--slate-dark-6))
+          drop-shadow(0 0 5px var(--slate-dark-6))
+          drop-shadow(0 0 16px var(--slate-dark-6));
       }
     }
 

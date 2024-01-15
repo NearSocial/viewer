@@ -9,6 +9,7 @@ import "App.scss";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
+// walllet selecor
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
@@ -17,6 +18,16 @@ import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
+import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
+import { setupBitgetWallet } from "@near-wallet-selector/bitget-wallet";
+import { setupNearFi } from "@near-wallet-selector/nearfi";
+import { setupMathWallet } from "@near-wallet-selector/math-wallet";
+import { setupWelldoneWallet } from "@near-wallet-selector/welldone-wallet";
+import { setupNearSnap } from "@near-wallet-selector/near-snap";
+import { setupLedger } from "@near-wallet-selector/ledger";
+import { setupCoin98Wallet } from "@near-wallet-selector/coin98-wallet";
+import { setupRamperWallet } from "@near-wallet-selector/ramper-wallet";
+import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
 import {
@@ -69,6 +80,16 @@ function App(props) {
               bundle: false,
             }),
             setupNightly(),
+            setupMintbaseWallet(),
+            setupNearMobileWallet(),
+            setupBitgetWallet(),
+            setupNearFi(),
+            setupMathWallet(),
+            setupWelldoneWallet(),
+            setupNearSnap(),
+            setupLedger(),
+            setupCoin98Wallet(),
+            setupRamperWallet(),
           ],
         }),
         customElements: {

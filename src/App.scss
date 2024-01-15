@@ -1,5 +1,9 @@
 @import "bootstrap";
 
+.App {
+  overflow-x: hidden;
+}
+
 body {
   overflow-y: scroll;
 }
@@ -67,5 +71,32 @@ a {
     &:hover {
       background: #0b99ff;
     }
+  }
+}
+
+@keyframes gelatine {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  45% {
+    transform: scale3d(1, 1, 1);
+  }
+  50% {
+    transform: scale3d(1.15, 0.75, 1);
+  }
+  60% {
+    transform: scale3d(0.85, 1.25, 1);
+  }
+  70% {
+    transform: scale3d(1.08, 0.85, 1);
+  }
+  75% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  85% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
   }
 }
