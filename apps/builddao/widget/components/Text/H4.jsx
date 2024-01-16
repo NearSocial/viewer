@@ -7,9 +7,9 @@ const StyledH4 = styled.h4`
   color: ${(props) => `${props.textColor}`}
 `;
 
-function H4({ children, textColor = "#FFFFFF" }) {
+function H4({ children, textColor }) {
   return (
-    <StyledH4 textColor={textColor}>
+    <StyledH4 textColor={textColor ?? "#FFFFFF"}>
       {children}
     </StyledH4>
   )
