@@ -45,7 +45,7 @@ import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
 
 export const refreshAllowanceObj = {};
-const documentationHref = "https://social.near-docs.io/";
+const documentationHref = "https://docs.potlock.io/";
 
 function App(props) {
   const [connected, setConnected] = useState(false);
