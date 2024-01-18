@@ -177,7 +177,6 @@ export default function EditorPage(props) {
   );
 
   const deleteCache = useCallback(async () => {
-    
     try {
       const response = await cache.localStorageSet(
         StorageDomain,
@@ -187,7 +186,6 @@ export default function EditorPage(props) {
         },
         {}
       );
-      
     } catch {
       console.error(e);
     }
@@ -214,13 +212,7 @@ export default function EditorPage(props) {
       view: localWidgetSrc,
     });
 
-    
-
     if (localWidgetSrc) {
-      
-        'this is the widgetsource and firing on ln 204',
-        localWidgetSrc
-      );
       checkForkDetails(localWidgetSrc);
       /*
        1. check if there are any forkDetails in localStorage
@@ -302,8 +294,6 @@ export default function EditorPage(props) {
 
   const openFile = useCallback(
     (path, code) => {
-      
-      
       setPath(path);
       addToFiles(path);
       setMetadata(undefined);
@@ -319,8 +309,6 @@ export default function EditorPage(props) {
             type: StorageType.Code,
           })
           .then(({ code }) => {
-            
-            
             updateCode(path, code);
             checkForkDetails(path);
           })
@@ -349,12 +337,8 @@ export default function EditorPage(props) {
           : `${accountId}/widget/${nameOrPath}`;
 
       setLocalWidgetSrc(widgetSrc);
-      
-      
 
       const c = () => {
-        
-        
         const code = cache.socialGet(
           near,
           widgetSrc,
