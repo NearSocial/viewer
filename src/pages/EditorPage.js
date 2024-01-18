@@ -176,21 +176,6 @@ export default function EditorPage(props) {
     [setForkDetails]
   );
 
-  const deleteCache = useCallback(async () => {
-    try {
-      const response = await cache.localStorageSet(
-        StorageDomain,
-        {
-          path,
-          type: StorageType.forkDetails,
-        },
-        {}
-      );
-    } catch {
-      console.error(e);
-    }
-  }, [path]);
-
   useEffect(() => {
     if (forkDetails) {
       setMetadata({
@@ -199,6 +184,13 @@ export default function EditorPage(props) {
       });
     }
   }, [forkDetails]);
+
+  // prevent metadata from being overwritten by empty object
+  useEffect(() => {
+    if (JSON.stringify(metadata) === '{}') {
+      setMetadata(undefined);
+    }
+  }, [metadata]);
 
   useEffect(() => {
     if (path || (widgetSrc && path)) {
@@ -814,12 +806,7 @@ export default function EditorPage(props) {
                         Open Component
                       </a>
                     )}
-                    <button
-                      className="btn btn-outline-dark"
-                      onClick={deleteCache}
-                    >
-                      Delete Cache
-                    </button>
+
                     <div className="dropdown">
                       <button
                         className="btn btn-outline-secondary flex-shrink-1"
