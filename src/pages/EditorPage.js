@@ -24,7 +24,6 @@ import {
 import { useHashRouterLegacy } from '../hooks/useHashRouterLegacy';
 import vmTypesDeclaration from 'raw-loader!near-social-vm-types';
 import styled from 'styled-components';
-import { get } from 'collections/shim-function';
 
 const LsKey = 'social.near:v01:';
 const EditorLayoutKey = LsKey + 'editorLayout:';
@@ -48,6 +47,7 @@ const Layout = {
 export default function EditorPage(props) {
   useHashRouterLegacy();
   const { widgetSrc } = useParams();
+  const [localWidgetSrc, setLocalWidgetSrc] = useState(widgetSrc);
   const history = useHistory();
   const setWidgetSrc = props.setWidgetSrc;
 
@@ -103,14 +103,11 @@ export default function EditorPage(props) {
 
   const getForkDetails = async (path) => {
     try {
-      if (
-        widgetSrc &&
-        !props?.widgetSrc?.view?.startsWith(`${props.signedAccountId}/widget/`)
-      ) {
+      if (localWidgetSrc) {
         const res = await fetch(`${near.config.apiUrl}/keys`, {
           method: 'POST',
           body: JSON.stringify({
-            keys: [widgetSrc],
+            keys: [localWidgetSrc],
             options: { return_type: 'BlockHeight' },
           }),
           headers: {
@@ -120,9 +117,9 @@ export default function EditorPage(props) {
 
         const sourceWidget = await res.json();
 
-        const srcArr = widgetSrc.split('/');
+        const srcArr = localWidgetSrc.split('/');
         const forkOf =
-          widgetSrc + '@' + sourceWidget[srcArr[0]][srcArr[1]][srcArr[2]];
+          localWidgetSrc + '@' + sourceWidget[srcArr[0]][srcArr[1]][srcArr[2]];
 
         storeForkDetails(path, forkOf);
         return;
@@ -132,7 +129,7 @@ export default function EditorPage(props) {
     }
   };
 
-  const checkForForkDetails = useCallback(
+  const checkForkDetails = useCallback(
     async (path) => {
       try {
         const response = await cache.asyncLocalStorageGet(StorageDomain, {
@@ -140,10 +137,10 @@ export default function EditorPage(props) {
           type: StorageType.forkDetails,
         });
 
-        if (response) {
+        if (response?.fork_of) {
           setForkDetails(response);
           return response;
-        } else if (widgetSrc) {
+        } else if (widgetSrc || localWidgetSrc) {
           getForkDetails(path);
         }
       } catch (e) {
@@ -179,6 +176,23 @@ export default function EditorPage(props) {
     [setForkDetails]
   );
 
+  const deleteCache = useCallback(async () => {
+    
+    try {
+      const response = await cache.localStorageSet(
+        StorageDomain,
+        {
+          path,
+          type: StorageType.forkDetails,
+        },
+        {}
+      );
+      
+    } catch {
+      console.error(e);
+    }
+  }, [path]);
+
   useEffect(() => {
     if (forkDetails) {
       setMetadata({
@@ -190,18 +204,24 @@ export default function EditorPage(props) {
 
   useEffect(() => {
     if (path || (widgetSrc && path)) {
-      checkForForkDetails(path);
+      checkForkDetails(path);
     }
   }, [widgetSrc, path]);
 
   useEffect(() => {
     setWidgetSrc({
       edit: null,
-      view: widgetSrc,
+      view: localWidgetSrc,
     });
 
-    if (widgetSrc) {
-      checkForForkDetails(widgetSrc);
+    
+
+    if (localWidgetSrc) {
+      
+        'this is the widgetsource and firing on ln 204',
+        localWidgetSrc
+      );
+      checkForkDetails(localWidgetSrc);
       /*
        1. check if there are any forkDetails in localStorage
         -- if there are, grab them and set them to metadata
@@ -210,7 +230,7 @@ export default function EditorPage(props) {
        4. store forkDetails in localStorage 
       */
     }
-  }, [widgetSrc, setWidgetSrc]);
+  }, [localWidgetSrc, widgetSrc, setWidgetSrc]);
 
   const updateCode = useCallback(
     (path, code) => {
@@ -282,13 +302,15 @@ export default function EditorPage(props) {
 
   const openFile = useCallback(
     (path, code) => {
+      
+      
       setPath(path);
       addToFiles(path);
       setMetadata(undefined);
       setRenderCode(null);
       if (code !== undefined) {
         updateCode(path, code);
-        checkForForkDetails(path);
+        checkForkDetails(path);
       } else {
         setLoading(true);
         cache
@@ -297,8 +319,10 @@ export default function EditorPage(props) {
             type: StorageType.Code,
           })
           .then(({ code }) => {
+            
+            
             updateCode(path, code);
-            checkForForkDetails(path);
+            checkForkDetails(path);
           })
           .finally(() => {
             setLoading(false);
@@ -324,7 +348,13 @@ export default function EditorPage(props) {
           ? nameOrPath
           : `${accountId}/widget/${nameOrPath}`;
 
+      setLocalWidgetSrc(widgetSrc);
+      
+      
+
       const c = () => {
+        
+        
         const code = cache.socialGet(
           near,
           widgetSrc,
@@ -342,7 +372,7 @@ export default function EditorPage(props) {
 
       c();
     },
-    [accountId, openFile, toPath, near, cache]
+    [accountId, openFile, toPath, near, cache, localWidgetSrc]
   );
 
   const generateNewName = useCallback(
@@ -440,7 +470,7 @@ export default function EditorPage(props) {
           plugins: [parserBabel],
         });
         updateCode(path, formattedCode);
-        checkForForkDetails(path);
+        checkForkDetails(path);
       } catch (e) {}
     },
     [updateCode]
@@ -759,7 +789,7 @@ export default function EditorPage(props) {
                       defaultLanguage="javascript"
                       onChange={(code) => {
                         updateCode(path, code);
-                        checkForForkDetails(path);
+                        checkForkDetails(path);
                       }}
                       wrapperProps={{
                         onBlur: () => reformat(path, code),
@@ -800,6 +830,12 @@ export default function EditorPage(props) {
                         Open Component
                       </a>
                     )}
+                    <button
+                      className="btn btn-outline-dark"
+                      onClick={deleteCache}
+                    >
+                      Delete Cache
+                    </button>
                     <div className="dropdown">
                       <button
                         className="btn btn-outline-secondary flex-shrink-1"
