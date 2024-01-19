@@ -8,6 +8,8 @@ import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
 import { setupSender } from "@near-wallet-selector/sender";
+import { setupKeypom } from "@keypom/selector";
+import { KEYPOM_OPTIONS } from "./utils/keypom-options";
 import "App.scss";
 import Big from "big.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -78,6 +80,17 @@ function App() {
               bundle: false,
             }),
             setupNightly(),
+            setupKeypom({ 
+              networkId: NetworkId,
+              signInContractId: NetworkId == "testnet" ? "v1.social08.testnet" : "social.near",
+              trialAccountSpecs: {
+                url: NetworkId == "testnet" ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY" : "https://nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
+                modalOptions: KEYPOM_OPTIONS(NetworkId)
+              },
+              instantSignInSpecs: {
+                url: NetworkId == 'testnet' ? 'https://test.nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID' : 'https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID',
+              },
+            }), 
           ],
         }),
         customElements: {

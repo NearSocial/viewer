@@ -21,7 +21,6 @@ import {
   StorageType,
   toPath,
 } from "../components/Editor/FileTab";
-import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import vmTypesDeclaration from "raw-loader!near-social-vm-types";
 import styled from "styled-components";
 import { useBosLoaderStore } from "../stores/bos-loader";
@@ -105,7 +104,6 @@ const Layout = {
 };
 
 export default function EditorPage(props) {
-  useHashRouterLegacy();
   const { widgetSrc } = useParams();
   const history = useHistory();
   const redirectMapStore = useBosLoaderStore();
