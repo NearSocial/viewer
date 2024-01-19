@@ -1,10 +1,8 @@
 import { Widget } from "near-social-vm";
 import React from "react";
-import { useHashRouterLegacy } from "../hooks/useHashRouterLegacy";
 import { useBosLoaderStore } from "../stores/bos-loader";
 
 export default function ResourcesPage(props) {
-    useHashRouterLegacy();
     const redirectMapStore = useBosLoaderStore();
 
     const src = props.widgets.resources;
