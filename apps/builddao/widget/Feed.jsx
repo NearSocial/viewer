@@ -92,6 +92,21 @@ const feeds = {
 [why are you asking?]
 `
   },
+  answer: {
+    label: "Answer",
+    icon: "bi-journal-code",
+    name: "answer",
+    hashtag: "answer",
+    template: `## Share an answer
+(posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=answer))
+
+[please restate the question you are answering]
+
+[your answer]
+
+[link to relevant docs, examples, or resources]
+`
+  },
   opportunity: {
     label: "Opportunity",
     icon: "bi-briefcase",
