@@ -157,8 +157,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   return Social.set(data, {
     force: true,
     onCommit: () => {
-      setPostContent(props.template);
-      Storage.privateSet(draftKey, postContent || "");
+      // console.log(`Commited ${feed}: #${postId}`);
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
@@ -464,7 +463,6 @@ return (
         )}
       </Button>
       <Button
-        disabled={!postContent}
         variant="primary"
         style={{ fontSize: 14 }}
         onClick={() =>
