@@ -9,7 +9,7 @@ const WalletSelectorDefaultValues = {
   "near-wallet-selector:selectedWalletId": "near-wallet",
   "near-wallet-selector:recentlySignedInWallets": ["near-wallet"],
   "near-wallet-selector:contract": {
-    contractId: NetworkId === "testnet" ? "v1.social08.testnet" : "donate.potlock.near",
+    contractId: NetworkId === "testnet" ? "v1.social08.testnet" : "social.near",
     methodNames: [],
   },
 };
