@@ -1,12 +1,18 @@
 const { Feed } = VM.require("devs.near/widget/Module.Feed");
-const { Button } = VM.require("buildhub.near/widget/components.Button");
+const { ButtonLink } = VM.require("buildhub.near/widget/components.ButtonLink");
 
-Button || (Button = () => <></>);
+ButtonLink || (ButtonLink = () => <></>);
 Feed = Feed || (() => <></>); // ensure it's defined or set to a default component
 
 const { type, hashtag } = props;
 type = hashtag;
 hashtag = type;
+
+const tab = props.tab || "resolutions";
+
+if (!tab) {
+  return "";
+}
 
 const { Post } = VM.require("buildhub.near/widget/components");
 Post = Post || (() => <></>);
@@ -36,7 +42,7 @@ const feeds = {
 **📊 MEASURING SUCCESS:**
 - [Metric 1 for Success]
 - [Metric 2 for Success]
-`
+`,
   },
   updates: {
     label: "Updates",
@@ -57,7 +63,7 @@ const feeds = {
 **🛑 BLOCKERS**
 - [what's blocking you?]
 - [how can someone help?]
-`
+`,
   },
   documentation: {
     label: "Documentation",
@@ -78,7 +84,7 @@ const feeds = {
 **USAGE**
 - [where is it used?]
 - [how to use it]
-`
+`,
   },
   question: {
     label: "Question",
@@ -90,7 +96,7 @@ const feeds = {
 
 [what are you thinking about?]
 [why are you asking?]
-`
+`,
   },
   answer: {
     label: "Answer",
@@ -105,7 +111,7 @@ const feeds = {
 [your answer]
 
 [link to relevant docs, examples, or resources]
-`
+`,
   },
   opportunity: {
     label: "Opportunity",
@@ -119,14 +125,14 @@ const feeds = {
 
 [explain the motivation or reason]
 
-`
+`,
   },
   idea: {
     label: "Idea",
     icon: "bi-lightbulb",
     name: "idea",
     hashtag: "idea",
-    template: ``
+    template: ``,
   },
   task: {
     label: "Task",
@@ -140,16 +146,16 @@ const feeds = {
 
 **Context or additional information:**
 - [Provide any context or details]
-`
+`,
   },
   bookmarks: {
     label: "Bookmarks",
     icon: "bi-bookmark",
-    name: "bookmark"
-  }
+    name: "bookmark",
+  },
 };
 
-const [activeFeed, setActiveFeed] = useState(type || "resolutions");
+const [activeFeed, setActiveFeed] = useState(tab || "resolutions");
 const [template, setTemplate] = useState("What did you have in mind?");
 
 return (
@@ -159,18 +165,22 @@ return (
       sideContent: Object.keys(feeds || {}).map((route) => {
         const data = feeds[route];
         return (
-          <Button
+          <ButtonLink
             id={route}
             variant={activeFeed === route ? "primary" : "outline"}
-            onClick={() => setActiveFeed(route)}
+            href={`/feed?tab=${route}`}
             className={
               "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
             }
-            style={{ fontSize: "14px" }}
+            style={{
+              fontSize: "14px",
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
           >
             <i className={`bi ${data.icon} `}></i>
             {data.label}
-          </Button>
+          </ButtonLink>
         );
       }),
       mainContent: (
@@ -181,7 +191,7 @@ return (
                 src="/*__@appAccount__*//widget/Compose"
                 props={{
                   feed: feeds[activeFeed],
-                  template: feeds[activeFeed].template
+                  template: feeds[activeFeed].template,
                 }}
               />
             ) : (
@@ -204,9 +214,9 @@ return (
                     order: "desc",
                   },
                   cacheOptions: {
-                    ignoreCache: true
-                  }
-                }
+                    ignoreCache: true,
+                  },
+                },
               ]}
               Item={(p) => (
                 <Post
@@ -218,7 +228,7 @@ return (
             />
           )}
         </>
-      )
+      ),
     }}
   />
 );
