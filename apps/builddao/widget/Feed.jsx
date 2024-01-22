@@ -8,9 +8,9 @@ const { type, hashtag } = props;
 type = hashtag;
 hashtag = type;
 
-const currentFeed = props.currentFeed || "resolutions";
+const tab = props.tab || "resolutions";
 
-if (!currentFeed) {
+if (!tab) {
   return "";
 }
 
@@ -155,7 +155,7 @@ const feeds = {
   },
 };
 
-const [activeFeed, setActiveFeed] = useState(currentFeed || "resolutions");
+const [activeFeed, setActiveFeed] = useState(tab || "resolutions");
 const [template, setTemplate] = useState("What did you have in mind?");
 
 return (
@@ -168,7 +168,7 @@ return (
           <ButtonLink
             id={route}
             variant={activeFeed === route ? "primary" : "outline"}
-            href={`/feed?currentFeed=${route}`}
+            href={`/feed?tab=${route}`}
             className={
               "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
             }
