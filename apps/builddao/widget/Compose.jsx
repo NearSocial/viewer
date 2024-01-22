@@ -5,6 +5,8 @@ Button = Button || (() => <></>);
 
 const draftKey = props.feed.name || "draft";
 const draft = Storage.privateGet(draftKey);
+const profile = Social.getr(`${context.accountId}/profile`);
+const autocompleteEnabled = true;
 
 if (draft === null) {
   return "";
@@ -14,6 +16,11 @@ const [view, setView] = useState("editor");
 const [postContent, setPostContent] = useState("");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
+const [uploadedImage, setImage] = useState({});
+const [showAccountAutocomplete, setShowAccountAutocomplete] = useState(false);
+const [mentionsArray, setMentionsArray] = useState([]);
+const [mentionInput, setMentionInput] = useState(null);
+const [handler, setHandler] = useState("update");
 
 setPostContent(draft || props.template);
 
@@ -23,17 +30,7 @@ function generateUID() {
   return randomNumber.toString(16).padStart(8, "0");
 }
 
-function tagsFromLabels(labels) {
-  return labels.reduce(
-    (newLabels, label) => ({
-      ...newLabels,
-      [label]: "",
-    }),
-    {}
-  );
-}
-
-const extractMentions = (text) => {
+function extractMentions(text) {
   const mentionRegex =
     /@((?:(?:[a-z\d]+[-_])*[a-z\d]+\.)*(?:[a-z\d]+[-_])*[a-z\d]+)/gi;
   mentionRegex.lastIndex = 0;
@@ -49,7 +46,7 @@ const extractMentions = (text) => {
     }
   }
   return [...accountIds];
-};
+}
 
 const extractHashtags = (text) => {
   const hashtagRegex = /#(\w+)/gi;
@@ -73,8 +70,8 @@ const extractMentionNotifications = (text, item) =>
       key: accountId,
       value: {
         type: "mention",
-        item,
-      },
+        item
+      }
     }));
 
 function checkAndAppendHashtag(input, target) {
@@ -102,6 +99,12 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     text = checkAndAppendHashtag(text, hashtag);
   });
 
+  const content = {
+    type: "md",
+    image: uploadedImage.cid ? { ipfs_cid: uploadedImage.cid } : undefined,
+    text: text
+  };
+
   const data = {
     // [feed.name]: {
     //   [postId]: {
@@ -118,21 +121,20 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     // },
     post: {
       main: JSON.stringify({
-        type: "md",
-        text,
+        content
         // tags: tagsFromLabels(labels),
         // postType: feed.name,
-      }),
+      })
     },
     index: {
-      post: JSON.stringify({ key: "main", value: { type: "md" } }),
+      post: JSON.stringify({ key: "main", value: { type: "md" } })
       // every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
-    },
+    }
   };
 
   const item = {
     type: "social",
-    path: `${context.accountId}/post/main`,
+    path: `${context.accountId}/post/main`
   };
 
   const notifications = extractMentionNotifications(text, item);
@@ -149,7 +151,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     data.index.hashtag = JSON.stringify(
       hashtags.map((hashtag) => ({
         key: hashtag,
-        value: item,
+        value: item
       }))
     );
   }
@@ -162,9 +164,46 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
-    },
+    }
   });
 };
+
+function textareaInputHandler(value) {
+  const words = value.split(/\s+/);
+  const allMentiones = words
+    .filter((word) => word.startsWith("@"))
+    .map((mention) => mention.slice(1));
+  const newMentiones = allMentiones.filter(
+    (item) => !mentionsArray.includes(item)
+  );
+  setMentionInput(newMentiones?.[0] ?? "");
+  setMentionsArray(allMentiones);
+  setShowAccountAutocomplete(newMentiones?.length > 0);
+  setPostContent(value);
+  setHandler("update");
+  Storage.privateSet(draftKey, value || "");
+}
+
+function autoCompleteAccountId(id) {
+  let currentIndex = 0;
+  const updatedDescription = postContent.replace(
+    /(?:^|\s)(@[^\s]*)/g,
+    (match) => {
+      if (currentIndex === mentionsArray.indexOf(mentionInput)) {
+        currentIndex++;
+        return ` @${id}`;
+      } else {
+        currentIndex++;
+        return match;
+      }
+    }
+  );
+  setPostContent(updatedDescription);
+  setShowAccountAutocomplete(false);
+  setMentionInput(null);
+  setHandler("autocompleteSelected");
+  Storage.privateSet(draftKey, value || "");
+}
 
 const PostCreator = styled.div`
   display: flex;
@@ -176,133 +215,77 @@ const PostCreator = styled.div`
   border-radius: 12px;
 
   margin-bottom: 1rem;
-`;
 
-const TextareaWrapper = styled.div`
-  display: grid;
-  vertical-align: top;
-  align-items: center;
-  position: relative;
-  align-items: stretch;
-
-  textarea {
+  .upload-image-button {
     display: flex;
     align-items: center;
-    transition: all 0.3s ease;
-  }
+    justify-content: center;
+    background: #f1f3f5;
+    color: #11181c;
+    border-radius: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 0;
+    border: none;
+    cursor: pointer;
+    transition: background 200ms, opacity 200ms;
 
-  textarea::placeholder {
-    padding-top: 4px;
-    font-size: 20px;
-  }
+    &::before {
+      font-size: 16px;
+    }
 
-  textarea:focus::placeholder {
-    font-size: inherit;
-    padding-top: 0px;
-  }
+    &:hover,
+    &:focus {
+      background: #d7dbde;
+      outline: none;
+    }
 
-  &::after,
-  textarea,
-  iframe {
-    width: 100%;
-    min-width: 1em;
-    height: unset;
-    min-height: 3em;
-    font: inherit;
-    margin: 0;
-    resize: none;
-    background: none;
-    appearance: none;
-    border: 0px solid #eee;
-    grid-area: 1 / 1;
-    overflow: hidden;
-    outline: none;
-  }
+    &:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
 
-  iframe {
-    padding: 0;
-  }
-
-  textarea:focus,
-  textarea:not(:empty) {
-    border-bottom: 1px solid #eee;
-    min-height: 5em;
-  }
-
-  &::after {
-    content: attr(data-value) " ";
-    visibility: hidden;
-    white-space: pre-wrap;
-  }
-  &.markdown-editor::after {
-    padding-top: 66px;
-    font-family: monospace;
-    font-size: 14px;
+    span {
+      margin-left: 12px;
+    }
   }
 `;
 
 const MarkdownEditor = `
-  html {
-    background: #23242b;
-  }
-
   * {
     border: none !important;
   }
 
-  .rc-md-editor {
-    background: #4f5055;
-    border-top: 1px solid #4f5055 !important;
+  body  {
+    background: #23242b !important;
+    color: #fff !important;
+    font-family: sans-serif !important;
+    font-size: 1rem;
+    border: 1px solid #4f5055 !important;
     border-radius: 8px;
   }
 
-  .editor-container {
-    background: #4f5055;
-  }
-  
-  .drop-wrap {
-    top: -110px !important;
-    border-radius: 0.5rem !important;
-  }
-
-  .header-list {
-    display: flex;
-    align-items: center;
-  }
-
-  textarea {
+  .CodeMirror-scroll{
     background: #23242b !important;
     color: #fff !important;
-
-    font-family: sans-serif !important;
-    font-size: 1rem;
-
-    border: 1px solid #4f5055 !important;
-    border-top: 0 !important;
-    border-radius: 0 0 8px 8px;
   }
 
-  .rc-md-navigation {
+  .CodeMirror{
     background: #23242b !important;
-    border: 1px solid #4f5055 !important;
-    border-top: 0 !important;
-    border-bottom: 0 !important;
-    border-radius: 8px 8px 0 0;
-  
-    i {
-      color: #cdd0d5;
-    }
+    color: #fff !important;
+    border-top: 1px solid #4f5055 !important;
   }
 
-  .editor-container {
-    border-radius: 0 0 8px 8px;
+  .editor-toolbar a {
+    color:inherit !important;
   }
 
-  .rc-md-editor .editor-container .sec-md .input {
-    overflow-y: auto;
-    padding: 8px !important;
-    line-height: normal;
-    border-radius: 0 0 8px 8px;
+  .editor-toolbar a.active, a:hover {
+    color:#2c3e50!important;
+  }
+
+  .CodeMirror-cursor {
+    border-left:1px solid white !important;
   }
 `;
 
@@ -420,34 +403,70 @@ return (
     {avatarComponent}
     <div style={{ border: "none" }}>
       {view === "editor" ? (
-        <TextareaWrapper
-          className="markdown-editor"
-          data-value={postContent || ""}
-          key={props.feed.name}
-        >
+        <div>
           <Widget
-            src="mob.near/widget/MarkdownEditorIframe"
+            src={"buildhub.near/widget/components.MarkdownEditor"}
             props={{
-              initialText: postContent,
-              embedCss: MarkdownEditor,
-              onChange: (v) => {
-                setPostContent(v);
-                Storage.privateSet(draftKey, v || "");
+              data: { handler: handler, content: postContent },
+              onChange: (content) => {
+                textareaInputHandler(content);
               },
+              embedCss: MarkdownEditor,
+              alignToolItems: "left",
+              className: "w-100 bg-black",
+              toolbar: [
+                "heading",
+                "bold",
+                "italic",
+                "quote",
+                "code",
+                "link",
+                "unordered-list",
+                "ordered-list",
+                "checklist",
+                "mention"
+              ],
+              spellChecker: false
             }}
           />
-        </TextareaWrapper>
+          {autocompleteEnabled && showAccountAutocomplete && (
+            <Widget
+              src="buildhub.near/widget/components.AccountAutocomplete"
+              props={{
+                term: mentionInput,
+                onSelect: autoCompleteAccountId,
+                onClose: () => setShowAccountAutocomplete(false)
+              }}
+            />
+          )}
+        </div>
       ) : (
         <MarkdownPreview>
           <Widget
             src="devhub.near/widget/devhub.components.molecule.MarkdownViewer"
             props={{ text: postContent }}
           />
+          {uploadedImage.cid && (
+            <Widget
+              src="mob.near/widget/Image"
+              props={{
+                image: uploadedImage.cid
+                  ? { ipfs_cid: uploadedImage.cid }
+                  : undefined
+              }}
+            />
+          )}
         </MarkdownPreview>
       )}
     </div>
 
     <div className="d-flex gap-3 align-self-end">
+      {view === "editor" && (
+        <IpfsImageUpload
+          // image={uploadedImage}
+          className="upload-image-button bi bi-image"
+        />
+      )}
       <Button
         variant="outline"
         onClick={() => setView(view === "editor" ? "preview" : "editor")}
