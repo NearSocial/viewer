@@ -12,11 +12,14 @@ if (draft === null) {
   return "";
 }
 
+State.init({
+  image: {}
+});
+
 const [view, setView] = useState("editor");
 const [postContent, setPostContent] = useState("");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
-const [uploadedImage, setImage] = useState({});
 const [showAccountAutocomplete, setShowAccountAutocomplete] = useState(false);
 const [mentionsArray, setMentionsArray] = useState([]);
 const [mentionInput, setMentionInput] = useState(null);
@@ -101,7 +104,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
 
   const content = {
     type: "md",
-    image: uploadedImage.cid ? { ipfs_cid: uploadedImage.cid } : undefined,
+    image: state.image.cid ? { ipfs_cid: state.image.cid } : undefined,
     text: text
   };
 
@@ -247,6 +250,17 @@ const PostCreator = styled.div`
 
     span {
       margin-left: 12px;
+    }
+  }
+
+  .d-inline-block {
+    display: flex !important;
+    gap: 12px;
+    margin: 0 !important;
+
+    .overflow-hidden {
+      width: 40px !important;
+      height: 40px !important;
     }
   }
 `;
@@ -446,12 +460,12 @@ return (
             src="devhub.near/widget/devhub.components.molecule.MarkdownViewer"
             props={{ text: postContent }}
           />
-          {uploadedImage.cid && (
+          {state.image.cid && (
             <Widget
               src="mob.near/widget/Image"
               props={{
-                image: uploadedImage.cid
-                  ? { ipfs_cid: uploadedImage.cid }
+                image: state.image.cid
+                  ? { ipfs_cid: state.image.cid }
                   : undefined
               }}
             />
@@ -463,7 +477,7 @@ return (
     <div className="d-flex gap-3 align-self-end">
       {view === "editor" && (
         <IpfsImageUpload
-          // image={uploadedImage}
+          image={state.image}
           className="upload-image-button bi bi-image"
         />
       )}
