@@ -32,7 +32,7 @@ import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
-import { Engine } from "mutable-web-engine";
+import { Engine, Overlay } from "mutable-web-engine";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -62,17 +62,9 @@ async function initializeEngine() {
   });
 
   await engine.start();
-
-  return engine;
 }
 
-initializeEngine()
-  .then((engine) => {
-    console.log("Mutable Web Engine started!", engine);
-  })
-  .catch((e) => {
-    console.error("Mutable Web Engine failed to start!", e);
-  });
+initializeEngine();
 
 function App(props) {
   const [connected, setConnected] = useState(false);
@@ -110,6 +102,12 @@ function App(props) {
             }
             return <Link {...props} />;
           },
+          DappletOverlay: ({ children }) => {
+            const child = children.filter(
+              (c) => typeof c !== "string" || !!c.trim()
+            )[0];
+            return <Overlay>{child}</Overlay>;
+          },
         },
         config: {
           defaultFinality: undefined,
@@ -117,6 +115,7 @@ function App(props) {
         features: {
           enableComponentPropsDataKey: true,
           enableComponentSrcDataKey: true,
+          skipTxConfirmationPopup: true,
         },
       });
   }, [initNear]);

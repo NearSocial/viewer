@@ -59,6 +59,7 @@ module.exports = function (env) {
           "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
           "near-api-js": path.resolve(__dirname, "./node_modules/near-api-js"),
           "near-social-vm": path.resolve(__dirname, "./node_modules/near-social-vm"),
+          'styled-components': path.resolve(__dirname, "./node_modules/styled-components"),
         },
       },
       plugins: [
