@@ -156,7 +156,6 @@ const feeds = {
 };
 
 const [activeFeed, setActiveFeed] = useState(tab || "resolutions");
-const [template, setTemplate] = useState("What did you have in mind?");
 
 return (
   <Widget
