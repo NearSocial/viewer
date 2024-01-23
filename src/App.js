@@ -41,6 +41,7 @@ import ProposePage from "./pages/ProposePage";
 import ViewPage from "./pages/ViewPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import LibraryPage from "./pages/LibraryPage";
+import Viewer from "./pages/Viewer";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos";
@@ -80,17 +81,24 @@ function App() {
               bundle: false,
             }),
             setupNightly(),
-            setupKeypom({ 
+            setupKeypom({
               networkId: NetworkId,
-              signInContractId: NetworkId == "testnet" ? "v1.social08.testnet" : "social.near",
+              signInContractId:
+                NetworkId == "testnet" ? "v1.social08.testnet" : "social.near",
               trialAccountSpecs: {
-                url: NetworkId == "testnet" ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY" : "https://nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
-                modalOptions: KEYPOM_OPTIONS(NetworkId)
+                url:
+                  NetworkId == "testnet"
+                    ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY"
+                    : "https://nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
+                modalOptions: KEYPOM_OPTIONS(NetworkId),
               },
               instantSignInSpecs: {
-                url: NetworkId == 'testnet' ? 'https://test.nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID' : 'https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID',
+                url:
+                  NetworkId == "testnet"
+                    ? "https://test.nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID"
+                    : "https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID",
               },
-            }), 
+            }),
           ],
         }),
         customElements: {
@@ -102,7 +110,7 @@ function App() {
             if (props.to) {
               props.to =
                 typeof props.to === "string" &&
-                  isValidAttribute("a", "href", props.to)
+                isValidAttribute("a", "href", props.to)
                   ? props.to
                   : "about:blank";
             }
@@ -195,8 +203,15 @@ function App() {
               <Flags {...passProps} />
             </Route>
             <Route path={"/join"}>
+              <BosLoaderBanner />
               <JoinPage {...passProps} />
             </Route>
+            {/* I've added the below as the isolated route for rendering the app */}
+            <Route path={"/:path*"}>
+              <BosLoaderBanner />
+              <Viewer {...passProps} />
+            </Route>
+            {/* Legacy: */}
             <Route path={"/propose"}>
               <ProposePage {...passProps} />
             </Route>
