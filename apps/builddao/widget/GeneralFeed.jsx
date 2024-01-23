@@ -40,7 +40,7 @@ function formatDate(date) {
 
 const daoName = "Build DAO";
 const feedLink = "https://nearbuilders.org/feed";
-const daoTag = "testDao";
+const daoTag = "build";
 
 const feeds = {
   resolutions: {
