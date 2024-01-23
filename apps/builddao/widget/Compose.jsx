@@ -206,7 +206,7 @@ function autoCompleteAccountId(id) {
   setShowAccountAutocomplete(false);
   setMentionInput(null);
   setHandler("autocompleteSelected");
-  Storage.privateSet(draftKey, value || "");
+  Storage.privateSet(draftKey, updatedDescription || "");
 }
 
 const PostCreator = styled.div`
