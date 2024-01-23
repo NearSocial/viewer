@@ -240,7 +240,19 @@ return (
                 index={[
                   {
                     action: "hashtag",
-                    key: feeds[activeFeed].hashtag,
+                    key: feeds[activeFeed].hashtag, // resolution
+                    options: {
+                      limit: 10,
+                      order: "desc",
+                    },
+                    cacheOptions: {
+                      ignoreCache: true,
+                    },
+                    required: true,
+                  },
+                  {
+                    action: "hashtag",
+                    key: daoTag, // build
                     options: {
                       limit: 10,
                       order: "desc",
