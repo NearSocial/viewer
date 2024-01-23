@@ -13,7 +13,7 @@ const Container = styled.div`
 
 const AsideContainer = styled.div`
   border-radius: 16px;
-  border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
+  border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
   background: var(--bg-1, #0b0c14);
   width: 100%;
 

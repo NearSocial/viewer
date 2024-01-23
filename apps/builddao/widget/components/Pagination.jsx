@@ -21,7 +21,7 @@ const Pagination = styled.div`
     align-items: center;
     gap: 10px;
     border-radius: 8px;
-    color: var(--White-100, #fff);
+    color: var(--font-color, #fff);
     transition: all 300ms;
     cursor: pointer;
 
@@ -33,11 +33,11 @@ const Pagination = styled.div`
 
     &.selected,
     &:hover {
-      background-color: #23242b;
+      background-color: var(--bg-1, #23242b);
     }
 
     &.arrow {
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
     }
 
     &.disabled {
