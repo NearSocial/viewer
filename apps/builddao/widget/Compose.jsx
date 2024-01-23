@@ -25,7 +25,9 @@ const [mentionsArray, setMentionsArray] = useState([]);
 const [mentionInput, setMentionInput] = useState(null);
 const [handler, setHandler] = useState("update");
 
-setPostContent(draft || props.template);
+useEffect(() => {
+  setPostContent(draft || props.template);
+}, []);
 
 function generateUID() {
   const maxHex = 0xffffffff;
@@ -265,41 +267,131 @@ const PostCreator = styled.div`
   }
 `;
 
+const TextareaWrapper = styled.div`
+  display: grid;
+  vertical-align: top;
+  align-items: center;
+  position: relative;
+  align-items: stretch;
+
+  textarea {
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+
+  textarea::placeholder {
+    padding-top: 4px;
+    font-size: 20px;
+  }
+
+  textarea:focus::placeholder {
+    font-size: inherit;
+    padding-top: 0px;
+  }
+
+  &::after,
+  textarea,
+  iframe {
+    width: 100%;
+    min-width: 1em;
+    height: unset;
+    min-height: 3em;
+    font: inherit;
+    margin: 0;
+    resize: none;
+    background: none;
+    appearance: none;
+    border: 0px solid #eee;
+    grid-area: 1 / 1;
+    overflow: hidden;
+    outline: none;
+  }
+
+  iframe {
+    padding: 0;
+  }
+
+  textarea:focus,
+  textarea:not(:empty) {
+    border-bottom: 1px solid #eee;
+    min-height: 5em;
+  }
+
+  &::after {
+    content: attr(data-value) " ";
+    visibility: hidden;
+    white-space: pre-wrap;
+  }
+  &.markdown-editor::after {
+    padding-top: 66px;
+    font-family: monospace;
+    font-size: 14px;
+  }
+`;
+
 const MarkdownEditor = `
+  html {
+    background: #23242b;
+  }
+
   * {
     border: none !important;
   }
 
-  body  {
-    background: #23242b !important;
-    color: #fff !important;
-    font-family: sans-serif !important;
-    font-size: 1rem;
-    border: 1px solid #4f5055 !important;
+  .rc-md-editor {
+    background: #4f5055;
+    border-top: 1px solid #4f5055 !important;
     border-radius: 8px;
   }
 
-  .CodeMirror-scroll{
+  .editor-container {
+    background: #4f5055;
+  }
+  
+  .drop-wrap {
+    top: -110px !important;
+    border-radius: 0.5rem !important;
+  }
+
+  .header-list {
+    display: flex;
+    align-items: center;
+  }
+
+  textarea {
     background: #23242b !important;
     color: #fff !important;
+
+    font-family: sans-serif !important;
+    font-size: 1rem;
+
+    border: 1px solid #4f5055 !important;
+    border-top: 0 !important;
+    border-radius: 0 0 8px 8px;
   }
 
-  .CodeMirror{
+  .rc-md-navigation {
     background: #23242b !important;
-    color: #fff !important;
-    border-top: 1px solid #4f5055 !important;
+    border: 1px solid #4f5055 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    border-radius: 8px 8px 0 0;
+  
+    i {
+      color: #cdd0d5;
+    }
   }
 
-  .editor-toolbar a {
-    color:inherit !important;
+  .editor-container {
+    border-radius: 0 0 8px 8px;
   }
 
-  .editor-toolbar a.active, a:hover {
-    color:#2c3e50!important;
-  }
-
-  .CodeMirror-cursor {
-    border-left:1px solid white !important;
+  .rc-md-editor .editor-container .sec-md .input {
+    overflow-y: auto;
+    padding: 8px !important;
+    line-height: normal;
+    border-radius: 0 0 8px 8px;
   }
 `;
 
@@ -417,7 +509,11 @@ return (
     {avatarComponent}
     <div style={{ border: "none" }}>
       {view === "editor" ? (
-        <div>
+        <TextareaWrapper
+          className="markdown-editor"
+          data-value={postContent || ""}
+          key={props.feed.name}
+        >
           <Widget
             src={"buildhub.near/widget/components.MarkdownEditor"}
             props={{
@@ -425,22 +521,7 @@ return (
               onChange: (content) => {
                 textareaInputHandler(content);
               },
-              embedCss: MarkdownEditor,
-              alignToolItems: "left",
-              className: "w-100 bg-black",
-              toolbar: [
-                "heading",
-                "bold",
-                "italic",
-                "quote",
-                "code",
-                "link",
-                "unordered-list",
-                "ordered-list",
-                "checklist",
-                "mention"
-              ],
-              spellChecker: false
+              embedCss: MarkdownEditor
             }}
           />
           {autocompleteEnabled && showAccountAutocomplete && (
@@ -453,7 +534,7 @@ return (
               }}
             />
           )}
-        </div>
+        </TextareaWrapper>
       ) : (
         <MarkdownPreview>
           <Widget
