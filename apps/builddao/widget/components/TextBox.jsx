@@ -1,5 +1,5 @@
 const Label = styled.label`
-  color: var(--White-100, #fff);
+  color: var(--label-color, #fff);
 
   /* Body/16px */
   font-size: 16px;
@@ -7,7 +7,6 @@ const Label = styled.label`
   font-weight: 400;
   line-height: 170%; /* 27.2px */
 `;
-
 
 const TextArea = styled.textarea`
   display: flex;
@@ -18,10 +17,10 @@ const TextArea = styled.textarea`
   align-self: stretch;
 
   border-radius: 8px;
-  border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
-  background: var(--Bg-1, #0b0c14);
+  border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
+  background: var(--bg-1, #0b0c14);
 
-  color: var(--White-50, #fff);
+  color: var(--font-color, #fff);
 
   /* Body/16px */
   font-size: 16px;

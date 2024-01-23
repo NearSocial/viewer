@@ -6,19 +6,19 @@ const StyledPost = styled.div`
   margin-bottom: 1rem;
   .post {
     border-radius: 16px;
-    border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
-    color: #b6b6b8;
+    border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
+    color: var(--font-muted-color, #b6b6b8);
     padding: 24px !important;
-    background-color: #23242b;
+    background-color: var(--bg-1, #23242b);
     transition: all 300ms;
 
     &:hover {
-      background-color: #1c1f33 !important;
+      background-color: var(--bg-1-hover, #17181c) !important;
       .expand-post {
         background-image: linear-gradient(
           to bottom,
-          rgba(28, 31, 51, 0),
-          rgba(28, 31, 51, 1) 25%
+          var(--bg-1-hover-transparent, rgba(23, 24, 28, 0)),
+          var(--bg-1-hover, #17181c) 25%
         ) !important;
       }
     }
@@ -26,7 +26,7 @@ const StyledPost = styled.div`
     .post-header {
       span,
       .text-muted {
-        color: #fff !important;
+        color: var(--font-color, #fff) !important;
       }
     }
 
@@ -38,34 +38,34 @@ const StyledPost = styled.div`
     .expand-post {
       background-image: linear-gradient(
         to bottom,
-        rgba(35, 36, 43, 0),
-        rgba(35, 36, 43, 1) 25%
+        var(--post-bg, rgba(35, 36, 43, 0)),
+        var(--post-bg-transparent, rgba(35, 36, 43, 1)) 25%
       ) !important;
     }
   }
 
   .dropdown-menu {
-    background-color: #0b0c14 !important;
-    color: #fff !important;
+    background-color: var(--bg-1, #0b0c14) !important;
+    color: var(--font-color, #fff) !important;
 
     li.dropdown-item {
-      color: #fff !important;
+      color: var(--font-color, #fff) !important;
       &:hover {
         a {
-          color: #0b0c14 !important;
+          color: var(--bg-1, #0b0c14) !important;
         }
       }
     }
 
     .link-dark,
     .dropdown-item {
-      color: #fff !important;
+      color: var(--font-color, #fff) !important;
 
       &:hover {
-        color: #0b0c14 !important;
+        color: var(--bg-1, #0b0c14) !important;
 
         span {
-          color: #0b0c14 !important;
+          color: var(--bg-1, #0b0c14) !important;
         }
       }
     }

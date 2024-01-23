@@ -137,7 +137,7 @@ function TextEditor({ value, onChange, maxWidth }) {
         src="mob.near/widget/MarkdownEditorIframe"
         props={{
           initialText: value,
-          embedCss: MarkdownEditor,
+          embedCss: props.EditorCSS || MarkdownEditor,
           onChange,
         }}
       />

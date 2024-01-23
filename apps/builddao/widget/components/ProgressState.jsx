@@ -1,4 +1,3 @@
-
 const Progress = styled.div`
   display: flex;
   width: 40px;
@@ -12,13 +11,13 @@ const Progress = styled.div`
   border: ${(props) => {
     switch (props.status) {
       case "focused":
-        return "1px solid var(--Yellow, #FFAF51)";
+        return "1px solid var(--yellow, #FFAF51)";
       case "error":
-        return "1px solid var(--System-Red, #FD2A5C)";
+        return "1px solid var(--system-red, #FD2A5C)";
       case "completed":
-        return "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))";
+        return "1px solid var(--stroke-color, rgba(255, 255, 255, 0.20))";
       default:
-        return "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))";
+        return "1px solid var(--stroke-color, rgba(255, 255, 255, 0.20))";
     }
   }};
 
@@ -29,7 +28,7 @@ const Progress = styled.div`
       case "error":
         return "#2f101f";
       case "completed":
-        return "#FFAF51";
+        return "var(--yellow, #FFAF51)";
       default:
         return "#23242B";
     }
@@ -38,13 +37,13 @@ const Progress = styled.div`
   color: ${(props) => {
     switch (props.status) {
       case "focused":
-        return "#fff";
+        return "var(--font-color, #fff)";
       case "error":
-        return "#FD2A5C";
+        return "var(--system-red, #FD2A5C)";
       case "completed":
-        return "#000";
+        return "var(--black, #000)";
       default:
-        return "#fff";
+        return "var(--font-color, #fff)";
     }
   }};
 `;

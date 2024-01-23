@@ -8,7 +8,7 @@ const CheckboxLabel = styled.label`
   align-items: center;
   gap: 8px;
 
-  color: #fff;
+  color: var(--label-color, #fff);
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
