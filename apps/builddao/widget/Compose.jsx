@@ -123,11 +123,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     //   },
     // },
     post: {
-      main: JSON.stringify({
-        content,
-        // tags: tagsFromLabels(labels),
-        // postType: feed.name,
-      }),
+      main: JSON.stringify(content),
     },
     index: {
       post: JSON.stringify({ key: "main", value: { type: "md" } }),
