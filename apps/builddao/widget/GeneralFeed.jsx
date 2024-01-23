@@ -1,15 +1,15 @@
 const { Feed } = VM.require("devs.near/widget/Module.Feed") || (() => <></>);
-const { Post, Button } = VM.require("buildhub.near/widget/components") || {
+const { Post, ButtonLink } = VM.require("buildhub.near/widget/components") || {
   Post: () => <></>,
-  Button: () => <></>,
+  ButtonLink: () => <></>,
 };
 
 const Theme = styled.div`
   --stroke-color: rgba(255, 255, 255, 0.2);
   --bg-1: #0b0c14;
-  --bg-2: ##23242b;
   --bg-1-hover: #17181c;
   --bg-1-hover-transparent: rgba(23, 24, 28, 0);
+  --bg-2: ##23242b;
   --label-color: #fff;
   --font-color: #fff;
   --font-muted-color: #cdd0d5;
@@ -17,7 +17,10 @@ const Theme = styled.div`
   --system-red: #fd2a5c;
   --yellow: #ffaf51;
 
-  --post-bg: #23242b;
+  --compose-bg: #23242b;
+
+  --post-bg: #0b0c14;
+  --post-bg-hover: #17181c;
   --post-bg-transparent: rgba(23, 24, 28, 0);
 
   --button-primary-bg: #ffaf51;
@@ -175,7 +178,14 @@ const feeds = {
   },
 };
 
-const tab = props.tab || "resolutions";
+if (!feeds) {
+  return "";
+}
+
+const tab = props.tab || Object.keys(feeds)[0];
+if (Object.keys(feeds).includes(props.hashtag)) {
+  tab = props.hashtag;
+}
 const [activeFeed, setActiveFeed] = useState(tab);
 
 return (
@@ -186,20 +196,22 @@ return (
         sideContent: Object.keys(feeds || {}).map((route) => {
           const data = feeds[route];
           return (
-            <Button
+            <ButtonLink
               id={route}
               variant={activeFeed === route ? "primary" : "outline"}
-              onClick={() => setActiveFeed(route)}
+              href={`?tab=${route}`}
               className={
                 "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
               }
               style={{
                 fontSize: "14px",
+                textDecoration: "none",
+                cursor: "pointer",
               }}
             >
               <i className={`bi ${data.icon} `}></i>
               {data.label}
-            </Button>
+            </ButtonLink>
           );
         }),
         mainContent: (

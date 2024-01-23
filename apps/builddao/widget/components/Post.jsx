@@ -9,16 +9,16 @@ const StyledPost = styled.div`
     border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
     color: var(--font-muted-color, #b6b6b8);
     padding: 24px !important;
-    background-color: var(--bg-1, #23242b);
+    background-color: var(--post-bg, #23242b);
     transition: all 300ms;
 
     &:hover {
-      background-color: var(--bg-1-hover, #17181c) !important;
+      background-color: var(--post-bg-hover, #17181c) !important;
       .expand-post {
         background-image: linear-gradient(
           to bottom,
-          var(--bg-1-hover-transparent, rgba(23, 24, 28, 0)),
-          var(--bg-1-hover, #17181c) 25%
+          var(--post-bg-hover-transparent, rgba(23, 24, 28, 0)),
+          var(--post-bg-hover, #17181c) 25%
         ) !important;
       }
     }
@@ -38,21 +38,21 @@ const StyledPost = styled.div`
     .expand-post {
       background-image: linear-gradient(
         to bottom,
-        var(--post-bg, rgba(35, 36, 43, 0)),
-        var(--post-bg-transparent, rgba(35, 36, 43, 1)) 25%
+        var(--post-bg-transparent, rgba(35, 36, 43, 0)),
+        var(--post-bg, rgba(35, 36, 43, 1)) 25%
       ) !important;
     }
   }
 
   .dropdown-menu {
-    background-color: var(--bg-1, #0b0c14) !important;
+    background-color: var(--post-bg, #0b0c14) !important;
     color: var(--font-color, #fff) !important;
 
     li.dropdown-item {
       color: var(--font-color, #fff) !important;
       &:hover {
         a {
-          color: var(--bg-1, #0b0c14) !important;
+          color: var(--post-bg, #0b0c14) !important;
         }
       }
     }
@@ -62,10 +62,10 @@ const StyledPost = styled.div`
       color: var(--font-color, #fff) !important;
 
       &:hover {
-        color: var(--bg-1, #0b0c14) !important;
+        color: var(--post-bg, #0b0c14) !important;
 
         span {
-          color: var(--bg-1, #0b0c14) !important;
+          color: var(--post-bg, #0b0c14) !important;
         }
       }
     }

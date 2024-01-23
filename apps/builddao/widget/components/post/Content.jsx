@@ -59,7 +59,7 @@ const [onHashtag] = useState(() => (hashtag) => (
     className="d-inline-flex"
     style={{ color: "var(--bs-link-color)" }}
   >
-    <a href={`/?hashtag=${hashtag}`}>#{hashtag}</a>
+    <a href={`?hashtag=${hashtag}`}>#{hashtag}</a>
   </span>
 ));
 
