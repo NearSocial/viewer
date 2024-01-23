@@ -35,7 +35,7 @@ function generateUID() {
   return randomNumber.toString(16).padStart(8, "0");
 }
 
-function extractMentions(text) {
+const extractMentions = (text) => {
   const mentionRegex =
     /@((?:(?:[a-z\d]+[-_])*[a-z\d]+\.)*(?:[a-z\d]+[-_])*[a-z\d]+)/gi;
   mentionRegex.lastIndex = 0;
@@ -51,7 +51,7 @@ function extractMentions(text) {
     }
   }
   return [...accountIds];
-}
+};
 
 const extractHashtags = (text) => {
   const hashtagRegex = /#(\w+)/gi;
@@ -514,7 +514,7 @@ return (
           key={props.feed.name}
         >
           <Widget
-            src={"buildhub.near/widget/components.MarkdownEditor"}
+            src={"buildhub.near/widget/components.MarkdownEditorIframe"}
             props={{
               data: { handler: handler, content: postContent },
               onChange: (content) => {
