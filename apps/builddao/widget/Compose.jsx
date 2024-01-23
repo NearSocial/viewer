@@ -1,11 +1,11 @@
-const { Avatar, Button } = VM.require("buildhub.near/widget/components");
-
-Avatar = Avatar || (() => <></>);
-Button = Button || (() => <></>);
+const { Avatar, Button } = VM.require("buildhub.near/widget/components") || {
+  Avatar: () => <></>,
+  Button: () => <></>,
+};
 
 const draftKey = props.feed.name || "draft";
 const draft = Storage.privateGet(draftKey);
-const profile = Social.getr(`${context.accountId}/profile`);
+
 const autocompleteEnabled = true;
 
 if (draft === null) {
@@ -13,7 +13,7 @@ if (draft === null) {
 }
 
 State.init({
-  image: {}
+  image: {},
 });
 
 const [view, setView] = useState("editor");
@@ -25,9 +25,7 @@ const [mentionsArray, setMentionsArray] = useState([]);
 const [mentionInput, setMentionInput] = useState(null);
 const [handler, setHandler] = useState("update");
 
-useEffect(() => {
-  setPostContent(draft || props.template);
-}, []);
+setPostContent(draft || props.template);
 
 function generateUID() {
   const maxHex = 0xffffffff;
@@ -75,8 +73,8 @@ const extractMentionNotifications = (text, item) =>
       key: accountId,
       value: {
         type: "mention",
-        item
-      }
+        item,
+      },
     }));
 
 function checkAndAppendHashtag(input, target) {
@@ -107,7 +105,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   const content = {
     type: "md",
     image: state.image.cid ? { ipfs_cid: state.image.cid } : undefined,
-    text: text
+    text: text,
   };
 
   const data = {
@@ -126,20 +124,20 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     // },
     post: {
       main: JSON.stringify({
-        content
+        content,
         // tags: tagsFromLabels(labels),
         // postType: feed.name,
-      })
+      }),
     },
     index: {
-      post: JSON.stringify({ key: "main", value: { type: "md" } })
+      post: JSON.stringify({ key: "main", value: { type: "md" } }),
       // every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
-    }
+    },
   };
 
   const item = {
     type: "social",
-    path: `${context.accountId}/post/main`
+    path: `${context.accountId}/post/main`,
   };
 
   const notifications = extractMentionNotifications(text, item);
@@ -156,7 +154,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     data.index.hashtag = JSON.stringify(
       hashtags.map((hashtag) => ({
         key: hashtag,
-        value: item
+        value: item,
       }))
     );
   }
@@ -169,7 +167,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
-    }
+    },
   });
 };
 
@@ -517,11 +515,12 @@ return (
           <Widget
             src={"buildhub.near/widget/components.MarkdownEditorIframe"}
             props={{
+              initialText: postContent,
               data: { handler: handler, content: postContent },
               onChange: (content) => {
                 textareaInputHandler(content);
               },
-              embedCss: MarkdownEditor
+              embedCss: MarkdownEditor,
             }}
           />
           {autocompleteEnabled && showAccountAutocomplete && (
@@ -530,7 +529,7 @@ return (
               props={{
                 term: mentionInput,
                 onSelect: autoCompleteAccountId,
-                onClose: () => setShowAccountAutocomplete(false)
+                onClose: () => setShowAccountAutocomplete(false),
               }}
             />
           )}
@@ -547,7 +546,7 @@ return (
               props={{
                 image: state.image.cid
                   ? { ipfs_cid: state.image.cid }
-                  : undefined
+                  : undefined,
               }}
             />
           )}

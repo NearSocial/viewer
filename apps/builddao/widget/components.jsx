@@ -33,7 +33,11 @@ function Pagination({
 
 function Post(props) {
   return (
-    <Widget src={"buildhub.near/widget/components.Post"} props={{ ...props }} />
+    <Widget
+      src={"buildhub.near/widget/components.Post"}
+      loading={<div className="w-100" style={{ height: "200px" }} />}
+      props={{ ...props }}
+    />
   );
 }
 
