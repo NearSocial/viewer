@@ -41,7 +41,7 @@ const StyledLink = styled.a`
       default:
         return "var(--button-default-color, #CDD0D5)";
     }
-  }};
+  }} !important;
 
   border: ${(props) =>
     props.variant === "outline"
