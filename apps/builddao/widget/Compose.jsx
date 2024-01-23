@@ -173,7 +173,7 @@ const PostCreator = styled.div`
   gap: 1.5rem;
 
   padding: 1rem;
-  background: #23242b;
+  background: var(--compose-bg, #23242b);
   border-radius: 12px;
 
   margin-bottom: 1rem;
@@ -375,36 +375,6 @@ const MarkdownPreview = styled.div`
   }
 `;
 
-const LabelSelect = styled.div`
-  label {
-    color: #fff;
-  }
-
-  .rbt-input-multi {
-    background: #23242b !important;
-    color: #fff !important;
-  }
-
-  .rbt-token {
-    background: #202020 !important;
-    color: #fff !important;
-  }
-
-  .rbt-menu {
-    background: #23242b !important;
-    color: #fff !important;
-
-    .dropdown-item {
-      color: #fff !important;
-      transition: all 300ms;
-
-      &:hover {
-        background: #202020;
-      }
-    }
-  }
-`;
-
 const avatarComponent = useMemo(() => {
   return (
     <div className="d-flex align-items-start gap-2">
@@ -430,7 +400,7 @@ return (
             src="mob.near/widget/MarkdownEditorIframe"
             props={{
               initialText: postContent,
-              embedCss: MarkdownEditor,
+              embedCss: props.customCSS || MarkdownEditor,
               onChange: (v) => {
                 setPostContent(v);
                 Storage.privateSet(draftKey, v || "");
