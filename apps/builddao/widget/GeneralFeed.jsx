@@ -1,3 +1,9 @@
+const { Feed } = VM.require("devs.near/widget/Module.Feed") || (() => <></>);
+const { Post, Button } = VM.require("buildhub.near/widget/components") || {
+  Post: () => <></>,
+  Button: () => <></>,
+};
+
 const Theme = styled.div`
   --stroke-color: rgba(255, 255, 255, 0.2);
   --bg-1: #0b0c14;
@@ -168,4 +174,83 @@ const feeds = {
   },
 };
 
-return <Theme></Theme>;
+const tab = props.tab || "resolutions";
+
+const [activeFeed, setActiveFeed] = useState(tab);
+const daoTag = "build";
+
+return (
+  <Theme>
+    <Widget
+      src="buildhub.near/widget/components.AsideWithMainContent"
+      props={{
+        sideContent: Object.keys(feeds || {}).map((route) => {
+          const data = feeds[route];
+          return (
+            <Button
+              id={route}
+              variant={activeFeed === route ? "primary" : "outline"}
+              onClick={() => setActiveFeed(route)}
+              className={
+                "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
+              }
+              style={{
+                fontSize: "14px",
+              }}
+            >
+              <i className={`bi ${data.icon} `}></i>
+              {data.label}
+            </Button>
+          );
+        }),
+        mainContent: (
+          <>
+            {context.accountId ? (
+              activeFeed !== "bookmarks" ? (
+                <Widget
+                  src="buildhub.near/widget/Compose"
+                  props={{
+                    feed: feeds[activeFeed],
+                    template: feeds[activeFeed].template,
+                  }}
+                />
+              ) : (
+                <Widget src="buildhub.near/widget/Bookmarks" />
+              )
+            ) : (
+              <Widget
+                src="buildhub.near/widget/components.login-now"
+                props={props}
+              />
+            )}
+            {activeFeed !== "bookmarks" && (
+              <Feed
+                index={[
+                  {
+                    action: "hashtag",
+                    key: feeds[activeFeed].hashtag,
+                    options: {
+                      limit: 10,
+                      order: "desc",
+                    },
+                    cacheOptions: {
+                      ignoreCache: true,
+                    },
+                    required: true,
+                  },
+                ]}
+                Item={(p) => (
+                  <Post
+                    accountId={p.accountId}
+                    blockHeight={p.blockHeight}
+                    noBorder={true}
+                  />
+                )}
+              />
+            )}
+          </>
+        ),
+      }}
+    />
+  </Theme>
+);
