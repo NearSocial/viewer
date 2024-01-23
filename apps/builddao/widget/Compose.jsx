@@ -92,7 +92,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   labels = labels.map((label) => label.toLowerCase());
   labels.push(feed.name.toLowerCase());
 
-  const requiredHashtags = ["build"];
+  const requiredHashtags = props.requiredHashtags || ["build"];
   if (feed.hashtag) requiredHashtags.push(feed.hashtag.toLowerCase());
   requiredHashtags.push(feed.name.toLowerCase());
 
