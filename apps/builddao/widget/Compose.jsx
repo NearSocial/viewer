@@ -157,9 +157,8 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   return Social.set(data, {
     force: true,
     onCommit: () => {
-      // console.log(`Commited ${feed}: #${postId}`);
       setPostContent("");
-      Storage.privateSet(draftKey, draft || props.template);
+      Storage.privateSet(draftKey, props.template || "");
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);

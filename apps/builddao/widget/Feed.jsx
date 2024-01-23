@@ -138,6 +138,7 @@ const feeds = {
     label: "Task",
     icon: "bi-check-lg",
     name: "task",
+    hashtag: "task",
     template: `## TASK TITLE
 (posted via [Build DAO Gateway](https://nearbuilders.org/feed?hashtag=task))
 
@@ -147,6 +148,13 @@ const feeds = {
 **Context or additional information:**
 - [Provide any context or details]
 `,
+  },
+  test: {
+    label: "Test",
+    icon: "bi-tools",
+    name: "test",
+    hashtag: "test",
+    template: ``,
   },
   bookmarks: {
     label: "Bookmarks",
