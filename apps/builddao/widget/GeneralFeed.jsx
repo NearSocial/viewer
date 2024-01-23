@@ -40,6 +40,7 @@ function formatDate(date) {
 
 const daoName = "Build DAO";
 const feedLink = "https://nearbuilders.org/feed";
+const daoTag = "testDao";
 
 const feeds = {
   resolutions: {
@@ -175,9 +176,7 @@ const feeds = {
 };
 
 const tab = props.tab || "resolutions";
-
 const [activeFeed, setActiveFeed] = useState(tab);
-const daoTag = "build";
 
 return (
   <Theme>
@@ -212,6 +211,7 @@ return (
                   props={{
                     feed: feeds[activeFeed],
                     template: feeds[activeFeed].template,
+                    requiredHashtags: [daoTag],
                   }}
                 />
               ) : (
