@@ -25,6 +25,12 @@ const Content = styled.div`
   background: #23242b;
   border-radius: 16px;
   color: white;
+
+  @media screen and (max-width: 768px) {
+    max-width: 90%;
+    min-width: 50%;
+    width: 100%;
+  }
 `;
 
 const NoButton = styled.button`
@@ -46,7 +52,14 @@ const Icon = styled.i`
   font-size: 24px;
 `;
 
-function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
+function DraftModal({
+  children,
+  open,
+  onOpenChange,
+  toggle,
+  toggleContainerProps,
+  editButton,
+}) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>
@@ -56,13 +69,14 @@ function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
         <Overlay>
           <Dialog.Content asChild>
             <Content>
-              <Dialog.Trigger asChild>
-                <CloseContainer>
-                  <Button variant="outline" type="icon">
-                    <Icon className="bi bi-x" />
-                  </Button>
-                </CloseContainer>
-              </Dialog.Trigger>
+              <div className="d-flex align-items-center justify-content-between">
+                <Dialog.Trigger asChild>
+                  <p className="mb-0">
+                    <i className="bi bi-chevron-left"></i> Drafts
+                  </p>
+                </Dialog.Trigger>
+                {editButton}
+              </div>
               {children}
             </Content>
           </Dialog.Content>
@@ -72,4 +86,4 @@ function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
   );
 }
 
-return { Modal };
+return { DraftModal };
