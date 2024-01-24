@@ -1,40 +1,10 @@
-const daoId = "build.sputnik-dao.near";
-const accountId = context.accountId;
-const alreadyJoinedRolesNames = ["community", "council"];
-const searchRange = 100;
+const { checkIsMemberOrPending } = VM.require(
+  "buildhub.near/widget/core.lib.common"
+);
 
-const policy = Near.view(daoId, "get_policy");
+checkIsMemberOrPending || (checkIsMemberOrPending = () => {});
 
-const lastProposalId = Near.view(daoId, "get_last_proposal_id") - 1;
-
-const lastProposals = Near.view(daoId, "get_proposals", {
-  from_index: lastProposalId - searchRange,
-  limit: searchRange,
-}) || [];
-
-const alreadyMadeAProposal =
-  lastProposals.filter((proposal) => {
-    return proposal.proposer === accountId;
-  }).length > 0;
-
-if (policy === null) {
-  return "";
-}
-
-const deposit = policy.proposal_bond;
-
-const group = policy.roles
-  .filter((role) => alreadyJoinedRolesNames.includes(role.name))
-  .map((role) => {
-    return role.kind.Group;
-  });
-
-const accounts = new Set(group[0].concat(group[1]));
-
-const isCommunityOrCouncilMember = accounts.has(accountId);
-
-const canJoin =
-  (accountId && !isCommunityOrCouncilMember )|| (accountId && !alreadyMadeAProposal);
+const isMemberOrPending = checkIsMemberOrPending(context.accountId);
 
 const Button = styled.a`
   width: max-content;
@@ -83,6 +53,10 @@ const Container = styled.div`
 
 return (
   <Container>
-    {canJoin ? <Button href={"/join"}>Join Now</Button> : props.children}
+    {!isMemberOrPending ? (
+      <Button href={"/join"}>Join Now</Button>
+    ) : (
+      props.children
+    )}
   </Container>
 );
