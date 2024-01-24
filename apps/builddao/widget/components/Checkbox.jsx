@@ -7,8 +7,6 @@ const CheckboxLabel = styled.label`
   padding: 12px;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
-  max-width: 100%;
 
   color: #fff;
   font-size: 16px;
@@ -17,17 +15,17 @@ const CheckboxLabel = styled.label`
   line-height: 170%; /* 27.2px */
 `;
 
-function Checkbox({ className, value, onChange, label }) {
+function Checkbox({ value, onChange, label }) {
   return (
-    <div key={`Checkbox-${label ?? "No-label"}`} style={{ maxWidth: "100%" }}>
+    <div key={`Checkbox-${label ?? "No-label"}`}>
       <CheckboxLabel>
         <CheckboxInput type="checkbox" checked={value} onChange={onChange} />
         {value ? (
-          <i style={{ cursor: "pointer" }} className="bi bi-check-square"></i>
+          <i className="bi bi-check-square"></i>
         ) : (
-          <i style={{ cursor: "pointer" }} className="bi bi-square"></i>
+          <i className="bi bi-square"></i>
         )}
-        <span className={className}>{label}</span>
+        {label}
       </CheckboxLabel>
     </div>
   );
