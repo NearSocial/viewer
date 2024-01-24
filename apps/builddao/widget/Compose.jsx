@@ -160,6 +160,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     onCommit: () => {
       setPostContent("");
       Storage.privateSet(draftKey, props.template || "");
+      setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);

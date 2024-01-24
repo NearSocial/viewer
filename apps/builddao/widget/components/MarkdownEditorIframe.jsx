@@ -48,7 +48,7 @@ window.addEventListener("message", (event) => {
       if (editorInstance) {
         editorInstance.updateEditorState(event.data.content);
       }
-      }
+    }
   }
 });
 
