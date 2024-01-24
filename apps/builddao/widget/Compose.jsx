@@ -506,6 +506,32 @@ const setPostToTest = () => {
   setPostUUID(generateUID());
 };
 
+const onSaveDraft = () => {
+  const savedDrafts = Storage.privateGet("savedDrafts") || "";
+  const drafts = JSON.parse(savedDrafts) || [];
+  drafts.push(postContent);
+  Storage.privateSet("savedDrafts", JSON.stringify(drafts));
+};
+
+const renderDrafts = () => {
+  const savedDrafts = Storage.privateGet("savedDrafts") || "";
+  const drafts = JSON.parse(savedDrafts) || [];
+
+  return (
+    <div className="d-flex flex-column gap-3">
+      {drafts.map((draft, i) => (
+        <div
+          className="w-100 border-light-subtle border-bottom pb-1"
+          key={`draft-${i}`}
+        >
+          {draft}
+        </div>
+      ))}
+      {drafts.length === 0 && <p className="text-white">No drafts saved</p>}
+    </div>
+  );
+};
+
 const avatarComponent = useMemo(() => {
   return (
     <div className="d-flex align-items-start gap-2">
@@ -531,10 +557,19 @@ return (
     <DraftModal
       open={showDraftsModal}
       onOpenChange={() => setShowDraftsModal(!showDraftsModal)}
-      children={<div>Test</div>}
+      children={
+        <div>
+          <renderDrafts />
+        </div>
+      }
     />
     <PostCreator>
-      {avatarComponent}
+      <div className="d-flex align-items-center justify-content-between">
+        {avatarComponent}
+        <Button variant="outline" onClick={onSaveDraft}>
+          Save Draft
+        </Button>
+      </div>
       <div style={{ border: "none" }}>
         {view === "editor" ? (
           <TextareaWrapper
