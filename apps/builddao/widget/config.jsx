@@ -184,14 +184,12 @@ return {
       blockHeight: "final",
       init: {
         icon: "bi bi-globe",
-      },
-    },
-    generalFeed: {
-      path: "buildhub.near/widget/GeneralFeed",
-      blockHeight: "final",
-      init: {
-        icon: "bi bi-globe",
         feeds: feeds,
+        daoName: "Build DAO",
+        feedLink: "https://nearbuilders.org/feed",
+        daoTag: "build",
+        pagePath: "/?page=feed",
+        //hashtag: "something"
       },
     },
     inspect: {

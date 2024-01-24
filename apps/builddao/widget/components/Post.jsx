@@ -266,6 +266,7 @@ const contentWidget = (
         raw,
         truncateContent: props.truncateContent,
         noEmbed: props.noEmbed,
+        currentPath: props.currentPath,
       }}
     />
     <RepostWidgetMobile>
