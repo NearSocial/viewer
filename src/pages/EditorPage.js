@@ -451,7 +451,9 @@ export default function EditorPage(props) {
         });
         updateCode(path, formattedCode);
         checkForkDetails(path);
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
     },
     [updateCode]
   );
@@ -461,7 +463,9 @@ export default function EditorPage(props) {
       try {
         const formattedProps = JSON.stringify(JSON.parse(props), null, 2);
         setWidgetProps(formattedProps);
-      } catch (e) {}
+      } catch (e) {
+        console.error(e);
+      }
     },
     [setWidgetProps]
   );

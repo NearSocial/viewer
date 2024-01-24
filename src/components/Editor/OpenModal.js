@@ -45,7 +45,6 @@ export default function OpenModal(props) {
           className="btn btn-outline-success"
           disabled={widgetSrc && widgetSrc.indexOf('/') !== -1}
           onClick={(e) => {
-            console.log('widgetSrc on press of Create New ln 48', widgetSrc);
             e.preventDefault();
             onNew(widgetSrc);
             setWidgetSrc('');
