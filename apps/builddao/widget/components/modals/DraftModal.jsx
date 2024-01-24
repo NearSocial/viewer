@@ -25,6 +25,12 @@ const Content = styled.div`
   background: #23242b;
   border-radius: 16px;
   color: white;
+
+  @media screen and (max-width: 768px) {
+    max-width: 90%;
+    min-width: 50%;
+    width: 100%;
+  }
 `;
 
 const NoButton = styled.button`
@@ -52,6 +58,7 @@ function DraftModal({
   onOpenChange,
   toggle,
   toggleContainerProps,
+  editButton,
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -68,7 +75,7 @@ function DraftModal({
                     <i className="bi bi-chevron-left"></i> Drafts
                   </p>
                 </Dialog.Trigger>
-                <Button variant="outline">Edit</Button>
+                {editButton}
               </div>
               {children}
             </Content>

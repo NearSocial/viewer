@@ -492,6 +492,7 @@ const LabelSelect = styled.div`
   }
 `;
 
+// To handle ifram refresh in order to trigger initialText change
 const [postUUID, setPostUUID] = useState(generateUID());
 const memoizedPostUUID = useMemo(() => postUUID, [postUUID]);
 
@@ -500,37 +501,6 @@ useEffect(() => {
     setPostUUID(generateUID());
   }
 }, [postContent]);
-
-const setPostToTest = () => {
-  textareaInputHandler("Test");
-  setPostUUID(generateUID());
-};
-
-const onSaveDraft = () => {
-  const savedDrafts = Storage.privateGet("savedDrafts") || "";
-  const drafts = JSON.parse(savedDrafts) || [];
-  drafts.push(postContent);
-  Storage.privateSet("savedDrafts", JSON.stringify(drafts));
-};
-
-const renderDrafts = () => {
-  const savedDrafts = Storage.privateGet("savedDrafts") || "";
-  const drafts = JSON.parse(savedDrafts) || [];
-
-  return (
-    <div className="d-flex flex-column gap-3">
-      {drafts.map((draft, i) => (
-        <div
-          className="w-100 border-light-subtle border-bottom pb-1"
-          key={`draft-${i}`}
-        >
-          {draft}
-        </div>
-      ))}
-      {drafts.length === 0 && <p className="text-white">No drafts saved</p>}
-    </div>
-  );
-};
 
 const avatarComponent = useMemo(() => {
   return (
@@ -543,7 +513,111 @@ const avatarComponent = useMemo(() => {
   );
 }, [context.accountId]);
 
+// for drafts
 const [showDraftsModal, setShowDraftsModal] = useState(false);
+const [draftEditMode, setDraftEditMode] = useState(false);
+const [checkedDrafts, setCheckDrafts] = useState([]);
+
+// handle deletion of drafts
+const handleDraftDelete = () => {
+  const savedDrafts = Storage.privateGet("savedDrafts") || "";
+  const drafts = JSON.parse(savedDrafts);
+  const newDrafts = drafts.filter((draft, i) => !checkedDrafts.includes(i));
+  Storage.privateSet("savedDrafts", JSON.stringify(newDrafts));
+  setCheckDrafts([]);
+};
+
+// handle draft save
+const onSaveDraft = () => {
+  const savedDrafts = Storage.privateGet("savedDrafts") || "";
+  const drafts = JSON.parse(savedDrafts) || [];
+  drafts.push(postContent);
+  Storage.privateSet("savedDrafts", JSON.stringify(drafts));
+};
+
+const DraftLabel = styled.span`
+  display: inline-flex;
+  padding: 12px;
+  align-items: center;
+  gap: 8px;
+
+  color: #fff;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 170%; /* 27.2px */
+`;
+
+const DraftItem = ({ draft, checked, isEdit }) => {
+  return (
+    <div
+      style={{
+        cursor: "pointer",
+        borderBottom: "1px solid #414247",
+        color: "#fff",
+      }}
+      className="d-flex align-items-center"
+    >
+      <DraftLabel className="w-100 text-truncate">
+        {isEdit && (
+          <i className={`bi bi-${checked ? "check-square" : "square"}`}></i>
+        )}
+        {draft}
+      </DraftLabel>
+    </div>
+  );
+};
+
+const RenderDrafts = () => {
+  const savedDrafts = Storage.privateGet("savedDrafts") || "";
+  const drafts = JSON.parse(savedDrafts);
+
+  const handleDraftSelect = (draft) => {
+    textareaInputHandler(draft);
+    setPostUUID(generateUID());
+    setShowDraftsModal(false);
+    setView("editor");
+  };
+
+  return (
+    <div className="d-flex flex-column gap-3">
+      {drafts.map((draft, i) => (
+        <div key={`draft-${i}`} onClick={() => handleDraftSelect(draft)}>
+          <DraftItem draft={draft} />
+        </div>
+      ))}
+      {drafts.length === 0 && <p style={{ color: "#fff" }}>No drafts saved</p>}
+    </div>
+  );
+};
+
+const EditDrafts = () => {
+  const savedDrafts = Storage.privateGet("savedDrafts") || "";
+  const drafts = JSON.parse(savedDrafts);
+
+  const handleDraftSelect = (draftIndex) => {
+    if (checkedDrafts.includes(draftIndex)) {
+      setCheckDrafts(checkedDrafts.filter((draft) => draft !== draftIndex));
+    } else {
+      setCheckDrafts([...checkedDrafts, draftIndex]);
+    }
+  };
+
+  return (
+    <div className="d-flex flex-column gap-3">
+      {drafts.map((draft, i) => (
+        <div key={`draft-${i}`} onClick={() => handleDraftSelect(i)}>
+          <DraftItem
+            isEdit={true}
+            draft={draft}
+            checked={checkedDrafts.includes(i)}
+          />
+        </div>
+      ))}
+      {drafts.length === 0 && <p style={{ color: "#fff" }}>No drafts saved</p>}
+    </div>
+  );
+};
 
 return (
   <div className="d-flex flex-column">
@@ -557,11 +631,29 @@ return (
     <DraftModal
       open={showDraftsModal}
       onOpenChange={() => setShowDraftsModal(!showDraftsModal)}
-      children={
-        <div>
-          <renderDrafts />
-        </div>
+      editButton={
+        draftEditMode ? (
+          <div className="d-flex align-items-center gap-3">
+            <Button type="icon" variant="outline" onClick={handleDraftDelete}>
+              <i className="bi bi-trash"></i>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setDraftEditMode(!draftEditMode)}
+            >
+              Done
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="outline"
+            onClick={() => setDraftEditMode(!draftEditMode)}
+          >
+            Edit
+          </Button>
+        )
       }
+      children={<div>{draftEditMode ? <EditDrafts /> : <RenderDrafts />}</div>}
     />
     <PostCreator>
       <div className="d-flex align-items-center justify-content-between">
