@@ -22,7 +22,7 @@ const Content = styled.div`
   max-width: 1000px;
   padding: 24px;
   outline: none !important;
-  background: #23242b;
+  background: #23242B;
   border-radius: 16px;
   color: white;
 `;
@@ -36,14 +36,14 @@ const NoButton = styled.button`
 `;
 
 const CloseContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  padding-bottom: 24px;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding-bottom: 24px;
 `;
 
 const Icon = styled.i`
-  font-size: 24px;
+    font-size: 24px;
 `;
 
 function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {

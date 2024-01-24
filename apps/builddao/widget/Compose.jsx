@@ -1,33 +1,19 @@
-const { Avatar, Button } = VM.require("buildhub.near/widget/components") || {
-  Avatar: () => <></>,
-  Button: () => <></>,
-};
+const { Avatar, Button } = VM.require("buildhub.near/widget/components");
 
-const { DraftModal } =
-  VM.require("buildhub.near/widget/components.modals.DraftModal") ||
-  (() => <></>);
+Avatar = Avatar || (() => <></>);
+Button = Button || (() => <></>);
 
 const draftKey = props.feed.name || "draft";
 const draft = Storage.privateGet(draftKey);
-
-const autocompleteEnabled = true;
 
 if (draft === null) {
   return "";
 }
 
-State.init({
-  image: {},
-});
-
 const [view, setView] = useState("editor");
 const [postContent, setPostContent] = useState("");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
-const [showAccountAutocomplete, setShowAccountAutocomplete] = useState(false);
-const [mentionsArray, setMentionsArray] = useState([]);
-const [mentionInput, setMentionInput] = useState(null);
-const [handler, setHandler] = useState("update");
 
 setPostContent(draft || props.template);
 
@@ -35,6 +21,16 @@ function generateUID() {
   const maxHex = 0xffffffff;
   const randomNumber = Math.floor(Math.random() * maxHex);
   return randomNumber.toString(16).padStart(8, "0");
+}
+
+function tagsFromLabels(labels) {
+  return labels.reduce(
+    (newLabels, label) => ({
+      ...newLabels,
+      [label]: "",
+    }),
+    {}
+  );
 }
 
 const extractMentions = (text) => {
@@ -106,12 +102,6 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     text = checkAndAppendHashtag(text, hashtag);
   });
 
-  const content = {
-    type: "md",
-    image: state.image.cid ? { ipfs_cid: state.image.cid } : undefined,
-    text: text,
-  };
-
   const data = {
     // [feed.name]: {
     //   [postId]: {
@@ -127,7 +117,12 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     //   },
     // },
     post: {
-      main: JSON.stringify(content),
+      main: JSON.stringify({
+        type: "md",
+        text,
+        // tags: tagsFromLabels(labels),
+        // postType: feed.name,
+      }),
     },
     index: {
       post: JSON.stringify({ key: "main", value: { type: "md" } }),
@@ -172,43 +167,6 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   });
 };
 
-function textareaInputHandler(value) {
-  const words = value.split(/\s+/);
-  const allMentiones = words
-    .filter((word) => word.startsWith("@"))
-    .map((mention) => mention.slice(1));
-  const newMentiones = allMentiones.filter(
-    (item) => !mentionsArray.includes(item)
-  );
-  setMentionInput(newMentiones?.[0] ?? "");
-  setMentionsArray(allMentiones);
-  setShowAccountAutocomplete(newMentiones?.length > 0);
-  setPostContent(value);
-  setHandler("update");
-  Storage.privateSet(draftKey, value || "");
-}
-
-function autoCompleteAccountId(id) {
-  let currentIndex = 0;
-  const updatedDescription = postContent.replace(
-    /(?:^|\s)(@[^\s]*)/g,
-    (match) => {
-      if (currentIndex === mentionsArray.indexOf(mentionInput)) {
-        currentIndex++;
-        return ` @${id}`;
-      } else {
-        currentIndex++;
-        return match;
-      }
-    }
-  );
-  setPostContent(updatedDescription);
-  setShowAccountAutocomplete(false);
-  setMentionInput(null);
-  setHandler("autocompleteSelected");
-  Storage.privateSet(draftKey, updatedDescription || "");
-}
-
 const PostCreator = styled.div`
   display: flex;
   flex-direction: column;
@@ -219,51 +177,6 @@ const PostCreator = styled.div`
   border-radius: 12px;
 
   margin-bottom: 1rem;
-
-  .upload-image-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f1f3f5;
-    color: #11181c;
-    border-radius: 40px;
-    height: 40px;
-    min-width: 40px;
-    font-size: 0;
-    border: none;
-    cursor: pointer;
-    transition: background 200ms, opacity 200ms;
-
-    &::before {
-      font-size: 16px;
-    }
-
-    &:hover,
-    &:focus {
-      background: #d7dbde;
-      outline: none;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    span {
-      margin-left: 12px;
-    }
-  }
-
-  .d-inline-block {
-    display: flex !important;
-    gap: 12px;
-    margin: 0 !important;
-
-    .overflow-hidden {
-      width: 40px !important;
-      height: 40px !important;
-    }
-  }
 `;
 
 const TextareaWrapper = styled.div`
@@ -492,16 +405,6 @@ const LabelSelect = styled.div`
   }
 `;
 
-// To handle ifram refresh in order to trigger initialText change
-const [postUUID, setPostUUID] = useState(generateUID());
-const memoizedPostUUID = useMemo(() => postUUID, [postUUID]);
-
-useEffect(() => {
-  if (postContent === "") {
-    setPostUUID(generateUID());
-  }
-}, [postContent]);
-
 const avatarComponent = useMemo(() => {
   return (
     <div className="d-flex align-items-start gap-2">
@@ -513,236 +416,63 @@ const avatarComponent = useMemo(() => {
   );
 }, [context.accountId]);
 
-// for drafts
-const [showDraftsModal, setShowDraftsModal] = useState(false);
-const [draftEditMode, setDraftEditMode] = useState(false);
-const [checkedDrafts, setCheckDrafts] = useState([]);
-
-// handle deletion of drafts
-const handleDraftDelete = () => {
-  const savedDrafts = Storage.privateGet("savedDrafts") || "";
-  const drafts = JSON.parse(savedDrafts);
-  const newDrafts = drafts.filter((draft, i) => !checkedDrafts.includes(i));
-  Storage.privateSet("savedDrafts", JSON.stringify(newDrafts));
-  setCheckDrafts([]);
-};
-
-// handle draft save
-const onSaveDraft = () => {
-  const savedDrafts = Storage.privateGet("savedDrafts") || "";
-  const drafts = JSON.parse(savedDrafts) || [];
-  drafts.push(postContent);
-  Storage.privateSet("savedDrafts", JSON.stringify(drafts));
-};
-
-const DraftLabel = styled.span`
-  display: inline-flex;
-  padding: 12px;
-  align-items: center;
-  gap: 8px;
-
-  color: #fff;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 170%; /* 27.2px */
-`;
-
-const DraftItem = ({ draft, checked, isEdit }) => {
-  return (
-    <div
-      style={{
-        cursor: "pointer",
-        borderBottom: "1px solid #414247",
-        color: "#fff",
-      }}
-      className="d-flex align-items-center"
-    >
-      <DraftLabel className="w-100 text-truncate">
-        {isEdit && (
-          <i className={`bi bi-${checked ? "check-square" : "square"}`}></i>
-        )}
-        {draft}
-      </DraftLabel>
-    </div>
-  );
-};
-
-const RenderDrafts = () => {
-  const savedDrafts = Storage.privateGet("savedDrafts") || "";
-  const drafts = JSON.parse(savedDrafts);
-
-  const handleDraftSelect = (draft) => {
-    textareaInputHandler(draft);
-    setPostUUID(generateUID());
-    setShowDraftsModal(false);
-    setView("editor");
-  };
-
-  return (
-    <div className="d-flex flex-column gap-3">
-      {drafts.map((draft, i) => (
-        <div key={`draft-${i}`} onClick={() => handleDraftSelect(draft)}>
-          <DraftItem draft={draft} />
-        </div>
-      ))}
-      {drafts.length === 0 && <p style={{ color: "#fff" }}>No drafts saved</p>}
-    </div>
-  );
-};
-
-const EditDrafts = () => {
-  const savedDrafts = Storage.privateGet("savedDrafts") || "";
-  const drafts = JSON.parse(savedDrafts);
-
-  const handleDraftSelect = (draftIndex) => {
-    if (checkedDrafts.includes(draftIndex)) {
-      setCheckDrafts(checkedDrafts.filter((draft) => draft !== draftIndex));
-    } else {
-      setCheckDrafts([...checkedDrafts, draftIndex]);
-    }
-  };
-
-  return (
-    <div className="d-flex flex-column gap-3">
-      {drafts.map((draft, i) => (
-        <div key={`draft-${i}`} onClick={() => handleDraftSelect(i)}>
-          <DraftItem
-            isEdit={true}
-            draft={draft}
-            checked={checkedDrafts.includes(i)}
-          />
-        </div>
-      ))}
-      {drafts.length === 0 && <p style={{ color: "#fff" }}>No drafts saved</p>}
-    </div>
-  );
-};
-
 return (
-  <div className="d-flex flex-column">
-    <Button
-      onClick={() => setShowDraftsModal(!showDraftsModal)}
-      variant="outline"
-      className="align-self-stretch mb-3"
-    >
-      Continue Drafts <i className="bi bi-arrow-right"></i>
-    </Button>
-    <DraftModal
-      open={showDraftsModal}
-      onOpenChange={() => setShowDraftsModal(!showDraftsModal)}
-      editButton={
-        draftEditMode ? (
-          <div className="d-flex align-items-center gap-3">
-            <Button type="icon" variant="outline" onClick={handleDraftDelete}>
-              <i className="bi bi-trash"></i>
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setDraftEditMode(!draftEditMode)}
-            >
-              Done
-            </Button>
-          </div>
-        ) : (
-          <Button
-            variant="outline"
-            onClick={() => setDraftEditMode(!draftEditMode)}
-          >
-            Edit
-          </Button>
-        )
-      }
-      children={<div>{draftEditMode ? <EditDrafts /> : <RenderDrafts />}</div>}
-    />
-    <PostCreator>
-      <div className="d-flex align-items-center justify-content-between">
-        {avatarComponent}
-        <Button variant="outline" onClick={onSaveDraft}>
-          Save Draft
-        </Button>
-      </div>
-      <div style={{ border: "none" }}>
-        {view === "editor" ? (
-          <TextareaWrapper
-            className="markdown-editor"
-            data-value={postContent || ""}
-            key={`${props.feed.name}-${memoizedPostUUID}`}
-          >
-            <Widget
-              src={"buildhub.near/widget/components.MarkdownEditorIframe"}
-              props={{
-                initialText: postContent,
-                data: { handler: handler, content: postContent },
-                onChange: (content) => {
-                  textareaInputHandler(content);
-                },
-                embedCss: MarkdownEditor,
-              }}
-            />
-            {autocompleteEnabled && showAccountAutocomplete && (
-              <Widget
-                src="buildhub.near/widget/components.AccountAutocomplete"
-                props={{
-                  term: mentionInput,
-                  onSelect: autoCompleteAccountId,
-                  onClose: () => setShowAccountAutocomplete(false),
-                }}
-              />
-            )}
-          </TextareaWrapper>
-        ) : (
-          <MarkdownPreview>
-            <Widget
-              src="devhub.near/widget/devhub.components.molecule.MarkdownViewer"
-              props={{ text: postContent }}
-            />
-            {state.image.cid && (
-              <Widget
-                src="mob.near/widget/Image"
-                props={{
-                  image: state.image.cid
-                    ? { ipfs_cid: state.image.cid }
-                    : undefined,
-                }}
-              />
-            )}
-          </MarkdownPreview>
-        )}
-      </div>
-
-      <div className="d-flex gap-3 align-self-end">
-        {view === "editor" && (
-          <IpfsImageUpload
-            image={state.image}
-            className="upload-image-button bi bi-image"
+  <PostCreator>
+    {avatarComponent}
+    <div style={{ border: "none" }}>
+      {view === "editor" ? (
+        <TextareaWrapper
+          className="markdown-editor"
+          data-value={postContent || ""}
+          key={props.feed.name}
+        >
+          <Widget
+            src="mob.near/widget/MarkdownEditorIframe"
+            props={{
+              initialText: postContent,
+              embedCss: MarkdownEditor,
+              onChange: (v) => {
+                setPostContent(v);
+                Storage.privateSet(draftKey, v || "");
+              },
+            }}
           />
+        </TextareaWrapper>
+      ) : (
+        <MarkdownPreview>
+          <Widget
+            src="devhub.near/widget/devhub.components.molecule.MarkdownViewer"
+            props={{ text: postContent }}
+          />
+        </MarkdownPreview>
+      )}
+    </div>
+
+    <div className="d-flex gap-3 align-self-end">
+      <Button
+        variant="outline"
+        onClick={() => setView(view === "editor" ? "preview" : "editor")}
+        style={{ fontSize: 14 }}
+      >
+        {view === "editor" ? (
+          <>
+            Preview <i className="bi bi-eye"></i>
+          </>
+        ) : (
+          <>
+            Edit <i className="bi bi-pencil-square"></i>
+          </>
         )}
-        <Button
-          variant="outline"
-          onClick={() => setView(view === "editor" ? "preview" : "editor")}
-          style={{ fontSize: 14 }}
-        >
-          {view === "editor" ? (
-            <>
-              Preview <i className="bi bi-eye"></i>
-            </>
-          ) : (
-            <>
-              Edit <i className="bi bi-pencil-square"></i>
-            </>
-          )}
-        </Button>
-        <Button
-          variant="primary"
-          style={{ fontSize: 14 }}
-          onClick={() =>
-            postToCustomFeed({ feed: props.feed, text: postContent, labels })
-          }
-        >
-          Post {props.feed.name}
-        </Button>
-      </div>
-    </PostCreator>
-  </div>
+      </Button>
+      <Button
+        variant="primary"
+        style={{ fontSize: 14 }}
+        onClick={() =>
+          postToCustomFeed({ feed: props.feed, text: postContent, labels })
+        }
+      >
+        Post {props.feed.name}
+      </Button>
+    </div>
+  </PostCreator>
 );
