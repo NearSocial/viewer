@@ -3,6 +3,10 @@ const { Avatar, Button } = VM.require("buildhub.near/widget/components") || {
   Button: () => <></>,
 };
 
+const { DraftModal } =
+  VM.require("buildhub.near/widget/components.modals.DraftModal") ||
+  (() => <></>);
+
 const draftKey = props.feed.name || "draft";
 const draft = Storage.privateGet(draftKey);
 
@@ -488,6 +492,20 @@ const LabelSelect = styled.div`
   }
 `;
 
+const [postUUID, setPostUUID] = useState(generateUID());
+const memoizedPostUUID = useMemo(() => postUUID, [postUUID]);
+
+useEffect(() => {
+  if (postContent === "") {
+    setPostUUID(generateUID());
+  }
+}, [postContent]);
+
+const setPostToTest = () => {
+  textareaInputHandler("Test");
+  setPostUUID(generateUID());
+};
+
 const avatarComponent = useMemo(() => {
   return (
     <div className="d-flex align-items-start gap-2">
@@ -499,90 +517,105 @@ const avatarComponent = useMemo(() => {
   );
 }, [context.accountId]);
 
-return (
-  <PostCreator>
-    {avatarComponent}
-    <div style={{ border: "none" }}>
-      {view === "editor" ? (
-        <TextareaWrapper
-          className="markdown-editor"
-          data-value={postContent || ""}
-          key={props.feed.name}
-        >
-          <Widget
-            src={"buildhub.near/widget/components.MarkdownEditorIframe"}
-            props={{
-              initialText: postContent,
-              data: { handler: handler, content: postContent },
-              onChange: (content) => {
-                textareaInputHandler(content);
-              },
-              embedCss: MarkdownEditor,
-            }}
-          />
-          {autocompleteEnabled && showAccountAutocomplete && (
-            <Widget
-              src="buildhub.near/widget/components.AccountAutocomplete"
-              props={{
-                term: mentionInput,
-                onSelect: autoCompleteAccountId,
-                onClose: () => setShowAccountAutocomplete(false),
-              }}
-            />
-          )}
-        </TextareaWrapper>
-      ) : (
-        <MarkdownPreview>
-          <Widget
-            src="devhub.near/widget/devhub.components.molecule.MarkdownViewer"
-            props={{ text: postContent }}
-          />
-          {state.image.cid && (
-            <Widget
-              src="mob.near/widget/Image"
-              props={{
-                image: state.image.cid
-                  ? { ipfs_cid: state.image.cid }
-                  : undefined,
-              }}
-            />
-          )}
-        </MarkdownPreview>
-      )}
-    </div>
+const [showDraftsModal, setShowDraftsModal] = useState(false);
 
-    <div className="d-flex gap-3 align-self-end">
-      {view === "editor" && (
-        <IpfsImageUpload
-          image={state.image}
-          className="upload-image-button bi bi-image"
-        />
-      )}
-      <Button
-        variant="outline"
-        onClick={() => setView(view === "editor" ? "preview" : "editor")}
-        style={{ fontSize: 14 }}
-      >
+return (
+  <div className="d-flex flex-column">
+    <Button
+      onClick={() => setShowDraftsModal(!showDraftsModal)}
+      variant="outline"
+      className="align-self-stretch mb-3"
+    >
+      Continue Drafts <i className="bi bi-arrow-right"></i>
+    </Button>
+    <DraftModal
+      open={showDraftsModal}
+      onOpenChange={() => setShowDraftsModal(!showDraftsModal)}
+      children={<div>Test</div>}
+    />
+    <PostCreator>
+      {avatarComponent}
+      <div style={{ border: "none" }}>
         {view === "editor" ? (
-          <>
-            Preview <i className="bi bi-eye"></i>
-          </>
+          <TextareaWrapper
+            className="markdown-editor"
+            data-value={postContent || ""}
+            key={`${props.feed.name}-${memoizedPostUUID}`}
+          >
+            <Widget
+              src={"buildhub.near/widget/components.MarkdownEditorIframe"}
+              props={{
+                initialText: postContent,
+                data: { handler: handler, content: postContent },
+                onChange: (content) => {
+                  textareaInputHandler(content);
+                },
+                embedCss: MarkdownEditor,
+              }}
+            />
+            {autocompleteEnabled && showAccountAutocomplete && (
+              <Widget
+                src="buildhub.near/widget/components.AccountAutocomplete"
+                props={{
+                  term: mentionInput,
+                  onSelect: autoCompleteAccountId,
+                  onClose: () => setShowAccountAutocomplete(false),
+                }}
+              />
+            )}
+          </TextareaWrapper>
         ) : (
-          <>
-            Edit <i className="bi bi-pencil-square"></i>
-          </>
+          <MarkdownPreview>
+            <Widget
+              src="devhub.near/widget/devhub.components.molecule.MarkdownViewer"
+              props={{ text: postContent }}
+            />
+            {state.image.cid && (
+              <Widget
+                src="mob.near/widget/Image"
+                props={{
+                  image: state.image.cid
+                    ? { ipfs_cid: state.image.cid }
+                    : undefined,
+                }}
+              />
+            )}
+          </MarkdownPreview>
         )}
-      </Button>
-      <Button
-        disabled={postContent === "" || postContent === props.template}
-        variant="primary"
-        style={{ fontSize: 14 }}
-        onClick={() =>
-          postToCustomFeed({ feed: props.feed, text: postContent, labels })
-        }
-      >
-        Post {props.feed.name}
-      </Button>
-    </div>
-  </PostCreator>
+      </div>
+
+      <div className="d-flex gap-3 align-self-end">
+        {view === "editor" && (
+          <IpfsImageUpload
+            image={state.image}
+            className="upload-image-button bi bi-image"
+          />
+        )}
+        <Button
+          variant="outline"
+          onClick={() => setView(view === "editor" ? "preview" : "editor")}
+          style={{ fontSize: 14 }}
+        >
+          {view === "editor" ? (
+            <>
+              Preview <i className="bi bi-eye"></i>
+            </>
+          ) : (
+            <>
+              Edit <i className="bi bi-pencil-square"></i>
+            </>
+          )}
+        </Button>
+        <Button
+          variant="primary"
+          style={{ fontSize: 14 }}
+          onClick={() =>
+            postToCustomFeed({ feed: props.feed, text: postContent, labels })
+          }
+        >
+          Post {props.feed.name}
+        </Button>
+      </div>
+    </PostCreator>
+  </div>
 );
