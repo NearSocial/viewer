@@ -42,6 +42,7 @@ export function FileTab(props) {
   const accountId = useAccountId();
   const [localCode, setLocalCode] = useState(null);
   const [chainCode, setChainCode] = useState(null);
+  const [tabWidgetSrc, setTabWidgetSrc] = useState(null);
   const [saved, setSaved] = useState(false);
 
   const jp = JSON.stringify(p);

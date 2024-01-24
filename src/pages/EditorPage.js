@@ -24,8 +24,6 @@ import {
 import { useHashRouterLegacy } from '../hooks/useHashRouterLegacy';
 import vmTypesDeclaration from 'raw-loader!near-social-vm-types';
 import styled from 'styled-components';
-import { get } from 'collections/shim-function';
-import { set } from 'collections/shim-object';
 
 const LsKey = 'social.near:v01:';
 const EditorLayoutKey = LsKey + 'editorLayout:';
@@ -49,6 +47,7 @@ const Layout = {
 export default function EditorPage(props) {
   useHashRouterLegacy();
   const { widgetSrc } = useParams();
+  const [localWidgetSrc, setLocalWidgetSrc] = useState(widgetSrc);
   const history = useHistory();
   const setWidgetSrc = props.setWidgetSrc;
 
@@ -104,14 +103,11 @@ export default function EditorPage(props) {
 
   const getForkDetails = async (path) => {
     try {
-      if (
-        widgetSrc &&
-        !props?.widgetSrc?.view?.startsWith(`${props.signedAccountId}/widget/`)
-      ) {
+      if (localWidgetSrc) {
         const res = await fetch(`${near.config.apiUrl}/keys`, {
           method: 'POST',
           body: JSON.stringify({
-            keys: [widgetSrc],
+            keys: [localWidgetSrc],
             options: { return_type: 'BlockHeight' },
           }),
           headers: {
@@ -121,14 +117,9 @@ export default function EditorPage(props) {
 
         const sourceWidget = await res.json();
 
-        console.log('made it to ln 122 sourceWidget', sourceWidget);
-
-        const srcArr = widgetSrc.split('/');
+        const srcArr = localWidgetSrc.split('/');
         const forkOf =
-          widgetSrc + '@' + sourceWidget[srcArr[0]][srcArr[1]][srcArr[2]];
-
-        console.log('made it to ln 128 forkOf', forkOf);
-        console.log('made it to ln 129 path', path);
+          localWidgetSrc + '@' + sourceWidget[srcArr[0]][srcArr[1]][srcArr[2]];
 
         storeForkDetails(path, forkOf);
         return;
@@ -138,54 +129,35 @@ export default function EditorPage(props) {
     }
   };
 
-  const checkForForkDetails = useCallback(
-    async (path) => {
-      try {
-        if (path.unnamed) {
-          try {
-            const response = await cache.localStorageSet(
-              StorageDomain,
-              {
-                path,
-                type: StorageType.forkDetails,
-              },
-              {}
-            );
-          } catch {
-            console.error(e);
-          }
-          return;
-        }
-        console.log('here is the path ln 141', path);
-        console.log('cache', cache);
-        const response = await cache.asyncLocalStorageGet(StorageDomain, {
-          path,
-          type: StorageType.forkDetails,
-        });
-        console.log('here is the response ln 147', response);
-        if (response) {
-          setForkDetails(response);
-          return response;
-        } else if (widgetSrc) {
-          console.log('getting fork details with this widgetSrc:', widgetSrc);
-          getForkDetails(path);
-        }
-      } catch (e) {
-        console.error(e);
+  const checkForkDetails = async (path) => {
+    try {
+      if (path.unnamed) return;
+      const response = await cache.asyncLocalStorageGet(StorageDomain, {
+        path,
+        type: StorageType.forkDetails,
+      });
+
+      if (response?.fork_of) {
+        setForkDetails(response);
+        return response;
+      } else if (localWidgetSrc && JSON.stringify(response) !== '{}') {
+        getForkDetails(path);
       }
-    },
-    [setForkDetails, getForkDetails]
-  );
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const storeForkDetails = useCallback(
     async (path, forkOf) => {
       try {
-        const forkDetails = {
+        let forkDetails = {
           fork_of: forkOf,
           time: Date.now(),
         };
-        console.log('here is the path ln 171', path);
-        console.log('here is the forkDetails ln 172', forkDetails);
+        // differentiate new components from forked components
+        forkOf === null ? (forkDetails = {}) : forkDetails;
+
         await cache.localStorageSet(
           StorageDomain,
           {
@@ -204,23 +176,8 @@ export default function EditorPage(props) {
     [setForkDetails]
   );
 
-  const deleteCache = useCallback(async () => {
-    try {
-      const response = await cache.localStorageSet(
-        StorageDomain,
-        {
-          path,
-          type: StorageType.forkDetails,
-        },
-        {}
-      );
-    } catch {
-      console.error(e);
-    }
-  }, [path]);
-
   useEffect(() => {
-    if (forkDetails) {
+    if (forkDetails?.fork_of) {
       setMetadata({
         ...metadata,
         fork_of: forkDetails.fork_of,
@@ -228,34 +185,29 @@ export default function EditorPage(props) {
     }
   }, [forkDetails]);
 
+  // prevent metadata from being overwritten by empty object
   useEffect(() => {
-    if (path || (widgetSrc && path)) {
-      console.log('running checkForForkDetails ln 218 path:', path);
-      console.log('running checkForForkDetails ln 219 widgetSrc:', widgetSrc);
-      checkForForkDetails(path);
+    if (JSON.stringify(metadata) === '{}') {
+      setMetadata(undefined);
     }
-  }, [widgetSrc, path]);
+  }, [metadata]);
+
+  useEffect(() => {
+    if (path || (localWidgetSrc && path)) {
+      checkForkDetails(path);
+    }
+  }, [localWidgetSrc, path]);
 
   useEffect(() => {
     setWidgetSrc({
       edit: null,
-      view: widgetSrc,
+      view: localWidgetSrc,
     });
 
-    if (widgetSrc) {
-      checkForForkDetails(widgetSrc);
-      /*
-       1. check if there are any forkDetails in localStorage
-        -- if there are, grab them and set them to metadata
-       2. if there are not grab ForkDetails with request
-       3. set metadata to forkDetails
-       4. store forkDetails in localStorage 
-      */
+    if (localWidgetSrc) {
+      checkForkDetails(localWidgetSrc);
     }
-
-    console.log('widgetSrc', widgetSrc);
-    console.log('setWidgetSrc', setWidgetSrc);
-  }, [widgetSrc, setWidgetSrc]);
+  }, [localWidgetSrc, widgetSrc, setWidgetSrc]);
 
   const updateCode = useCallback(
     (path, code) => {
@@ -333,7 +285,7 @@ export default function EditorPage(props) {
       setRenderCode(null);
       if (code !== undefined) {
         updateCode(path, code);
-        checkForForkDetails(path);
+        checkForkDetails(path);
       } else {
         setLoading(true);
         cache
@@ -343,7 +295,8 @@ export default function EditorPage(props) {
           })
           .then(({ code }) => {
             updateCode(path, code);
-            checkForForkDetails(path);
+
+            checkForkDetails(path);
           })
           .finally(() => {
             setLoading(false);
@@ -368,7 +321,9 @@ export default function EditorPage(props) {
         nameOrPath.indexOf('/') >= 0
           ? nameOrPath
           : `${accountId}/widget/${nameOrPath}`;
-      console.log('loaded widgetSrc ln 221', widgetSrc);
+
+      setLocalWidgetSrc(widgetSrc);
+
       const c = () => {
         const code = cache.socialGet(
           near,
@@ -380,14 +335,14 @@ export default function EditorPage(props) {
         );
         if (code) {
           const name = widgetSrc.split('/').slice(2).join('/');
-          console.log('here is the name ln 233', name);
+
           openFile(toPath(Filetype.Widget, widgetSrc), code);
         }
       };
 
       c();
     },
-    [accountId, openFile, toPath, near, cache]
+    [accountId, openFile, toPath, near, cache, localWidgetSrc]
   );
 
   const generateNewName = useCallback(
@@ -409,10 +364,12 @@ export default function EditorPage(props) {
     (type) => {
       setForkDetails(undefined);
       setMetadata(undefined);
+      setLocalWidgetSrc('');
       const path = generateNewName(type);
+
       openFile(path, DefaultEditorCode);
     },
-    [generateNewName, openFile, forkDetails, metadata]
+    [generateNewName, openFile]
   );
 
   const renameFile = useCallback(
@@ -423,7 +380,7 @@ export default function EditorPage(props) {
         const jPath = JSON.stringify(path);
         forkDetails?.fork_of
           ? await storeForkDetails(newPath, forkDetails.fork_of)
-          : null;
+          : storeForkDetails(newPath, null);
         setFiles((files) => {
           const newFiles = files.filter(
             (file) => JSON.stringify(file) !== jNewPath
@@ -450,12 +407,18 @@ export default function EditorPage(props) {
     cache
       .asyncLocalStorageGet(StorageDomain, { type: StorageType.Files })
       .then((value) => {
-        const { files, lastPath, forkDetails } = value || {};
+        const { files, lastPath } = value || {};
         setFiles(files || []);
         setLastPath(lastPath);
-        if (forkDetails) {
-          setMetadata({ ...metadata, forkDetails });
-        }
+      });
+  }, [cache]);
+
+  useEffect(() => {
+    cache
+      .asyncLocalStorageGet(StorageDomain, { type: StorageType.forkDetails })
+      .then((value) => {})
+      .catch((e) => {
+        console.error(e);
       });
   }, [cache]);
 
@@ -487,10 +450,8 @@ export default function EditorPage(props) {
           plugins: [parserBabel],
         });
         updateCode(path, formattedCode);
-        checkForForkDetails(path);
-      } catch (e) {
-        console.log(e);
-      }
+        checkForkDetails(path);
+      } catch (e) {}
     },
     [updateCode]
   );
@@ -500,9 +461,7 @@ export default function EditorPage(props) {
       try {
         const formattedProps = JSON.stringify(JSON.parse(props), null, 2);
         setWidgetProps(formattedProps);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
     },
     [setWidgetProps]
   );
@@ -649,6 +608,10 @@ export default function EditorPage(props) {
                   files,
                   code: jp === jpath ? code : undefined,
                   updateSaved,
+                  setForkDetails,
+                  setMetadata,
+                  setWidgetSrc,
+                  setLocalWidgetSrc,
                 }}
               />
             );
@@ -810,7 +773,7 @@ export default function EditorPage(props) {
                       defaultLanguage="javascript"
                       onChange={(code) => {
                         updateCode(path, code);
-                        checkForForkDetails(path);
+                        checkForkDetails(path);
                       }}
                       wrapperProps={{
                         onBlur: () => reformat(path, code),
@@ -857,6 +820,7 @@ export default function EditorPage(props) {
                     >
                       Delete Cache
                     </button>
+
                     <div className="dropdown">
                       <button
                         className="btn btn-outline-secondary flex-shrink-1"
