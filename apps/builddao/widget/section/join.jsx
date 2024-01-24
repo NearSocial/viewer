@@ -1,3 +1,11 @@
+const { checkIsMemberOrPending } = VM.require(
+  "buildhub.near/widget/core.lib.common"
+);
+
+checkIsMemberOrPending || (checkIsMemberOrPending = () => {});
+
+const isMemberOrPending = checkIsMemberOrPending(context.accountId);
+
 const SectionPill = ({ title, icon }) => {
   const Pill = styled.div`
     display: flex;
@@ -356,7 +364,7 @@ return (
           <br />
           3. Fulfill contribution requirements
         </p>
-        <a href="/join">Join Now</a>
+        {!isMemberOrPending && <a href="/join">Join Now</a>}
       </CTAContent>
     </CTAContainer>
   </JoinContainer>
