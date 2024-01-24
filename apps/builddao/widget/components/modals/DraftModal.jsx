@@ -46,7 +46,13 @@ const Icon = styled.i`
   font-size: 24px;
 `;
 
-function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
+function DraftModal({
+  children,
+  open,
+  onOpenChange,
+  toggle,
+  toggleContainerProps,
+}) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>
@@ -56,13 +62,14 @@ function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
         <Overlay>
           <Dialog.Content asChild>
             <Content>
-              <Dialog.Trigger asChild>
-                <CloseContainer>
-                  <Button variant="outline" type="icon">
-                    <Icon className="bi bi-x" />
-                  </Button>
-                </CloseContainer>
-              </Dialog.Trigger>
+              <div className="d-flex align-items-center justify-content-between">
+                <Dialog.Trigger asChild>
+                  <p className="mb-0">
+                    <i className="bi bi-chevron-left"></i> Drafts
+                  </p>
+                </Dialog.Trigger>
+                <Button variant="outline">Edit</Button>
+              </div>
               {children}
             </Content>
           </Dialog.Content>
@@ -72,4 +79,4 @@ function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
   );
 }
 
-return { Modal };
+return { DraftModal };
