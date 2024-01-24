@@ -158,7 +158,9 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   return Social.set(data, {
     force: true,
     onCommit: () => {
-      // console.log(`Commited ${feed}: #${postId}`);
+      setPostContent("");
+      Storage.privateSet(draftKey, props.template || "");
+      setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
@@ -572,6 +574,7 @@ return (
         )}
       </Button>
       <Button
+        disabled={postContent === "" || postContent === props.template}
         variant="primary"
         style={{ fontSize: 14 }}
         onClick={() =>
