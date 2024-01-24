@@ -814,12 +814,6 @@ export default function EditorPage(props) {
                         Open Component
                       </a>
                     )}
-                    <button
-                      className="btn btn-outline-dark"
-                      onClick={deleteCache}
-                    >
-                      Delete Cache
-                    </button>
 
                     <div className="dropdown">
                       <button
