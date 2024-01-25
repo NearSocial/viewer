@@ -140,6 +140,8 @@ export default function EditorPage(props) {
       if (response?.fork_of) {
         setForkDetails(response);
         return response;
+      } else if (JSON.stringify(response) === "{}") {
+        setForkDetails(undefined);
       } else if (localWidgetSrc && JSON.stringify(response) !== "{}") {
         getForkDetails(path);
       }
@@ -342,7 +344,7 @@ export default function EditorPage(props) {
 
       c();
     },
-    [accountId, openFile, toPath, near, cache, localWidgetSrc]
+    [accountId, openFile, toPath, near, cache, setLocalWidgetSrc]
   );
 
   const generateNewName = useCallback(
@@ -378,7 +380,7 @@ export default function EditorPage(props) {
         const newPath = toPath(path.type, newName);
         const jNewPath = JSON.stringify(newPath);
         const jPath = JSON.stringify(path);
-        forkDetails?.fork_of
+        forkDetails?.fork_of && !path.name.includes("New-Draft")
           ? await storeForkDetails(newPath, forkDetails.fork_of)
           : storeForkDetails(newPath, null);
         setFiles((files) => {
