@@ -119,6 +119,7 @@ const feeds = {
     label: "Task",
     icon: "bi-check-lg",
     name: "task",
+    hashtag: "task",
     template: `## TASK TITLE
     (posted via [${daoName} Gateway](${feedLink}?tab=task))
     
