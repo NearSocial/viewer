@@ -2,10 +2,10 @@ const { page, layout, loading, ...passProps } = props;
 
 const { routes, theme } = VM.require("buildhub.near/widget/config") ?? {
   routes: {},
-  theme: "background-color: red;"
+  theme: "background-color: red;",
 };
 
-const { AppLayout } = VM.require("every.near/widget/layout") || {
+const { AppLayout } = VM.require("buildhub.near/widget/template.layout") || {
   AppLayout: () => <>Layout loading...</>,
 };
 
@@ -16,9 +16,7 @@ const Root = styled.div`
     color: inherit;
   }
 
-  ${theme}
-
-  // can come from config
+  ${theme}// can come from config
 `;
 
 const [activeRoute, setActiveRoute] = useState(page);
@@ -27,7 +25,8 @@ useEffect(() => {
   setActiveRoute(page);
 }, [page]);
 
-function Router({ active, routes }) { // this may be converted to a module at devs.near/widget/Router
+function Router({ active, routes }) {
+  // this may be converted to a module at devs.near/widget/Router
   const routeParts = active.split(".");
 
   let currentRoute = routes;
@@ -60,13 +59,12 @@ function Router({ active, routes }) { // this may be converted to a module at de
 
 const Container = styled.div`
   display: flex;
-  height: 100vh;
+  height: 100%;
 `;
 
 const Content = styled.div`
   width: 100%;
   height: 100%;
-  overflow: scroll;
 `;
 
 return (

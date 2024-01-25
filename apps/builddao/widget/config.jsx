@@ -176,14 +176,13 @@ return {
       blockHeight: "final",
       init: {
         name: "Home",
-        icon: "bi bi-house",
       },
     },
     feed: {
       path: "buildhub.near/widget/page.feed",
       blockHeight: "final",
       init: {
-        icon: "bi bi-globe",
+        name: "Feed",
         feeds: feeds,
         daoName: "Build DAO",
         feedLink: "https://nearbuilders.org/feed",
