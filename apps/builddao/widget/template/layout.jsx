@@ -55,7 +55,7 @@ const AppHeader = ({ page, routes }) => (
           }
           return (
             <NavLink to={k}>
-              <Button key={k} className={`${page === k ? "active" : ""} `}>
+              <Button key={k} variant={page === k && "primary"}>
                 {route.init.icon && <i className={route.init.icon}></i>}
                 {route.init.name}
               </Button>
