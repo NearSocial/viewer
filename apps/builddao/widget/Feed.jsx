@@ -39,6 +39,7 @@ return (
                 fontSize: "14px",
                 textDecoration: "none",
                 cursor: "pointer",
+                padding: "8px 12px",
               }}
             >
               <i className={`bi ${data.icon} `}></i>
@@ -48,26 +49,27 @@ return (
         }),
         mainContent: (
           <>
-            {context.accountId ? (
-              activeFeed !== "bookmarks" ? (
-                <Widget
-                  src="buildhub.near/widget/Compose"
-                  props={{
-                    feed: feeds[activeFeed],
-                    template: feeds[activeFeed].template,
-                    requiredHashtags: [daoTag],
-                  }}
-                />
-              ) : (
-                <Widget src="buildhub.near/widget/Bookmarks" />
-              )
+            {feeds[activeFeed].hideCompose ? null : context.accountId ? (
+              <Widget
+                src="buildhub.near/widget/Compose"
+                props={{
+                  feed: feeds[activeFeed],
+                  template: feeds[activeFeed].template,
+                  requiredHashtags: [daoTag],
+                }}
+              />
             ) : (
               <Widget
                 src="buildhub.near/widget/components.login-now"
                 props={props}
               />
             )}
-            {activeFeed !== "bookmarks" && (
+            {feeds[activeFeed].customWidget ? (
+              <Widget
+                src={feeds[activeFeed].customWidget}
+                props={{ ...props }}
+              />
+            ) : (
               <Feed
                 index={[
                   {

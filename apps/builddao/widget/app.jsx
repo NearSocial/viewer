@@ -1,8 +1,11 @@
 const { page, layout, loading, ...passProps } = props;
 
-const { routes, theme } = VM.require("buildhub.near/widget/config") ?? {
+const { routes } = VM.require("buildhub.near/widget/config") ?? {
   routes: {},
-  theme: "background-color: red;",
+};
+
+const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
+  theme: {},
 };
 
 const { AppLayout } = VM.require("buildhub.near/widget/template.layout") || {
@@ -12,10 +15,6 @@ const { AppLayout } = VM.require("buildhub.near/widget/template.layout") || {
 if (!page) page = Object.keys(routes)[0] || "home";
 
 const Root = styled.div`
-  a {
-    color: inherit;
-  }
-
   ${theme}// can come from config
 `;
 
@@ -49,10 +48,7 @@ function Router({ active, routes }) {
 
   return (
     <div key={active}>
-      <Widget
-        src="every.near/widget/thing"
-        props={{ ...passProps, ...defaultProps, path: src }}
-      />
+      <Widget src={src} props={{ ...passProps, ...defaultProps }} />
     </div>
   );
 }

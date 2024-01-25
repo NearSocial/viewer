@@ -26,7 +26,6 @@ const Navbar = styled.div`
   padding: 24px;
   width: 100%;
 
-  border: 2px outset #3c3d43;
   background-color: #0b0c14;
 `;
 
@@ -46,7 +45,7 @@ const { NavLink } = props || {
 };
 
 const AppHeader = ({ page, routes }) => (
-  <Navbar>
+  <Navbar className="container-xl">
     <ButtonGroup>
       {routes &&
         (Object.keys(routes) || []).map((k) => {
