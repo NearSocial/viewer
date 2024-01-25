@@ -40,10 +40,11 @@ return (
                 textDecoration: "none",
                 cursor: "pointer",
                 padding: "8px 12px",
+                gap: "10px",
               }}
             >
               <i className={`bi ${data.icon} `}></i>
-              {data.label}
+              <span>{data.label}</span>
             </ButtonLink>
           );
         }),

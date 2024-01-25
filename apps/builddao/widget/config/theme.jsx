@@ -22,7 +22,7 @@ const theme = `
   --button-default-bg: #23242b;
 
   --button-primary-color: #000;
-  --button-outline-color: #fff;
+  --button-outline-color: #cdd0d5;
   --button-default-color: #cdd0d5;
 
   --button-primary-hover-bg: #e49b48;
