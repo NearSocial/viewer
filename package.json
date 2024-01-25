@@ -27,6 +27,7 @@
     "dompurify": "^3.0.6",
     "error-polyfill": "^0.1.2",
     "local-storage": "^2.0.0",
+    "mutable-web-engine": "github:dapplets/mutable-web-engine",
     "near-api-js": "^2.1.3",
     "near-social-vm": "git+https://github.com/dapplets/near-social-vm#shadow-dom-slot",
     "near-social-vm-types": "^1.0.0",
@@ -37,8 +38,7 @@
     "react-bootstrap-typeahead": "^6.1.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^5.2.0",
-    "styled-components": "^5.3.6",
-    "mutable-web-engine": "github:dapplets/mutable-web-engine"
+    "styled-components": "^5.3.6"
   },
   "scripts": {
     "serve": "webpack serve",
