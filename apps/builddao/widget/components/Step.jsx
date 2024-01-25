@@ -11,7 +11,7 @@ const StepContainer = styled.div`
     left: 0;
     right: 0;
     height: 1px;
-    background: #000; /* Change color as needed */
+    background: var(--black, #000); /* Change color as needed */
     background-image: repeating-linear-gradient(
       90deg,
       #3c3d43,

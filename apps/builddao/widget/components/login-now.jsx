@@ -1,6 +1,6 @@
 const Container = styled.div`
   background-color: #23242b;
-  color: #ffffff;
+  color: #fff;
 
   width: 100%;
   height: 16rem;
