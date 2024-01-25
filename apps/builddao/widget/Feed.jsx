@@ -203,7 +203,7 @@ return (
                 }}
               />
             ) : (
-              <Widget src="/*__@appAccount__*//widget/feed.Bookmarks" />
+              <Widget src="/*__@appAccount__*//widget/Bookmarks" />
             )
           ) : (
             <Widget
