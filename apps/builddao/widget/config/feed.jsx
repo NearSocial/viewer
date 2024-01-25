@@ -3,6 +3,9 @@ function formatDate(date) {
   return date.toLocaleDateString("en-US", options);
 }
 
+const daoName = "Build DAO";
+const feedLink = "https://nearbuilders.org/feed";
+
 const feeds = {
   resolutions: {
     label: "Resolutions",
@@ -10,20 +13,20 @@ const feeds = {
     name: "resolution",
     hashtag: "nearyearresolutions2024",
     template: `### 🎉 NEAR YEAR RESOLUTIONS: 2024
-    (posted via [${daoName} Gateway](${feedLink}))
+(posted via [${daoName} Gateway](${feedLink}))
     
-    **🌟 REFLECTIONS ON THE PAST YEAR:**
-    - [Reflection 1 from the past year]
-    - [Reflection 2 from the past year]
+**🌟 REFLECTIONS ON THE PAST YEAR:**
+- [Reflection 1 from the past year]
+- [Reflection 2 from the past year]
     
-    **🎯 NEW YEAR'S RESOLUTIONS:**
-    - [Resolution 1]
-    - [Resolution 2]
+**🎯 NEW YEAR'S RESOLUTIONS:**
+- [Resolution 1]
+- [Resolution 2]
     
-    **📊 MEASURING SUCCESS:**
-    - [Metric 1 for Success]
-    - [Metric 2 for Success]
-    `,
+**📊 MEASURING SUCCESS:**
+- [Metric 1 for Success]
+- [Metric 2 for Success]
+`,
   },
   updates: {
     label: "Updates",
@@ -31,20 +34,20 @@ const feeds = {
     name: "update",
     hashtag: "update",
     template: `### BUILDER UPDATE:  ${formatDate(new Date())}
-    (posted via [${daoName} Gateway](${feedLink}?tab=update))
-    
-    **✅ DONE**
-    - [what'd you do]
-    - [link proof]
-    
-    **⏩ NEXT**
-    - [what's next?]
-    - [what are you thinking about?]
-    
-    **🛑 BLOCKERS**
-    - [what's blocking you?]
-    - [how can someone help?]
-    `,
+(posted via [${daoName} Gateway](${feedLink}?tab=update))
+
+**✅ DONE**
+- [what'd you do]
+- [link proof]
+
+**⏩ NEXT**
+- [what's next?]
+- [what are you thinking about?]
+
+**🛑 BLOCKERS**
+- [what's blocking you?]
+- [how can someone help?]
+`,
   },
   documentation: {
     label: "Documentation",
@@ -52,20 +55,20 @@ const feeds = {
     name: "documentation",
     hashtag: "documentation",
     template: `## TITLE
-    (posted via [${daoName} Gateway](${feedLink}?tab=documentation))
-    
-    **WHAT IS _____?**
-    - [context]
-    - [why is it important?]
-    
-    **EXAMPLE**
-    - [how can this be demonstrated?]
-    - [what is the expected outcome?]
-    
-    **USAGE**
-    - [where is it used?]
-    - [how to use it]
-    `,
+(posted via [${daoName} Gateway](${feedLink}?tab=documentation))
+
+**WHAT IS _____?**
+- [context]
+- [why is it important?]
+
+**EXAMPLE**
+- [how can this be demonstrated?]
+- [what is the expected outcome?]
+
+**USAGE**
+- [where is it used?]
+- [how to use it]
+`,
   },
   question: {
     label: "Question",
@@ -73,11 +76,11 @@ const feeds = {
     name: "question",
     hashtag: "question",
     template: `## what is your question?
-    (posted via [${daoName} Gateway](${feedLink}?tab=question))
-    
-    [what are you thinking about?]
-    [why are you asking?]
-    `,
+(posted via [${daoName} Gateway](${feedLink}?tab=question))
+
+[what are you thinking about?]
+[why are you asking?]
+`,
   },
   answer: {
     label: "Answer",
@@ -85,14 +88,14 @@ const feeds = {
     name: "answer",
     hashtag: "answer",
     template: `## Share an answer
-    (posted via [${daoName} Gateway](${feedLink}?tab=answer))
-    
-    [please restate the question you are answering]
-    
-    [your answer]
-    
-    [link to relevant docs, examples, or resources]
-    `,
+(posted via [${daoName} Gateway](${feedLink}?tab=answer))
+
+[please restate the question you are answering]
+
+[your answer]
+
+[link to relevant docs, examples, or resources]
+`,
   },
   opportunity: {
     label: "Opportunity",
@@ -100,20 +103,28 @@ const feeds = {
     name: "opportunity",
     hashtag: "opportunity",
     template: `## TITLE
-    (posted via [${daoName} Gateway](${feedLink}?tab=opportunity))
-    
-    [what is the opportunity?]
-    
-    [explain the motivation or reason]
-    
-    `,
+(posted via [${daoName} Gateway](${feedLink}?tab=opportunity))
+
+[what is the opportunity?]
+
+[explain the motivation or reason]
+
+`,
   },
   idea: {
     label: "Idea",
     icon: "bi-lightbulb",
     name: "idea",
     hashtag: "idea",
-    template: ``,
+    template: `## IDEA TITLE
+(posted via [${daoName} Gateway](${feedLink}?tab=idea))
+
+**What idea are you proposing?**
+- [Describe the idea]
+
+**Context or additional information:**
+- [Provide any context or details]
+`,
   },
   task: {
     label: "Task",
@@ -121,14 +132,14 @@ const feeds = {
     name: "task",
     hashtag: "task",
     template: `## TASK TITLE
-    (posted via [${daoName} Gateway](${feedLink}?tab=task))
-    
-    **What needs to be done?**
-    - [Describe the task or action steps]
-    
-    **Context or additional information:**
-    - [Provide any context or details]
-    `,
+(posted via [${daoName} Gateway](${feedLink}?tab=task))
+
+**What needs to be done?**
+- [Describe the task or action steps]
+
+**Context or additional information:**
+- [Provide any context or details]
+`,
   },
   bookmarks: {
     label: "Bookmarks",
