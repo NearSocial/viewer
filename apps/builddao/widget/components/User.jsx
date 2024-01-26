@@ -87,13 +87,15 @@ const accountId = props.accountId;
 const blockHeight = props.blockHeight;
 const pinned = !!props.pinned;
 const hideMenu = !!props.hideMenu;
-const name = Social.get(`${accountId}/profile/name`);
+const name = props.name || Social.get(`${accountId}/profile/name`);
 
 const postType = props.postType ?? "post";
 const link = props.link;
 const isPremium = !!props.isPremium;
 const flagItem = props.flagItem;
 const customActions = props.customActions ?? [];
+const showTime = props.showTime ?? true;
+const toggleModal = props.toggleModal;
 
 const Overlay = (props) => (
   <a
@@ -128,19 +130,21 @@ return (
             </div>
           </div>
           <p className="username">{accountId}</p>
-          <p className="time">
-            {blockHeight === "now" ? (
-              "now"
-            ) : (
-              <a className="text-white" href={link}>
-                <Widget
-                  loading=""
-                  src="mob.near/widget/TimeAgo"
-                  props={{ blockHeight }}
-                />
-              </a>
-            )}
-          </p>
+          {showTime && (
+            <p className="time">
+              {blockHeight === "now" ? (
+                "now"
+              ) : (
+                <a className="text-white" href={link}>
+                  <Widget
+                    loading=""
+                    src="mob.near/widget/TimeAgo"
+                    props={{ blockHeight }}
+                  />
+                </a>
+              )}
+            </p>
+          )}
         </Wrapper>
         {pinned && (
           <span title="Pinned" className="ms-2">
@@ -184,7 +188,11 @@ return (
             customActions.map((action) => (
               <li key={action.label}>
                 <button
-                  onClick={() => action.onClick(flagItem)}
+                  onClick={() =>
+                    action.type === "modal"
+                      ? action.onClick(toggleModal)
+                      : action.onClick(flagItem)
+                  }
                   className="btn btn-outline-dark dropdown-item"
                 >
                   <i className={`bi ${action.icon}`}></i>{" "}

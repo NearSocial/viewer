@@ -1,6 +1,7 @@
-const { User } = VM.require("buildhub.near/widget/components");
+const { User, Button } = VM.require("buildhub.near/widget/components");
 
 User = User || (() => <></>);
+Button = Button || (() => <></>);
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;
@@ -287,127 +288,144 @@ const contentWidget = (
   </>
 );
 
+const [showModal, setShowModal] = useState(false);
+const toggleModal = () => {
+  setShowModal(!showModal);
+};
+
 return (
-  <StyledPost>
-    <Wrapper
-      className="w-100 mx-auto"
-      style={
-        props.hideComments || props.noBorder
-          ? undefined
-          : {
-              borderBottom: "1px solid #eee",
-            }
-      }
-    >
-      <div className={`post ${props.reposted ? "reposted" : ""}`}>
-        <div className="right d-flex flex-column gap-3">
-          <User
-            accountId={accountId}
-            blockHeight={blockHeight}
-            pinned={pinned}
-            hideMenu={hideMenu}
-            link={link}
-            postType={"post"}
-            flagItem={item}
-            customActions={customActions}
-          />
-          {fullPostLink ? (
-            <a
-              key="full-post-link"
-              target="_blank"
-              href={fullPostLink}
-              className="text-decoration-none link-dark"
-            >
-              {contentWidget}
-            </a>
-          ) : (
-            contentWidget
-          )}
-          {props.customButtons ? (
-            props.customButtons
-          ) : !pinned && !hideButtons && blockHeight !== "now" ? (
-            <div className="buttons d-flex justify-content-between">
-              <Widget
-                loading=""
-                src="mob.near/widget/N.CommentButton"
-                props={{
-                  disabled: permissions.disableComment,
-                  onClick: () => State.update({ showReply: !state.showReply }),
-                }}
-              />
-              <RepostWidgetDesktop>
+  <>
+    <Widget
+      src="buildhub.near/widget/components.modals.ProposeModal"
+      props={{
+        showModal,
+        toggleModal,
+        item: item,
+      }}
+    />
+    <StyledPost>
+      <Wrapper
+        className="w-100 mx-auto"
+        style={
+          props.hideComments || props.noBorder
+            ? undefined
+            : {
+                borderBottom: "1px solid #eee",
+              }
+        }
+      >
+        <div className={`post ${props.reposted ? "reposted" : ""}`}>
+          <div className="right d-flex flex-column gap-3">
+            <User
+              accountId={accountId}
+              blockHeight={blockHeight}
+              pinned={pinned}
+              hideMenu={hideMenu}
+              link={link}
+              postType={"post"}
+              flagItem={item}
+              customActions={customActions}
+              toggleModal={toggleModal}
+            />
+            {fullPostLink ? (
+              <a
+                key="full-post-link"
+                target="_blank"
+                href={fullPostLink}
+                className="text-decoration-none link-dark"
+              >
+                {contentWidget}
+              </a>
+            ) : (
+              contentWidget
+            )}
+            {props.customButtons ? (
+              props.customButtons
+            ) : !pinned && !hideButtons && blockHeight !== "now" ? (
+              <div className="buttons d-flex justify-content-between">
                 <Widget
                   loading=""
-                  src="mob.near/widget/N.RepostButton"
+                  src="mob.near/widget/N.CommentButton"
                   props={{
-                    disable: permissions.disableRepost,
-                    notifyAccountId,
-                    item,
-                    // indexKey,
-                    // groupId,
+                    disabled: permissions.disableComment,
+                    onClick: () =>
+                      State.update({ showReply: !state.showReply }),
                   }}
                 />
-              </RepostWidgetDesktop>
-              <Widget
-                loading=""
-                src="mob.near/widget/N.LikeButton"
-                props={{
-                  notifyAccountId,
-                  item,
-                }}
-              />
-              <Widget
-                loading=""
-                src="buildhub.near/widget/components.post.BookmarkButton"
-                props={{
-                  item,
-                }}
-              />
-              <Widget
-                loading=""
-                src="mob.near/widget/MainPage.N.Post.ShareButton"
-                props={{ accountId, blockHeight, postType: "post", groupId }}
-              />
-            </div>
-          ) : (
-            <div className="buttons-placeholder" />
-          )}
+                <RepostWidgetDesktop>
+                  <Widget
+                    loading=""
+                    src="mob.near/widget/N.RepostButton"
+                    props={{
+                      disable: permissions.disableRepost,
+                      notifyAccountId,
+                      item,
+                      // indexKey,
+                      // groupId,
+                    }}
+                  />
+                </RepostWidgetDesktop>
+                <Widget
+                  loading=""
+                  src="mob.near/widget/N.LikeButton"
+                  props={{
+                    notifyAccountId,
+                    item,
+                  }}
+                />
+                <Widget
+                  loading=""
+                  src="buildhub.near/widget/components.post.BookmarkButton"
+                  props={{
+                    item,
+                  }}
+                />
+                <Widget
+                  loading=""
+                  src="mob.near/widget/MainPage.N.Post.ShareButton"
+                  props={{ accountId, blockHeight, postType: "post", groupId }}
+                />
+              </div>
+            ) : (
+              <div className="buttons-placeholder" />
+            )}
+          </div>
         </div>
-      </div>
-      {state.showReply && (
-        <div className="border-top">
-          <Widget
-            loading=""
-            src="mob.near/widget/MainPage.N.Comment.Compose"
-            props={{
-              notifyAccountId,
-              item,
-              onComment: () => State.update({ showReply: false }),
-            }}
-          />
-        </div>
-      )}
-      {props.customComments
-        ? props.customComments
-        : !props.hideComments && (
-            <div className="ms-5 my-3">
-              <Widget
-                key="comments"
-                loading={false}
-                src="mob.near/widget/MainPage.N.Comment.Feed"
-                props={{
-                  item,
-                  highlightComment: props.highlightComment,
-                  limit: props.commentsLimit,
-                  subscribe,
-                  raw,
-                  accounts: props.commentAccounts,
-                  groupId,
-                  permissions,
-                }}
-              />
-            </div>
-          )}
-    </Wrapper>
-  </StyledPost>
+        {state.showReply && (
+          <div className="border-top">
+            <Widget
+              loading=""
+              src="mob.near/widget/MainPage.N.Comment.Compose"
+              props={{
+                notifyAccountId,
+                item,
+                onComment: () => State.update({ showReply: false }),
+              }}
+            />
+          </div>
+        )}
+        {props.customComments
+          ? props.customComments
+          : !props.hideComments && (
+              <div className="ms-5 my-3">
+                <Widget
+                  key="comments"
+                  loading={false}
+                  src="mob.near/widget/MainPage.N.Comment.Feed"
+                  props={{
+                    item,
+                    highlightComment: props.highlightComment,
+                    limit: props.commentsLimit,
+                    subscribe,
+                    raw,
+                    accounts: props.commentAccounts,
+                    groupId,
+                    permissions,
+                  }}
+                />
+              </div>
+            )}
+      </Wrapper>
+    </StyledPost>
+  </>
 );
