@@ -203,12 +203,11 @@ return (
 
     <StyledTypeahead className="mb-3">
       <Typeahead
+        id="dao-selector"
         options={options}
         onChange={(v) => setSelectedDAO(v)}
         placeholder="Search DAO Contract ID"
-        defaultSelected={
-          selectedDAO !== "testdao.near" ? selectedDAO : undefined
-        }
+        defaultSelected={[selectedDAO]}
       />
     </StyledTypeahead>
 
