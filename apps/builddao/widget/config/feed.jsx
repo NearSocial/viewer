@@ -141,19 +141,42 @@ const feeds = {
 - [Provide any context or details]
 `,
   },
+  request: {
+    label: "Request",
+    icon: "bi-file-earmark-text",
+    name: "request",
+    hashtag: "request",
+    template: `## REQUEST TITLE
+(posted via [${daoName} Gateway](${feedLink}?tab=request))
+
+**What are you requesting?**
+- [Describe the request]
+
+**Context or additional information:**
+- [Provide any context or details]
+`,
+    customActions: [
+      {
+        label: "Propose",
+        icon: "bi-file-earmark-text",
+        onClick: (post) => console.log("propose", post),
+      },
+    ],
+  },
+  feedback: {
+    label: "Feedback",
+    icon: "bi-chat-left-text",
+    name: "feedback",
+    hashtag: "feedback",
+    template: `## TITLE
+`,
+  },
   bookmarks: {
     label: "Bookmarks",
     icon: "bi-bookmark",
     name: "bookmark",
     hideCompose: true,
     customWidget: "buildhub.near/widget/Bookmarks",
-  },
-  proposals: {
-    label: "Proposals",
-    icon: "bi-file-earmark-text",
-    name: "proposal",
-    hideCompose: true,
-    customWidget: "buildhub.near/widget/Proposals",
   },
 };
 

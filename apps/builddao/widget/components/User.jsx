@@ -92,6 +92,8 @@ const name = Social.get(`${accountId}/profile/name`);
 const postType = props.postType ?? "post";
 const link = props.link;
 const isPremium = !!props.isPremium;
+const flagItem = props.flagItem;
+const customActions = props.customActions ?? [];
 
 const Overlay = (props) => (
   <a
@@ -178,6 +180,18 @@ return (
               />
             </li>
           )}
+          {customActions.length > 0 &&
+            customActions.map((action) => (
+              <li key={action.label}>
+                <button
+                  onClick={() => action.onClick(flagItem)}
+                  className="btn btn-outline-dark dropdown-item"
+                >
+                  <i className={`bi ${action.icon}`}></i>{" "}
+                  <span>{action.label}</span>
+                </button>
+              </li>
+            ))}
         </ul>
       </span>
     )}
