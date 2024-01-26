@@ -149,17 +149,17 @@ const feeds = {
     template: `## REQUEST TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=request))
 
-**What are you requesting?**
-- [Describe the request]
+#### Description
+[Detailed description of what the proposal is about.]
 
-**Context or additional information:**
-- [Provide any context or details]
-`,
+#### Why This Proposal?
+[Explanation of why this proposal is necessary or beneficial.]`,
     customActions: [
       {
         label: "Propose",
         icon: "bi-file-earmark-text",
-        onClick: (post) => console.log("propose", post),
+        type: "modal",
+        onClick: (modalToggle) => modalToggle(),
       },
     ],
   },
