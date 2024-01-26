@@ -1,16 +1,16 @@
 const { daos } = VM.require("buildhub.near/widget/fetch.daos");
 const { Modal, Button, User } = VM.require("buildhub.near/widget/components");
 
-const [selectedDAO, setSelectedDAO] = useState("testdao.near");
-const [daoName, setDAOName] = useState("Select DAO");
+const [selectedDAO, setSelectedDAO] = useState(
+  props.daoId || "build.sputnik-dao.near"
+);
+const [daoName, setDAOName] = useState("");
 const [selectedOption, setSelectedOption] = useState("");
 const [text, setText] = useState("");
 
 const options = daos.map((dao) => dao.contract_id);
 
 useEffect(() => {
-  if (selectedDAO === "testdao.near") return;
-
   const name = Social.get(`${selectedDAO}/profile/name`);
   setDAOName(name);
 }, [selectedDAO]);
@@ -212,72 +212,68 @@ return (
       />
     </StyledTypeahead>
 
-    {selectedDAO !== "testdao.near" && (
-      <>
-        <div className="mb-3">
-          <label htmlFor="proposal-type">Proposal Type</label>
-          <select
-            name="proposal-type"
-            id="proposal-type"
-            data-bs-theme="dark"
-            class="form-select"
-            aria-label="Default select example"
-            onChange={(e) => setSelectedOption(e.target.value)}
-            selected={selectedOption}
-          >
-            <option selected>Open this select menu</option>
-            <option value="text">Text</option>
-            <option value="transfer">Transfer</option>
-            <option value="functionCall">Function Call</option>
-            <option value="addMember">Add Member To Role</option>
-            <option value="removeMember">Remove Member From Role</option>
-          </select>
-        </div>
+    <div className="mb-3">
+      <label htmlFor="proposal-type">Proposal Type</label>
+      <select
+        name="proposal-type"
+        id="proposal-type"
+        data-bs-theme="dark"
+        class="form-select"
+        aria-label="Default select example"
+        onChange={(e) => setSelectedOption(e.target.value)}
+        selected={selectedOption}
+      >
+        <option selected>Open this select menu</option>
+        <option value="text">Text</option>
+        <option value="transfer">Transfer</option>
+        <option value="functionCall">Function Call</option>
+        <option value="addMember">Add Member To Role</option>
+        <option value="removeMember">Remove Member From Role</option>
+      </select>
+    </div>
 
-        <div className="mb-3">
-          {selectedOption === "text" && (
-            <>
-              <label>Proposal Description</label>
-              <TextareaWrapper
-                className="markdown-editor mb-3"
-                data-value={text || ""}
-                key={memoizedKey}
-              >
-                <Widget
-                  src="mob.near/widget/MarkdownEditorIframe"
-                  props={{
-                    initialText: text,
-                    embedCss: MarkdownEditor,
-                    onChange: (v) => {
-                      setText(v);
-                    },
-                  }}
-                />
-              </TextareaWrapper>
-              <div className="w-100">
-                <Button
-                  className="ms-auto"
-                  variant="primary"
-                  onClick={() =>
-                    Near.call(selectedDAO, "add_proposal", {
-                      proposal: {
-                        description: text,
-                        kind: "Vote",
-                      },
-                    })
-                  }
-                >
-                  Next
-                </Button>
-              </div>
-            </>
-          )}
-          {selectedOption === "transfer" && "transfer"}
-          {selectedOption === "functionCall" && "functionCall"}
-          {selectedOption === "addMember" && "addMember"}
-          {selectedOption === "removeMember" && "removeMember"}
-        </div>
-      </>
-    )}
+    <div className="mb-3">
+      {selectedOption === "text" && (
+        <>
+          <label>Proposal Description</label>
+          <TextareaWrapper
+            className="markdown-editor mb-3"
+            data-value={text || ""}
+            key={memoizedKey}
+          >
+            <Widget
+              src="mob.near/widget/MarkdownEditorIframe"
+              props={{
+                initialText: text,
+                embedCss: MarkdownEditor,
+                onChange: (v) => {
+                  setText(v);
+                },
+              }}
+            />
+          </TextareaWrapper>
+          <div className="w-100">
+            <Button
+              className="ms-auto"
+              variant="primary"
+              onClick={() =>
+                Near.call(selectedDAO, "add_proposal", {
+                  proposal: {
+                    description: text,
+                    kind: "Vote",
+                  },
+                })
+              }
+            >
+              Next
+            </Button>
+          </div>
+        </>
+      )}
+      {selectedOption === "transfer" && "transfer"}
+      {selectedOption === "functionCall" && "functionCall"}
+      {selectedOption === "addMember" && "addMember"}
+      {selectedOption === "removeMember" && "removeMember"}
+    </div>
   </Modal>
 );
