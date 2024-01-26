@@ -1,4 +1,4 @@
-const { feeds } = VM.require("buildhub.near/widget/config.feed");
+const { feeds } = VM.require("buildhub.near/widget/config.feed") || {};
 
 console.log(feeds);
 
