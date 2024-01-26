@@ -295,14 +295,16 @@ const toggleModal = () => {
 
 return (
   <>
-    <Widget
-      src="buildhub.near/widget/components.modals.ProposeModal"
-      props={{
-        showModal,
-        toggleModal,
-        item: item,
-      }}
-    />
+    {props.feedType === "request" && (
+      <Widget
+        src="buildhub.near/widget/components.modals.ProposeModal"
+        props={{
+          showModal,
+          toggleModal,
+          item: item,
+        }}
+      />
+    )}
     <StyledPost>
       <Wrapper
         className="w-100 mx-auto"

@@ -106,6 +106,7 @@ return (
                     noBorder={true}
                     currentPath={`${props.pagePath}`}
                     customActions={feeds[activeFeed].customActions}
+                    feedType={feed.name}
                   />
                 )}
               />
