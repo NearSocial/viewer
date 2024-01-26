@@ -305,7 +305,7 @@ return (
         }}
       />
     )}
-    <StyledPost>
+    <StyledPost key={`Post-${item.path}-${item.blockHeight}`}>
       <Wrapper
         className="w-100 mx-auto"
         style={

@@ -25,6 +25,12 @@ const Content = styled.div`
   background: #23242b;
   border-radius: 16px;
   color: white;
+
+  @media screen and (max-width: 768px) {
+    width: 80%;
+    max-width: 100%;
+    min-width: 0;
+  }
 `;
 
 const NoButton = styled.button`
@@ -39,7 +45,6 @@ const CloseContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  padding-bottom: 24px;
 `;
 
 const Icon = styled.i`
@@ -53,17 +58,18 @@ function Modal({
   onOpenChange,
   toggle,
   toggleContainerProps,
+  key,
 }) {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root key={key} open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>
         <NoButton {...toggleContainerProps}>{toggle}</NoButton>
       </Dialog.Trigger>
       <Dialog.Overlay asChild>
-        <Overlay>
+        <Overlay key={`Overlay-${key}`}>
           <Dialog.Content asChild>
             <Content>
-              <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center justify-content-between pb-4">
                 <h5 className="w-100">{title}</h5>
                 <Dialog.Trigger asChild>
                   <CloseContainer>
