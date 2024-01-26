@@ -105,6 +105,7 @@ return (
                     blockHeight={p.blockHeight}
                     noBorder={true}
                     currentPath={`${props.pagePath}`}
+                    customActions={feeds[activeFeed].customActions}
                   />
                 )}
               />

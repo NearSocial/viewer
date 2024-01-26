@@ -237,6 +237,7 @@ const groupId = props.groupId ?? content.groupId;
 const indexKey = props.indexKey;
 const permissions = props.permissions;
 const fullPostLink = props.fullPostLink;
+const customActions = props.customActions;
 
 const notifyAccountId = accountId;
 const item = {
@@ -308,6 +309,7 @@ return (
             link={link}
             postType={"post"}
             flagItem={item}
+            customActions={customActions}
           />
           {fullPostLink ? (
             <a
