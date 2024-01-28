@@ -34,26 +34,28 @@ const roleId = "community";
 
 const handleJoin = () => {
   const connectData = {
-    graph: {
-      connect: {
-        [daoId]: ""
-      }
-    },
-    index: {
-      graph: JSON.stringify({
-        key: "connect",
+    [userAccountId]: {
+      graph: {
+        connect: {
+          [daoId]: ""
+        }
+      },
+      index: {
+        graph: JSON.stringify({
+          key: "connect",
+          value: {
+            type: "connect",
+            accountId: daoId
+          }
+        })
+      },
+      notify: JSON.stringify({
+        key: daoId,
         value: {
-          type: "connect",
-          accountId: daoId
+          type: "connect"
         }
       })
-    },
-    notify: JSON.stringify({
-      key: daoId,
-      value: {
-        type: "connect"
-      }
-    })
+    }
   };
 
   Near.call([
