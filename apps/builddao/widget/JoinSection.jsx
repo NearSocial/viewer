@@ -137,9 +137,6 @@ const CTASection = styled.div`
 `;
 
 const userWidgets = Social.keys(`${context.accountId}/widget/**`) || [];
-
-const { Bullet } = VM.require("buildhub.near/widget/components.Bullet")
-
 const daoId = "build.sputnik-dao.near";
 const accountId = context.accountId;
 
@@ -167,14 +164,15 @@ const proposalId = Near.view(daoId, "get_last_proposal_id") - 1;
 
 // get data from last proposal
 const proposal = Near.view(daoId, "get_proposal", {
-  id: proposalId,
+  id: proposalId
 });
 
 if (proposal === null) {
   return "";
 }
 
-const canJoin = accountId && accountId !== proposal.proposer && !isCommunityOrCouncilMember
+const canJoin =
+  accountId && accountId !== proposal.proposer && !isCommunityOrCouncilMember;
 
 const groupMembers = group.join(", ");
 
@@ -216,37 +214,12 @@ const CreateSomethingView = (props) => {
               </a>
             </>
           ) : (
-            <>
-              {canJoin ? (
-                <Widget
-                  src="/*__@appAccount__*//widget/JoinButton"
-                  props={{
-                    children: (
-                      <>
-                        Join Build DAO{" "}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="17"
-                          viewBox="0 0 16 17"
-                          fill="none"
-                        >
-                          <path
-                            d="M10.7809 7.83327L7.2049 4.25726L8.1477 3.31445L13.3332 8.49993L8.1477 13.6853L7.2049 12.7425L10.7809 9.1666H2.6665V7.83327H10.7809Z"
-                            fill="black"
-                          />
-                        </svg>
-                      </>
-                    ),
-                  }}
-                />
-              ) : (
-                <>
-                  <Bullet variant={!validMember ? "default" : "light"}>
-                    {!validMember ? "Pending..." : "Joined"}
-                  </Bullet>
-                  <a href={"/feed"}>
-                    View Activity{" "}
+            <Widget
+              src="/*__@appAccount__*//widget/components.buttons.Connect"
+              props={{
+                joinBtnChildren: (
+                  <>
+                    Join Build DAO{" "}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -259,10 +232,12 @@ const CreateSomethingView = (props) => {
                         fill="black"
                       />
                     </svg>
-                  </a>
-                </>
-              )}
-            </>
+                  </>
+                ),
+                className: "custom-button",
+                showActivity: true
+              }}
+            />
           )}{" "}
         </CTASection>
       </Card>
