@@ -1,3 +1,8 @@
+/**
+ * This could be generalized for items in the graph, 
+ * Social adapter (getr(`${accountId}/graph/${item}`, "final")
+ */
+
 const { Post } = VM.require("buildhub.near/widget/components") || (() => <></>);
 
 const accountId = props.accountId ?? context.accountId;
