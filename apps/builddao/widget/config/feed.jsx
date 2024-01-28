@@ -1,3 +1,5 @@
+const { Post } = VM.require("buildhub.near/widget/components") || (() => <></>);
+
 function formatDate(date) {
   const options = { year: "numeric", month: "short", day: "numeric" };
   return date.toLocaleDateString("en-US", options);
@@ -186,7 +188,20 @@ const feeds = {
     icon: "bi-bookmark",
     name: "bookmark",
     hideCompose: true,
-    customWidget: "buildhub.near/widget/Bookmarks",
+    customWidget: "buildhub.near/widget/adapters.item",
+    customProps: {
+      item: "bookmark",
+      renderItem: (item) => {
+        return (
+          <Post
+            accountId={item.accountId}
+            blockHeight={item.blockHeight}
+            noBorder={true}
+            hideComments={true}
+          />
+        );
+      },
+    },
   },
 };
 

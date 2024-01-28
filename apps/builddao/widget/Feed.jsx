@@ -68,7 +68,7 @@ return (
             {feeds[activeFeed].customWidget ? (
               <Widget
                 src={feeds[activeFeed].customWidget}
-                props={{ ...props }}
+                props={{ ...props, ...feeds[activeFeed].customProps }}
               />
             ) : (
               <Feed
