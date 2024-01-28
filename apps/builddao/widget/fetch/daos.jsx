@@ -1,3 +1,6 @@
+/**
+ * This would be nice to be in the DAO SDK
+ */
 let daos;
 
 const apikey = "c5d70a09-5740-489d-8c3b-36fbc3d40bff";

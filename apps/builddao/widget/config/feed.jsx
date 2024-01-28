@@ -8,10 +8,19 @@ const feedLink = "https://nearbuilders.org/feed";
 
 const feeds = {
   resolutions: {
+    // metadata
+    name: "resolution",
+
+    // start sidebar
     label: "Resolutions",
     icon: "bi-calendar3",
-    name: "resolution",
+    // end sidebar
+    // start compose
     hashtag: "nearyearresolutions2024",
+
+    // better way to provide a template? reference to document -- maybe rename "initialText" or more general, "defaultProps"
+    // this could be moved to metadata, maybe daoName and feedLink = source: { label, href }, "context", or reference to other thing
+    // I like if it came from context cuz then unconfigurable unless from a forked VM
     template: `### 🎉 NEAR YEAR RESOLUTIONS: 2024
 (posted via [${daoName} Gateway](${feedLink}))
     
@@ -27,6 +36,7 @@ const feeds = {
 - [Metric 1 for Success]
 - [Metric 2 for Success]
 `,
+    // end compose
   },
   updates: {
     label: "Updates",
@@ -180,4 +190,4 @@ const feeds = {
   },
 };
 
-return { type: config, feeds: feeds };
+return { type: "feed", feeds: feeds };
