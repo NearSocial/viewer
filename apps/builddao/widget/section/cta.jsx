@@ -1,11 +1,3 @@
-const { checkIsMemberOrPending } = VM.require(
-  "buildhub.near/widget/core.lib.common"
-);
-
-checkIsMemberOrPending || (checkIsMemberOrPending = () => {});
-
-const isMemberOrPending = checkIsMemberOrPending(context.accountId);
-
 const logoLink =
   "https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya";
 const gridLink =
@@ -141,7 +133,15 @@ return (
     <Card>
       <Logo src={logoLink} />
       <h1>Together, we can build a better future.</h1>
-      {!isMemberOrPending && <a href="/join">Join Now</a>}
+      <Widget
+        src="/*__@appAccount__*//widget/components.buttons.Connect"
+        props={{
+          joinBtnChildren: "Join Now",
+          showActivity: true,
+          className: "custom-button",
+          href: "/join"
+        }}
+      />
     </Card>
     <Grid src={gridLink} />
     <LeftBlur src={leftBlur} />

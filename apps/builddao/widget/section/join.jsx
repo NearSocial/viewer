@@ -1,11 +1,3 @@
-const { checkIsMemberOrPending } = VM.require(
-  "buildhub.near/widget/core.lib.common"
-);
-
-checkIsMemberOrPending || (checkIsMemberOrPending = () => {});
-
-const isMemberOrPending = checkIsMemberOrPending(context.accountId);
-
 const SectionPill = ({ title, icon }) => {
   const Pill = styled.div`
     display: flex;
@@ -364,7 +356,15 @@ return (
           <br />
           3. Fulfill contribution requirements
         </p>
-        {!isMemberOrPending && <a href="/join">Join Now</a>}
+        <Widget
+          src="/*__@appAccount__*//widget/components.buttons.Connect"
+          props={{
+            joinBtnChildren: "Join Now",
+            showActivity: true,
+            className: "custom-button",
+            href: "/join"
+          }}
+        />
       </CTAContent>
     </CTAContainer>
   </JoinContainer>

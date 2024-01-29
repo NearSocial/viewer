@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { UserDropdown } from "./desktop/UserDropdown";
 import { Widget } from "near-social-vm";
 import { useBosLoaderStore } from "../../stores/bos-loader";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const StyledNavbar = styled.nav`
   display: flex;
@@ -160,123 +161,144 @@ export function Navbar(props) {
         <div className="d-none flex-grow-1 justify-content-center d-md-flex align-items-center gap-3">
           <NavLink
             href="/"
-            className={`${window.location.href === `${window.location.origin}/` && "active"
-              }`}
+            className={`${
+              window.location.href === `${window.location.origin}/` && "active"
+            }`}
           >
             Home
           </NavLink>
           <NavLink
             href="/edit"
-            className={`${window.location.href === `${window.location.origin}/edit` &&
+            className={`${
+              window.location.href === `${window.location.origin}/edit` &&
               "active"
-              }`}
+            }`}
           >
             Editor
           </NavLink>
           <NavLink href={props.documentationHref}>Docs</NavLink>
           <NavLink
             href="/feed"
-            className={`${window.location.href === `${window.location.origin}/feed` &&
+            className={`${
+              window.location.href === `${window.location.origin}/feed` &&
               "active"
-              }`}
+            }`}
           >
             Feed
           </NavLink>
           <NavLink
             href="/resources"
-            className={`${window.location.href === `${window.location.origin}/resources` &&
+            className={`${
+              window.location.href === `${window.location.origin}/resources` &&
               "active"
-              }`}
+            }`}
           >
             Resources
           </NavLink>
         </div>
         <div className="d-none d-md-block flex-grow-1" style={{ flexBasis: 0 }}>
-        {!props.signedIn && (
+          {!props.signedIn && (
             <button className="sign-in" onClick={props.requestSignIn}>
               Sign In
             </button>
           )}
           {props.signedIn && (
-            <Widget
-              src="buildhub.near/widget/components.buttons.JoinNow"
-              config={{
-                redirectMap: redirectStore.redirectMap,
-              }}
-              props={{
-                children: <UserDropdown {...props} />,
-              }}
-            />
-            )}
+            <Link to="/join">
+              <Widget
+                src="buildhub.near/widget/components.buttons.Connect"
+                config={{
+                  redirectMap: redirectStore.redirectMap,
+                }}
+                props={{
+                  connectedChildren: <UserDropdown {...props} />,
+                  showActivity: false,
+                  className: "custom-button",
+                  joinBtnChildren: "Join Now",
+                  // href: "/join",
+                }}
+              />
+              </Link>
+          )}
         </div>
-        
+
         <div className="d-block d-md-none">
           <MobileDropdownButton onClick={toggleDropdown}>
             <i className={`bi ${dropdown ? "bi-x" : "bi-list"}`}></i>
           </MobileDropdownButton>
         </div>
         <div
-          className={`d-md-none ${dropdown ? "d-flex" : "d-none"
-            } w-100 flex-column gap-3 text-white position-absolute start-50 top-100 shadow`}
+          className={`d-md-none ${
+            dropdown ? "d-flex" : "d-none"
+          } w-100 flex-column gap-3 text-white position-absolute start-50 top-100 shadow`}
           style={{
             transform: "translateX(-50%)",
             background: "#0b0c14",
             padding: "24px 48px",
             zIndex: 5,
-            borderBottom: "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))"
+            borderBottom:
+              "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
           }}
         >
           <MobileLink
             href="/"
-            className={`${window.location.href === `${window.location.origin}/` && "active"
-              }`}
+            className={`${
+              window.location.href === `${window.location.origin}/` && "active"
+            }`}
           >
             Home
           </MobileLink>
           <MobileLink
             href="/edit"
-            className={`${window.location.href === `${window.location.origin}/edit` &&
+            className={`${
+              window.location.href === `${window.location.origin}/edit` &&
               "active"
-              }`}
+            }`}
           >
             Editor
           </MobileLink>
           <MobileLink
             href="/feed"
-            className={`${window.location.href === `${window.location.origin}/feed` &&
+            className={`${
+              window.location.href === `${window.location.origin}/feed` &&
               "active"
-              }`}
+            }`}
           >
             Feed
           </MobileLink>
           <MobileLink
             href="/resources"
-            className={`${window.location.href === `${window.location.origin}/resources` &&
+            className={`${
+              window.location.href === `${window.location.origin}/resources` &&
               "active"
-              }`}
+            }`}
           >
             Resources
           </MobileLink>
           <MobileLink href={props.documentationHref}>Docs</MobileLink>
 
-          {props.signedIn ?
+          {props.signedIn ? (
             <div>
               <Widget
-                src="buildhub.near/widget/components.buttons.JoinNow"
+                src="buildhub.near/widget/components.buttons.Connect"
                 config={{
                   redirectMap: redirectStore.redirectMap,
                 }}
                 props={{
-                  children: <UserDropdown {...props} />,
+                  connectedChildren: <UserDropdown {...props} />,
+                  showActivity: false,
+                  className: "custom-button",
+                  joinBtnChildren: "Join Now",
+                  href: "/join",
                 }}
               />
             </div>
-            : <button className="sign-in my-3" onClick={props.requestSignIn}>
+          ) : (
+            <button className="sign-in my-3" onClick={props.requestSignIn}>
               Sign In
-            </button>}
+            </button>
+          )}
         </div>
       </StyledNavbar>
     </div>
   );
 }
-
