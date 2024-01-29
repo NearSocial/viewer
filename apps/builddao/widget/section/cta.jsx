@@ -138,7 +138,8 @@ return (
         props={{
           joinBtnChildren: "Join Now",
           showActivity: true,
-          className: "custom-button"
+          className: "custom-button",
+          href: "/join"
         }}
       />
     </Card>

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { UserDropdown } from "./desktop/UserDropdown";
 import { Widget } from "near-social-vm";
 import { useBosLoaderStore } from "../../stores/bos-loader";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const StyledNavbar = styled.nav`
   display: flex;
@@ -147,7 +148,8 @@ export function Navbar(props) {
   return (
     <div
       style={{
-        borderBottom: "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))"
+        borderBottom:
+          "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
       }}
     >
       <StyledNavbar className="container-xl position-relative">
@@ -201,16 +203,21 @@ export function Navbar(props) {
             </button>
           )}
           {props.signedIn && (
-            <Widget
-              src="buildhub.near/widget/components.buttons.Connect"
-              config={{
-                redirectMap: redirectStore.redirectMap
-              }}
-              props={{
-                connectedChildren: <UserDropdown {...props} />,
-                showActivity: false
-              }}
-            />
+            <Link to="/join">
+              <Widget
+                src="buildhub.near/widget/components.buttons.Connect"
+                config={{
+                  redirectMap: redirectStore.redirectMap,
+                }}
+                props={{
+                  connectedChildren: <UserDropdown {...props} />,
+                  showActivity: false,
+                  className: "custom-button",
+                  joinBtnChildren: "Join Now",
+                  // href: "/join",
+                }}
+              />
+              </Link>
           )}
         </div>
 
@@ -229,7 +236,7 @@ export function Navbar(props) {
             padding: "24px 48px",
             zIndex: 5,
             borderBottom:
-              "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))"
+              "1px solid var(--Stroke-color, rgba(255, 255, 255, 0.20))",
           }}
         >
           <MobileLink
@@ -274,11 +281,14 @@ export function Navbar(props) {
               <Widget
                 src="buildhub.near/widget/components.buttons.Connect"
                 config={{
-                  redirectMap: redirectStore.redirectMap
+                  redirectMap: redirectStore.redirectMap,
                 }}
                 props={{
                   connectedChildren: <UserDropdown {...props} />,
-                  showActivity: false
+                  showActivity: false,
+                  className: "custom-button",
+                  joinBtnChildren: "Join Now",
+                  href: "/join",
                 }}
               />
             </div>

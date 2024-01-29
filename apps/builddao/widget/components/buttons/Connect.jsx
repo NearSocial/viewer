@@ -1,6 +1,7 @@
+const { joinBtnChildren, connectedChildren, showActivity, className, href } = props;
+
 const { Bullet } = VM.require("buildhub.near/widget/components.Bullet");
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
-const { joinBtnChildren, connectedChildren, showActivity, className } = props;
 
 if (!DaoSDK) {
   return <></>;
@@ -150,11 +151,19 @@ const Component = () => {
     }
     return <div>{connectedChildren}</div>;
   } else {
-    return (
-      <button className={className} onClick={handleJoin}>
-        {joinBtnChildren}
-      </button>
-    );
+    if (href) {
+      return (
+        <a type="button" href={href} className={className}>
+          {joinBtnChildren}
+        </a>
+      );
+    } else {
+      return (
+        <button className={className} onClick={handleJoin}>
+           {joinBtnChildren}
+        </button>
+      );
+    }
   }
 };
 
