@@ -14,7 +14,7 @@ const Overlay = styled.div`
   z-index: 1000;
   width: 100vw;
   height: 100vh;
-  background: rgba(11, 12, 20, 0.5);
+  background: var(--modal-overlay-color, rgba(11, 12, 20, 0.5));
 `;
 
 const Content = styled.div`
@@ -22,9 +22,9 @@ const Content = styled.div`
   max-width: 1000px;
   padding: 24px;
   outline: none !important;
-  background: #23242b;
+  background: var(--modal-background-color, #23242b);
   border-radius: 16px;
-  color: white;
+  color: var(--modal-text-color, #fff);
 
   @media screen and (max-width: 768px) {
     width: 80%;
