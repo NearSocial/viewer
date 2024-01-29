@@ -7,6 +7,8 @@ const [amount, setAmount] = useState(0);
 const [description, setDescription] = useState("");
 const [validatedAddresss, setValidatedAddress] = useState(true);
 
+const bootstrapTheme = props.bootstrapTheme;
+
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
 useEffect(() => {
@@ -177,7 +179,7 @@ return (
         id="recipient"
         placeholder="NEAR Address"
         value={recipient}
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         onChange={(e) => setRecipient(e.target.value)}
       />
       {!validatedAddresss && (
@@ -195,7 +197,7 @@ return (
         name="token"
         id="token"
         value={token}
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         onChange={(e) => setToken(e.target.value)}
       >
         <option value="">Select a token</option>
@@ -216,7 +218,7 @@ return (
         id="amount"
         type="number"
         value={amount}
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         onChange={(e) => setAmount(e.target.value)}
       />
     </div>
@@ -231,10 +233,10 @@ return (
           src="mob.near/widget/MarkdownEditorIframe"
           props={{
             initialText: text,
-            embedCss: MarkdownEditor,
+            embedCss: props.customCSS || MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            }
+            },
           }}
         />
       </TextareaWrapper>
@@ -252,10 +254,10 @@ return (
                 Transfer: {
                   token_id: token,
                   reciever_id: recipient,
-                  amount: amount
-                }
-              }
-            }
+                  amount: amount,
+                },
+              },
+            },
           })
         }
       >

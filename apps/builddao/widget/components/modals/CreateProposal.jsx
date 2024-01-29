@@ -15,6 +15,9 @@ const { Modal, Button, User } = VM.require(
 const showModal = props.showModal;
 const toggleModal = props.toggleModal;
 const toggle = props.toggle;
+const bootstrapTheme = props.bootstrapTheme || "dark";
+const editorCSS = props.editorCSS;
+
 if (!showModal) {
   return "";
 }
@@ -102,7 +105,7 @@ return (
       <select
         name="proposal-type"
         id="proposal-type"
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         class="form-select"
         onChange={(e) => setSelectedOption(e.target.value)}
         value={selectedOption}
@@ -124,6 +127,8 @@ return (
             props={{
               selectedDAO: selectedDAO,
               item: props.item,
+              bootstrapTheme: bootstrapTheme,
+              customCSS: editorCSS,
             }}
           />
         </>
@@ -135,6 +140,8 @@ return (
             props={{
               selectedDAO: selectedDAO,
               item: props.item,
+              bootstrapTheme: bootstrapTheme,
+              customCSS: editorCSS,
             }}
           />
         </>
@@ -146,6 +153,8 @@ return (
             props={{
               selectedDAO: selectedDAO,
               item: props.item,
+              bootstrapTheme: bootstrapTheme,
+              customCSS: editorCSS,
             }}
           />
         </>
@@ -158,6 +167,8 @@ return (
               roles: roles,
               selectedDAO: selectedDAO,
               item: props.item,
+              bootstrapTheme: bootstrapTheme,
+              customCSS: editorCSS,
             }}
           />
         </>
@@ -170,6 +181,8 @@ return (
               roles: roles,
               selectedDAO: selectedDAO,
               item: props.item,
+              bootstrapTheme: bootstrapTheme,
+              customCSS: editorCSS,
             }}
           />
         </>
