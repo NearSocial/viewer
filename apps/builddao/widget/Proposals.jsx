@@ -157,10 +157,10 @@ const ProposalsComponent = () => {
             })
           ];
 
-          const { thresholdVoteCount } = getVotersAndThresholdForProposalKind({
+          const { thresholdVoteCount } = sdk.getVotersAndThresholdForProposalKind({
             kindName
           });
-          const totalVotes = calculateVoteCountByType({ votes: item.votes });
+          const totalVotes = sdk.calculateVoteCountByType({ votes: item.votes });
           let expirationTime = sdk.getProposalExpirationTime({
             submissionTime: item.submission_time
           });
