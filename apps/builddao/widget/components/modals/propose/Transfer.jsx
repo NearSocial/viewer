@@ -10,6 +10,9 @@ const [validatedAddresss, setValidatedAddress] = useState(true);
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
 useEffect(() => {
+  if (!props.item) {
+    return;
+  }
   const { path, blockHeight } = props.item;
   setText(`[EMBED](${path}@${blockHeight})`);
   setEditorKey((editorKey) => editorKey + 1);
@@ -231,7 +234,7 @@ return (
             embedCss: MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            },
+            }
           }}
         />
       </TextareaWrapper>
@@ -249,10 +252,10 @@ return (
                 Transfer: {
                   token_id: token,
                   reciever_id: recipient,
-                  amount: amount,
-                },
-              },
-            },
+                  amount: amount
+                }
+              }
+            }
           })
         }
       >
