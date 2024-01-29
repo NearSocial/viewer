@@ -19,6 +19,7 @@ function Pagination({
   maxVisiblePages,
   onPageClick,
   selectedPage,
+  ThemeContainer
 }) {
   return (
     <Widget
@@ -28,6 +29,7 @@ function Pagination({
         maxVisiblePages,
         onPageClick,
         selectedPage,
+        ThemeContainer
       }}
     />
   );
@@ -59,5 +61,5 @@ return {
   TextEditor,
   Checkbox,
   Avatar,
-  User,
+  User
 };
