@@ -10,6 +10,9 @@ const [deposit, useDeposit] = useState(0);
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
 useEffect(() => {
+  if (!props.item) {
+    return;
+  }
   const { path, blockHeight } = props.item;
   setText(`[EMBED](${path}@${blockHeight})`);
   setEditorKey((editorKey) => editorKey + 1);
@@ -223,7 +226,7 @@ return (
             embedCss: MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            },
+            }
           }}
         />
       </TextareaWrapper>
@@ -245,12 +248,12 @@ return (
                       method_name: method,
                       args: args,
                       deposit: deposit,
-                      gas: gas,
-                    },
-                  ],
-                },
-              },
-            },
+                      gas: gas
+                    }
+                  ]
+                }
+              }
+            }
           })
         }
       >

@@ -4,6 +4,9 @@ const { Button } =
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
 useEffect(() => {
+  if (!props.item) {
+    return;
+  }
   const { path, blockHeight } = props.item;
   setText(`[EMBED](${path}@${blockHeight})`);
   setEditorKey((editorKey) => editorKey + 1);
@@ -155,7 +158,7 @@ return (
           embedCss: MarkdownEditor,
           onChange: (v) => {
             setText(v);
-          },
+          }
         }}
       />
     </TextareaWrapper>
@@ -167,8 +170,8 @@ return (
           Near.call(selectedDAO, "add_proposal", {
             proposal: {
               description: text,
-              kind: "Vote",
-            },
+              kind: "Vote"
+            }
           })
         }
       >

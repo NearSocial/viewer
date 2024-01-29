@@ -9,6 +9,9 @@ const selectedDAO = props.selectedDAO;
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
 useEffect(() => {
+  if (!props.item) {
+    return;
+  }
   const { path, blockHeight } = props.item;
   setText(`[EMBED](${path}@${blockHeight})`);
   setEditorKey((editorKey) => editorKey + 1);
@@ -207,7 +210,7 @@ return (
             embedCss: MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            },
+            }
           }}
         />
       </TextareaWrapper>
@@ -225,10 +228,10 @@ return (
               kind: {
                 AddMemberToRole: {
                   member_id: accountId,
-                  role: role,
-                },
-              },
-            },
+                  role: role
+                }
+              }
+            }
           })
         }
       >
