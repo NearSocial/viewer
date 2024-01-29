@@ -14,6 +14,16 @@ useEffect(() => {
   setEditorKey((editorKey) => editorKey + 1);
 }, [props.item]);
 const memoizedKey = useMemo((editorKey) => editorKey, [editorKey]);
+const [validatedAddresss, setValidatedAddresss] = useState(true);
+
+const regex = /.{1}\.near$/;
+useEffect(() => {
+  if (regex.test(accountId) || accountId === "") {
+    setValidatedAddresss(true);
+  } else {
+    setValidatedAddresss(false);
+  }
+});
 
 const MarkdownEditor = `
   html {
@@ -147,7 +157,9 @@ const TextareaWrapper = styled.div`
 return (
   <div className="d-flex flex-column">
     <div className="form-group mb-3">
-      <label htmlFor="accountId">Account ID</label>
+      <label htmlFor="accountId">
+        Account ID<span className="text-danger">*</span>
+      </label>
       <input
         name="accountId"
         id="accountId"
@@ -156,10 +168,17 @@ return (
         value={accountId}
         onChange={(e) => setAccountId(e.target.value)}
       />
+      {!validatedAddresss && (
+        <span className="text-danger" style={{ fontSize: 12 }}>
+          Please check if the NEAR address is valid!
+        </span>
+      )}
     </div>
 
     <div className="form-group mb-3">
-      <label htmlFor="role">Role</label>
+      <label htmlFor="role">
+        Role<span className="text-danger">*</span>
+      </label>
       <select
         name="role"
         id="role"
@@ -168,7 +187,7 @@ return (
         onChange={(e) => setRole(e.target.value)}
         selected={role}
       >
-        <option>Select a role</option>
+        <option value="">Select a role</option>
         {roles.length > 0 &&
           roles.map((role) => <option value={role}>{role}</option>)}
       </select>
@@ -198,7 +217,7 @@ return (
       <Button
         className="ms-auto"
         variant="primary"
-        disabled={!accountId || !role}
+        disabled={!accountId || !role || !validatedAddresss}
         onClick={() =>
           Near.call(selectedDAO, "add_proposal", {
             proposal: {
