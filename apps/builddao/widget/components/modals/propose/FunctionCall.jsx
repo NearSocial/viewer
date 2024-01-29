@@ -149,7 +149,9 @@ const TextareaWrapper = styled.div`
 return (
   <div className="d-flex flex-column">
     <div className="form-group mb-3">
-      <label htmlFor="contract">Contract</label>
+      <label htmlFor="contract">
+        Contract<span className="text-danger">*</span>
+      </label>
       <input
         name="contract"
         id="contract"
@@ -160,7 +162,9 @@ return (
       />
     </div>
     <div className="form-group mb-3">
-      <label htmlFor="method">Method</label>
+      <label htmlFor="method">
+        Method<span className="text-danger">*</span>
+      </label>
       <input
         name="method"
         id="method"

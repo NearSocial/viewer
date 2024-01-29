@@ -37,7 +37,7 @@ const StyledTypeahead = styled.div`
   input,
   input:focus,
   .rbt-input-hint {
-    background: #23242b;
+    background: #212529;
     color: #fff;
 
     &::placeholder {
@@ -47,9 +47,13 @@ const StyledTypeahead = styled.div`
     border: 1px solid #434950;
   }
 
+  .rbt-input-hint {
+    color: rgba(255, 255, 255, 0.2) !important;
+  }
+
   .rbt-menu,
   .dropdown-item {
-    background: #23242b;
+    background: #212529;
     color: #fff;
   }
 `;
@@ -153,6 +157,7 @@ return (
             props={{
               roles: roles,
               selectedDAO: selectedDAO,
+              item: props.item,
             }}
           />
         </>
@@ -164,6 +169,7 @@ return (
             props={{
               roles: roles,
               selectedDAO: selectedDAO,
+              item: props.item,
             }}
           />
         </>

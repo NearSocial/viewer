@@ -5,6 +5,7 @@ const [recipient, setRecipient] = useState("");
 const [token, setToken] = useState("");
 const [amount, setAmount] = useState(0);
 const [description, setDescription] = useState("");
+const [validatedAddresss, setValidatedAddress] = useState(true);
 
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
@@ -15,6 +16,22 @@ useEffect(() => {
 }, [props.item]);
 const memoizedKey = useMemo((editorKey) => editorKey, [editorKey]);
 const selectedDao = props.selectedDao;
+
+// handle checking
+const regex = /.{1}\.near$/;
+useEffect(() => {
+  if (regex.test(recipient) || recipient === "") {
+    setValidatedAddress(true);
+  } else {
+    setValidatedAddress(false);
+  }
+}, [recipient]);
+
+useEffect(() => {
+  if (amount < 0) {
+    setAmount(0);
+  }
+}, [amount]);
 
 const MarkdownEditor = `
   html {
@@ -148,18 +165,28 @@ const TextareaWrapper = styled.div`
 return (
   <div className="d-flex flex-column">
     <div className="form-group mb-3">
-      <label htmlFor="recipient">Recipient</label>
+      <label htmlFor="recipient">
+        Recipient<span className="text-danger">*</span>
+      </label>
       <input
         className="form-control"
         name="recipient"
         id="recipient"
+        placeholder="NEAR Address"
         value={recipient}
         data-bs-theme="dark"
         onChange={(e) => setRecipient(e.target.value)}
       />
+      {!validatedAddresss && (
+        <span className="text-danger" style={{ fontSize: 12 }}>
+          Please check if the NEAR address is valid!
+        </span>
+      )}
     </div>
     <div className="form-group mb-3">
-      <label htmlFor="token">Token</label>
+      <label htmlFor="token">
+        Token<span className="text-danger">*</span>
+      </label>
       <select
         class="form-select"
         name="token"
@@ -168,7 +195,7 @@ return (
         data-bs-theme="dark"
         onChange={(e) => setToken(e.target.value)}
       >
-        <option>Select a token</option>
+        <option value="">Select a token</option>
         <option value="near">NEAR</option>
         <option value="eth">ETH</option>
         <option value="usdc">USDC</option>
@@ -177,7 +204,9 @@ return (
       </select>
     </div>
     <div className="form-group mb-3">
-      <label htmlFor="amount">Amount</label>
+      <label htmlFor="amount">
+        Amount<span className="text-danger">*</span>
+      </label>
       <input
         className="form-control"
         name="amount"
