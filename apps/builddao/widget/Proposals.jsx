@@ -99,7 +99,6 @@ if (Array.isArray(policy.roles)) {
 }
 
 const proposalPeriod = policy.proposal_period;
-console.log(policy);
 
 const ProposalsComponent = () => {
   return (
