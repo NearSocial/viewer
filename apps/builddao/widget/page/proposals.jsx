@@ -1,7 +1,7 @@
 return (
-  <div>
+  <div className="container-xl">
     <Widget
-      src="astraplusplus.ndctools.near/widget/DAO.Proposals.index"
+      src="buildhub.near/widget/Proposals"
       props={{ daoId: "build.sputnik-dao.near" }}
     />
   </div>
