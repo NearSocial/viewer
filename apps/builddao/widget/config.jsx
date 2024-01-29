@@ -16,10 +16,10 @@ return {
       },
     },
     proposal: {
-      path: "buildhub.near/widget/page.proposal",
+      path: "buildhub.near/widget/page.proposals",
       blockHeight: "final",
       init: {
-        name: "Proposal",
+        name: "Proposals",
       },
     },
   },
