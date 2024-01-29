@@ -9,6 +9,9 @@ const [deposit, useDeposit] = useState(0);
 
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
+
+const bootstrapTheme = props.bootstrapTheme;
+
 useEffect(() => {
   if (!props.item) {
     return;
@@ -158,7 +161,7 @@ return (
       <input
         name="contract"
         id="contract"
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         value={contract}
         onChange={(e) => setContract(e.target.value)}
         className="form-control"
@@ -171,7 +174,7 @@ return (
       <input
         name="method"
         id="method"
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         value={method}
         onChange={(e) => setMethod(e.target.value)}
         className="form-control"
@@ -182,7 +185,7 @@ return (
       <textarea
         name="args"
         id="args"
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         value={args}
         onChange={(e) => setArgs(e.target.value)}
         className="form-control"
@@ -194,7 +197,7 @@ return (
         name="gas"
         id="gas"
         type="number"
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         value={gas}
         onChange={(e) => setGas(e.target.value)}
         className="form-control"
@@ -206,7 +209,7 @@ return (
         name="deposit"
         id="deposit"
         type="number"
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         value={deposit}
         onChange={(e) => setDeposit(e.target.value)}
         className="form-control"
@@ -223,10 +226,10 @@ return (
           src="mob.near/widget/MarkdownEditorIframe"
           props={{
             initialText: text,
-            embedCss: MarkdownEditor,
+            embedCss: props.customCSS || MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            }
+            },
           }}
         />
       </TextareaWrapper>
@@ -248,12 +251,12 @@ return (
                       method_name: method,
                       args: args,
                       deposit: deposit,
-                      gas: gas
-                    }
-                  ]
-                }
-              }
-            }
+                      gas: gas,
+                    },
+                  ],
+                },
+              },
+            },
           })
         }
       >

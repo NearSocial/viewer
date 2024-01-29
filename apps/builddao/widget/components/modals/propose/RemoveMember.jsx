@@ -8,6 +8,8 @@ const selectedDAO = props.selectedDAO;
 
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
+
+const bootstrapTheme = props.bootstrapTheme;
 useEffect(() => {
   if (!props.item) {
     return;
@@ -167,7 +169,7 @@ return (
         name="accountId"
         id="accountId"
         className="form-control"
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         value={accountId}
         onChange={(e) => setAccountId(e.target.value)}
       />
@@ -185,7 +187,7 @@ return (
       <select
         name="role"
         id="role"
-        data-bs-theme="dark"
+        data-bs-theme={bootstrapTheme}
         class="form-select"
         onChange={(e) => setRole(e.target.value)}
         selected={role}
@@ -211,10 +213,10 @@ return (
           src="mob.near/widget/MarkdownEditorIframe"
           props={{
             initialText: text,
-            embedCss: MarkdownEditor,
+            embedCss: props.customCSS || MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            }
+            },
           }}
         />
       </TextareaWrapper>
@@ -232,10 +234,10 @@ return (
               kind: {
                 RemoveMemberFromRole: {
                   member_id: accountId,
-                  role: role
-                }
-              }
-            }
+                  role: role,
+                },
+              },
+            },
           })
         }
       >
