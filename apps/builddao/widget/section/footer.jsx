@@ -74,6 +74,44 @@ const TelegramIcon = (
   </svg>
 );
 
+const GitHubIcon = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="white"
+  >
+    <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48 0-.24-.01-1.01-.01-1.84-2.78.61-3.37-1.35-3.37-1.35-.46-1.16-1.12-1.47-1.12-1.47-.91-.62.07-.61.07-.61 1.01.07 1.54 1.04 1.54 1.04.9 1.54 2.36 1.1 2.94.84.09-.65.35-1.1.64-1.35-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.26.1-2.63 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.38.1 2.63.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.76 0 .27.18.58.69.48A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z"/>
+  </svg>
+);
+
+const NearSocialIcon = (
+
+<svg
+      width="29"
+      height="20"
+      viewBox="0 0 29 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9.55396 17.509L2 9.99996L9.55396 2.49097"
+        stroke="#ffffff"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19.536 2.49097L27 9.99996L19.536 17.509"
+        stroke="#ffffff"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+);
+
 const SocialContainer = styled.div`
   display: flex;
   gap: 1.25rem;
@@ -91,7 +129,13 @@ return (
       <a href="https://nearbuilders.com/tg-builders" target="_blank">
         {TelegramIcon}
       </a>
+      <a href="https://github.com/nearbuilders" target="_blank">
+        {GitHubIcon}
+      </a>
+      <a href="https://devs.near.social" target="_blank">
+        {NearSocialIcon}
+      </a>
     </SocialContainer>
-    <p>{date.getFullYear()} BuildDAO all rights reserved</p>
+    <p>{date.getFullYear()} | Build DAO</p>
   </Footer>
 );
