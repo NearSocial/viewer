@@ -22,9 +22,15 @@ const Content = styled.div`
   max-width: 1000px;
   padding: 24px;
   outline: none !important;
-  background: #23242B;
+  background: #23242b;
   border-radius: 16px;
   color: white;
+
+  @media screen and (max-width: 768px) {
+    width: 80%;
+    max-width: 100%;
+    min-width: 0;
+  }
 `;
 
 const NoButton = styled.button`
@@ -36,33 +42,43 @@ const NoButton = styled.button`
 `;
 
 const CloseContainer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    padding-bottom: 24px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 `;
 
 const Icon = styled.i`
-    font-size: 24px;
+  font-size: 24px;
 `;
 
-function Modal({ children, open, onOpenChange, toggle, toggleContainerProps }) {
+function Modal({
+  children,
+  title,
+  open,
+  onOpenChange,
+  toggle,
+  toggleContainerProps,
+  key,
+}) {
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root key={key} open={open} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>
         <NoButton {...toggleContainerProps}>{toggle}</NoButton>
       </Dialog.Trigger>
       <Dialog.Overlay asChild>
-        <Overlay>
+        <Overlay key={`Overlay-${key}`}>
           <Dialog.Content asChild>
             <Content>
-              <Dialog.Trigger asChild>
-                <CloseContainer>
-                  <Button variant="outline" type="icon">
-                    <Icon className="bi bi-x" />
-                  </Button>
-                </CloseContainer>
-              </Dialog.Trigger>
+              <div className="d-flex align-items-center justify-content-between pb-4">
+                <h5 className="w-100">{title}</h5>
+                <Dialog.Trigger asChild>
+                  <CloseContainer>
+                    <Button variant="outline" type="icon">
+                      <Icon className="bi bi-x" />
+                    </Button>
+                  </CloseContainer>
+                </Dialog.Trigger>
+              </div>
               {children}
             </Content>
           </Dialog.Content>

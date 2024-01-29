@@ -1,15 +1,24 @@
-const { Post } = VM.require("buildhub.near/widget/components") || (() => <></>);
+/**
+ * generalized graph item fetcher,
+ * Social adapter (getr(`${accountId}/graph/${item}`, "final")
+ */
 
 const accountId = props.accountId ?? context.accountId;
+const item = props.item;
+const renderItem = props.renderItem;
 
-const bookmarks = Social.getr(`${accountId}/graph/bookmark`, "final", {
+if (!item) {
+  return <p className="text-white">No item prop passed</p>;
+}
+
+const items = Social.getr(`${accountId}/graph/${item}`, "final", {
   withBlockHeight: true,
 });
 
 const StorageKey = "order";
 const order = Storage.privateGet(StorageKey);
 const apps = useMemo(() => {
-  if (bookmarks === null || order === null) {
+  if (items === null || order === null) {
     return [];
   }
   const starredApps = new Map();
@@ -28,7 +37,7 @@ const apps = useMemo(() => {
     });
   };
 
-  buildSrc(bookmarks ?? {}, [], starredApps);
+  buildSrc(items ?? {}, [], starredApps);
   let apps = [...starredApps.entries()];
   apps.sort((a, b) => b[1] - a[1]);
   apps = apps.map((a) => a[0]);
@@ -38,7 +47,7 @@ const apps = useMemo(() => {
     Object.fromEntries(apps.map((a, i) => [a, i + 1]))
   );
   return apps;
-}, [bookmarks, order]);
+}, [items, order]);
 
 let transformedArray = apps.map((item) => {
   let splitParts = item.split("/");
@@ -55,16 +64,9 @@ let filteredArray = transformedArray.filter(
 
 return (
   <>
-    {(filteredArray ?? []).map((item) => (
-      <Post
-        accountId={item.accountId}
-        blockHeight={item.blockHeight}
-        noBorder={true}
-        hideComments={true}
-      />
-    ))}
+    {(filteredArray ?? []).map((item) => renderItem(item))}
     {filteredArray.length === 0 && (
-      <p className="fw-bold text-white">No Bookmarks Yet!</p>
+      <p className="fw-bold text-white">No items!</p>
     )}
   </>
 );

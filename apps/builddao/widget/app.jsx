@@ -1,24 +1,21 @@
 const { page, layout, loading, ...passProps } = props;
 
-const { routes, theme } = VM.require("buildhub.near/widget/config") ?? {
+const { routes } = VM.require("buildhub.near/widget/config") ?? {
   routes: {},
-  theme: "background-color: red;"
 };
 
-const { AppLayout } = VM.require("every.near/widget/layout") || {
+const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
+  theme: {},
+};
+
+const { AppLayout } = VM.require("buildhub.near/widget/template.layout") || {
   AppLayout: () => <>Layout loading...</>,
 };
 
 if (!page) page = Object.keys(routes)[0] || "home";
 
 const Root = styled.div`
-  a {
-    color: inherit;
-  }
-
-  ${theme}
-
-  // can come from config
+  ${theme}// can come from config
 `;
 
 const [activeRoute, setActiveRoute] = useState(page);
@@ -27,7 +24,8 @@ useEffect(() => {
   setActiveRoute(page);
 }, [page]);
 
-function Router({ active, routes }) { // this may be converted to a module at devs.near/widget/Router
+function Router({ active, routes }) {
+  // this may be converted to a module at devs.near/widget/Router
   const routeParts = active.split(".");
 
   let currentRoute = routes;
@@ -50,23 +48,19 @@ function Router({ active, routes }) { // this may be converted to a module at de
 
   return (
     <div key={active}>
-      <Widget
-        src="every.near/widget/thing"
-        props={{ ...passProps, ...defaultProps, path: src }}
-      />
+      <Widget src={src} props={{ ...passProps, ...defaultProps }} />
     </div>
   );
 }
 
 const Container = styled.div`
   display: flex;
-  height: 100vh;
+  height: 100%;
 `;
 
 const Content = styled.div`
   width: 100%;
   height: 100%;
-  overflow: scroll;
 `;
 
 return (

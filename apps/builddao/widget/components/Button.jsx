@@ -61,12 +61,27 @@ const StyledButton = styled.button`
       }
     }};
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
-function Button({ id, children, variant, type, onClick, className, style }) {
+function Button({
+  id,
+  disabled,
+  children,
+  variant,
+  type,
+  onClick,
+  className,
+  style,
+}) {
   return (
     <StyledButton
       id={id}
+      disabled={disabled}
       key={`Button-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
       className={className}
       variant={variant}
