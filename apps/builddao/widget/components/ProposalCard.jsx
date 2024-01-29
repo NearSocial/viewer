@@ -103,17 +103,16 @@ const Wrapper = styled.div`
     color: #51b6ff !important;
   }
 
-  // TODO
   .danger {
-    border: 1px solid rgba(81, 182, 255, 0.2) !important;
-    background: rgba(81, 182, 255, 0.2) !important;
-    color: #51b6ff !important;
+    border: 1px solid rgba(253, 42, 92, 0.1);
+    background: rgba(253, 42, 92, 0.1);
+    color: #fd2a5c !important;
   }
 
   .black {
-    border: 1px solid rgba(81, 182, 255, 0.2) !important;
-    background: rgba(81, 182, 255, 0.2) !important;
-    color: #51b6ff !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
   }
 
   .word-wrap {
