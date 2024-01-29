@@ -297,7 +297,7 @@ return (
   <>
     {props.feedType === "request" && (
       <Widget
-        src="buildhub.near/widget/components.modals.ProposeModal"
+        src="buildhub.near/widget/components.modals.CreateProposal"
         props={{
           showModal,
           toggleModal,
