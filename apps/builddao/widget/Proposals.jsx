@@ -29,19 +29,44 @@ const proposals = proposalId
       limit: resPerPage
     }) || [];
 
+const PaginationThemeContainer = props.PaginationThemeContainer;
+
+const ThemeContainer =
+  props.ThemeContainer ||
+  styled.div`
+    --primary-bg-color: #23242b;
+    --secondary-bg-color: #ffffff1a;
+    --primary-border-color: #fff;
+    --primary-text-color: #ffffff;
+    --secondary-text-color: #b0b0b0;
+    --primary-btn-bg-color: #ffaf51;
+    --primary-btn-text-color: #000;
+    --approve-bg-color: #82e299;
+    --reject-bg-color: #c23f38;
+    --spam-bg-color: #f5c518;
+    --vote-button-color: #ffffff;
+    --success-badge-bg-color: #38c7931a;
+    --success-badge-text-color: #38c793;
+    --primary-badge-bg-color: #ffaf5133;
+    --primary-badge-text-color: #ffaf51;
+    --info-badge-bg-color: #51b6ff33;
+    --info-badge-text-color: #51b6ff;
+    --danger-badge-bg-color: #fd2a5c1a;
+    --danger-badge-text-color: #fd2a5c;
+    --black-badge-bg-color: #ffffff1a;
+    --black-badge-text-color: #fff;
+  `;
+
 const Container = styled.div`
   .ndc-card {
     border: none;
-    background-color: #23242b;
-    color: white !important;
+    background-color: var(--primary-bg-color);
+    color: var(--primary-text-color) !important;
     padding: 2rem;
   }
 `;
 
 const handleVote = ({ action, proposalId, proposer }) => {
-  let args = {};
-  args["id"] = JSON.parse(proposalId);
-  args["action"] = action;
   const customAction = action.replace("Vote", "");
   const notification = {
     [accountId]: {
@@ -63,22 +88,23 @@ const handleVote = ({ action, proposalId, proposer }) => {
       }
     }
   };
-  Near.call([
-    {
-      contractName: daoId,
-      methodName: "act_proposal",
-      args: args,
-      gas: 200000000000000
-    },
-    {
-      contractName: "social.near",
-      methodName: "set",
-      args: { data: notification },
-      deposit: Big(JSON.stringify(notification).length * 16).mul(
-        Big(10).pow(20)
-      )
-    }
-  ]);
+
+  sdk.actProposal({
+    proposalId,
+    action,
+    deposit: "",
+    gas: 200000000000000,
+    additionalCalls: [
+      {
+        contractName: "social.near",
+        methodName: "set",
+        args: { data: notification },
+        deposit: Big(JSON.stringify(notification).length * 16).mul(
+          Big(10).pow(20)
+        )
+      }
+    ]
+  });
 };
 
 const policy = sdk.getPolicy();
@@ -110,84 +136,34 @@ const ProposalsComponent = () => {
               ? item.kind
               : Object.keys(item.kind)[0];
 
-          const comments = Social.index("comment", {
-            type: "dao_proposal_comment",
-            path: `${daoId}/proposal/main`,
-            proposal_id: item.id + "-beta"
-          });
-          const permissionKind = proposalKinds[kindName];
-          let totalVotesNeeded = 0;
+          const comments = sdk.getCommentsByProposalId({ proposalId: item.id });
+
           const isAllowedToVote = [
             sdk.hasPermission({
               accountId,
-              permissionKind,
+              kindName,
               actionType: actions.VoteApprove
             }),
             sdk.hasPermission({
               accountId,
-              permissionKind,
+              kindName,
               actionType: actions.VoteReject
             }),
 
             sdk.hasPermission({
               accountId,
-              permissionKind,
+              kindName,
               actionType: actions.VoteRemove
             })
           ];
 
-          policy.roles.forEach((role) => {
-            const isRoleAllowedToVote =
-              role.permissions.includes(
-                `${proposalKinds[kindName]}:VoteApprove`
-              ) ||
-              role.permissions.includes(
-                `${proposalKinds[kindName]}:VoteReject`
-              ) ||
-              role.permissions.includes(`${proposalKinds[kindName]}:*`) ||
-              role.permissions.includes(`*:VoteApprove`) ||
-              role.permissions.includes(`*:VoteReject`) ||
-              role.permissions.includes("*:*");
-            if (isRoleAllowedToVote) {
-              const threshold = (role.vote_policy &&
-                role.vote_policy[proposalKinds[kindName]]?.threshold) ||
-                policy["default_vote_policy"]?.threshold || [0, 0];
-              const eligibleVoters = role.kind.Group
-                ? role.kind.Group.length
-                : 0;
-
-              // Apply the threshold
-              if (eligibleVoters === 0) {
-                return;
-              }
-
-              const votesNeeded =
-                Math.floor((threshold[0] / threshold[1]) * eligibleVoters) + 1;
-              console.log(item.id, "votesNeeded", votesNeeded);
-              totalVotesNeeded += votesNeeded;
-            }
+          const { thresholdVoteCount } = getVotersAndThresholdForProposalKind({
+            kindName
           });
-
-          let totalVotes = {
-            yes: 0,
-            no: 0,
-            spam: 0,
-            total: 0
-          };
-          for (const vote of Object.values(item.votes)) {
-            if (vote === "Approve") {
-              totalVotes.yes++;
-            } else if (vote === "Reject") {
-              totalVotes.no++;
-            } else if (vote === "Spam") {
-              totalVotes.spam++;
-            }
-          }
-          totalVotes.total = totalVotes.yes + totalVotes.no + totalVotes.spam;
-
-          let expirationTime = Big(item.submission_time).add(
-            Big(proposalPeriod)
-          );
+          const totalVotes = calculateVoteCountByType({ votes: item.votes });
+          let expirationTime = sdk.getProposalExpirationTime({
+            submissionTime: item.submission_time
+          });
 
           return (
             <Widget
@@ -196,8 +172,12 @@ const ProposalsComponent = () => {
                 proposalData: {
                   ...item,
                   typeName: kindName.replace(/([A-Z])/g, " $1").trim(),
-                  totalVotesNeeded,
-                  totalVotes,
+                  totalVotesNeeded: thresholdVoteCount,
+                  totalVotes: {
+                    ...totalVotes,
+                    yes: totalVotes.approve,
+                    no: totalVotes.reject
+                  },
                   expirationTime
                 },
                 daoId: daoId,
@@ -216,39 +196,38 @@ const ProposalsComponent = () => {
 };
 
 return (
-  <Container className="d-flex flex-column gap-4">
-    <Widget
-      src="buildhub.near/widget/components.modals.CreateProposal"
-      props={{
-        showModal: showProposalModal,
-        toggleModal: () => setShowModal(!showProposalModal)
-      }}
-    />
-    <div className="d-flex justify-content-between">
-      <h3>Proposals</h3>
-      <Button variant="primary" onClick={() => setShowModal(true)}>
-        Create Proposal
-      </Button>
-    </div>
-    <div className="d-flex flex-column gap-4">
-      <ProposalsComponent />
-    </div>
-    {!proposalId && (
-      <div className="d-flex justify-content-center my-4">
-        <Widget
-          src="nearui.near/widget/Navigation.PrevNext"
-          props={{
-            hasPrev: currentPage > 0,
-            hasNext: proposals?.[0].id !== resPerPage,
-            onPrev: () => {
-              setCurrentPage(currentPage - 1);
-            },
-            onNext: () => {
-              setCurrentPage(currentPage + 1);
-            }
-          }}
-        />
+  <ThemeContainer>
+    <Container className="d-flex flex-column gap-4">
+      <Widget
+        src="buildhub.near/widget/components.modals.CreateProposal"
+        props={{
+          showModal: showProposalModal,
+          toggleModal: () => setShowModal(!showProposalModal)
+        }}
+      />
+      <div className="d-flex justify-content-between">
+        <h3>Proposals</h3>
+        <Button variant="primary" onClick={() => setShowModal(true)}>
+          Create Proposal
+        </Button>
       </div>
-    )}
-  </Container>
+      <div className="d-flex flex-column gap-4">
+        <ProposalsComponent />
+      </div>
+      {!proposalId && (
+        <div className="d-flex justify-content-center my-4">
+          <Widget
+            src={"buildhub.near/widget/components.Pagination"}
+            props={{
+              maxVisiblePages: 5,
+              totalPages: Math.round(lastProposalId / resPerPage),
+              onPageClick: (v) => setCurrentPage(v),
+              selectedPage: currentPage,
+              ThemeContainer: PaginationThemeContainer
+            }}
+          />
+        </div>
+      )}
+    </Container>
+  </ThemeContainer>
 );

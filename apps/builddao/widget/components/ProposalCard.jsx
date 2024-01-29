@@ -14,6 +14,32 @@ const {
 const { daoId, isAllowedToVote, handleVote, comments, proposalData } = props;
 const accountId = context.accountId;
 
+const ThemeContainer =
+  props.ThemeContainer ||
+  styled.div`
+    --primary-bg-color: #23242b;
+    --secondary-bg-color: #ffffff1a;
+    --primary-border-color: #fff;
+    --primary-text-color: #ffffff;
+    --secondary-text-color: #b0b0b0;
+    --primary-btn-bg-color: #ffaf51;
+    --primary-btn-text-color: #000;
+    --approve-bg-color: #82e299;
+    --reject-bg-color: #c23f38;
+    --spam-bg-color: #f5c518;
+    --vote-button-color: #ffffff;
+    --success-badge-bg-color: #38c7931a;
+    --success-badge-text-color: #38c793;
+    --primary-badge-bg-color: #ffaf5133;
+    --primary-badge-text-color: #ffaf51;
+    --info-badge-bg-color: #51b6ff33;
+    --info-badge-text-color: #51b6ff;
+    --danger-badge-bg-color: #fd2a5c1a;
+    --danger-badge-text-color: #fd2a5c;
+    --black-badge-bg-color: #ffffff1a;
+    --black-badge-text-color: #fff;
+  `;
+
 function checkVotes(value) {
   return votes[accountId] === value;
 }
@@ -27,41 +53,37 @@ const Wrapper = styled.div`
   gap: 24px;
   min-height: 500px;
   width: 100%;
-  border: 1px solid #fff;
+  border: 1px solid var(--primary-border-color);
 
   b {
     font-weight: 600;
   }
 
-  .grey-bg {
-    background: rgba(255, 255, 255, 0.1) !important;
+  .secondary-bg {
+    background: var(--secondary-bg-color) !important;
   }
 
-  .light-grey-text {
-    color: rgba(176, 176, 176, 1) !important;
-  }
-
-  .text-muted {
-    color: rgba(176, 176, 176, 1) !important;
+  .secondary-text {
+    color: var(--secondary-text-color) !important;
   }
 
   a {
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
+    background: var(--secondary-bg-color) !important;
+    color: var(--primary-text-color) !important;
   }
 
   .social_url {
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
+    background: var(--secondary-bg-color) !important;
   }
 
   .btn-primary {
-    background-color: #ffaf51 !important;
-    color: black !important;
+    background-color: var(--primary-btn-bg-color) !important;
+    color: var(--primary-btn-text-color) !important;
+    border: none;
   }
 
   ul {
-    background-color: #23242b;
+    background-color: var(--primary-bg-color);
   }
 
   .Approve {
@@ -86,33 +108,33 @@ const Wrapper = styled.div`
   }
 
   .success {
-    border: 1px solid rgba(56, 199, 147, 0.2) !important;
-    background: rgba(56, 199, 147, 0.1) !important;
-    color: #38c793 !important;
+    border: 1px solid var(--success-badge-bg-color) !important;
+    background: var(--success-badge-bg-color) !important;
+    color: var(--success-badge-text-color) !important;
   }
 
   .primary {
-    border: 1px solid rgba(255, 175, 81, 0.2) !important;
-    background: rgba(255, 175, 81, 0.2) !important;
-    color: #ffaf51 !important;
+    border: 1px solid var(--primary-badge-bg-color) !important;
+    background: var(--primary-badge-bg-color) !important;
+    color: var(--primary-badge-text-color) !important;
   }
 
   .info {
-    border: 1px solid rgba(81, 182, 255, 0.2) !important;
-    background: rgba(81, 182, 255, 0.2) !important;
-    color: #51b6ff !important;
+    border: 1px solid var(--info-badge-bg-color) !important;
+    background: var(--info-badge-bg-color) !important;
+    color: var(--info-badge-text-color) !important;
   }
 
   .danger {
-    border: 1px solid rgba(253, 42, 92, 0.1);
-    background: rgba(253, 42, 92, 0.1);
-    color: #fd2a5c !important;
+    border: 1px solid var(--danger-badge-bg-color) !important;
+    background: var(--danger-badge-bg-color) !important;
+    color: var(--danger-badge-text-color) !important;
   }
 
   .black {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff !important;
+    border: 1px solid var(--black-badge-bg-color) !important;
+    background: var(--black-badge-bg-color) !important;
+    color: var(--black-badge-text-color) !important;
   }
 
   .word-wrap {
@@ -122,7 +144,7 @@ const Wrapper = styled.div`
   ${({ status }) =>
     status === "Approved" &&
     `
-    border-color: #82E299;
+    border-color: var(--approve-bg-color);
   `}
 
   ${({ status }) =>
@@ -134,7 +156,7 @@ const Wrapper = styled.div`
   ${({ status }) =>
     (status === "Failed" || status === "Rejected") &&
     `
-    border-color: #C23F38;
+    border-color: var(--reject-bg-color);
   `}
 
   .text-sm {
@@ -184,7 +206,7 @@ const YouVotedBadge = () => {
 
 function renderPermission({ isAllowedToVote }) {
   return (
-    <div className={"text-center p-2 rounded-pill light-grey-text grey-bg"}>
+    <div className={"text-center p-2 rounded-pill secondary-text secondary-bg"}>
       {isAllowedToVote
         ? "You are allowed to vote on this proposal"
         : "You are not allowed to vote on this proposal"}
@@ -246,7 +268,7 @@ function renderHeader({ typeName, id, status }) {
             props={{
               children: `Proposal ID #${id}`,
               variant: "",
-              className: "grey-bg",
+              className: "secondary-bg",
               size: "lg"
             }}
           />
@@ -314,7 +336,7 @@ function renderData({
           <div className="mb-2">
             <b>Proposer</b>
           </div>
-          <div className="light-grey-text">
+          <div className="secondary-text">
             <Widget
               src="mob.near/widget/Profile.ShortInlineBlock"
               props={{ accountId: proposer, tooltip: true }}
@@ -324,7 +346,7 @@ function renderData({
       </div>
       <div className="mt-3 word-wrap ">
         <b>Description</b>
-        <div className="light-grey-text">
+        <div className="secondary-text">
           <Markdown text={description} />
         </div>
       </div>
@@ -339,7 +361,7 @@ function renderData({
           <div className="info_section">
             <b>Submitted at</b>
             <div>
-              <small className="text-muted">
+              <small className="secondary-text">
                 {new Date(
                   parseInt(Big(submission_time).div(1000000))
                 ).toLocaleString()}
@@ -351,7 +373,7 @@ function renderData({
         <div className="info_section">
           <b>Expired at</b>
           <div>
-            <small className="text-muted">
+            <small className="secondary-text">
               {new Date(
                 parseInt(Big(expirationTime).div(1000000))
               ).toLocaleString()}
@@ -362,7 +384,7 @@ function renderData({
         <div className="info_section no-border">
           <b>Required Votes</b>
           <div>
-            <small className="text-muted">{totalVotesNeeded}</small>
+            <small className="secondary-text">{totalVotesNeeded}</small>
           </div>
         </div>
       </div>
@@ -388,13 +410,11 @@ function renderVoteButtons({
     align-items: center;
     position: relative;
     overflow: hidden;
-    color: rgb(var(--vote-button-color));
-    background-color: rgba(255, 255, 255, 0.10);
-    --vote-button-bg: 130, 226, 153;
-    --vote-button-color: 255, 255, 255;
-
+    color: var(--vote-button-color);
+    background-color: var(--secondary-bg-color);
+    --vote-button-bg: var(--approve-bg-color);
     &.no {
-      --vote-button-bg: 194, 63, 56;
+      --vote-button-bg: var(--reject-bg-color);
     }
 
     &.no > div:last-child {
@@ -405,26 +425,22 @@ function renderVoteButtons({
         if (percentage > 80) {
           return `
         &.no > div:last-child {
-          color: rgb(var(--vote-button-color)) !important;
+          color: var(--vote-button-color) !important;
         }
       `;
         }
       } else if (!disabled) {
         return `
         &:hover.no > div:last-child {
-          color: rgb(var(--vote-button-color)) !important;
+          color: var(--vote-button-color) !important;
         } 
         `;
       }
     }}}
 
     &.spam {
-      --vote-button-bg: 245, 197, 24;
+      --vote-button-bg: var(--spam-bg-color);
     }
-
-    &.abstain {
-        --vote-button-bg: 169, 169, 169;
-      }
 
     &:before {
       content: "";
@@ -435,7 +451,7 @@ function renderVoteButtons({
       border-radius: 12px;
       transition: all 0.4s ease-in-out;
       z-index: 0;
-      background-color: rgb(var(--vote-button-bg));
+      background-color: var(--vote-button-bg);
       ${({ percentage }) => `
         min-width: ${percentage && percentage > 5 ? `${percentage}%` : "5px"};
       `}
@@ -544,7 +560,7 @@ function renderVoteButtons({
           wins={wins.yes}
           myVote={voted.yes}
           onClick={() => handleVote("VoteApprove")}
-          disabled={alreadyVoted || finished || !isAllowedToVote[0]}
+          // disabled={alreadyVoted || finished || !isAllowedToVote[0]}
         >
           <div>
             {wins.yes && (
@@ -673,7 +689,7 @@ function renderFooter({ totalVotes, votes, comments, daoId, proposal }) {
             <div
               key={index}
               className={
-                "d-flex gap-2 align-items-center justify-content-center user-select-none light-grey-text" +
+                "d-flex gap-2 align-items-center justify-content-center user-select-none secondary-text" +
                 (index !== items.length - 1 ? " border-end" : "")
               }
             >
@@ -710,35 +726,37 @@ const canVote =
   isAllowedToVote.every((v) => v) && status === "In Progress" && !alreadyVoted;
 
 return (
-  <Wrapper className="ndc-card" status={status}>
-    {renderPermission({ isAllowedToVote: isAllowedToVote.every((v) => v) })}
-    {renderHeader({ typeName, id, daoId, status })}
-    {renderData({
-      proposer,
-      description,
-      submission_time,
-      totalVotesNeeded
-    })}
-    {renderVoteButtons({
-      totalVotes,
-      status,
-      votes,
-      accountId,
-      isAllowedToVote,
-      handleVote: (action) => {
-        return handleVote({
-          action,
-          proposalId: id,
-          proposer
-        });
-      }
-    })}
-    {renderFooter({
-      totalVotes,
-      votes,
-      comments,
-      daoId,
-      proposal: proposalData
-    })}
-  </Wrapper>
+  <ThemeContainer>
+    <Wrapper className="ndc-card" status={status}>
+      {renderPermission({ isAllowedToVote: isAllowedToVote.every((v) => v) })}
+      {renderHeader({ typeName, id, daoId, status })}
+      {renderData({
+        proposer,
+        description,
+        submission_time,
+        totalVotesNeeded
+      })}
+      {renderVoteButtons({
+        totalVotes,
+        status,
+        votes,
+        accountId,
+        isAllowedToVote,
+        handleVote: (action) => {
+          return handleVote({
+            action,
+            proposalId: id,
+            proposer
+          });
+        }
+      })}
+      {renderFooter({
+        totalVotes,
+        votes,
+        comments,
+        daoId,
+        proposal: proposalData
+      })}
+    </Wrapper>
+  </ThemeContainer>
 );
