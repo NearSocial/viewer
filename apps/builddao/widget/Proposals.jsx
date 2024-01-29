@@ -219,7 +219,7 @@ const ProposalsComponent = () => {
 return (
   <Container className="d-flex flex-column gap-4">
     <Widget
-      src="buildhub.near/widget/components.modals.ProposeModal"
+      src="buildhub.near/widget/components.modals.CreateProposal"
       props={{
         showModal: showProposalModal,
         toggleModal: () => setShowModal(!showProposalModal)
