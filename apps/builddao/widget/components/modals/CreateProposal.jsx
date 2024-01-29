@@ -128,6 +128,7 @@ return (
               selectedDAO: selectedDAO,
               item: props.item,
               bootstrapTheme: bootstrapTheme,
+              customCSS: editorCSS,
             }}
           />
         </>

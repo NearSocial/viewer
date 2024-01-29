@@ -155,10 +155,10 @@ return (
         src="mob.near/widget/MarkdownEditorIframe"
         props={{
           initialText: text,
-          embedCss: MarkdownEditor,
+          embedCss: props.customCSS || MarkdownEditor,
           onChange: (v) => {
             setText(v);
-          }
+          },
         }}
       />
     </TextareaWrapper>
@@ -170,8 +170,8 @@ return (
           Near.call(selectedDAO, "add_proposal", {
             proposal: {
               description: text,
-              kind: "Vote"
-            }
+              kind: "Vote",
+            },
           })
         }
       >
