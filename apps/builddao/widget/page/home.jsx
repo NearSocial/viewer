@@ -17,8 +17,6 @@ const { Footer } = VM.require("buildhub.near/widget/home.footer") || {
   Footer: () => <></>
 };
 
-const ownerId = "/*__@appAccount__*/";
-
 const Root = styled.div`
   background-color: #0b0c14;
   color: #ffffff;
