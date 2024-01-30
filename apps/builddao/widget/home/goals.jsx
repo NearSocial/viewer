@@ -212,32 +212,36 @@ const GridItem = ({ tag, title, description, image, isFirst }) => {
   );
 };
 
-return (
-  <GoalsContainer className="container-xl">
-    <SectionPill title="Goals" icon={MagicIcon} />
-    <Title>
-      Primary <span className="yellow">Objectives</span>
-    </Title>
-    <GridContainer>
-      <GridItem
-        title="Support Builders"
-        tag="Development"
-        description="The core mission is to build open-source infrastructure and web applications for everyone. By creating systems to reward useful contributions, we can grow successful projects that solve problems and generate sustainable value."
-        image="https://ipfs.near.social/ipfs/bafkreiezfdf2y4zz3nm2dgfhfs2lq3wjuwm647vdn75c3rdwidru4l3ufy"
-        isFirst
-      />
-      <GridItem
-        title="Learn Together"
-        tag="Education"
-        description="We are cultivating a worldwide community of builders who are motivated to help others. Members can earn badges and get necessary resources for training potential contributors."
-        image="https://ipfs.near.social/ipfs/bafkreigdor4dtdj5sfq6g2m6wvsfihx72psb7sc5wtx6mbp7g7kxetrpsi"
-      />
-      <GridItem
-        title="Community"
-        tag="Facilitate Governance"
-        description="We introduced on-chain feedback channels to gather input from participants. This will be crucial for understanding common issues, optimizing documentation, and improving quality of experience."
-        image="https://ipfs.near.social/ipfs/bafkreiggevnacu45yy72igqlmq4gkdyea2jj7hswvolonjoqzvifdf57nq"
-      />
-    </GridContainer>
-  </GoalsContainer>
-);
+const Goals = () => {
+  return (
+    <GoalsContainer className="container-xl">
+      <SectionPill title="Goals" icon={MagicIcon} />
+      <Title>
+        Primary <span className="yellow">Objectives</span>
+      </Title>
+      <GridContainer>
+        <GridItem
+          title="Support Builders"
+          tag="Development"
+          description="The core mission is to build open-source infrastructure and web applications for everyone. By creating systems to reward useful contributions, we can grow successful projects that solve problems and generate sustainable value."
+          image="https://ipfs.near.social/ipfs/bafkreiezfdf2y4zz3nm2dgfhfs2lq3wjuwm647vdn75c3rdwidru4l3ufy"
+          isFirst
+        />
+        <GridItem
+          title="Learn Together"
+          tag="Education"
+          description="We are cultivating a worldwide community of builders who are motivated to help others. Members can earn badges and get necessary resources for training potential contributors."
+          image="https://ipfs.near.social/ipfs/bafkreigdor4dtdj5sfq6g2m6wvsfihx72psb7sc5wtx6mbp7g7kxetrpsi"
+        />
+        <GridItem
+          title="Community"
+          tag="Facilitate Governance"
+          description="We introduced on-chain feedback channels to gather input from participants. This will be crucial for understanding common issues, optimizing documentation, and improving quality of experience."
+          image="https://ipfs.near.social/ipfs/bafkreiggevnacu45yy72igqlmq4gkdyea2jj7hswvolonjoqzvifdf57nq"
+        />
+      </GridContainer>
+    </GoalsContainer>
+  );
+};
+
+return { Goals };

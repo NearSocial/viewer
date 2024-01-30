@@ -95,17 +95,21 @@ const Content = styled.div`
   margin: 0 auto;
 `;
 
-return (
-  <HeroContainer>
-    <Content>
-      <Logo src={logoLink} />
-      <Tagline>
-        Designed to connect and empower builders in a{" "}
-        <span className="muted">multi-chain ecosystem</span>
-      </Tagline>
-    </Content>
-    <Grid src={gridLink} />
-    <LeftBlur src={leftBlur} />
-    <RightBlur src={rightBlur} />
-  </HeroContainer>
-);
+const Hero = () => {
+  return (
+    <HeroContainer>
+      <Content>
+        <Logo src={logoLink} />
+        <Tagline>
+          Designed to connect and empower builders in a{" "}
+          <span className="muted">multi-chain ecosystem</span>
+        </Tagline>
+      </Content>
+      <Grid src={gridLink} />
+      <LeftBlur src={leftBlur} />
+      <RightBlur src={rightBlur} />
+    </HeroContainer>
+  );
+};
+
+return { Hero };

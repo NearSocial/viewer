@@ -148,19 +148,23 @@ const Image = styled.img`
   max-width: 1200px;
 `;
 
-return (
-  <GovernanceContainer>
-    <ContentContainer>
-      <SectionPill title="Governance" icon={MagicIcon} />
-      <h1>
-        Let's <span className="blue">coordinate!</span>
-      </h1>
-      <p>
-        Build DAO upholds the principles of openness and accountability in its
-        decision-making processes. We believe success depends on metagovernance
-        of builders, by builders, for builders.
-      </p>
-    </ContentContainer>
-    <Image src={imageLink} />
-  </GovernanceContainer>
-);
+const Governance = () => {
+  return (
+    <GovernanceContainer>
+      <ContentContainer>
+        <SectionPill title="Governance" icon={MagicIcon} />
+        <h1>
+          Let's <span className="blue">coordinate!</span>
+        </h1>
+        <p>
+          Build DAO upholds the principles of openness and accountability in its
+          decision-making processes. We believe success depends on
+          metagovernance of builders, by builders, for builders.
+        </p>
+      </ContentContainer>
+      <Image src={imageLink} />
+    </GovernanceContainer>
+  );
+};
+
+return { Governance };

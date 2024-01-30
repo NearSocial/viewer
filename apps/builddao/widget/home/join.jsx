@@ -317,55 +317,59 @@ const CTAContent = styled.div`
   }
 `;
 
-return (
-  <JoinContainer>
-    <ContentContainer>
-      <SectionPill title="Join" icon={MagicIcon} />
-      <h2>
-        Open call for members to{" "}
-        <span className="blue">join and contribute</span>
-      </h2>
-      <p>
-        Build DAO is an innovative, community-led organization designed to serve
-        the open web ecosystem in multiple ways:
-      </p>
-    </ContentContainer>
-    <CardContainer>
-      <Card
-        title="Vote on Important Decisions"
-        description="Members collectively shape community programs and policies."
-      />
-      <Card
-        title="Earn Recognition and Rewards"
-        description="Members develop their own reputations as builders."
-      />
-      <Card
-        title="Discover Opportunities"
-        description="Members gain exposure to new gigs and interesting projects."
-      />
-    </CardContainer>
-    <CTAContainer>
-      <h2>
-        How to <span className="blue">join</span>
-      </h2>
-      <CTAContent>
+const Join = () => {
+  return (
+    <JoinContainer>
+      <ContentContainer>
+        <SectionPill title="Join" icon={MagicIcon} />
+        <h2>
+          Open call for members to{" "}
+          <span className="blue">join and contribute</span>
+        </h2>
         <p>
-          1. Sign membership agreement (on-chain)
-          <br />
-          2. Propose to be added to the “Community” role
-          <br />
-          3. Fulfill contribution requirements
+          Build DAO is an innovative, community-led organization designed to
+          serve the open web ecosystem in multiple ways:
         </p>
-        <Widget
-          src="/*__@appAccount__*//widget/components.buttons.Connect"
-          props={{
-            joinBtnChildren: "Join Now",
-            showActivity: true,
-            className: "custom-button",
-            href: "/join"
-          }}
+      </ContentContainer>
+      <CardContainer>
+        <Card
+          title="Vote on Important Decisions"
+          description="Members collectively shape community programs and policies."
         />
-      </CTAContent>
-    </CTAContainer>
-  </JoinContainer>
-);
+        <Card
+          title="Earn Recognition and Rewards"
+          description="Members develop their own reputations as builders."
+        />
+        <Card
+          title="Discover Opportunities"
+          description="Members gain exposure to new gigs and interesting projects."
+        />
+      </CardContainer>
+      <CTAContainer>
+        <h2>
+          How to <span className="blue">join</span>
+        </h2>
+        <CTAContent>
+          <p>
+            1. Sign membership agreement (on-chain)
+            <br />
+            2. Propose to be added to the “Community” role
+            <br />
+            3. Fulfill contribution requirements
+          </p>
+          <Widget
+            src="/*__@appAccount__*//widget/components.buttons.Connect"
+            props={{
+              joinBtnChildren: "Join Now",
+              showActivity: true,
+              className: "custom-button",
+              href: "/join",
+            }}
+          />
+        </CTAContent>
+      </CTAContainer>
+    </JoinContainer>
+  );
+};
+
+return { Join };
