@@ -46,6 +46,8 @@ const Wrapper = styled.div`
   }
 `;
 
+const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
+
 const accountId = props.accountId;
 const name = props.name || Social.get(`${accountId}/profile/name`);
 const isPremium = !!props.isPremium;
@@ -53,7 +55,12 @@ const isPremium = !!props.isPremium;
 const Overlay = (props) => (
   <Link
     className="link-dark text-truncate d-inline-flex mw-100"
-    href={`/mob.near/widget/ProfilePage?accountId=${accountId}`}
+    to={href({
+      widgetSrc: "mob.near/widget/ProfilePage",
+      props: {
+        accountId,
+      },
+    })}
   >
     <Widget
       src="mob.near/widget/Profile.N.OverlayTrigger"

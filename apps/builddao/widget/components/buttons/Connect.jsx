@@ -124,6 +124,9 @@ const Container = styled.div`
   }
 `;
 
+const { href: linkHref } =
+  VM.require("buildhub.near/widget/lib.url") || (() => {});
+
 const Component = () => {
   if (data.isDaoMember || isConnected) {
     if (showActivity) {
@@ -132,7 +135,15 @@ const Component = () => {
           <Bullet variant="light">
             {data.isDaoMember ? "Joined" : "Pending application"}
           </Bullet>
-          <Link href={"/?page=feed"}>
+          <Link
+            // href={"/?page=feed"}
+            to={linkHref({
+              widgetSrc: "buildhub.near/widget/app",
+              props: {
+                page: "feed",
+              },
+            })}
+          >
             View Activity{" "}
             <svg
               xmlns="http://www.w3.org/2000/svg"

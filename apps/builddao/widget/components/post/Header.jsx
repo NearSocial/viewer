@@ -97,10 +97,17 @@ const customActions = props.customActions ?? [];
 const showTime = props.showTime ?? true;
 const toggleModal = props.toggleModal;
 
+const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
+
 const Overlay = (props) => (
   <Link
     className="link-dark text-truncate d-inline-flex mw-100"
-    href={`/mob.near/widget/ProfilePage?accountId=${accountId}`}
+    to={href({
+      widgetSrc: "mob.near/widget/ProfilePage",
+      props: {
+        accountId,
+      },
+    })}
   >
     <Widget
       src="mob.near/widget/Profile.N.OverlayTrigger"

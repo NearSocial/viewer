@@ -7,7 +7,7 @@ const Navbar = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 48px;
+  padding: 24px 48px;
   width: 100%;
 
   background-color: #0b0c14;
@@ -54,8 +54,19 @@ const MobileNavigation = styled.div`
   }
 `;
 
+const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
+
 const NavLink = ({ to, children }) => (
-  <Link key={to} to={`/?page=${to}`}>
+  <Link
+    key={to}
+    // to={`/?page=${to}`}
+    to={href({
+      widgetSrc: "buildhub.near/widget/app",
+      props: {
+        page: to,
+      },
+    })}
+  >
     {children}
   </Link>
 );
@@ -67,7 +78,14 @@ const AppHeader = ({ page, routes }) => (
   <Navbar>
     <div className="d-flex align-items-center justify-content-between w-100">
       <DesktopNavigation className="container-xl">
-        <Link to={"/"}>
+        <Link
+          to={href({
+            widgetSrc: "buildhub.near/widget/app",
+            props: {
+              page: "home",
+            },
+          })}
+        >
           <img
             style={{ width: 85, objectFit: "cover" }}
             src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya"
@@ -102,7 +120,14 @@ const AppHeader = ({ page, routes }) => (
         />
       </DesktopNavigation>
       <MobileNavigation>
-        <Link to={"/"}>
+        <Link
+          to={href({
+            widgetSrc: "buildhub.near/widget/app",
+            props: {
+              page: "home",
+            },
+          })}
+        >
           <img
             style={{ width: 85, objectFit: "cover" }}
             src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya"
