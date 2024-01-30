@@ -1,55 +1,87 @@
 const { page, tab, layout, loading, ...passProps } = props;
 
-const { routes } = {
-  type: "app",
-  routes: {
-    home: {
-      path: "buildhub.near/widget/page.home",
-      blockHeight: "final",
-      init: {
-        name: "Home",
-      },
-    },
-    feed: {
-      path: "buildhub.near/widget/page.feed",
-      blockHeight: "final",
-      init: {
-        name: "Feed",
-      },
-    },
-    proposal: {
-      path: "buildhub.near/widget/page.proposals",
-      blockHeight: "final",
-      init: {
-        name: "Proposals",
-      },
-    },
-  },
+const { routes } = VM.require("buildhub.near/widget/config.routes") ?? {
+  routes: {},
 };
 
-// const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
-//   theme: {},
-// };
+const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
+  theme: {},
+};
 
 const { AppLayout } = VM.require("buildhub.near/widget/template.AppLayout") || {
   AppLayout: () => <>Layout loading...</>,
 };
 
-const { Router } = VM.require("devs.near/widget/Router") || {
-  Router: () => <>Router loading...</>,
-};
-
 if (!page) page = Object.keys(routes)[0] || "home";
 
 const Root = styled.div`
-  // can come from config
+  --stroke-color: rgba(255, 255, 255, 0.2);
+  --bg-1: #0b0c14;
+  --bg-1-hover: #17181c;
+  --bg-1-hover-transparent: rgba(23, 24, 28, 0);
+  --bg-2: ##23242b;
+  --label-color: #fff;
+  --font-color: #fff;
+  --font-muted-color: #cdd0d5;
+  --black: #000;
+  --system-red: #fd2a5c;
+  --yellow: #ffaf51;
+
+  --compose-bg: #23242b;
+
+  --post-bg: #0b0c14;
+  --post-bg-hover: #17181c;
+  --post-bg-transparent: rgba(23, 24, 28, 0);
+
+  --button-primary-bg: #ffaf51;
+  --button-outline-bg: transparent;
+  --button-default-bg: #23242b;
+
+  --button-primary-color: #000;
+  --button-outline-color: #cdd0d5;
+  --button-default-color: #cdd0d5;
+
+  --button-primary-hover-bg: #e49b48;
+  --button-outline-hover-bg: rgba(255, 255, 255, 0.2);
+  --button-default-hover-bg: #17181c;
 `;
 
-// const [activeRoute, setActiveRoute] = useState(page);
+function Router({ active, routes }) {
+  // this may be converted to a module at devs.near/widget/Router
+  const routeParts = active.split(".");
 
-// useEffect(() => {
-//   setActiveRoute(page);
-// }, [page]);
+  let currentRoute = routes;
+  let src = "";
+  let defaultProps = {};
+
+  for (let part of routeParts) {
+    if (currentRoute[part]) {
+      currentRoute = currentRoute[part];
+      src = currentRoute.path;
+
+      if (currentRoute.init) {
+        defaultProps = { ...defaultProps, ...currentRoute.init };
+      }
+    } else {
+      // Handle 404 or default case for unknown routes
+      return <p>404 Not Found</p>;
+    }
+  }
+
+  return (
+    <div key={active}>
+      <Widget
+        src={src}
+        props={{
+          currentPath: `/buildhub.near/widget/app?page=${page}`,
+          page: tab,
+          ...passProps,
+          ...defaultProps,
+        }}
+      />
+    </div>
+  );
+}
 
 const Container = styled.div`
   display: flex;
