@@ -53,7 +53,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const currentPath = props.currentPath ?? "/?page=feed";
+const currentPath = props.currentPath ?? "/buildhub.near/widget/app?page=feed";
 
 const [onHashtag] = useState(() => (hashtag) => (
   <span

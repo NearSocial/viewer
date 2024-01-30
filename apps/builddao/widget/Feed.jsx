@@ -39,7 +39,7 @@ return (
           accountId={p.accountId}
           blockHeight={p.blockHeight}
           noBorder={true}
-          currentPath={`/?page=feed`}
+          currentPath={`/buildhub.near/widget/app?page=feed`}
           customActions={customActions}
           feedType={name}
         />

@@ -48,7 +48,15 @@ function Router({ active, routes }) {
 
   return (
     <div key={active}>
-      <Widget src={src} props={{ currentPath: `page=${page}`, page: tab, ...passProps, ...defaultProps }} />
+      <Widget
+        src={src}
+        props={{
+          currentPath: `/buildhub.near/widget/app?page=${page}`,
+          page: tab,
+          ...passProps,
+          ...defaultProps,
+        }}
+      />
     </div>
   );
 }

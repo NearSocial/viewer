@@ -48,7 +48,7 @@ const Sidebar = ({ currentPath, page, routes }) => (
           <Button
             id={k}
             variant={page === k ? "primary" : "outline"}
-            href={`?${currentPath}&tab=${k}`}
+            href={`${currentPath}&tab=${k}`}
             className={
               "justify-content-start fw-medium align-self-stretch w-100"
             }

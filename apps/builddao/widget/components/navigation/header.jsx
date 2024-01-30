@@ -62,7 +62,7 @@ const NavLink = ({ to, children }) => (
     // to={`/?page=${to}`}
     to={href({
       widgetSrc: "buildhub.near/widget/app",
-      props: {
+      params: {
         page: to,
       },
     })}
@@ -81,7 +81,7 @@ const AppHeader = ({ page, routes }) => (
         <Link
           to={href({
             widgetSrc: "buildhub.near/widget/app",
-            props: {
+            params: {
               page: "home",
             },
           })}
@@ -123,7 +123,7 @@ const AppHeader = ({ page, routes }) => (
         <Link
           to={href({
             widgetSrc: "buildhub.near/widget/app",
-            props: {
+            params: {
               page: "home",
             },
           })}
