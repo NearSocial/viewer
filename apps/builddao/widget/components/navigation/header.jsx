@@ -19,6 +19,15 @@ const ButtonGroup = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 8px;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+
+    a {
+      display: flex;
+    }
+  }
 `;
 
 const DesktopNavigation = styled.div`
@@ -110,7 +119,43 @@ const AppHeader = ({ page, routes }) => (
       </MobileNavigation>
     </div>
     <MobileNavigation>
-      {showMenu && <div className="text-white">Test</div>}
+      {showMenu && (
+        <div className="text-white w-100 d-flex flex-column gap-3 mt-3">
+          <ButtonGroup className="align-items-stretch">
+            {routes &&
+              (Object.keys(routes) || []).map((k) => {
+                const route = routes[k];
+                if (route.hide) {
+                  return null;
+                }
+                return (
+                  <NavLink to={k}>
+                    <Button
+                      key={k}
+                      variant={page === k && "primary"}
+                      className="w-100"
+                    >
+                      {route.init.icon && <i className={route.init.icon}></i>}
+                      {route.init.name}
+                    </Button>
+                  </NavLink>
+                );
+              })}
+          </ButtonGroup>
+          <Widget
+            src="buildhub.near/widget/components.buttons.Connect"
+            props={{
+              connectedChildren: (
+                <div className="text-white mx-auto">User Dropdown</div>
+              ),
+              showActivity: false,
+              className: "custom-button",
+              joinBtnChildren: "Join Now",
+              href: "/join",
+            }}
+          />
+        </div>
+      )}
     </MobileNavigation>
   </Navbar>
 );

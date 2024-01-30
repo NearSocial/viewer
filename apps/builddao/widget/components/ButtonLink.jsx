@@ -63,9 +63,18 @@ const StyledLink = styled.a`
   }
 `;
 
-function ButtonLink({ id, children, variant, type, href, className, style }) {
+function ButtonLink({
+  id,
+  children,
+  linkClassName,
+  variant,
+  type,
+  href,
+  className,
+  style,
+}) {
   return (
-    <Link to={href} className="d-flex w-100">
+    <Link to={href} className={linkClassName}>
       <StyledLink
         id={id}
         key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}

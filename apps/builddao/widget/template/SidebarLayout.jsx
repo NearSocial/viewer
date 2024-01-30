@@ -52,6 +52,7 @@ const Sidebar = ({ currentPath, page, routes }) => (
             className={
               "justify-content-start fw-medium align-self-stretch w-100"
             }
+            linkClassName={"d-flex w-100"}
             style={{
               fontSize: "14px",
               textDecoration: "none",
