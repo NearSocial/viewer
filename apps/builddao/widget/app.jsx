@@ -18,11 +18,11 @@ const Root = styled.div`
   ${theme}// can come from config
 `;
 
-const [activeRoute, setActiveRoute] = useState(page);
+// const [activeRoute, setActiveRoute] = useState(page);
 
-useEffect(() => {
-  setActiveRoute(page);
-}, [page]);
+// useEffect(() => {
+//   setActiveRoute(page);
+// }, [page]);
 
 function Router({ active, routes }) {
   // this may be converted to a module at devs.near/widget/Router
@@ -74,9 +74,9 @@ const Content = styled.div`
 return (
   <Root>
     <Container>
-      <AppLayout page={activeRoute} routes={routes}>
+      <AppLayout page={page} routes={routes}>
         <Content>
-          <Router active={activeRoute} routes={routes} />
+          <Router active={page} routes={routes} />
         </Content>
       </AppLayout>
     </Container>
