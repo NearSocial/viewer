@@ -139,7 +139,7 @@ const Component = () => {
             // href={"/?page=feed"}
             to={linkHref({
               widgetSrc: "buildhub.near/widget/app",
-              props: {
+              params: {
                 page: "feed",
               },
             })}

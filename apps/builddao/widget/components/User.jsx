@@ -57,7 +57,7 @@ const Overlay = (props) => (
     className="link-dark text-truncate d-inline-flex mw-100"
     to={href({
       widgetSrc: "mob.near/widget/ProfilePage",
-      props: {
+      params: {
         accountId,
       },
     })}
