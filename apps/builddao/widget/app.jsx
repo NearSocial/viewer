@@ -1,11 +1,7 @@
-const { page, tab, layout, loading, ...passProps } = props;
+const { page, tab, ...passProps } = props;
 
 const { routes } = VM.require("buildhub.near/widget/config.routes") ?? {
   routes: {},
-};
-
-const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
-  theme: {},
 };
 
 const { AppLayout } = VM.require("buildhub.near/widget/template.AppLayout") || {
