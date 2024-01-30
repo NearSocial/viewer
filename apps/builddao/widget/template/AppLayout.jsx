@@ -27,7 +27,7 @@ const Navbar = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
+  padding: 48px;
   width: 100%;
 
   background-color: #0b0c14;
@@ -50,6 +50,10 @@ const { NavLink } = props || {
 
 const AppHeader = ({ page, routes }) => (
   <Navbar className="container-xl">
+    <img
+      style={{ width: 85, objectFit: "cover" }}
+      src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya"
+    />
     <ButtonGroup>
       {routes &&
         (Object.keys(routes) || []).map((k) => {
@@ -67,22 +71,16 @@ const AppHeader = ({ page, routes }) => (
           );
         })}
     </ButtonGroup>
-    {routes && (
-      <>
-        <ButtonGroup>
-          <NavLink to={`inspect&src=${routes[page].path}`}>
-            <Button type="icon">
-              <i className={"bi bi-code"}></i>
-            </Button>
-          </NavLink>
-          <NavLink to={"notifications"}>
-            <Button type="icon">
-              <i className={"bi bi-bell"}></i>
-            </Button>
-          </NavLink>
-        </ButtonGroup>
-      </>
-    )}
+    <Widget
+      src="buildhub.near/widget/components.buttons.Connect"
+      props={{
+        connectedChildren: <div className="text-white">User Dropdown</div>,
+        showActivity: false,
+        className: "custom-button",
+        joinBtnChildren: "Join Now",
+        href: "/join",
+      }}
+    />
   </Navbar>
 );
 

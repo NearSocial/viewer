@@ -65,7 +65,7 @@ const StyledLink = styled.a`
 
 function ButtonLink({ id, children, variant, type, href, className, style }) {
   return (
-    <Link to={href}>
+    <Link to={href} className="d-flex w-100">
       <StyledLink
         id={id}
         key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
