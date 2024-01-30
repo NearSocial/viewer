@@ -22,5 +22,19 @@ return {
         name: "Proposals",
       },
     },
+    resources: {
+      path: "buildhub.near/widget/page.resources",
+      blockHeight: "final",
+      init: {
+        name: "Resources",
+      },
+    },
+    library: {
+      path: "buildhub.near/widget/page.library",
+      blockHeight: "final",
+      init: {
+        name: "Library",
+      },
+    },
   },
 };
