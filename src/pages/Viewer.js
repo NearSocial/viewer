@@ -60,7 +60,7 @@ function Viewer({ code }) {
 
   return (
     <Widget
-      src={!code && path ? "every.near/widget/thing" : src}
+      src={!code && src}
       code={code} // prioritize code
       props={{
         path: src,

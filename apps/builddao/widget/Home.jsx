@@ -1,9 +1,21 @@
-const { Hero } = VM.require("buildhub.near/widget/home.hero");
-const { Goals } = VM.require("buildhub.near/widget/home.goals");
-const { Join } = VM.require("buildhub.near/widget/home.join");
-const { Governance } = VM.require("buildhub.near/widget/home.governance");
-const { CTA } = VM.require("buildhub.near/widget/home.cta");
-const { Footer } = VM.require("buildhub.near/widget/home.footer");
+const { Hero } = VM.require("buildhub.near/widget/home.hero") || {
+  Hero: () => <></>
+};
+const { Goals } = VM.require("buildhub.near/widget/home.goals") || {
+  Goals: () => <></>
+};
+const { Join } = VM.require("buildhub.near/widget/home.join") || {
+  Join: () => <></>
+};
+const { Governance } = VM.require("buildhub.near/widget/home.governance") || {
+  Governance: () => <></>
+};
+const { CTA } = VM.require("buildhub.near/widget/home.cta") || {
+  CTA: () => <></>
+};
+const { Footer } = VM.require("buildhub.near/widget/home.footer") || {
+  Footer: () => <></>
+};
 
 const ownerId = "/*__@appAccount__*/";
 

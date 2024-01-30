@@ -1,21 +1,55 @@
 const { page, tab, layout, loading, ...passProps } = props;
 
-const { routes } = VM.require("buildhub.near/widget/config.routes") ?? {
-  routes: {},
+const { routes } = {
+  type: "app",
+  routes: {
+    home: {
+      path: "buildhub.near/widget/page.home",
+      blockHeight: "final",
+      init: {
+        name: "Home",
+      },
+    },
+    about: {
+      path: "buildhub.near/widget/page.about",
+      blockHeight: "final",
+      init: {
+        name: "About",
+      },
+    },
+    feed: {
+      path: "buildhub.near/widget/page.feed",
+      blockHeight: "final",
+      init: {
+        name: "Feed",
+      },
+    },
+    proposal: {
+      path: "buildhub.near/widget/page.proposals",
+      blockHeight: "final",
+      init: {
+        name: "Proposals",
+      },
+    },
+  },
 };
 
-const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
-  theme: {},
-};
+// const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
+//   theme: {},
+// };
 
 const { AppLayout } = VM.require("buildhub.near/widget/template.AppLayout") || {
   AppLayout: () => <>Layout loading...</>,
 };
 
+const { Router } = VM.require("devs.near/widget/Router") || {
+  Router: () => <>Router loading...</>,
+}
+
 if (!page) page = Object.keys(routes)[0] || "home";
 
 const Root = styled.div`
-  ${theme}// can come from config
+ // can come from config
 `;
 
 // const [activeRoute, setActiveRoute] = useState(page);
@@ -24,42 +58,7 @@ const Root = styled.div`
 //   setActiveRoute(page);
 // }, [page]);
 
-function Router({ active, routes }) {
-  // this may be converted to a module at devs.near/widget/Router
-  const routeParts = active.split(".");
 
-  let currentRoute = routes;
-  let src = "";
-  let defaultProps = {};
-
-  for (let part of routeParts) {
-    if (currentRoute[part]) {
-      currentRoute = currentRoute[part];
-      src = currentRoute.path;
-
-      if (currentRoute.init) {
-        defaultProps = { ...defaultProps, ...currentRoute.init };
-      }
-    } else {
-      // Handle 404 or default case for unknown routes
-      return <p>404 Not Found</p>;
-    }
-  }
-
-  return (
-    <div key={active}>
-      <Widget
-        src={src}
-        props={{
-          currentPath: `/buildhub.near/widget/app?page=${page}`,
-          page: tab,
-          ...passProps,
-          ...defaultProps,
-        }}
-      />
-    </div>
-  );
-}
 
 const Container = styled.div`
   display: flex;

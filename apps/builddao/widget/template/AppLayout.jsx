@@ -2,7 +2,9 @@
  * This is a standard layout with a header, body, and a footer
  */
 
-const { Button } = VM.require("buildhub.near/widget/components");
+const { Button } = VM.require("buildhub.near/widget/components") || {
+  Button: () => <></>,
+};
 
 const Container = styled.div`
   display: flex;
@@ -20,6 +22,13 @@ const ContentContainer = styled.div`
   width: 100%;
 `;
 
+const Header = ({ page, routes }) => (
+  <Widget
+    src="buildhub.near/widget/components.navigation.header"
+    props={{ page, routes, ...props }}
+  />
+);
+
 const Footer = (props) => {
   return <></>;
 };
@@ -28,12 +37,7 @@ const Footer = (props) => {
 function AppLayout({ routes, page, children }) {
   return (
     <Container>
-      {/* <AppHeader page={page} routes={routes} /> */}
-      <Widget
-        src="buildhub.near/widget/components.navigation.header"
-        loading="..."
-        props={{ page, routes, ...props }}
-      />
+      <Header page={page} routes={routes} />
       <ContentContainer key={page}>{children}</ContentContainer>
       <Footer page={page} />
     </Container>

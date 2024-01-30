@@ -23,5 +23,4 @@ return {
       },
     },
   },
-  theme: theme,
 };
