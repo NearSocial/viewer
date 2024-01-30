@@ -1,4 +1,4 @@
-const { page, layout, loading, ...passProps } = props;
+const { page, tab, layout, loading, ...passProps } = props;
 
 const { routes } = VM.require("buildhub.near/widget/config.routes") ?? {
   routes: {},
@@ -8,7 +8,7 @@ const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
   theme: {},
 };
 
-const { AppLayout } = VM.require("buildhub.near/widget/template.layout") || {
+const { AppLayout } = VM.require("buildhub.near/widget/template.AppLayout") || {
   AppLayout: () => <>Layout loading...</>,
 };
 
@@ -48,7 +48,7 @@ function Router({ active, routes }) {
 
   return (
     <div key={active}>
-      <Widget src={src} props={{ ...passProps, ...defaultProps }} />
+      <Widget src={src} props={{ currentPath: `page=${page}`, page: tab, ...passProps, ...defaultProps }} />
     </div>
   );
 }

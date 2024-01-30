@@ -8,44 +8,43 @@ function formatDate(date) {
 const daoName = "Build DAO";
 const feedLink = "https://nearbuilders.org/feed";
 
-const feeds = {
-  resolutions: {
-    // metadata
-    name: "resolution",
-
-    // start sidebar
-    label: "Resolutions",
-    icon: "bi-calendar3",
-    // end sidebar
-    // start compose
-    hashtag: "nearyearresolutions2024",
-
-    // better way to provide a template? reference to document -- maybe rename "initialText" or more general, "defaultProps"
-    // this could be moved to metadata, maybe daoName and feedLink = source: { label, href }, "context", or reference to other thing
-    // I like if it came from context cuz then unconfigurable unless from a forked VM
-    template: `### 🎉 NEAR YEAR RESOLUTIONS: 2024
+return {
+  type: "app", // every.near/type/app
+  routes: {
+    resolutions: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Resolutions", // maybe these should be moved to navbar specific
+        icon: "bi-calendar3",
+        requiredHashtags: ["build", "resolution", "nearyearresolutions2024"],
+        template: `
+### 🎉 NEAR YEAR RESOLUTIONS: 2024
 (posted via [${daoName} Gateway](${feedLink}))
-    
+
 **🌟 REFLECTIONS ON THE PAST YEAR:**
 - [Reflection 1 from the past year]
 - [Reflection 2 from the past year]
-    
+
 **🎯 NEW YEAR'S RESOLUTIONS:**
 - [Resolution 1]
 - [Resolution 2]
-    
+
 **📊 MEASURING SUCCESS:**
 - [Metric 1 for Success]
 - [Metric 2 for Success]
 `,
-    // end compose
-  },
-  updates: {
-    label: "Updates",
-    icon: "bi-bell",
-    name: "update",
-    hashtag: "update",
-    template: `### BUILDER UPDATE:  ${formatDate(new Date())}
+      },
+    },
+    updates: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Updates",
+        icon: "bi-bell",
+        requiredHashtags: ["build", "update"],
+        template: `
+### BUILDER UPDATE:  ${formatDate(new Date())}
 (posted via [${daoName} Gateway](${feedLink}?tab=update))
 
 **✅ DONE**
@@ -60,13 +59,17 @@ const feeds = {
 - [what's blocking you?]
 - [how can someone help?]
 `,
-  },
-  documentation: {
-    label: "Documentation",
-    icon: "bi-book",
-    name: "documentation",
-    hashtag: "documentation",
-    template: `## TITLE
+      },
+    },
+    documentation: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Documentation",
+        icon: "bi-book",
+        requiredHashtags: ["build", "documentation"],
+        template: `
+## TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=documentation))
 
 **WHAT IS _____?**
@@ -81,25 +84,33 @@ const feeds = {
 - [where is it used?]
 - [how to use it]
 `,
-  },
-  question: {
-    label: "Question",
-    icon: "bi-question-lg",
-    name: "question",
-    hashtag: "question",
-    template: `## what is your question?
+      },
+    },
+    question: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Question",
+        icon: "bi-question-lg",
+        requiredHashtags: ["build", "question"],
+        template: `
+## what is your question?
 (posted via [${daoName} Gateway](${feedLink}?tab=question))
 
 [what are you thinking about?]
 [why are you asking?]
 `,
-  },
-  answer: {
-    label: "Answer",
-    icon: "bi-journal-code",
-    name: "answer",
-    hashtag: "answer",
-    template: `## Share an answer
+      },
+    },
+    answer: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Answer",
+        icon: "bi-journal-code",
+        requiredHashtags: ["build", "answer"],
+        template: `
+## Share an answer
 (posted via [${daoName} Gateway](${feedLink}?tab=answer))
 
 [please restate the question you are answering]
@@ -108,27 +119,34 @@ const feeds = {
 
 [link to relevant docs, examples, or resources]
 `,
-  },
-  opportunity: {
-    label: "Opportunity",
-    icon: "bi-briefcase",
-    name: "opportunity",
-    hashtag: "opportunity",
-    template: `## TITLE
+      },
+    },
+    opportunity: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Opportunity",
+        icon: "bi-briefcase",
+        requiredHashtags: ["build", "opportunity"],
+        template: `
+## TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=opportunity))
 
 [what is the opportunity?]
 
 [explain the motivation or reason]
-
 `,
-  },
-  idea: {
-    label: "Idea",
-    icon: "bi-lightbulb",
-    name: "idea",
-    hashtag: "idea",
-    template: `## IDEA TITLE
+      },
+    },
+    idea: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Idea",
+        icon: "bi-lightbulb",
+        requiredHashtags: ["build", "idea"],
+        template: `
+## IDEA TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=idea))
 
 **What idea are you proposing?**
@@ -137,13 +155,17 @@ const feeds = {
 **Context or additional information:**
 - [Provide any context or details]
 `,
-  },
-  task: {
-    label: "Task",
-    icon: "bi-check-lg",
-    name: "task",
-    hashtag: "task",
-    template: `## TASK TITLE
+      },
+    },
+    task: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Task",
+        icon: "bi-check-lg",
+        requiredHashtags: ["build", "task"],
+        template: `
+## TASK TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=task))
 
 **What needs to be done?**
@@ -152,57 +174,62 @@ const feeds = {
 **Context or additional information:**
 - [Provide any context or details]
 `,
-  },
-  request: {
-    label: "Request",
-    icon: "bi-file-earmark-text",
-    name: "request",
-    hashtag: "request",
-    template: `## REQUEST TITLE
+      },
+    },
+    request: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Request",
+        icon: "bi-file-earmark-text",
+        requiredHashtags: ["build", "request"],
+        customActions: [
+          {
+            label: "Propose",
+            icon: "bi-file-earmark-text",
+            type: "modal",
+            onClick: (modalToggle) => modalToggle(),
+          },
+        ],
+        template: `
+## REQUEST TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=request))
 
 #### Description
 [Detailed description of what the proposal is about.]
 
 #### Why This Proposal?
-[Explanation of why this proposal is necessary or beneficial.]`,
-    customActions: [
-      {
-        label: "Propose",
-        icon: "bi-file-earmark-text",
-        type: "modal",
-        onClick: (modalToggle) => modalToggle(),
-      },
-    ],
-  },
-  feedback: {
-    label: "Feedback",
-    icon: "bi-chat-left-text",
-    name: "feedback",
-    hashtag: "feedback",
-    template: `## TITLE
+[Explanation of why this proposal is necessary or beneficial.]
 `,
-  },
-  bookmarks: {
-    label: "Bookmarks",
-    icon: "bi-bookmark",
-    name: "bookmark",
-    hideCompose: true,
-    customWidget: "buildhub.near/widget/adapters.item",
-    customProps: {
-      item: "bookmark",
-      renderItem: (item) => {
-        return (
-          <Post
-            accountId={item.accountId}
-            blockHeight={item.blockHeight}
-            noBorder={true}
-            hideComments={true}
-          />
-        );
+      },
+    },
+    feedback: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Feedback",
+        icon: "bi-chat-left-text",
+        requiredHashtags: ["build", "feedback"],
+      },
+    },
+    bookmarks: {
+      path: "buildhub.near/widget/OrderedGraphFeed",
+      blockHeight: "final",
+      init: {
+        name: "Bookmarks",
+        icon: "bi-bookmark",
+        itemType: "bookmark",
+        renderItem: (item) => {
+          return (
+            <Post
+              accountId={item.accountId}
+              blockHeight={item.blockHeight}
+              noBorder={true}
+              hideComments={true}
+            />
+          );
+        },
       },
     },
   },
 };
-
-return { type: "feed", feeds: feeds };

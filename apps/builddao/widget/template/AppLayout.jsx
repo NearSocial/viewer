@@ -1,3 +1,7 @@
+/**
+ * This is a standard layout with a header, body, and a footer
+ */
+
 const { Button } = VM.require("buildhub.near/widget/components");
 
 const Container = styled.div`
@@ -89,13 +93,11 @@ const Footer = (props) => {
 // Define the new component that follows the AppLayout pattern
 function AppLayout({ routes, page, children }) {
   return (
-    <>
-      <Container>
-        <AppHeader page={page} routes={routes} />
-        <ContentContainer>{children}</ContentContainer>
-        <Footer page={page} />
-      </Container>
-    </>
+    <Container>
+      <AppHeader page={page} routes={routes} />
+      <ContentContainer key={page}>{children}</ContentContainer>
+      <Footer page={page} />
+    </Container>
   );
 }
 

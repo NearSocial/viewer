@@ -1,32 +1,27 @@
-/**
- * generalized graph item fetcher,
- * Social adapter (getr(`${accountId}/graph/${item}`, "final")
- */
-
 const accountId = props.accountId ?? context.accountId;
-const item = props.item;
+const itemType = props.itemType;
 const renderItem = props.renderItem;
 
-if (!item) {
-  return <p className="text-white">No item prop passed</p>;
+if (!itemType) {
+  return <p className="text-white">No graph item type passed.</p>;
 }
 
-const items = Social.getr(`${accountId}/graph/${item}`, "final", {
+const items = Social.getr(`${accountId}/graph/${itemType}`, "final", {
   withBlockHeight: true,
 });
 
 const StorageKey = "order";
 const order = Storage.privateGet(StorageKey);
-const apps = useMemo(() => {
+const graphItems = useMemo(() => {
   if (items === null || order === null) {
     return [];
   }
-  const starredApps = new Map();
+  const itemMap = new Map();
   const path = [];
 
   const buildSrc = (node) => {
     if (node.hasOwnProperty("")) {
-      starredApps.set(path.join("/"), node[":block"]);
+      itemMap.set(path.join("/"), node[":block"]);
     }
     Object.entries(node).forEach(([key, value]) => {
       if (typeof value === "object") {
@@ -37,19 +32,19 @@ const apps = useMemo(() => {
     });
   };
 
-  buildSrc(items ?? {}, [], starredApps);
-  let apps = [...starredApps.entries()];
-  apps.sort((a, b) => b[1] - a[1]);
-  apps = apps.map((a) => a[0]);
-  apps.sort((a, b) => (order?.[a] || 0) - (order?.[b] || 0));
+  buildSrc(items ?? {}, [], itemMap);
+  let entries = [...itemMap.entries()];
+  entries.sort((a, b) => b[1] - a[1]);
+  entries = entries.map((a) => a[0]);
+  entries.sort((a, b) => (order?.[a] || 0) - (order?.[b] || 0));
   Storage.privateSet(
     StorageKey,
-    Object.fromEntries(apps.map((a, i) => [a, i + 1]))
+    Object.fromEntries(entries.map((a, i) => [a, i + 1]))
   );
-  return apps;
+  return entries;
 }, [items, order]);
 
-let transformedArray = apps.map((item) => {
+let transformedArray = graphItems.map((item) => {
   let splitParts = item.split("/");
   let accountId = splitParts[0];
   let lastPart = splitParts[splitParts.length - 1];
@@ -66,7 +61,7 @@ return (
   <>
     {(filteredArray ?? []).map((item) => renderItem(item))}
     {filteredArray.length === 0 && (
-      <p className="fw-bold text-white">No items!</p>
+      <p className="fw-bold text-white">No {itemType}s!</p>
     )}
   </>
 );

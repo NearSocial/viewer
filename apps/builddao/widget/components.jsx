@@ -19,7 +19,7 @@ function Pagination({
   maxVisiblePages,
   onPageClick,
   selectedPage,
-  ThemeContainer
+  ThemeContainer,
 }) {
   return (
     <Widget
@@ -29,7 +29,7 @@ function Pagination({
         maxVisiblePages,
         onPageClick,
         selectedPage,
-        ThemeContainer
+        ThemeContainer,
       }}
     />
   );
@@ -37,13 +37,21 @@ function Pagination({
 
 function Post(props) {
   return (
-    <Widget src={"buildhub.near/widget/components.Post"} props={{ ...props }} />
+    <Widget
+      loading={<div className="w-100" style={{ height: "200px" }} />}
+      src={"buildhub.near/widget/components.Post"}
+      props={{ ...props }}
+    />
   );
 }
 
 function User(props) {
   return (
-    <Widget src="buildhub.near/widget/components.User" props={{ ...props }} />
+    <Widget
+      loading={<div style={{ widget: "3rem", height: "3rem" }} />}
+      src="buildhub.near/widget/components.User"
+      props={{ ...props }}
+    />
   );
 }
 
@@ -61,5 +69,5 @@ return {
   TextEditor,
   Checkbox,
   Avatar,
-  User
+  User,
 };

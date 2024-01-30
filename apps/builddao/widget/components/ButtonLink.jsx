@@ -65,17 +65,19 @@ const StyledLink = styled.a`
 
 function ButtonLink({ id, children, variant, type, href, className, style }) {
   return (
-    <StyledLink
-      id={id}
-      key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
-      className={className}
-      variant={variant}
-      type={type}
-      style={style}
-      href={href}
-    >
-      {children}
-    </StyledLink>
+    <Link to={href}>
+      <StyledLink
+        id={id}
+        key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
+        className={className}
+        variant={variant}
+        type={type}
+        style={style}
+        href={href}
+      >
+        {children}
+      </StyledLink>
+    </Link>
   );
 }
 
