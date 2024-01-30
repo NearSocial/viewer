@@ -31,6 +31,7 @@ function AppLayout({ routes, page, children }) {
       {/* <AppHeader page={page} routes={routes} /> */}
       <Widget
         src="buildhub.near/widget/components.navigation.header"
+        loading="..."
         props={{ page, routes, ...props }}
       />
       <ContentContainer key={page}>{children}</ContentContainer>

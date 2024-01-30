@@ -110,6 +110,7 @@ const AppHeader = ({ page, routes }) => (
         </ButtonGroup>
         <Widget
           src="buildhub.near/widget/components.buttons.Connect"
+          loading="User Dropdown"
           props={{
             connectedChildren: <div className="text-white">User Dropdown</div>,
             showActivity: false,
@@ -169,6 +170,7 @@ const AppHeader = ({ page, routes }) => (
           </ButtonGroup>
           <Widget
             src="buildhub.near/widget/components.buttons.Connect"
+            loading="User Dropdown"
             props={{
               connectedChildren: (
                 <div className="text-white mx-auto">User Dropdown</div>

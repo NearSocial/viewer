@@ -1,1 +1,1 @@
-return <Widget src="buildhub.near/widget/Home" />;
+return <Widget src="buildhub.near/widget/Home" loading="..." />;
