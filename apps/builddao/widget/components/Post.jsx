@@ -1,7 +1,5 @@
-const { User, Button } = VM.require("buildhub.near/widget/components") || {
-  User: () => <></>,
-  Button: () => <></>,
-};
+const { Button } =
+  VM.require("buildhub.near/widget/components") || (() => <></>);
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;
@@ -318,16 +316,19 @@ return (
       >
         <div className={`post ${props.reposted ? "reposted" : ""}`}>
           <div className="right d-flex flex-column gap-3">
-            <User
-              accountId={accountId}
-              blockHeight={blockHeight}
-              pinned={pinned}
-              hideMenu={hideMenu}
-              link={link}
-              postType={"post"}
-              flagItem={item}
-              customActions={customActions}
-              toggleModal={toggleModal}
+            <Widget
+              src="buildhub.near/widget/components.post.Header"
+              props={{
+                accountId: accountId,
+                blockHeight: blockHeight,
+                pinned: pinned,
+                hideMenu: hideMenu,
+                link: link,
+                postType: "post",
+                flagItem: item,
+                customActions: customActions,
+                toggleModal: toggleModal,
+              }}
             />
             {fullPostLink ? (
               <a
