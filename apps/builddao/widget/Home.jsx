@@ -10,7 +10,7 @@ const ownerId = "/*__@appAccount__*/";
 const Root = styled.div`
   background-color: #0b0c14;
   color: #ffffff;
-  font-family: Satoshi;
+  font-family: Satoshi, sans-serif;
 
   width: 100%;
 `;

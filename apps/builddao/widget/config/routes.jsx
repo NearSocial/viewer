@@ -8,6 +8,13 @@ return {
         name: "Home",
       },
     },
+    about: {
+      path: "buildhub.near/widget/page.about",
+      blockHeight: "final",
+      init: {
+        name: "About",
+      },
+    },
     feed: {
       path: "buildhub.near/widget/page.feed",
       blockHeight: "final",
