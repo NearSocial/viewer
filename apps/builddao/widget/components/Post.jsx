@@ -1,7 +1,7 @@
-const { User, Button } = VM.require("buildhub.near/widget/components");
-
-User = User || (() => <></>);
-Button = Button || (() => <></>);
+const { User, Button } = VM.require("buildhub.near/widget/components") || {
+  User: () => <></>,
+  Button: () => <></>,
+};
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;

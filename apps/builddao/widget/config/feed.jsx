@@ -18,8 +18,7 @@ return {
         name: "Resolutions", // maybe these should be moved to navbar specific
         icon: "bi-calendar3",
         requiredHashtags: ["build", "resolution", "nearyearresolutions2024"],
-        template: `
-### 🎉 NEAR YEAR RESOLUTIONS: 2024
+        template: `### 🎉 NEAR YEAR RESOLUTIONS: 2024
 (posted via [${daoName} Gateway](${feedLink}))
 
 **🌟 REFLECTIONS ON THE PAST YEAR:**
@@ -43,8 +42,7 @@ return {
         name: "Updates",
         icon: "bi-bell",
         requiredHashtags: ["build", "update"],
-        template: `
-### BUILDER UPDATE:  ${formatDate(new Date())}
+        template: `### BUILDER UPDATE:  ${formatDate(new Date())}
 (posted via [${daoName} Gateway](${feedLink}?tab=update))
 
 **✅ DONE**
@@ -68,8 +66,7 @@ return {
         name: "Documentation",
         icon: "bi-book",
         requiredHashtags: ["build", "documentation"],
-        template: `
-## TITLE
+        template: `## TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=documentation))
 
 **WHAT IS _____?**
@@ -93,8 +90,7 @@ return {
         name: "Question",
         icon: "bi-question-lg",
         requiredHashtags: ["build", "question"],
-        template: `
-## what is your question?
+        template: `## what is your question?
 (posted via [${daoName} Gateway](${feedLink}?tab=question))
 
 [what are you thinking about?]
@@ -109,8 +105,7 @@ return {
         name: "Answer",
         icon: "bi-journal-code",
         requiredHashtags: ["build", "answer"],
-        template: `
-## Share an answer
+        template: `## Share an answer
 (posted via [${daoName} Gateway](${feedLink}?tab=answer))
 
 [please restate the question you are answering]
@@ -128,8 +123,7 @@ return {
         name: "Opportunity",
         icon: "bi-briefcase",
         requiredHashtags: ["build", "opportunity"],
-        template: `
-## TITLE
+        template: `## TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=opportunity))
 
 [what is the opportunity?]
@@ -145,8 +139,7 @@ return {
         name: "Idea",
         icon: "bi-lightbulb",
         requiredHashtags: ["build", "idea"],
-        template: `
-## IDEA TITLE
+        template: `## IDEA TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=idea))
 
 **What idea are you proposing?**
@@ -164,8 +157,7 @@ return {
         name: "Task",
         icon: "bi-check-lg",
         requiredHashtags: ["build", "task"],
-        template: `
-## TASK TITLE
+        template: `## TASK TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=task))
 
 **What needs to be done?**
@@ -188,11 +180,10 @@ return {
             label: "Propose",
             icon: "bi-file-earmark-text",
             type: "modal",
-            onClick: (modalToggle) => modalToggle(),
+            onClick: (modalToggle) => modalToggle(), // want to fix
           },
         ],
-        template: `
-## REQUEST TITLE
+        template: `## REQUEST TITLE
 (posted via [${daoName} Gateway](${feedLink}?tab=request))
 
 #### Description

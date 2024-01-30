@@ -1,4 +1,4 @@
-const { Feed } = VM.require("devs.near/widget/Module.Feed") || {
+const { Feed } = VM.require("devs.near/widget/Feed") || {
   Feed: () => <></>,
 };
 const { Post, ButtonLink } = VM.require("buildhub.near/widget/components") || {
@@ -6,17 +6,17 @@ const { Post, ButtonLink } = VM.require("buildhub.near/widget/components") || {
   ButtonLink: () => <></>,
 };
 
-const { template, requiredHashtags, customActions } = props;
+const { name, template, requiredHashtags, customActions } = props;
 
 return (
-  <>
+  <div key={name}>
     {!context.accountId ? ( // if not logged in
       <Widget src="buildhub.near/widget/components.login-now" props={props} />
     ) : (
       <Widget
         src="buildhub.near/widget/Compose"
         props={{
-          feed: feeds[activeFeed],
+          draftKey: name,
           template: template,
           requiredHashtags: requiredHashtags,
         }}
@@ -42,123 +42,9 @@ return (
           noBorder={true}
           currentPath={`${props.pagePath}`}
           customActions={customActions}
-          feedType={feeds[activeFeed].name}
+          feedType={name}
         />
       )}
     />
-  </>
+  </div>
 );
-
-// const daoName = props.daoName || "Build DAO";
-// const feedLink = props.feedLink || "https://nearbuilders.org/feed";
-// const daoTag = props.daoTag || "build";
-
-// const feeds = props.feeds || {};
-
-// if (!feeds) {
-//   return "";
-// }
-
-// const tab = props.tab || Object.keys(feeds)[0];
-// if (Object.keys(feeds).includes(props.hashtag)) {
-//   tab = props.hashtag;
-// }
-// const [activeFeed, setActiveFeed] = useState(tab);
-
-// return (
-//   <>
-//     <Widget
-//       src="buildhub.near/widget/components.AsideWithMainContent"
-//       props={{
-//         sideContent: Object.keys(feeds || {}).map((route) => {
-//           const data = feeds[route];
-//           return (
-//             <ButtonLink
-//               id={route}
-//               variant={activeFeed === route ? "primary" : "outline"}
-//               href={`${props.pagePath}&tab=${route}`}
-//               className={
-//                 "align-self-stretch flex-shrink-0 justify-content-start fw-medium"
-//               }
-//               style={{
-//                 fontSize: "14px",
-//                 textDecoration: "none",
-//                 cursor: "pointer",
-//                 padding: "8px 12px",
-//                 gap: "10px",
-//               }}
-//             >
-//               <i className={`bi ${data.icon} `}></i>
-//               <span>{data.label}</span>
-//             </ButtonLink>
-//           );
-//         }),
-//         mainContent: (
-//           <>
-//             {feeds[activeFeed].hideCompose ? null : context.accountId ? (
-//               <Widget
-//                 src="buildhub.near/widget/Compose"
-//                 props={{
-//                   feed: feeds[activeFeed],
-//                   template: feeds[activeFeed].template,
-//                   requiredHashtags: [daoTag],
-//                 }}
-//               />
-//             ) : (
-//               <Widget
-//                 src="buildhub.near/widget/components.login-now"
-//                 props={props}
-//               />
-//             )}
-//             {feeds[activeFeed].customWidget ? (
-//               <Widget
-//                 src={feeds[activeFeed].customWidget}
-//                 props={{ ...props, ...feeds[activeFeed].customProps }}
-//               />
-//             ) : (
-//               <Feed
-//                 index={[
-//                   {
-//                     action: "hashtag",
-//                     key: feeds[activeFeed].hashtag, // resolution
-//                     options: {
-//                       limit: 10,
-//                       order: "desc",
-//                     },
-//                     cacheOptions: {
-//                       ignoreCache: true,
-//                     },
-//                     required: true,
-//                   },
-//                   // fix this
-//                   // {
-//                   //   action: "hashtag",
-//                   //   key: daoTag, // build
-//                   //   options: {
-//                   //     limit: 10,
-//                   //     order: "desc",
-//                   //   },
-//                   //   cacheOptions: {
-//                   //     ignoreCache: true,
-//                   //   },
-//                   //   required: true,
-//                   // },
-//                 ]}
-//                 Item={(p) => (
-//                   <Post
-//                     accountId={p.accountId}
-//                     blockHeight={p.blockHeight}
-//                     noBorder={true}
-//                     currentPath={`${props.pagePath}`}
-//                     customActions={feeds[activeFeed].customActions}
-//                     feedType={feeds[activeFeed].name}
-//                   />
-//                 )}
-//               />
-//             )}
-//           </>
-//         ),
-//       }}
-//     />
-//   </>
-// );
