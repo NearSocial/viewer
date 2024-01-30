@@ -1,9 +1,8 @@
 const { Feed } = VM.require("devs.near/widget/Feed") || {
   Feed: () => <></>,
 };
-const { Post, ButtonLink } = VM.require("buildhub.near/widget/components") || {
+const { Post } = VM.require("buildhub.near/widget/components") || {
   Post: () => <></>,
-  ButtonLink: () => <></>,
 };
 
 const { name, template, requiredHashtags, customActions } = props;
@@ -40,7 +39,7 @@ return (
           accountId={p.accountId}
           blockHeight={p.blockHeight}
           noBorder={true}
-          currentPath={`${props.pagePath}`}
+          currentPath={`/?page=feed`}
           customActions={customActions}
           feedType={name}
         />

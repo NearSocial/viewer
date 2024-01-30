@@ -170,7 +170,7 @@ return (
             />
           </div>
           <span className={`${selection === 0 && "disabled"}`}>
-            <a
+            <Link
               href={selection === 1 ? "/edit" : "#"}
               onClick={() => selection === 2 && setView("proposal")}
             >
@@ -187,7 +187,7 @@ return (
                   fill="black"
                 />
               </svg>
-            </a>
+            </Link>
           </span>
         </>
       ) : (

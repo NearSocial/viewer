@@ -76,8 +76,32 @@ function Button({
   type,
   onClick,
   className,
+  linkClassName,
+  href,
   style,
 }) {
+  if (href) {
+    return (
+      <Link
+        to={href}
+        className={linkClassName}
+        style={{ textDecoration: "none" }}
+      >
+        <StyledButton
+          id={id}
+          key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
+          className={className}
+          variant={variant}
+          type={type}
+          style={style}
+          href={href}
+        >
+          {children}
+        </StyledButton>
+      </Link>
+    );
+  }
+
   return (
     <StyledButton
       id={id}

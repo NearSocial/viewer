@@ -68,7 +68,11 @@ const Content = styled.div`
 return (
   <Root>
     <Container>
-      <SidebarLayout currentPath={currentPath} page={activeRoute} routes={routes}>
+      <SidebarLayout
+        currentPath={currentPath}
+        page={activeRoute}
+        routes={routes}
+      >
         <Content>
           <Router active={activeRoute} routes={routes} />
         </Content>
@@ -76,8 +80,6 @@ return (
     </Container>
   </Root>
 );
-
-return;
 
 // const { feeds } = VM.require("buildhub.near/widget/config.feed") || {}; // this is the thing, which works better as a module if it needs to be provided with context
 

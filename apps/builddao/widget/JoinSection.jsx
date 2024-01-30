@@ -164,7 +164,7 @@ const proposalId = Near.view(daoId, "get_last_proposal_id") - 1;
 
 // get data from last proposal
 const proposal = Near.view(daoId, "get_proposal", {
-  id: proposalId
+  id: proposalId,
 });
 
 if (proposal === null) {
@@ -197,7 +197,7 @@ const CreateSomethingView = (props) => {
           {userWidgets.length === 0 ? (
             <>
               <h3>In order to join Build DAO, you need to create a widget</h3>
-              <a href="/edit">
+              <Link href="/edit">
                 Create Something{" "}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -211,7 +211,7 @@ const CreateSomethingView = (props) => {
                     fill="black"
                   />
                 </svg>
-              </a>
+              </Link>
             </>
           ) : (
             <Widget
@@ -235,7 +235,7 @@ const CreateSomethingView = (props) => {
                   </>
                 ),
                 className: "custom-button",
-                showActivity: true
+                showActivity: true,
               }}
             />
           )}{" "}

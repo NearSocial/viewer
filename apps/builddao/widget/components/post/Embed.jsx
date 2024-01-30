@@ -39,7 +39,7 @@ const parsed = useMemo(() => {
 }, [href]);
 
 if (!parsed || !EmbedMap.has(parsed.widgetSrc)) {
-  return <a href={href}>{props.children}</a>;
+  return <Link href={href}>{props.children}</Link>;
 }
 
 const widgetSrc = EmbedMap.get(parsed.widgetSrc);

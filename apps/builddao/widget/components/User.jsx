@@ -51,7 +51,7 @@ const name = props.name || Social.get(`${accountId}/profile/name`);
 const isPremium = !!props.isPremium;
 
 const Overlay = (props) => (
-  <a
+  <Link
     className="link-dark text-truncate d-inline-flex mw-100"
     href={`/mob.near/widget/ProfilePage?accountId=${accountId}`}
   >
@@ -63,7 +63,7 @@ const Overlay = (props) => (
         children: props.children,
       }}
     />
-  </a>
+  </Link>
 );
 
 return (

@@ -98,7 +98,7 @@ const showTime = props.showTime ?? true;
 const toggleModal = props.toggleModal;
 
 const Overlay = (props) => (
-  <a
+  <Link
     className="link-dark text-truncate d-inline-flex mw-100"
     href={`/mob.near/widget/ProfilePage?accountId=${accountId}`}
   >
@@ -110,7 +110,7 @@ const Overlay = (props) => (
         children: props.children,
       }}
     />
-  </a>
+  </Link>
 );
 
 return (
@@ -135,13 +135,13 @@ return (
               {blockHeight === "now" ? (
                 "now"
               ) : (
-                <a className="text-white" href={link}>
+                <Link className="text-white" href={link}>
                   <Widget
                     loading=""
                     src="mob.near/widget/TimeAgo"
                     props={{ blockHeight }}
                   />
-                </a>
+                </Link>
               )}
             </p>
           )}
@@ -160,12 +160,12 @@ return (
         </Button>
         <ul className="dropdown-menu">
           <li className="dropdown-item">
-            <a
+            <Link
               className="link-dark text-decoration-none"
               href={`${link}&raw=true`}
             >
               <i className="bi bi-filetype-raw" /> View raw markdown source
-            </a>
+            </Link>
           </li>
           <li>
             <Widget

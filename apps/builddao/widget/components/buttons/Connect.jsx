@@ -132,7 +132,7 @@ const Component = () => {
           <Bullet variant="light">
             {data.isDaoMember ? "Joined" : "Pending application"}
           </Bullet>
-          <a href={"/?page=feed"}>
+          <Link href={"/?page=feed"}>
             View Activity{" "}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -146,7 +146,7 @@ const Component = () => {
                 fill="black"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       );
     }
@@ -154,9 +154,9 @@ const Component = () => {
   } else {
     if (href) {
       return (
-        <a type="button" href={href} className={className}>
+        <Link href={href} className={className}>
           {joinBtnChildren}
-        </a>
+        </Link>
       );
     } else {
       return (

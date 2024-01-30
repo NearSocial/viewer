@@ -1,5 +1,4 @@
 const { Button } = VM.require("buildhub.near/widget/components.Button");
-const { ButtonLink } = VM.require("buildhub.near/widget/components.ButtonLink");
 const { ProgressState } = VM.require(
   "buildhub.near/widget/components.ProgressState"
 );
@@ -57,7 +56,6 @@ function User(props) {
 
 return {
   Button,
-  ButtonLink,
   Pagination,
   Post,
   ProgressState,

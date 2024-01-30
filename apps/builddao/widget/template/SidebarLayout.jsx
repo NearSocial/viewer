@@ -1,4 +1,4 @@
-const { ButtonLink } = VM.require("buildhub.near/widget/components");
+const { Button } = VM.require("buildhub.near/widget/components");
 
 const Container = styled.div`
   display: grid;
@@ -45,7 +45,7 @@ const Sidebar = ({ currentPath, page, routes }) => (
           return null;
         }
         return (
-          <ButtonLink
+          <Button
             id={k}
             variant={page === k ? "primary" : "outline"}
             href={`?${currentPath}&tab=${k}`}
@@ -63,7 +63,7 @@ const Sidebar = ({ currentPath, page, routes }) => (
           >
             {route.init.icon && <i className={`bi ${route.init.icon} `} />}
             <span>{route.init.name}</span>
-          </ButtonLink>
+          </Button>
         );
       })}
   </>
