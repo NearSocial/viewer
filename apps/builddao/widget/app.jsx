@@ -10,13 +10,6 @@ const { routes } = {
         name: "Home",
       },
     },
-    about: {
-      path: "buildhub.near/widget/page.about",
-      blockHeight: "final",
-      init: {
-        name: "About",
-      },
-    },
     feed: {
       path: "buildhub.near/widget/page.feed",
       blockHeight: "final",
@@ -44,12 +37,12 @@ const { AppLayout } = VM.require("buildhub.near/widget/template.AppLayout") || {
 
 const { Router } = VM.require("devs.near/widget/Router") || {
   Router: () => <>Router loading...</>,
-}
+};
 
 if (!page) page = Object.keys(routes)[0] || "home";
 
 const Root = styled.div`
- // can come from config
+  // can come from config
 `;
 
 // const [activeRoute, setActiveRoute] = useState(page);
@@ -57,8 +50,6 @@ const Root = styled.div`
 // useEffect(() => {
 //   setActiveRoute(page);
 // }, [page]);
-
-
 
 const Container = styled.div`
   display: flex;
