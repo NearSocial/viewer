@@ -194,6 +194,15 @@ return {
 `,
       },
     },
+    proposals: {
+      path: "buildhub.near/widget/Proposals",
+      blockHeight: "final",
+      init: {
+        name: "Proposals",
+        icon: "bi-file-earmark-text",
+        daoId: "build.sputnik-dao.near"
+      }
+    },
     feedback: {
       path: "buildhub.near/widget/Feed",
       blockHeight: "final",
