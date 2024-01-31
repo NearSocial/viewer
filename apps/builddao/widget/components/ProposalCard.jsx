@@ -560,7 +560,7 @@ function renderVoteButtons({
           wins={wins.yes}
           myVote={voted.yes}
           onClick={() => handleVote("VoteApprove")}
-          // disabled={alreadyVoted || finished || !isAllowedToVote[0]}
+          disabled={alreadyVoted || finished || !isAllowedToVote[0]}
         >
           <div>
             {wins.yes && (
