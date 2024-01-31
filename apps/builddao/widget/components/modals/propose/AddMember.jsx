@@ -1,10 +1,17 @@
 const { Button } =
   VM.require("buildhub.near/widget/components") || (() => <></>);
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
+
+if (!DaoSDK) {
+  return <></>;
+}
 
 const [accountId, setAccountId] = useState("");
 const [role, setRole] = useState("");
 const roles = props.roles;
 const selectedDAO = props.selectedDAO;
+
+const sdk = DaoSDK(selectedDAO);
 
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
@@ -212,7 +219,7 @@ return (
             embedCss: props.customCSS || MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            },
+            }
           }}
         />
       </TextareaWrapper>
@@ -223,19 +230,15 @@ return (
         className="ms-auto"
         variant="primary"
         disabled={!accountId || !role || !validatedAddresss}
-        onClick={() =>
-          Near.call(selectedDAO, "add_proposal", {
-            proposal: {
-              description: text,
-              kind: {
-                AddMemberToRole: {
-                  member_id: accountId,
-                  role: role,
-                },
-              },
-            },
-          })
-        }
+        onClick={() => {
+          sdk.createAddMemberProposal({
+            description: text,
+            memberId: accountId,
+            roleId: role,
+            gas: 180000000000000,
+            deposit: 200000000000000
+          });
+        }}
       >
         Next
       </Button>
