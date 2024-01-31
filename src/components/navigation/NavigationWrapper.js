@@ -23,7 +23,7 @@ export function NavigationWrapper(props) {
   ) : (
     <Container>
       <DesktopNavigation {...props} />
-      {JSON.parse(showBanner) && <Banner setShowbanner={setShowbanner} />}
+      {JSON.parse(showBanner) && false && <Banner setShowbanner={setShowbanner} />}
       {/* {!matches && <MobileNavigation {...props} />} */}
     </Container>
   );
