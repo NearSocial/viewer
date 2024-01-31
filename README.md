@@ -5,33 +5,32 @@ A framework for reusable components to render and modify SocialDB by Near Social
 ## Setup & Development
 
 Initialize repo:
+
 ```
 yarn
 ```
 
 Start development version:
+
 ```
 yarn start
 ```
 
 ## Widget example
 
-Profile view 
+Profile view
 
 ```jsx
 let accountId = props.accountId || "eugenethedream";
 let profile = socialGetr(`${accountId}/profile`);
 
-(
-  <div>
-    <img src={profile.image.url}/>
-    <span>{profile.name}</span> <span>(@{accountId})</span>
-  </div>
-);
+<div>
+  <img src={profile.image.url} />
+  <span>{profile.name}</span> <span>(@{accountId})</span>
+</div>;
 ```
 
-
-Profile editor 
+Profile editor
 
 ```jsx
 let accountId = context.accountId;
@@ -80,5 +79,4 @@ return (
     </div>
   </div>
 );
-
 ```

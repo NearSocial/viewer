@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ls from "local-storage";
-import prettier from "prettier";
+import prettier, { check } from "prettier";
 import parserBabel from "prettier/parser-babel";
 import { useHistory, useParams } from "react-router-dom";
 import Editor, { useMonaco } from "@monaco-editor/react";
@@ -47,6 +47,7 @@ const Layout = {
 export default function EditorPage(props) {
   useHashRouterLegacy();
   const { widgetSrc } = useParams();
+  const [localWidgetSrc, setLocalWidgetSrc] = useState(widgetSrc);
   const history = useHistory();
   const setWidgetSrc = props.setWidgetSrc;
 
@@ -70,6 +71,7 @@ export default function EditorPage(props) {
   const [parsedWidgetProps, setParsedWidgetProps] = useState({});
   const [propsError, setPropsError] = useState(null);
   const [metadata, setMetadata] = useState(undefined);
+  const [forkDetails, setForkDetails] = useState(undefined);
   const near = useNear();
   const cache = useCache();
   const accountId = useAccountId();
@@ -99,12 +101,115 @@ export default function EditorPage(props) {
     [setLayoutState]
   );
 
+  const getForkDetails = async (path) => {
+    try {
+      if (localWidgetSrc) {
+        const res = await fetch(`${near.config.apiUrl}/keys`, {
+          method: "POST",
+          body: JSON.stringify({
+            keys: [localWidgetSrc],
+            options: { return_type: "BlockHeight" },
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const sourceWidget = await res.json();
+
+        const srcArr = localWidgetSrc.split("/");
+        const forkOf =
+          localWidgetSrc + "@" + sourceWidget[srcArr[0]][srcArr[1]][srcArr[2]];
+
+        storeForkDetails(path, forkOf);
+        return;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const checkForkDetails = async (path) => {
+    try {
+      if (path.unnamed) return;
+      const response = await cache.asyncLocalStorageGet(StorageDomain, {
+        path,
+        type: StorageType.forkDetails,
+      });
+
+      if (response?.fork_of) {
+        setForkDetails(response);
+        return response;
+      } else if (JSON.stringify(response) === "{}") {
+        setForkDetails(undefined);
+      } else if (localWidgetSrc && JSON.stringify(response) !== "{}") {
+        getForkDetails(path);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const storeForkDetails = useCallback(
+    async (path, forkOf) => {
+      try {
+        let forkDetails = {
+          fork_of: forkOf,
+          time: Date.now(),
+        };
+        // differentiate new components from forked components
+        forkOf === null ? (forkDetails = {}) : forkDetails;
+
+        await cache.localStorageSet(
+          StorageDomain,
+          {
+            path,
+            type: StorageType.forkDetails,
+          },
+          forkDetails
+        );
+        setForkDetails(forkDetails);
+        return;
+      } catch (e) {
+        console.error(e);
+        return { error: e };
+      }
+    },
+    [setForkDetails]
+  );
+
+  useEffect(() => {
+    if (forkDetails?.fork_of) {
+      setMetadata({
+        ...metadata,
+        fork_of: forkDetails.fork_of,
+      });
+    }
+  }, [forkDetails]);
+
+  // prevent metadata from being overwritten by empty object
+  useEffect(() => {
+    if (JSON.stringify(metadata) === "{}") {
+      setMetadata(undefined);
+    }
+  }, [metadata]);
+
+  useEffect(() => {
+    if (path || (localWidgetSrc && path)) {
+      checkForkDetails(path);
+    }
+  }, [localWidgetSrc, path]);
+
   useEffect(() => {
     setWidgetSrc({
       edit: null,
-      view: widgetSrc,
+      view: localWidgetSrc,
     });
-  }, [widgetSrc, setWidgetSrc]);
+
+    if (localWidgetSrc) {
+      checkForkDetails(localWidgetSrc);
+    }
+  }, [localWidgetSrc, widgetSrc, setWidgetSrc]);
 
   const updateCode = useCallback(
     (path, code) => {
@@ -182,6 +287,7 @@ export default function EditorPage(props) {
       setRenderCode(null);
       if (code !== undefined) {
         updateCode(path, code);
+        checkForkDetails(path);
       } else {
         setLoading(true);
         cache
@@ -191,6 +297,8 @@ export default function EditorPage(props) {
           })
           .then(({ code }) => {
             updateCode(path, code);
+
+            checkForkDetails(path);
           })
           .finally(() => {
             setLoading(false);
@@ -215,6 +323,9 @@ export default function EditorPage(props) {
         nameOrPath.indexOf("/") >= 0
           ? nameOrPath
           : `${accountId}/widget/${nameOrPath}`;
+
+      setLocalWidgetSrc(widgetSrc);
+
       const c = () => {
         const code = cache.socialGet(
           near,
@@ -226,19 +337,20 @@ export default function EditorPage(props) {
         );
         if (code) {
           const name = widgetSrc.split("/").slice(2).join("/");
+
           openFile(toPath(Filetype.Widget, widgetSrc), code);
         }
       };
 
       c();
     },
-    [accountId, openFile, toPath, near, cache]
+    [accountId, openFile, toPath, near, cache, setLocalWidgetSrc]
   );
 
   const generateNewName = useCallback(
     (type) => {
       for (let i = 0; ; i++) {
-        const name = `Draft-${i}`;
+        const name = `New-Draft-${i}`;
         const path = toPath(type, name);
         path.unnamed = true;
         const jPath = JSON.stringify(path);
@@ -252,32 +364,45 @@ export default function EditorPage(props) {
 
   const createFile = useCallback(
     (type) => {
+      setForkDetails(undefined);
+      setMetadata(undefined);
+      setLocalWidgetSrc("");
       const path = generateNewName(type);
+
       openFile(path, DefaultEditorCode);
     },
     [generateNewName, openFile]
   );
 
   const renameFile = useCallback(
-    (newName, code) => {
-      const newPath = toPath(path.type, newName);
-      const jNewPath = JSON.stringify(newPath);
-      const jPath = JSON.stringify(path);
-      setFiles((files) => {
-        const newFiles = files.filter(
-          (file) => JSON.stringify(file) !== jNewPath
-        );
-        const i = newFiles.findIndex((file) => JSON.stringify(file) === jPath);
-        if (i >= 0) {
-          newFiles[i] = newPath;
-        }
-        return newFiles;
-      });
-      setLastPath(newPath);
-      setPath(newPath);
-      updateCode(newPath, code);
+    async (newName, code) => {
+      try {
+        const newPath = toPath(path.type, newName);
+        const jNewPath = JSON.stringify(newPath);
+        const jPath = JSON.stringify(path);
+        forkDetails?.fork_of && !path.name.includes("New-Draft")
+          ? await storeForkDetails(newPath, forkDetails.fork_of)
+          : storeForkDetails(newPath, null);
+        setFiles((files) => {
+          const newFiles = files.filter(
+            (file) => JSON.stringify(file) !== jNewPath
+          );
+          const i = newFiles.findIndex(
+            (file) => JSON.stringify(file) === jPath
+          );
+          if (i >= 0) {
+            newFiles[i] = newPath;
+          }
+          return newFiles;
+        });
+        setLastPath(newPath);
+        setPath(newPath);
+        updateCode(newPath, code);
+      } catch (e) {
+        console.error(e);
+      }
     },
-    [path, toPath, updateCode]
+    [forkDetails, path, toPath, updateCode]
   );
 
   useEffect(() => {
@@ -287,6 +412,15 @@ export default function EditorPage(props) {
         const { files, lastPath } = value || {};
         setFiles(files || []);
         setLastPath(lastPath);
+      });
+  }, [cache]);
+
+  useEffect(() => {
+    cache
+      .asyncLocalStorageGet(StorageDomain, { type: StorageType.forkDetails })
+      .then((value) => {})
+      .catch((e) => {
+        console.error(e);
       });
   }, [cache]);
 
@@ -318,8 +452,9 @@ export default function EditorPage(props) {
           plugins: [parserBabel],
         });
         updateCode(path, formattedCode);
+        checkForkDetails(path);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     },
     [updateCode]
@@ -331,7 +466,7 @@ export default function EditorPage(props) {
         const formattedProps = JSON.stringify(JSON.parse(props), null, 2);
         setWidgetProps(formattedProps);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     },
     [setWidgetProps]
@@ -479,6 +614,10 @@ export default function EditorPage(props) {
                   files,
                   code: jp === jpath ? code : undefined,
                   updateSaved,
+                  setForkDetails,
+                  setMetadata,
+                  setWidgetSrc,
+                  setLocalWidgetSrc,
                 }}
               />
             );
@@ -638,7 +777,10 @@ export default function EditorPage(props) {
                       value={code}
                       path={widgetPath}
                       defaultLanguage="javascript"
-                      onChange={(code) => updateCode(path, code)}
+                      onChange={(code) => {
+                        updateCode(path, code);
+                        checkForkDetails(path);
+                      }}
                       wrapperProps={{
                         onBlur: () => reformat(path, code),
                       }}
@@ -678,6 +820,7 @@ export default function EditorPage(props) {
                         Open Component
                       </a>
                     )}
+
                     <div className="dropdown">
                       <button
                         className="btn btn-outline-secondary flex-shrink-1"
