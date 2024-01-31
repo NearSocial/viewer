@@ -7,9 +7,9 @@ if (!DaoSDK) {
 const [contract, setContract] = useState("");
 const [method, setMethod] = useState("");
 const [args, setArgs] = useState("{}");
-const [gas, setGas] = useState(50000000000000);
+const [gas, setGas] = useState(180000000000000);
 const [deposit, setDeposit] = useState(0);
-
+const [validatedAddresss, setValidatedAddress] = useState(true);
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
 
@@ -26,6 +26,16 @@ useEffect(() => {
 const memoizedKey = useMemo((editorKey) => editorKey, [editorKey]);
 const selectedDAO = props.selectedDAO;
 const sdk = DaoSDK(selectedDAO);
+
+const regex = /.{1}\.near$/;
+useEffect(() => {
+  if (regex.test(contract) || contract === "") {
+    setValidatedAddress(true);
+  } else {
+    setValidatedAddress(false);
+  }
+}, [contract]);
+
 const MarkdownEditor = `
   html {
     background: #23242b;
@@ -169,6 +179,11 @@ return (
         onChange={(e) => setContract(e.target.value)}
         className="form-control"
       />
+      {!validatedAddresss && (
+        <span className="text-danger" style={{ fontSize: 12 }}>
+          Please check if the NEAR address is valid!
+        </span>
+      )}
     </div>
     <div className="form-group mb-3">
       <label htmlFor="method">
@@ -239,7 +254,7 @@ return (
     </div>
     <div className="w-100 d-flex">
       <Button
-        disabled={!contract || !method}
+        disabled={!contract || !method || !validatedAddresss}
         className="ms-auto"
         variant="primary"
         onClick={() => {

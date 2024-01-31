@@ -27,13 +27,14 @@ const selectedDAO = props.selectedDAO;
 const sdk = DaoSDK(selectedDAO);
 
 const res = fetch(`https://api.nearblocks.io/v1/account/${selectedDAO}/tokens`);
-
+const NearTokenId = "NEAR";
 const tokensData = [
   {
     decimals: 24,
     icon: "",
     name: "NEAR",
-    symbol: "NEAR"
+    symbol: "NEAR",
+    tokenId: NearTokenId
   }
 ];
 if (res.body) {
@@ -42,7 +43,7 @@ if (res.body) {
     if (ftMetadata === null) {
       return;
     }
-    tokensData.push(ftMetadata);
+    tokensData.push({ ...ftMetadata, tokenId: item });
   });
 }
 
@@ -226,7 +227,7 @@ return (
       >
         <option value="">Select a token</option>
         {tokensData?.map((item) => {
-          return <option value={item.symbol}>{item.symbol}</option>;
+          return <option value={item.tokenId}>{item.symbol}</option>;
         })}
       </select>
     </div>
@@ -265,17 +266,17 @@ return (
     </div>
     <div className="w-100 d-flex">
       <Button
-        disabled={!token || !recipient || !amount}
+        disabled={!token || !recipient || !amount || !validatedAddresss}
         className="ms-auto"
         variant="primary"
         onClick={() => {
-          let ftMetadata = tokensData.find((item) => item.symbol === token);
+          let ftMetadata = tokensData.find((item) => item.tokenId === token);
           const amountInYocto = Big(amount)
             .mul(Big(10).pow(ftMetadata.decimals))
             .toFixed();
           sdk.createTransferProposal({
             description: text,
-            tokenId: token,
+            tokenId: token === NearTokenId ? "" : token,
             receiverId: recipient,
             amount: amountInYocto,
             gas,
