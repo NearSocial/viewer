@@ -89,10 +89,12 @@ const Content = styled.div`
   height: 100%;
 `;
 
+console.log("app", props);
+
 return (
   <Root>
     <Container>
-      <AppLayout page={page} routes={routes}>
+      <AppLayout page={page} routes={routes} {...props}>
         <Content>
           <Router active={page} routes={routes} />
         </Content>

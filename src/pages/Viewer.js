@@ -4,7 +4,7 @@ import { useLocation, useParams } from "react-router-dom";
 
 const SESSION_STORAGE_REDIRECT_MAP_KEY = "nearSocialVMredirectMap";
 
-function Viewer({ code }) {
+function Viewer({ code, ...props }) {
   const { path } = useParams(); // get path from url, could be socialdb path or relative to "core"
   const location = useLocation(); // get query params from url
   const searchParams = new URLSearchParams(location.search);
@@ -65,6 +65,7 @@ function Viewer({ code }) {
       props={{
         path: src,
         ...passProps,
+        ...props,
       }}
       config={{ redirectMap }}
     />

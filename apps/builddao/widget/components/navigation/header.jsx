@@ -1,5 +1,5 @@
 const { Button } = VM.require("buildhub.near/widget/components") || {
-  Button: () => <></>
+  Button: () => <></>,
 };
 
 const Navbar = styled.div`
@@ -75,12 +75,14 @@ const NavLink = ({ to, children }) => (
 
 const [showMenu, setShowMenu] = useState(false);
 const toggleDropdown = () => setShowMenu(!showMenu);
+console.log("header", props);
 
-const AppHeader = ({ page, routes }) => (
+const AppHeader = ({ page, routes, ...props }) => (
   <Navbar>
     <div className="d-flex align-items-center justify-content-between w-100">
       <DesktopNavigation className="container-xl">
         <Link
+          style={{ flex: 1 }}
           to={href({
             widgetSrc: "buildhub.near/widget/app",
             params: {
@@ -93,7 +95,7 @@ const AppHeader = ({ page, routes }) => (
             src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya"
           />
         </Link>
-        <ButtonGroup>
+        <ButtonGroup style={{ flex: 1 }}>
           {routes &&
             (Object.keys(routes) || []).map((k) => {
               const route = routes[k];
@@ -110,17 +112,25 @@ const AppHeader = ({ page, routes }) => (
               );
             })}
         </ButtonGroup>
-        <Widget
-          src="buildhub.near/widget/components.buttons.Connect"
-          loading="User Dropdown"
-          props={{
-            connectedChildren: <div className="text-white">User Dropdown</div>,
-            showActivity: false,
-            className: "custom-button",
-            joinBtnChildren: "Join Now",
-            href: "/join",
-          }}
-        />
+
+        <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+          <Widget
+            src="buildhub.near/widget/components.buttons.Connect"
+            loading="User Dropdown"
+            props={{
+              connectedChildren: (
+                <Widget
+                  src="buildhub.near/widget/components.buttons.UserDropdown"
+                  props={{ logOut: props.logOut }}
+                />
+              ),
+              showActivity: false,
+              className: "custom-button",
+              joinBtnChildren: "Join Now",
+              href: "/join",
+            }}
+          />
+        </div>
       </DesktopNavigation>
       <MobileNavigation>
         <Link
@@ -157,7 +167,7 @@ const AppHeader = ({ page, routes }) => (
                   return null;
                 }
                 return (
-                  <NavLink to={k}>
+                  <NavLink to={k} style={{ textDecoration: "none" }}>
                     <Button
                       key={k}
                       variant={page === k && "primary"}
@@ -170,23 +180,28 @@ const AppHeader = ({ page, routes }) => (
                 );
               })}
           </ButtonGroup>
-          <Widget
-            src="buildhub.near/widget/components.buttons.Connect"
-            loading="User Dropdown"
-            props={{
-              connectedChildren: (
-                <div className="text-white mx-auto">User Dropdown</div>
-              ),
-              showActivity: false,
-              className: "custom-button",
-              joinBtnChildren: "Join Now",
-              href: "/join",
-            }}
-          />
+          <div className="d-flex w-100 justify-content-center">
+            <Widget
+              src="buildhub.near/widget/components.buttons.Connect"
+              loading="User Dropdown"
+              props={{
+                connectedChildren: (
+                  <Widget
+                    src="buildhub.near/widget/components.buttons.UserDropdown"
+                    props={{ logOut: props.logOut }}
+                  />
+                ),
+                showActivity: false,
+                className: "custom-button",
+                joinBtnChildren: "Join Now",
+                href: "/join",
+              }}
+            />
+          </div>
         </div>
       )}
     </MobileNavigation>
   </Navbar>
 );
 
-return <AppHeader page={props.page} routes={props.routes} />;
+return <AppHeader page={props.page} routes={props.routes} {...props} />;

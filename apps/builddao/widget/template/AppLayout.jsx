@@ -22,7 +22,7 @@ const ContentContainer = styled.div`
   width: 100%;
 `;
 
-const Header = ({ page, routes }) => (
+const Header = ({ page, routes, ...props }) => (
   <Widget
     src="buildhub.near/widget/components.navigation.header"
     props={{ page, routes, ...props }}
@@ -34,10 +34,10 @@ const Footer = (props) => {
 };
 
 // Define the new component that follows the AppLayout pattern
-function AppLayout({ routes, page, children }) {
+function AppLayout({ routes, page, children, ...props }) {
   return (
     <Container>
-      <Header page={page} routes={routes} />
+      <Header page={page} routes={routes} {...props} />
       <ContentContainer key={page}>{children}</ContentContainer>
       <Footer page={page} />
     </Container>
