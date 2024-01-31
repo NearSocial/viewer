@@ -18,7 +18,7 @@ const Container = styled.div`
     text-align: center;
 
     /* Body/Large */
-    font-family: Satoshi;
+    font-family: Satoshi, sans-serif;
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
