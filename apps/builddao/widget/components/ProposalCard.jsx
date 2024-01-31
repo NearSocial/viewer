@@ -59,6 +59,10 @@ const Wrapper = styled.div`
     font-weight: 600;
   }
 
+  .font-monospace {
+    color: var(--secondary-text-color) !important;
+  }
+
   .secondary-bg {
     background: var(--secondary-bg-color) !important;
   }
