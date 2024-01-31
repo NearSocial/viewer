@@ -1,12 +1,15 @@
 const { Button } =
   VM.require("buildhub.near/widget/components") || (() => <></>);
-
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
+if (!DaoSDK) {
+  return <></>;
+}
 const [contract, setContract] = useState("");
 const [method, setMethod] = useState("");
 const [args, setArgs] = useState("{}");
-const [gas, setGas] = useState(50000000000000);
-const [deposit, useDeposit] = useState(0);
-
+const [gas, setGas] = useState(180000000000000);
+const [deposit, setDeposit] = useState(0);
+const [validatedAddresss, setValidatedAddress] = useState(true);
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
 
@@ -21,7 +24,17 @@ useEffect(() => {
   setEditorKey((editorKey) => editorKey + 1);
 }, [props.item]);
 const memoizedKey = useMemo((editorKey) => editorKey, [editorKey]);
-const selectedDao = props.selectedDao;
+const selectedDAO = props.selectedDAO;
+const sdk = DaoSDK(selectedDAO);
+
+const regex = /.{1}\.near$/;
+useEffect(() => {
+  if (regex.test(contract) || contract === "") {
+    setValidatedAddress(true);
+  } else {
+    setValidatedAddress(false);
+  }
+}, [contract]);
 
 const MarkdownEditor = `
   html {
@@ -166,6 +179,11 @@ return (
         onChange={(e) => setContract(e.target.value)}
         className="form-control"
       />
+      {!validatedAddresss && (
+        <span className="text-danger" style={{ fontSize: 12 }}>
+          Please check if the NEAR address is valid!
+        </span>
+      )}
     </div>
     <div className="form-group mb-3">
       <label htmlFor="method">
@@ -229,36 +247,28 @@ return (
             embedCss: props.customCSS || MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            },
+            }
           }}
         />
       </TextareaWrapper>
     </div>
     <div className="w-100 d-flex">
       <Button
-        disabled={!contract || !method}
+        disabled={!contract || !method || !validatedAddresss}
         className="ms-auto"
         variant="primary"
-        onClick={() =>
-          Near.call(selectedDAO, "add_proposal", {
-            proposal: {
-              description: text,
-              kind: {
-                FunctionCall: {
-                  reciever_id: contract,
-                  actions: [
-                    {
-                      method_name: method,
-                      args: args,
-                      deposit: deposit,
-                      gas: gas,
-                    },
-                  ],
-                },
-              },
-            },
-          })
-        }
+        onClick={() => {
+          sdk.createFunctionCallProposal({
+            description: text,
+            receiverId: contract,
+            methodName: method,
+            args: args,
+            proposalDeposit: deposit,
+            proposalGas: gas,
+            gas: 180000000000000,
+            deposit: 200000000000000
+          });
+        }}
       >
         Next
       </Button>

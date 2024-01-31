@@ -1,6 +1,9 @@
 const { Button } =
   VM.require("buildhub.near/widget/components") || (() => <></>);
-
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
+if (!DaoSDK) {
+  return <></>;
+}
 const [recipient, setRecipient] = useState("");
 const [token, setToken] = useState("");
 const [amount, setAmount] = useState(0);
@@ -20,7 +23,29 @@ useEffect(() => {
   setEditorKey((editorKey) => editorKey + 1);
 }, [props.item]);
 const memoizedKey = useMemo((editorKey) => editorKey, [editorKey]);
-const selectedDao = props.selectedDao;
+const selectedDAO = props.selectedDAO;
+const sdk = DaoSDK(selectedDAO);
+
+const res = fetch(`https://api.nearblocks.io/v1/account/${selectedDAO}/tokens`);
+const NearTokenId = "NEAR";
+const tokensData = [
+  {
+    decimals: 24,
+    icon: "",
+    name: "NEAR",
+    symbol: "NEAR",
+    tokenId: NearTokenId
+  }
+];
+if (res.body) {
+  res.body?.tokens?.fts.map((item) => {
+    const ftMetadata = Near.view(item, "ft_metadata", {});
+    if (ftMetadata === null) {
+      return;
+    }
+    tokensData.push({ ...ftMetadata, tokenId: item });
+  });
+}
 
 // handle checking
 const regex = /.{1}\.near$/;
@@ -201,11 +226,9 @@ return (
         onChange={(e) => setToken(e.target.value)}
       >
         <option value="">Select a token</option>
-        <option value="near">NEAR</option>
-        <option value="eth">ETH</option>
-        <option value="usdc">USDC</option>
-        <option value="usdt">USDT</option>
-        <option value="aurora">AURORA</option>
+        {tokensData?.map((item) => {
+          return <option value={item.tokenId}>{item.symbol}</option>;
+        })}
       </select>
     </div>
     <div className="form-group mb-3">
@@ -236,30 +259,32 @@ return (
             embedCss: props.customCSS || MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            },
+            }
           }}
         />
       </TextareaWrapper>
     </div>
     <div className="w-100 d-flex">
       <Button
-        disabled={!token || !recipient || !amount}
+        disabled={!token || !recipient || !amount || !validatedAddresss}
         className="ms-auto"
         variant="primary"
-        onClick={() =>
-          Near.call(selectedDAO, "add_proposal", {
-            proposal: {
-              description: text,
-              kind: {
-                Transfer: {
-                  token_id: token,
-                  reciever_id: recipient,
-                  amount: amount,
-                },
-              },
-            },
-          })
-        }
+        onClick={() => {
+          let ftMetadata = tokensData.find((item) => item.tokenId === token);
+          const amountInYocto = Big(amount)
+            .mul(Big(10).pow(ftMetadata.decimals))
+            .toFixed();
+          sdk.createTransferProposal({
+            description: text,
+            tokenId: token === NearTokenId ? "" : token,
+            receiverId: recipient,
+            amount: amountInYocto,
+            gas,
+            deposit,
+            gas: 180000000000000,
+            deposit: 200000000000000
+          });
+        }}
       >
         Next
       </Button>

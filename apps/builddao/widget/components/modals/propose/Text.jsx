@@ -1,5 +1,10 @@
 const { Button } =
   VM.require("buildhub.near/widget/components") || (() => <></>);
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
+
+if (!DaoSDK) {
+  return <></>;
+}
 
 const [text, setText] = useState("");
 const [editorKey, setEditorKey] = useState(0);
@@ -14,6 +19,7 @@ useEffect(() => {
 const memoizedKey = useMemo((editorKey) => editorKey, [editorKey]);
 const selectedDAO = props.selectedDAO;
 
+const sdk = DaoSDK(selectedDAO);
 const MarkdownEditor = `
   html {
     background: #23242b;
@@ -158,7 +164,7 @@ return (
           embedCss: props.customCSS || MarkdownEditor,
           onChange: (v) => {
             setText(v);
-          },
+          }
         }}
       />
     </TextareaWrapper>
@@ -166,14 +172,13 @@ return (
       <Button
         className="ms-auto"
         variant="primary"
-        onClick={() =>
-          Near.call(selectedDAO, "add_proposal", {
-            proposal: {
-              description: text,
-              kind: "Vote",
-            },
-          })
-        }
+        onClick={() => {
+          sdk.createPollProposal({
+            description: text,
+            gas: 180000000000000,
+            deposit: 200000000000000
+          });
+        }}
       >
         Next
       </Button>

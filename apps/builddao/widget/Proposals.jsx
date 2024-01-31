@@ -1,5 +1,5 @@
 const { Button } = VM.require("buildhub.near/widget/components.Button") || {
-  Button: <></>,
+  Button: <></>
 };
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
 
@@ -15,20 +15,23 @@ const accountId = context.accountId;
 
 const [showProposalModal, setShowModal] = useState(false);
 const lastProposalId = sdk.getLastProposalId();
-const proposals = proposalId
+const reversedProposals = proposalId
   ? [
       sdk.getProposalById({
-        proposalId,
-      }),
+        proposalId
+      })
     ] || []
   : sdk.getProposals({
       offset:
         currentPage === 0
-          ? lastProposalId - resPerPage
+          ? lastProposalId > 10
+            ? lastProposalId - resPerPage
+            : lastProposalId ?? 10
           : lastProposalId - currentPage * resPerPage,
-      limit: resPerPage,
+      limit: resPerPage
     }) || [];
 
+const proposals = reversedProposals.reverse();
 const PaginationThemeContainer = props.PaginationThemeContainer;
 
 const ThemeContainer =
@@ -78,32 +81,31 @@ const handleVote = ({ action, proposalId, proposer }) => {
               message: `${accountId} voted to ${customAction} your proposal for ${daoId} (Proposal ID: ${proposalId})`,
               params: {
                 daoId: daoId,
-                proposalId: proposalId,
+                proposalId: proposalId
               },
               type: "custom",
-              widget: "buildhub.near/widget/Proposals",
-            },
-          },
-        ]),
-      },
-    },
+              widget: "buildhub.near/widget/Proposals"
+            }
+          }
+        ])
+      }
+    }
   };
 
   sdk.actProposal({
     proposalId,
     action,
-    deposit: "",
     gas: 200000000000000,
     additionalCalls: [
       {
         contractName: "social.near",
         methodName: "set",
         args: { data: notification },
-        deposit: Big(JSON.stringify(notification).length * 16).mul(
-          Big(10).pow(20)
-        ),
-      },
-    ],
+        deposit: Big(JSON.stringify(notification).length * 16)
+          .mul(Big(10).pow(20))
+          .toString()
+      }
+    ]
   });
 };
 
@@ -126,7 +128,7 @@ if (Array.isArray(policy.roles)) {
 
 const proposalPeriod = policy.proposal_period;
 
-const ProposalsComponent = () => {
+const proposalsComponent = useMemo(() => {
   return (
     <div className="d-flex flex-column gap-2">
       {Array.isArray(proposals) ? (
@@ -142,30 +144,30 @@ const ProposalsComponent = () => {
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteApprove,
+              actionType: actions.VoteApprove
             }),
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteReject,
+              actionType: actions.VoteReject
             }),
 
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteRemove,
-            }),
+              actionType: actions.VoteRemove
+            })
           ];
 
           const { thresholdVoteCount } =
             sdk.getVotersAndThresholdForProposalKind({
-              kindName,
+              kindName
             });
           const totalVotes = sdk.calculateVoteCountByType({
-            votes: item.votes,
+            votes: item.votes
           });
           let expirationTime = sdk.getProposalExpirationTime({
-            submissionTime: item.submission_time,
+            submissionTime: item.submission_time
           });
 
           return (
@@ -179,14 +181,14 @@ const ProposalsComponent = () => {
                   totalVotes: {
                     ...totalVotes,
                     yes: totalVotes.approve,
-                    no: totalVotes.reject,
+                    no: totalVotes.reject
                   },
-                  expirationTime,
+                  expirationTime
                 },
                 daoId: daoId,
                 comments: comments,
                 isAllowedToVote,
-                handleVote,
+                handleVote
               }}
             />
           );
@@ -196,7 +198,7 @@ const ProposalsComponent = () => {
       )}
     </div>
   );
-};
+}, [proposals]);
 
 return (
   <ThemeContainer>
@@ -205,7 +207,7 @@ return (
         src="buildhub.near/widget/components.modals.CreateProposal"
         props={{
           showModal: showProposalModal,
-          toggleModal: () => setShowModal(!showProposalModal),
+          toggleModal: () => setShowModal(!showProposalModal)
         }}
       />
       <div className="d-flex justify-content-between">
@@ -214,9 +216,7 @@ return (
           Create Proposal
         </Button>
       </div>
-      <div className="d-flex flex-column gap-4">
-        <ProposalsComponent />
-      </div>
+      <div className="d-flex flex-column gap-4">{proposalsComponent}</div>
       {!proposalId && (
         <div className="d-flex justify-content-center my-4">
           <Widget
@@ -226,7 +226,7 @@ return (
               totalPages: Math.round(lastProposalId / resPerPage),
               onPageClick: (v) => setCurrentPage(v),
               selectedPage: currentPage,
-              ThemeContainer: PaginationThemeContainer,
+              ThemeContainer: PaginationThemeContainer
             }}
           />
         </div>

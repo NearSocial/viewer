@@ -9,7 +9,7 @@ const { Modal, Button, User } = VM.require(
 ) || {
   Modal: () => <></>,
   Button: () => <></>,
-  User: () => <></>,
+  User: () => <></>
 };
 
 const showModal = props.showModal;
@@ -128,7 +128,7 @@ return (
               selectedDAO: selectedDAO,
               item: props.item,
               bootstrapTheme: bootstrapTheme,
-              customCSS: editorCSS,
+              customCSS: editorCSS
             }}
           />
         </>
@@ -141,7 +141,7 @@ return (
               selectedDAO: selectedDAO,
               item: props.item,
               bootstrapTheme: bootstrapTheme,
-              customCSS: editorCSS,
+              customCSS: editorCSS
             }}
           />
         </>
@@ -154,7 +154,7 @@ return (
               selectedDAO: selectedDAO,
               item: props.item,
               bootstrapTheme: bootstrapTheme,
-              customCSS: editorCSS,
+              customCSS: editorCSS
             }}
           />
         </>
@@ -168,7 +168,7 @@ return (
               selectedDAO: selectedDAO,
               item: props.item,
               bootstrapTheme: bootstrapTheme,
-              customCSS: editorCSS,
+              customCSS: editorCSS
             }}
           />
         </>
@@ -182,7 +182,7 @@ return (
               selectedDAO: selectedDAO,
               item: props.item,
               bootstrapTheme: bootstrapTheme,
-              customCSS: editorCSS,
+              customCSS: editorCSS
             }}
           />
         </>

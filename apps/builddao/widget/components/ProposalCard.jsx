@@ -59,6 +59,10 @@ const Wrapper = styled.div`
     font-weight: 600;
   }
 
+  .font-monospace {
+    color: var(--secondary-text-color) !important;
+  }
+
   .secondary-bg {
     background: var(--secondary-bg-color) !important;
   }
@@ -560,7 +564,7 @@ function renderVoteButtons({
           wins={wins.yes}
           myVote={voted.yes}
           onClick={() => handleVote("VoteApprove")}
-          // disabled={alreadyVoted || finished || !isAllowedToVote[0]}
+          disabled={alreadyVoted || finished || !isAllowedToVote[0]}
         >
           <div>
             {wins.yes && (
