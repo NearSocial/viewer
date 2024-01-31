@@ -89,8 +89,6 @@ const Content = styled.div`
   height: 100%;
 `;
 
-console.log("app", props);
-
 return (
   <Root>
     <Container>

@@ -75,7 +75,33 @@ const NavLink = ({ to, children }) => (
 
 const [showMenu, setShowMenu] = useState(false);
 const toggleDropdown = () => setShowMenu(!showMenu);
-console.log("header", props);
+
+const SignInOrConnect = () => (
+  <>
+    {context.accountId ? (
+      <Widget
+        src="buildhub.near/widget/components.buttons.Connect"
+        loading="User Dropdown"
+        props={{
+          connectedChildren: (
+            <Widget
+              src="buildhub.near/widget/components.buttons.UserDropdown"
+              props={{ logOut: props.logOut }}
+            />
+          ),
+          showActivity: false,
+          className: "custom-button",
+          joinBtnChildren: "Join Now",
+          href: "/join",
+        }}
+      />
+    ) : (
+      <Link to={"/join"} style={{ textDecoration: "none" }}>
+        <Button variant={"outline"}>Sign In</Button>
+      </Link>
+    )}
+  </>
+);
 
 const AppHeader = ({ page, routes, ...props }) => (
   <Navbar>
@@ -114,22 +140,7 @@ const AppHeader = ({ page, routes, ...props }) => (
         </ButtonGroup>
 
         <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
-          <Widget
-            src="buildhub.near/widget/components.buttons.Connect"
-            loading="User Dropdown"
-            props={{
-              connectedChildren: (
-                <Widget
-                  src="buildhub.near/widget/components.buttons.UserDropdown"
-                  props={{ logOut: props.logOut }}
-                />
-              ),
-              showActivity: false,
-              className: "custom-button",
-              joinBtnChildren: "Join Now",
-              href: "/join",
-            }}
-          />
+          <SignInOrConnect />
         </div>
       </DesktopNavigation>
       <MobileNavigation>
@@ -181,22 +192,7 @@ const AppHeader = ({ page, routes, ...props }) => (
               })}
           </ButtonGroup>
           <div className="d-flex w-100 justify-content-center">
-            <Widget
-              src="buildhub.near/widget/components.buttons.Connect"
-              loading="User Dropdown"
-              props={{
-                connectedChildren: (
-                  <Widget
-                    src="buildhub.near/widget/components.buttons.UserDropdown"
-                    props={{ logOut: props.logOut }}
-                  />
-                ),
-                showActivity: false,
-                className: "custom-button",
-                joinBtnChildren: "Join Now",
-                href: "/join",
-              }}
-            />
+            <SignInOrConnect />
           </div>
         </div>
       )}

@@ -203,21 +203,19 @@ export function Navbar(props) {
             </button>
           )}
           {props.signedIn && (
-            <Link to="/join">
-              <Widget
-                src="buildhub.near/widget/components.buttons.Connect"
-                config={{
-                  redirectMap: redirectStore.redirectMap,
-                }}
-                props={{
-                  connectedChildren: <UserDropdown {...props} />,
-                  showActivity: false,
-                  className: "custom-button",
-                  joinBtnChildren: "Join Now",
-                  // href: "/join",
-                }}
-              />
-              </Link>
+            <Widget
+              src="buildhub.near/widget/components.buttons.Connect"
+              config={{
+                redirectMap: redirectStore.redirectMap,
+              }}
+              props={{
+                connectedChildren: <UserDropdown {...props} />,
+                showActivity: false,
+                className: "custom-button",
+                joinBtnChildren: <Link to="/join">Join Now</Link>,
+                // href: "/join",
+              }}
+            />
           )}
         </div>
 
