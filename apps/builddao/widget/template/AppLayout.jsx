@@ -12,6 +12,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   // margin-top: calc(-1 * var(--body-top-padding));
+  background-color: var(--bg-1, #0b0c14);
 `;
 
 const ContentContainer = styled.div`

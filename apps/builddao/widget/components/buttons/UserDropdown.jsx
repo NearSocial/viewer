@@ -1,20 +1,20 @@
 const StyledDropdown = styled.div`
   button,
   a {
-    font-weight: var(--font-weight-medium);
+    font-weight: 500;
   }
   .dropdown-toggle {
     display: flex;
     align-items: center;
     text-align: left;
-    background-color: var(--slate-dark-5);
+    background-color: #2b2f31;
     border-radius: 50px;
     outline: none;
     border: 0;
 
     &:after {
       margin: 0 15px;
-      border-top-color: var(--slate-dark-11);
+      border-top-color: #9ba1a6;
     }
 
     img {
@@ -23,6 +23,7 @@ const StyledDropdown = styled.div`
 
     .profile-info {
       margin: 5px 10px;
+      margin-right: 0;
       line-height: normal;
       max-width: 140px;
 
@@ -33,16 +34,16 @@ const StyledDropdown = styled.div`
       }
 
       .profile-name {
-        color: var(--slate-dark-12);
+        color: #ecedee;
       }
       .profile-username {
-        color: var(--slate-dark-11);
+        color: #9ba1a6;
       }
     }
   }
 
   ul {
-    background-color: var(--slate-dark-5);
+    background-color: #2b2f31;
     width: 100%;
     width: 240px;
 
@@ -52,7 +53,7 @@ const StyledDropdown = styled.div`
 
     button,
     a {
-      color: var(--slate-dark-11);
+      color: #9ba1a6;
       display: flex;
       align-items: center;
       border-radius: 8px;
@@ -61,7 +62,7 @@ const StyledDropdown = styled.div`
       :hover,
       :focus {
         text-decoration: none;
-        background-color: var(--slate-dark-1);
+        background-color: #151718;
         color: white;
 
         svg {
@@ -75,7 +76,7 @@ const StyledDropdown = styled.div`
         margin-right: 7px;
         min-width: 24px;
         path {
-          stroke: var(--slate-dark-9);
+          stroke: #0091ff;
         }
       }
     }
@@ -153,15 +154,18 @@ return (
       id="dropdownMenu2222"
       data-bs-toggle="dropdown"
       aria-expanded="false"
+      style={{ background: "#2b2f31" }}
     >
-      <Widget
-        src={"mob.near/widget/ProfileImage"}
-        props={{
-          accountId: context.accountId,
-          className: "d-inline-block",
-          style: { width: "40px", height: "40px" },
-        }}
-      />
+      <div>
+        <Widget
+          src={"mob.near/widget/ProfileImage"}
+          props={{
+            accountId: context.accountId,
+            className: "d-inline-block",
+            style: { width: "40px", height: "40px" },
+          }}
+        />
+      </div>
       <div className="profile-info">
         <div className="profile-name">
           <Widget src={"patrick.near/widget/ProfileName"} />
