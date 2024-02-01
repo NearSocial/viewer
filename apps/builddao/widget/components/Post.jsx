@@ -286,26 +286,8 @@ const contentWidget = (
   </>
 );
 
-// need to refactor this
-const [showModal, setShowModal] = useState(false);
-const toggleModal = () => {
-  setShowModal(!showModal);
-};
-
 return (
   <>
-    {props.feedType.toLowerCase() === "request" && (
-      <>
-        <Widget
-          src="buildhub.near/widget/components.modals.CreateProposal"
-          props={{
-            showModal,
-            toggleModal,
-            item: item,
-          }}
-        />
-      </>
-    )}
     <StyledPost key={`Post-${item.path}-${item.blockHeight}`}>
       <Wrapper
         className="w-100 mx-auto"
@@ -330,7 +312,8 @@ return (
                 postType: "post",
                 flagItem: item,
                 customActions: customActions,
-                toggleModal: toggleModal,
+                modalToggles: props.modalToggles,
+                setItem: props.setItem,
               }}
             />
             {fullPostLink ? (

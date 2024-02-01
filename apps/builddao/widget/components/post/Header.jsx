@@ -95,7 +95,8 @@ const isPremium = !!props.isPremium;
 const flagItem = props.flagItem;
 const customActions = props.customActions ?? [];
 const showTime = props.showTime ?? true;
-const toggleModal = props.toggleModal;
+const modalToggles = props.modalToggles;
+const setItem = props.setItem;
 
 const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
 
@@ -195,11 +196,12 @@ return (
             customActions.map((action) => (
               <li key={action.label}>
                 <button
-                  onClick={() =>
-                    action.type === "modal"
-                      ? action.onClick(toggleModal)
-                      : action.onClick(flagItem)
-                  }
+                  onClick={() => {
+                    if (action.type === "modal") {
+                      action.onClick(modalToggles);
+                      setItem(flagItem);
+                    }
+                  }}
                   className="btn btn-outline-dark dropdown-item"
                 >
                   <i className={`bi ${action.icon}`}></i>{" "}

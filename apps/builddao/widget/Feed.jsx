@@ -5,17 +5,40 @@ const { Post } = VM.require("buildhub.near/widget/components") || {
   Post: () => <></>,
 };
 
-const { name, template, requiredHashtags, customActions } = props;
+const { name: feedName, template, requiredHashtags, customActions } = props;
+
+// for modals
+const [item, setItem] = useState(null);
+const [showProposeModal, setShowProposeModal] = useState(false);
+const toggleProposeModal = () => {
+  setShowProposeModal(!showProposeModal);
+};
+const modalToggles = {
+  propose: toggleProposeModal,
+};
 
 return (
-  <div key={name}>
+  <div key={feedName}>
+    {feedName.toLowerCase() === "request" && (
+      <>
+        <Widget
+          src="buildhub.near/widget/components.modals.CreateProposal"
+          loading="..."
+          props={{
+            showModal: showProposeModal,
+            toggleModal: toggleProposeModal,
+            item: item,
+          }}
+        />
+      </>
+    )}
     {!context.accountId ? ( // if not logged in
       <Widget src="buildhub.near/widget/components.login-now" props={props} />
     ) : (
       <Widget
         src="buildhub.near/widget/Compose"
         props={{
-          draftKey: name,
+          draftKey: feedName,
           template: template,
           requiredHashtags: requiredHashtags,
         }}
@@ -41,7 +64,8 @@ return (
           noBorder={true}
           currentPath={`/buildhub.near/widget/app?page=feed`}
           customActions={customActions}
-          feedType={name}
+          modalToggles={modalToggles}
+          setItem={setItem}
         />
       )}
     />

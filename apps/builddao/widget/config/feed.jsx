@@ -189,9 +189,10 @@ return {
             type: "modal",
             icon: "bi-file",
             label: "Propose",
-            onClick: (modalToggle) => {
-              console.log("modal", modalToggle);
-              modalToggle();
+            onClick: (modalToggles) => {
+              console.log(modalToggles);
+              const toggle = modalToggles.propose;
+              toggle();
             },
           },
         ],
