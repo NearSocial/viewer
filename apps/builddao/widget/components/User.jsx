@@ -64,7 +64,7 @@ const Overlay = (props) => (
   >
     <Widget
       src="mob.near/widget/Profile.N.OverlayTrigger"
-      loading={props.children}
+      loading={""}
       props={{
         accountId,
         children: props.children,

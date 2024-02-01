@@ -400,7 +400,7 @@ return (
               <div className="ms-5 my-3">
                 <Widget
                   key="comments"
-                  loading={false}
+                  loading={""}
                   src="mob.near/widget/MainPage.N.Comment.Feed"
                   props={{
                     item,

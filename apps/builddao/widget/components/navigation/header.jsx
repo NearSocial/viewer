@@ -81,7 +81,7 @@ const SignInOrConnect = () => (
     {context.accountId ? (
       <Widget
         src="buildhub.near/widget/components.buttons.Connect"
-        loading="User Dropdown"
+        loading=""
         props={{
           connectedChildren: (
             <Widget

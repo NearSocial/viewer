@@ -147,12 +147,12 @@ const components = [
     },
     preview: (
       <>
-        {/* <div className="d-flex align-items-center gap-3 mb-3">
+        <div className="d-flex align-items-center gap-3 mb-3">
           <ProgressState status="default">1</ProgressState>
           <ProgressState status="focused">1</ProgressState>
           <ProgressState status="error">1</ProgressState>
           <ProgressState status="completed">1</ProgressState>
-        </div> */}
+        </div>
       </>
     ),
     embedCode: `
@@ -274,7 +274,11 @@ const components = [
     preview: (
       <>
         <div className="d-flex flex-column gap-3 mb-3">
-          <Checkbox label="Checkbox" />
+          <Checkbox
+            value={checked}
+            onChange={(e) => setChecked(!checked)}
+            label="Checkbox"
+          />
         </div>
       </>
     ),
