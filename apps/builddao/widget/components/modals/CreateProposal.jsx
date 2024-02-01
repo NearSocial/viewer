@@ -110,7 +110,9 @@ return (
         onChange={(e) => setSelectedOption(e.target.value)}
         value={selectedOption}
       >
-        <option selected>Open this select menu</option>
+        <option selected value="">
+          Open this select menu
+        </option>
         <option value="text">Text</option>
         <option value="transfer">Transfer</option>
         <option value="functionCall">Function Call</option>

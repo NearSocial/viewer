@@ -23,7 +23,7 @@ return (
       <>
         <Widget
           src="buildhub.near/widget/components.modals.CreateProposal"
-          loading="..."
+          loading=""
           props={{
             showModal: showProposeModal,
             toggleModal: toggleProposeModal,
@@ -33,9 +33,19 @@ return (
       </>
     )}
     {!context.accountId ? ( // if not logged in
-      <Widget src="buildhub.near/widget/components.login-now" props={props} />
+      <Widget
+        loading=""
+        src="buildhub.near/widget/components.login-now"
+        props={props}
+      />
     ) : (
       <Widget
+        loading={
+          <div
+            className="placeholder-glow h-100 w-100"
+            style={{ height: 400 }}
+          ></div>
+        }
         src="buildhub.near/widget/Compose"
         props={{
           draftKey: feedName,
