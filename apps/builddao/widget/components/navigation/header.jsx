@@ -20,7 +20,7 @@ const ButtonGroup = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 
   @media screen and (max-width: 768px) {
     flex-direction: column;
@@ -130,7 +130,11 @@ const AppHeader = ({ page, routes, ...props }) => (
               }
               return (
                 <NavLink to={k}>
-                  <Button key={k} variant={page === k && "primary"}>
+                  <Button
+                    key={k}
+                    variant={page === k && "primary"}
+                    style={{ padding: "0.5rem 1rem", fontWeight: 500 }}
+                  >
                     {route.init.icon && <i className={route.init.icon}></i>}
                     {route.init.name}
                   </Button>
