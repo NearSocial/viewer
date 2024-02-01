@@ -86,18 +86,15 @@ function checkAndAppendHashtag(input, target) {
 }
 
 const postToCustomFeed = ({ feed, text, labels }) => {
-  const postId = generateUID();
-  if (!labels) labels = [];
+  // if (!labels) labels = [];
 
-  labels = labels.map((label) => label.toLowerCase());
-  labels.push(feed.name.toLowerCase());
+  // labels = labels.map((label) => label.toLowerCase());
+  // labels.push(feed.name.toLowerCase());
 
   const requiredHashtags = props.requiredHashtags || ["build"];
   if (feed.hashtag) requiredHashtags.push(feed.hashtag.toLowerCase());
   requiredHashtags.push(feed.name.toLowerCase());
-
   text = text + `\n\n`;
-
   requiredHashtags.forEach((hashtag) => {
     text = checkAndAppendHashtag(text, hashtag);
   });
@@ -394,7 +391,7 @@ return (
         <TextareaWrapper
           className="markdown-editor"
           data-value={postContent || ""}
-          key={props.feed.name}
+          key={props.feed.name || "Editor"}
         >
           <Widget
             src="mob.near/widget/MarkdownEditorIframe"
@@ -438,7 +435,11 @@ return (
         variant="primary"
         style={{ fontSize: 14 }}
         onClick={() =>
-          postToCustomFeed({ feed: props.feed, text: postContent, labels })
+          postToCustomFeed({
+            feed: props.feed,
+            text: postContent,
+            labels,
+          })
         }
       >
         Post {props.feed.name}

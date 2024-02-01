@@ -51,6 +51,7 @@ return (
           draftKey: feedName,
           template: template,
           requiredHashtags: requiredHashtags,
+          feed: { ...props },
         }}
       />
     )}

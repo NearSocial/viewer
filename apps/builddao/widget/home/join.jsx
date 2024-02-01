@@ -251,7 +251,7 @@ const CTAContainer = styled.div`
     color: var(--white-100, #fff);
 
     /* H2/Large */
-    font-family: Satoshi;
+    font-family: Satoshi, sans-serif;
     font-size: 40px;
     font-style: normal;
     font-weight: 500;
@@ -282,7 +282,7 @@ const CTAContent = styled.div`
   p {
     color: var(--Sea-Blue, #51ffea);
     /* Body/Large */
-    font-family: Satoshi;
+    font-family: Satoshi, sans-serif;
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;
