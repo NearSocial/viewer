@@ -26,7 +26,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import "react-bootstrap-typeahead/css/Typeahead.css";
-import { Link, Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { Link, Route, BrowserRouter as Router, Switch, Redirect } from "react-router-dom";
 import { BosLoaderBanner } from "./components/BosLoaderBanner";
 import { Navbar } from "./components/navigation/Navbar";
 import { useEthersProviderContext } from "./data/web3";
@@ -110,7 +110,7 @@ function App() {
             if (props.to) {
               props.to =
                 typeof props.to === "string" &&
-                isValidAttribute("a", "href", props.to)
+                  isValidAttribute("a", "href", props.to)
                   ? props.to
                   : "about:blank";
             }
@@ -206,27 +206,24 @@ function App() {
               <BosLoaderBanner />
               <JoinPage {...passProps} />
             </Route>
+            <Route path={"/library"}>
+              <Redirect to="buildhub.near/widget/app?page=library" />
+            </Route>
+            <Route path={"/propose"}>
+              <Redirect to="buildhub.near/widget/app?page=proposal" />
+            </Route>
+            <Route path={"/feed"}>
+              <Redirect to="buildhub.near/widget/app?page=feed" />
+            </Route>
+            <Route path={"/resources"}>
+              <Redirect to="buildhub.near/widget/app?page=resources" />
+            </Route>
             {/* I've added the below as the isolated route for rendering the app */}
             <Route path={"/:path*"}>
               <BosLoaderBanner />
               <Viewer {...passProps} />
             </Route>
             {/* Legacy: */}
-            <Route path={"/propose"}>
-              <ProposePage {...passProps} />
-            </Route>
-            <Route path={"/library"}>
-              <Navbar {...passProps} />
-              <LibraryPage {...passProps} />
-            </Route>
-            <Route path={"/feed"}>
-              <Navbar {...passProps} />
-              <FeedPage {...passProps} />
-            </Route>
-            <Route path={"/resources"}>
-              <Navbar {...passProps} />
-              <ResourcesPage {...passProps} />
-            </Route>
             <Route path={"/embed/:widgetSrc*"}>
               <EmbedPage {...passProps} />
             </Route>
@@ -234,11 +231,11 @@ function App() {
               <Navbar {...passProps} />
               <EditorPage {...passProps} />
             </Route>
-            <Route path={"/:widgetSrc*"}>
+            {/* <Route path={"/:widgetSrc*"}>
               <BosLoaderBanner />
               <Navbar {...passProps} />
               <ViewPage {...passProps} />
-            </Route>
+            </Route> */}
           </Switch>
         </Router>
       </EthersProviderContext.Provider>
