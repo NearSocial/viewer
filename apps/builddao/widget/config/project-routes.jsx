@@ -24,7 +24,6 @@ return {
             icon: "bi-file-earmark-text",
             label: "Propose",
             onClick: (modalToggles) => {
-              console.log(modalToggles);
               const toggle = modalToggles.propose;
               toggle();
             },

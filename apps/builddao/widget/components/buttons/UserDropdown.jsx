@@ -144,8 +144,6 @@ function LogOut() {
   );
 }
 
-console.log("props", props);
-
 return (
   <StyledDropdown className="dropdown">
     <button
