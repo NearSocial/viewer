@@ -32,8 +32,8 @@ return {
 **📊 MEASURING SUCCESS:**
 - [Metric 1 for Success]
 - [Metric 2 for Success]
-`
-      }
+`,
+      },
     },
     updates: {
       path: "buildhub.near/widget/Feed",
@@ -56,8 +56,8 @@ return {
 **🛑 BLOCKERS**
 - [what's blocking you?]
 - [how can someone help?]
-`
-      }
+`,
+      },
     },
     documentation: {
       path: "buildhub.near/widget/Feed",
@@ -80,8 +80,8 @@ return {
 **USAGE**
 - [where is it used?]
 - [how to use it]
-`
-      }
+`,
+      },
     },
     question: {
       path: "buildhub.near/widget/Feed",
@@ -95,8 +95,8 @@ return {
 
 [what are you thinking about?]
 [why are you asking?]
-`
-      }
+`,
+      },
     },
     answer: {
       path: "buildhub.near/widget/Feed",
@@ -113,8 +113,8 @@ return {
 [your answer]
 
 [link to relevant docs, examples, or resources]
-`
-      }
+`,
+      },
     },
     opportunity: {
       path: "buildhub.near/widget/Feed",
@@ -129,8 +129,8 @@ return {
 [what is the opportunity?]
 
 [explain the motivation or reason]
-`
-      }
+`,
+      },
     },
     idea: {
       path: "buildhub.near/widget/Feed",
@@ -147,8 +147,8 @@ return {
 
 **Context or additional information:**
 - [Provide any context or details]
-`
-      }
+`,
+      },
     },
     task: {
       path: "buildhub.near/widget/Feed",
@@ -165,8 +165,8 @@ return {
 
 **Context or additional information:**
 - [Provide any context or details]
-`
-      }
+`,
+      },
     },
     feedback: {
       path: "buildhub.near/widget/Feed",
@@ -174,8 +174,28 @@ return {
       init: {
         name: "Feedback",
         icon: "bi-chat-left-text",
-        requiredHashtags: ["build", "feedback"]
-      }
+        requiredHashtags: ["build", "feedback"],
+      },
+    },
+    request: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "Request",
+        icon: "bi-file",
+        requiredHashtags: ["build", "request"],
+        customActions: [
+          {
+            type: "modal",
+            icon: "bi-file",
+            label: "Propose",
+            onClick: (modalToggle) => {
+              console.log("modal", modalToggle);
+              modalToggle();
+            },
+          },
+        ],
+      },
     },
     bookmarks: {
       path: "buildhub.near/widget/OrderedGraphFeed",
@@ -193,8 +213,8 @@ return {
               hideComments={true}
             />
           );
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 };
