@@ -95,7 +95,7 @@ return (
         role="tabpanel"
         aria-labelledby="pills-posts-tab"
       >
-        <div className="col-lg-8 mx-auto">
+        <div className="mx-auto">
           {description && (
             <Post
               key="desc"

@@ -41,7 +41,7 @@ inner = link ? (
     href={
       link !== true
         ? link
-        : `/mob.near/widget/ProfilePage?accountId=${accountId}`
+        : `/buildhub.near/widget/app?page=profile&accountId=${accountId}`
     }
     style={{ color: "var(--font-color, #fff)" }}
     className="text-white text-truncate d-inline-flex"

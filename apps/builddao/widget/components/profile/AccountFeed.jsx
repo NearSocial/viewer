@@ -75,6 +75,7 @@ const renderPost = (a) => {
         groupId
         permissions
         noBorder={true}
+        width="100%"
       />
     </div>
   );
@@ -180,6 +181,7 @@ const renderRepost = (a) => {
         groupId
         permissions
         noBorder={true}
+        width="100%"
       />
     </div>
   );

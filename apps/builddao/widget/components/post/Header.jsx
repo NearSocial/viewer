@@ -104,8 +104,9 @@ const Overlay = (props) => (
   <Link
     className="link-dark text-truncate d-inline-flex mw-100"
     to={href({
-      widgetSrc: "mob.near/widget/ProfilePage",
+      widgetSrc: "buildhub.near/widget/app",
       params: {
+        page: "profile",
         accountId,
       },
     })}
