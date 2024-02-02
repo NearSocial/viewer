@@ -155,7 +155,7 @@ return (
           )}
         </Wrapper>
         {pinned && (
-          <span title="Pinned" className="ms-2">
+          <span title="Pinned" className="ms-2 text-white">
             <i className="bi bi-pin-angle" />
           </span>
         )}

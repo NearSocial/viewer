@@ -181,7 +181,7 @@ return (
         <Link
           className="dropdown-item"
           type="button"
-          to={`/mob.near/widget/ProfilePage?accountId=${context.accountId}`}
+          to={`/buildhub.near/widget/app?page=profile&accountId=${context.accountId}`}
         >
           <User />
           My Profile
