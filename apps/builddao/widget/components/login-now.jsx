@@ -1,4 +1,5 @@
-const { Button } = VM.require("buildhub.near/widget/components");
+const { Button } =
+  VM.require("buildhub.near/widget/components") || (() => <></>);
 
 const Container = styled.div`
   background-color: #23242b;

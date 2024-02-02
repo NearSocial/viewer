@@ -1,6 +1,6 @@
 const { Button } =
   VM.require("buildhub.near/widget/components") || (() => <></>);
-const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || {};
 
 if (!DaoSDK) {
   return <></>;
@@ -164,7 +164,7 @@ return (
           embedCss: props.customCSS || MarkdownEditor,
           onChange: (v) => {
             setText(v);
-          }
+          },
         }}
       />
     </TextareaWrapper>
@@ -176,7 +176,7 @@ return (
           sdk.createPollProposal({
             description: text,
             gas: 180000000000000,
-            deposit: 200000000000000
+            deposit: 200000000000000,
           });
         }}
       >

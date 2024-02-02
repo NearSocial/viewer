@@ -1,5 +1,7 @@
-const { MarkdownView } = VM.require("buildhub.near/widget/md-view");
-const { Button } = VM.require("buildhub.near/widget/components.Button");
+const { MarkdownView } =
+  VM.require("buildhub.near/widget/md-view") || (() => <></>);
+const { Button } =
+  VM.require("buildhub.near/widget/components.Button") || (() => <></>);
 
 Button || (Button = () => <></>);
 MarkdownView || (MarkdownView = () => <></>);
@@ -40,7 +42,7 @@ return (
           </Button>
         );
       }),
-      mainContent: <MarkdownView path={currentResource.mdLink} />
+      mainContent: <MarkdownView path={currentResource.mdLink} />,
     }}
   />
 );

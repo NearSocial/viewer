@@ -1,6 +1,6 @@
 const { Button } =
   VM.require("buildhub.near/widget/components") || (() => <></>);
-const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || {};
 if (!DaoSDK) {
   return <></>;
 }
@@ -34,8 +34,8 @@ const tokensData = [
     icon: "",
     name: "NEAR",
     symbol: "NEAR",
-    tokenId: NearTokenId
-  }
+    tokenId: NearTokenId,
+  },
 ];
 if (res.body) {
   res.body?.tokens?.fts.map((item) => {
@@ -259,7 +259,7 @@ return (
             embedCss: props.customCSS || MarkdownEditor,
             onChange: (v) => {
               setText(v);
-            }
+            },
           }}
         />
       </TextareaWrapper>
@@ -282,7 +282,7 @@ return (
             gas,
             deposit,
             gas: 180000000000000,
-            deposit: 200000000000000
+            deposit: 200000000000000,
           });
         }}
       >

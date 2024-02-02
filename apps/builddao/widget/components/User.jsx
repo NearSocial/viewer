@@ -46,9 +46,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || {
-  href: () => {},
-};
+const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
 
 const accountId = props.accountId;
 const name = props.name || Social.get(`${accountId}/profile/name`);
