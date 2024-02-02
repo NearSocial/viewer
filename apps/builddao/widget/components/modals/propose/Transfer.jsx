@@ -1,6 +1,6 @@
 const { Button } =
   VM.require("buildhub.near/widget/components") || (() => <></>);
-const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || {};
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
 if (!DaoSDK) {
   return <></>;
 }
