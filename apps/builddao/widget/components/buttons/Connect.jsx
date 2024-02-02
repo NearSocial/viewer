@@ -127,7 +127,7 @@ const Container = styled.div`
 `;
 
 const { href: linkHref } =
-  VM.require("buildhub.near/widget/lib.url") || (() => {});
+  VM.require("buildhub.near/widget/lib.url") || { href: () => {} };
 
 const Component = () => {
   if (data.isDaoMember || isConnected) {
