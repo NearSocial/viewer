@@ -1,4 +1,6 @@
-const { Post } = VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Post } = VM.require("buildhub.near/widget/components") || {
+  Post: () => <></>,
+};
 
 const accountId = props.accountId ?? context.accountId;
 if (!accountId) {

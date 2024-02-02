@@ -144,7 +144,9 @@ function LogOut() {
   );
 }
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
+const { href } = VM.require("buildhub.near/widget/lib.url") || {
+  href: () => {},
+};
 
 return (
   <StyledDropdown className="dropdown">

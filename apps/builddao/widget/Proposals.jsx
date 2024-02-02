@@ -1,11 +1,14 @@
 const { Button } = VM.require("buildhub.near/widget/components.Button") || {
   Button: <></>,
 };
-const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || {
+  DaoSDK: () => {},
+};
 
 if (!DaoSDK) {
   return <></>;
 }
+
 const resPerPage = 10;
 const daoId = props.daoId ?? "build.sputnik-dao.near";
 const proposalId = props.proposalId ?? null;

@@ -4,7 +4,9 @@ const { joinBtnChildren, connectedChildren, showActivity, className, href } =
 const { Bullet } = VM.require("buildhub.near/widget/components.Bullet") || {
   Bullet: () => <></>,
 };
-const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || {
+  DaoSDK: () => {},
+};
 
 if (!DaoSDK) {
   return <></>;

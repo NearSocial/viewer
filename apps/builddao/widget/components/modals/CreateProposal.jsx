@@ -1,4 +1,5 @@
-const { daos } = VM.require("buildhub.near/widget/fetch.daos") || [];
+const { daos } = VM.require("buildhub.near/widget/fetch.daos") || { daos: [] };
+
 if (!daos) {
   return "";
 }

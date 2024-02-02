@@ -1,5 +1,6 @@
-const { Button } =
-  VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Button } = VM.require("buildhub.near/widget/components") || {
+  Button: () => <></>,
+};
 
 if (!context.accountId || !props.accountId) {
   return "No Account ID";

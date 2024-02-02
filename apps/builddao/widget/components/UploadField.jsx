@@ -1,5 +1,6 @@
-const { Button } =
-  VM.require("buildhub.near/widget/components.Button") || (() => <></>);
+const { Button } = VM.require("buildhub.near/widget/components.Button") || {
+  Button: () => <></>,
+};
 
 const UploadContainer = styled.div`
   display: flex;

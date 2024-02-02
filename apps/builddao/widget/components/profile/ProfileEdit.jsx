@@ -2,9 +2,9 @@ const { Button, Avatar, InputField, TextEditor } = VM.require(
   "buildhub.near/widget/components"
 ) || {
   Button: () => <></>,
+  Avatar: () => <></>,
   InputField: () => <></>,
   TextEditor: () => <></>,
-  Avatar: () => <></>,
 };
 
 const accountId = context.accountId;

@@ -1,5 +1,6 @@
-const { theme } =
-  VM.require("rambo-dev.near/widget/ThemeProvider") || (() => <></>);
+const { theme } = VM.require("rambo-dev.near/widget/ThemeProvider") || {
+  theme: {},
+};
 
 const StyledBullet = styled.div`
   width: fit-content;

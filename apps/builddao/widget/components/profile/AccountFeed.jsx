@@ -1,4 +1,6 @@
-const { Post } = VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Post } = VM.require("buildhub.near/widget/components") || {
+  Post: () => <></>,
+};
 
 const indexKey = props.indexKey ?? "main";
 const groupId = props.groupId;

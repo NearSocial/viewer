@@ -1,5 +1,8 @@
-const { ProgressState } =
-  VM.require("buildhub.near/widget/components.ProgressState") || (() => <></>);
+const { ProgressState } = VM.require(
+  "buildhub.near/widget/components.ProgressState"
+) || {
+  ProgressState: () => <></>,
+};
 
 const StepContainer = styled.div`
   position: relative;

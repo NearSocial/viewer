@@ -1,5 +1,6 @@
-const { Avatar } =
-  VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Avatar } = VM.require("buildhub.near/widget/components") || {
+  Avatar: () => <></>,
+};
 
 const Button = styled.div`
   line-height: 20px;
@@ -98,7 +99,9 @@ const showTime = props.showTime ?? true;
 const modalToggles = props.modalToggles;
 const setItem = props.setItem;
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
+const { href } = VM.require("buildhub.near/widget/lib.url") || {
+  href: () => {},
+};
 
 const Overlay = (props) => (
   <Link

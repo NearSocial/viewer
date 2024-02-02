@@ -11,20 +11,20 @@ const {
   User,
   Avatar,
   Checkbox,
-} = VM.require("buildhub.near/widget/components");
-
-Button = Button || (() => <></>);
-Pagination = Pagination || (() => <></>);
-ProgressState = ProgressState || (() => <></>);
-Step = Step || (() => <></>);
-Post = Post || (() => <></>);
-InputField = InputField || (() => <></>);
-UploadField = UploadField || (() => <></>);
-TextBox = TextBox || (() => <></>);
-TextEditor = TextEditor || (() => <></>);
-User = User || (() => <></>);
-Avatar = Avatar || (() => <></>);
-Checkbox = Checkbox || (() => <></>);
+} = VM.require("buildhub.near/widget/components") || {
+  Button: () => <></>,
+  Pagination: () => <></>,
+  ProgressState: () => <></>,
+  Step: () => <></>,
+  Post: () => <></>,
+  InputField: () => <></>,
+  UploadField: () => <></>,
+  TextBox: () => <></>,
+  TextEditor: () => <></>,
+  User: () => <></>,
+  Avatar: () => <></>,
+  Checkbox: () => <></>,
+};
 
 // states
 const [checked, setChecked] = useState(false);

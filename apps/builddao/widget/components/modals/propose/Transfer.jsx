@@ -1,9 +1,14 @@
-const { Button } =
-  VM.require("buildhub.near/widget/components") || (() => <></>);
-const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
+const { Button } = VM.require("buildhub.near/widget/components") || {
+  Button: () => <></>,
+};
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || {
+  DaoSDK: () => {},
+};
+
 if (!DaoSDK) {
   return <></>;
 }
+
 const [recipient, setRecipient] = useState("");
 const [token, setToken] = useState("");
 const [amount, setAmount] = useState(0);

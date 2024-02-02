@@ -1,4 +1,6 @@
-const { Post } = VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Post } = VM.require("buildhub.near/widget/components") || {
+  Post: () => <></>,
+};
 
 function formatDate(date) {
   const options = { year: "numeric", month: "short", day: "numeric" };
@@ -17,7 +19,7 @@ return {
       init: {
         name: "All", // maybe these should be moved to navbar specific
         icon: "bi-list",
-        requiredHashtags: ["build"]
+        requiredHashtags: ["build"],
       },
     },
     resolutions: {

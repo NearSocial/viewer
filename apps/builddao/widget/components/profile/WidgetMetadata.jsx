@@ -50,7 +50,9 @@ const linktreeObjects = linktree.map((o, i) => {
 });
 
 const descriptionKey = `${widgetPath}-description`.replaceAll(/[._\/-]/g, "--");
-const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
+const { href } = VM.require("buildhub.near/widget/lib.url") || {
+  href: () => {},
+};
 
 return (
   <div

@@ -12,7 +12,9 @@ const title = props.title ?? `${name} @${accountId}`;
 const tooltip =
   props.tooltip && (props.tooltip === true ? title : props.tooltip);
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
+const { href } = VM.require("buildhub.near/widget/lib.url") || {
+  href: () => {},
+};
 
 let inner = (
   <>
