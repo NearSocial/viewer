@@ -28,6 +28,7 @@ const SidebarContainer = styled.div`
     border: 0px;
     flex-direction: row;
     overflow-x: auto;
+    min-height: auto;
   }
 `;
 
@@ -57,7 +58,7 @@ const Sidebar = ({ currentPath, page, routes }) => (
               textDecoration: "none",
               cursor: "pointer",
               padding: "8px 12px",
-              gap: "10px"
+              gap: "10px",
             }}
           >
             {route.init.icon && <i className={`bi ${route.init.icon} `} />}
