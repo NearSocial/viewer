@@ -1,5 +1,6 @@
-const { Avatar } =
-  VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Avatar } = VM.require("buildhub.near/widget/components") || {
+  Avatar: () => <></>,
+};
 
 const Wrapper = styled.div`
   color: #fff;
@@ -58,8 +59,9 @@ const Overlay = (props) => (
   <Link
     className="link-dark text-truncate d-inline-flex mw-100"
     to={href({
-      widgetSrc: "mob.near/widget/ProfilePage",
+      widgetSrc: "buildhub.near/widget/app",
       params: {
+        page: "profile",
         accountId,
       },
     })}

@@ -1,11 +1,12 @@
 const { Button } = VM.require("buildhub.near/widget/components.Button") || {
-  Button: <></>
+  Button: <></>,
 };
-const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
+const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
 
 if (!DaoSDK) {
   return <></>;
 }
+
 const resPerPage = 10;
 const daoId = props.daoId ?? "build.sputnik-dao.near";
 const proposalId = props.proposalId ?? null;
@@ -18,8 +19,8 @@ const lastProposalId = sdk.getLastProposalId();
 const reversedProposals = proposalId
   ? [
       sdk.getProposalById({
-        proposalId
-      })
+        proposalId,
+      }),
     ] || []
   : sdk.getProposals({
       offset:
@@ -28,7 +29,7 @@ const reversedProposals = proposalId
             ? lastProposalId - resPerPage
             : lastProposalId ?? 10
           : lastProposalId - currentPage * resPerPage,
-      limit: resPerPage
+      limit: resPerPage,
     }) || [];
 
 const proposals = reversedProposals.reverse();
@@ -81,15 +82,15 @@ const handleVote = ({ action, proposalId, proposer }) => {
               message: `${accountId} voted to ${customAction} your proposal for ${daoId} (Proposal ID: ${proposalId})`,
               params: {
                 daoId: daoId,
-                proposalId: proposalId
+                proposalId: proposalId,
               },
               type: "custom",
-              widget: "buildhub.near/widget/Proposals"
-            }
-          }
-        ])
-      }
-    }
+              widget: "buildhub.near/widget/Proposals",
+            },
+          },
+        ]),
+      },
+    },
   };
 
   sdk.actProposal({
@@ -103,9 +104,9 @@ const handleVote = ({ action, proposalId, proposer }) => {
         args: { data: notification },
         deposit: Big(JSON.stringify(notification).length * 16)
           .mul(Big(10).pow(20))
-          .toString()
-      }
-    ]
+          .toString(),
+      },
+    ],
   });
 };
 
@@ -144,30 +145,30 @@ const proposalsComponent = useMemo(() => {
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteApprove
+              actionType: actions.VoteApprove,
             }),
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteReject
+              actionType: actions.VoteReject,
             }),
 
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteRemove
-            })
+              actionType: actions.VoteRemove,
+            }),
           ];
 
           const { thresholdVoteCount } =
             sdk.getVotersAndThresholdForProposalKind({
-              kindName
+              kindName,
             });
           const totalVotes = sdk.calculateVoteCountByType({
-            votes: item.votes
+            votes: item.votes,
           });
           let expirationTime = sdk.getProposalExpirationTime({
-            submissionTime: item.submission_time
+            submissionTime: item.submission_time,
           });
 
           return (
@@ -181,14 +182,14 @@ const proposalsComponent = useMemo(() => {
                   totalVotes: {
                     ...totalVotes,
                     yes: totalVotes.approve,
-                    no: totalVotes.reject
+                    no: totalVotes.reject,
                   },
-                  expirationTime
+                  expirationTime,
                 },
                 daoId: daoId,
                 comments: comments,
                 isAllowedToVote,
-                handleVote
+                handleVote,
               }}
             />
           );
@@ -207,7 +208,7 @@ return (
         src="buildhub.near/widget/components.modals.CreateProposal"
         props={{
           showModal: showProposalModal,
-          toggleModal: () => setShowModal(!showProposalModal)
+          toggleModal: () => setShowModal(!showProposalModal),
         }}
       />
       <div className="d-flex justify-content-between">
@@ -226,7 +227,7 @@ return (
               totalPages: Math.round(lastProposalId / resPerPage),
               onPageClick: (v) => setCurrentPage(v),
               selectedPage: currentPage,
-              ThemeContainer: PaginationThemeContainer
+              ThemeContainer: PaginationThemeContainer,
             }}
           />
         </div>

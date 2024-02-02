@@ -32,26 +32,45 @@ const link =
 const Wrapper = styled.div`
   margin: 0 -12px;
   line-height: normal;
-  
+
   .post {
     position: relative;
     padding: 12px;
     padding-bottom: 4px;
     display: flex;
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       font-size: 16px !important;
     }
-    @media(max-width: 767px) {
+    @media (max-width: 767px) {
       font-size: 15px !important;
-      h1, h2, h3, h4, h5, h6 {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
         font-size: 15px !important;
       }
     }
 
-    h1, h2, h3, h4, h5, h6, strong, b {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    strong,
+    b {
       font-weight: 500 !important;
     }
-    ol, ul, dl {
+    ol,
+    ul,
+    dl {
       margin-bottom: 0.5rem;
       white-space: inherit;
     }
@@ -69,16 +88,18 @@ const Wrapper = styled.div`
       min-width: 5em;
     }
 
-    .table>:not(caption)>*>* {
-      padding: .3rem;
+    .table > :not(caption) > * > * {
+      padding: 0.3rem;
     }
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.03);
       .expand-post {
-        background-image : linear-gradient(to bottom, 
-                      rgba(0,0,0, 0), 
-                      rgba(247.35,247.35,247.35, 1) 25%);
+        background-image: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0),
+          rgba(247.35, 247.35, 247.35, 1) 25%
+        );
       }
     }
 
@@ -108,7 +129,7 @@ const Wrapper = styled.div`
     background-color: #ddd;
     z-index: -1;
   }
-  
+
   .left {
     margin-right: 12px;
     min-width: 40px;

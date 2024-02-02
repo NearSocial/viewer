@@ -17,9 +17,8 @@ const Label = styled.label`
 
 const Input = styled.input`
   display: flex;
-  max-width: ${(props) => props.maxWidth ?? "390px"};
   width: 100%;
-  padding: 16px 12px;
+  padding: 12px;
   align-items: flex-start;
   gap: 10px;
 
@@ -48,15 +47,18 @@ function InputField({
   maxWidth,
 }) {
   return (
-    <InputContainer>
+    <InputContainer
+      key={`input-container-${key}`}
+      style={{ maxWidth: maxWidth ?? "390px" }}
+    >
       {label && <Label>{label}</Label>}
       <Input
-        key={key}
+        key={`input-field-${key}`}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
         type={type ?? "text"}
-        maxWidth={maxWidth}
+        style={{ maxWidth: maxWidth ?? "390px" }}
       />
     </InputContainer>
   );

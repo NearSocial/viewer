@@ -1,4 +1,6 @@
-const { Feed } = VM.require("devs.near/widget/Module.Feed") || (() => <></>);
+const { Feed } = VM.require("devs.near/widget/Module.Feed") || {
+  Feed: () => <></>,
+};
 
 Feed = Feed || (() => <></>); // make sure you have this or else it can break
 

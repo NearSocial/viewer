@@ -5,36 +5,44 @@ return {
       path: "buildhub.near/widget/page.home",
       blockHeight: "final",
       init: {
-        name: "Home"
-      }
+        name: "Home",
+      },
     },
     feed: {
       path: "buildhub.near/widget/page.feed",
       blockHeight: "final",
       init: {
-        name: "Feed"
-      }
+        name: "Feed",
+      },
     },
     proposal: {
       path: "buildhub.near/widget/page.projects",
       blockHeight: "final",
       init: {
-        name: "Projects"
-      }
+        name: "Projects",
+      },
     },
     resources: {
       path: "buildhub.near/widget/page.resources",
       blockHeight: "final",
       init: {
-        name: "Resources"
-      }
+        name: "Resources",
+      },
     },
     library: {
       path: "buildhub.near/widget/page.library",
       blockHeight: "final",
       init: {
-        name: "Library"
-      }
-    }
-  }
+        name: "Library",
+      },
+    },
+    profile: {
+      path: "buildhub.near/widget/page.profile",
+      blockHeight: "final",
+      init: {
+        name: "Profile",
+      },
+      hide: true,
+    },
+  },
 };

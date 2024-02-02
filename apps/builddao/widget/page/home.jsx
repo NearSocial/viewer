@@ -1,20 +1,20 @@
 const { Hero } = VM.require("buildhub.near/widget/home.hero") || {
-  Hero: () => <></>
+  Hero: () => <></>,
 };
 const { Goals } = VM.require("buildhub.near/widget/home.goals") || {
-  Goals: () => <></>
+  Goals: () => <></>,
 };
 const { Join } = VM.require("buildhub.near/widget/home.join") || {
-  Join: () => <></>
+  Join: () => <></>,
 };
 const { Governance } = VM.require("buildhub.near/widget/home.governance") || {
-  Governance: () => <></>
+  Governance: () => <></>,
 };
 const { CTA } = VM.require("buildhub.near/widget/home.cta") || {
-  CTA: () => <></>
+  CTA: () => <></>,
 };
 const { Footer } = VM.require("buildhub.near/widget/home.footer") || {
-  Footer: () => <></>
+  Footer: () => <></>,
 };
 
 const Root = styled.div`

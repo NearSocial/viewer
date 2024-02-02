@@ -11,15 +11,17 @@ const Wrapper = styled.div`
     overflow: hidden;
 
     .expand-post {
-      position : absolute;
-      z-index  : 1;
-      top   : 35em;
-      left     : 0;
-      background-image : linear-gradient(to bottom, 
-                        rgba(255,255,255, 0), 
-                        rgba(255,255,255, 1) 25%);
-      width    : 100%;
-      height   : 3em;
+      position: absolute;
+      z-index: 1;
+      top: 35em;
+      left: 0;
+      background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 1) 25%
+      );
+      width: 100%;
+      height: 3em;
 
       > div {
         position: relative;
@@ -36,7 +38,7 @@ const Wrapper = styled.div`
       }
     }
 
-    @media(max-width: 991px) {
+    @media (max-width: 991px) {
       max-height: 30em;
       .expand-post {
         top: 27em;

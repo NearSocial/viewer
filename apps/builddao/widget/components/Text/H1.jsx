@@ -4,15 +4,11 @@ const StyledH1 = styled.h1`
   font-size: 2rem;
   line-height: 100%;
   letter-spacing: 0;
-  color: ${(props) => `${props.textColor}`}
+  color: ${(props) => `${props.textColor}`};
 `;
 
-function H1({ children, textColor}) {
-  return (
-    <StyledH1 textColor={textColor ?? "#FFFFFF"}>
-      {children}
-    </StyledH1>
-  )
+function H1({ children, textColor }) {
+  return <StyledH1 textColor={textColor ?? "#FFFFFF"}>{children}</StyledH1>;
 }
 
-return { H1 }
+return { H1 };

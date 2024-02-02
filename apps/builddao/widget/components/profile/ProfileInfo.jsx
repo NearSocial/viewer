@@ -1,5 +1,6 @@
-const { Button } =
-  VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Button } = VM.require("buildhub.near/widget/components") || {
+  Button: () => <></>,
+};
 
 if (!context.accountId || !props.accountId) {
   return "No Account ID";
@@ -298,51 +299,70 @@ const Badges = ({ tags }) => {
   );
 };
 
-return (
-  <Container>
-    <div className="profile-image-section">
-      <Widget
-        src="mob.near/widget/Image"
-        loading=""
-        props={{ image: profile.image }}
-      />
-      {context.accountId === accountId && (
-        <Button variant="outline">Edit Profile</Button>
-      )}
-    </div>
-    <div className="account-info-section">
-      <h3>{profile.name}</h3>
-      <span onClick={() => clipboard.writeText(accountId)}>
-        {accountId} <CopyIcon />
-      </span>
-    </div>
-    <div>
-      <Widget
-        src="buildhub.near/widget/components.profile.FollowStats"
-        loading=""
-        props={{ accountId }}
-      />
-    </div>
-    <div className="badge-section">
-      <Badges tags={profile.tags} />
-    </div>
-    {profile.description && (
-      <div className="bio-section">
-        <h3>BIO</h3>
-        <Markdown text={profile.description} />
+const [editMode, setEditMode] = useState(false);
+
+const InfoSection = () => {
+  return (
+    <>
+      <div className="profile-image-section">
+        <Widget
+          src="mob.near/widget/Image"
+          loading=""
+          props={{ image: profile.image }}
+        />
+
+        {context.accountId === accountId && (
+          <Button variant="outline" onClick={() => setEditMode(true)}>
+            Edit Profile
+          </Button>
+        )}
       </div>
-    )}
-    {profile.location && (
-      <div className="location-section">
-        <span>
-          <MapIcon /> {profile.location}
+      <div className="account-info-section">
+        <h3>{profile.name}</h3>
+        <span onClick={() => clipboard.writeText(accountId)}>
+          {accountId} <CopyIcon />
         </span>
       </div>
-    )}
-    {profile.linktree && (
-      <div className="link-section">
-        <LinkTree profile={profile} />
+      <div>
+        <Widget
+          src="buildhub.near/widget/components.profile.FollowStats"
+          loading=""
+          props={{ accountId }}
+        />
       </div>
-    )}
-  </Container>
-);
+      <div className="badge-section">
+        <Badges tags={profile.tags} />
+      </div>
+      {profile.description && (
+        <div className="bio-section">
+          <h3>BIO</h3>
+          <Markdown text={profile.description} />
+        </div>
+      )}
+      {profile.location && (
+        <div className="location-section">
+          <span>
+            <MapIcon /> {profile.location}
+          </span>
+        </div>
+      )}
+      {profile.linktree && (
+        <div className="link-section">
+          <LinkTree profile={profile} />
+        </div>
+      )}
+    </>
+  );
+};
+
+const EditSection = () => {
+  return (
+    <Widget
+      src="buildhub.near/widget/components.profile.ProfileEdit"
+      loading=""
+      props={{ setEditMode }}
+    />
+  );
+};
+
+return <Container>{!editMode ? <InfoSection /> : <EditSection />}</Container>;

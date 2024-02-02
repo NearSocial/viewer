@@ -9,7 +9,7 @@ const {
   totalVotes,
   submission_time,
   votes,
-  expirationTime
+  expirationTime,
 } = props.proposalData;
 const { daoId, isAllowedToVote, handleVote, comments, proposalData } = props;
 const accountId = context.accountId;
@@ -202,7 +202,7 @@ const YouVotedBadge = () => {
       props={{
         size: "sm",
         variant: "info outline mb-1",
-        children: "You voted"
+        children: "You voted",
       }}
     />
   );
@@ -273,7 +273,7 @@ function renderHeader({ typeName, id, status }) {
               children: `Proposal ID #${id}`,
               variant: "",
               className: "secondary-bg",
-              size: "lg"
+              size: "lg",
             }}
           />
 
@@ -288,14 +288,14 @@ function renderHeader({ typeName, id, status }) {
                       fontSize: "16px",
                       marginRight: "5px",
                       borderWidth: "2px",
-                      animationDuration: "3s"
+                      animationDuration: "3s",
                     }}
                   ></i>
                   {statustext}
                 </>
               ),
               variant: `${statusvariant} round`,
-              size: "lg"
+              size: "lg",
             }}
           />
 
@@ -311,13 +311,13 @@ function renderHeader({ typeName, id, status }) {
                         props={{
                           timeToCheck: parseInt(
                             Big(expirationTime).div(1000000)
-                          )
+                          ),
                         }}
                       />
                     </div>
                   ),
                   variant: `info round`,
-                  size: "lg"
+                  size: "lg",
                 }}
               />
             )}
@@ -331,7 +331,7 @@ function renderData({
   proposer,
   description,
   submission_time,
-  totalVotesNeeded
+  totalVotesNeeded,
 }) {
   return (
     <div className="d-flex gap-2 flex-column">
@@ -400,7 +400,7 @@ function renderVoteButtons({
   totalVotes,
   status,
   isAllowedToVote,
-  handleVote
+  handleVote,
 }) {
   const finished = status !== "InProgress";
   const VoteButton = styled.button`
@@ -519,19 +519,19 @@ function renderVoteButtons({
     yes: getPercentage(totalVotes.yes),
     no: getPercentage(totalVotes.no),
     spam: getPercentage(totalVotes.spam),
-    abstain: getPercentage(totalVotes.abstain)
+    abstain: getPercentage(totalVotes.abstain),
   };
 
   const wins = {
     yes: status === "Approved",
     no: status === "Rejected",
-    spam: status === "Failed" || status === "Spam"
+    spam: status === "Failed" || status === "Spam",
   };
 
   const voted = {
     yes: checkVotes("Approve"),
     no: checkVotes("Reject"),
-    spam: checkVotes("Remove")
+    spam: checkVotes("Remove"),
   };
 
   const alreadyVoted = voted.yes || voted.no || voted.spam || voted.abstain;
@@ -552,7 +552,7 @@ function renderVoteButtons({
     <div
       className="d-lg-grid d-flex flex-wrap gap-2 align-items-end"
       style={{
-        gridTemplateColumns: "repeat(3,1fr)"
+        gridTemplateColumns: "repeat(3,1fr)",
       }}
     >
       <div className="w-100">
@@ -635,9 +635,9 @@ function renderFooter({ totalVotes, votes, comments, daoId, proposal }) {
         item: {
           type: "dao_proposal_comment",
           path: `${daoId}/proposal/main`,
-          proposal_id: proposal.id + "-beta"
-        }
-      }
+          proposal_id: proposal.id + "-beta",
+        },
+      },
     },
     {
       title: "Voters",
@@ -649,8 +649,8 @@ function renderFooter({ totalVotes, votes, comments, daoId, proposal }) {
         votes,
         totalVotes,
         proposalId: proposal.id,
-        votersCount: totalVotes.total
-      }
+        votersCount: totalVotes.total,
+      },
     },
     {
       title: "Share",
@@ -660,9 +660,9 @@ function renderFooter({ totalVotes, votes, comments, daoId, proposal }) {
         url: `https://near.org/buildhub.near/widget/Proposals?daoId=${daoId}&proposalId=${
           proposalData.id
         }${props.dev ? "&dev=true" : ""}`,
-        text: "Explore this new proposal from our DAO! Your support and feedback are essential as we work towards a decentralized future. Review the details and join the discussion here:"
-      }
-    }
+        text: "Explore this new proposal from our DAO! Your support and feedback are essential as we work towards a decentralized future. Review the details and join the discussion here:",
+      },
+    },
   ];
 
   if (proposal.typeName !== "Text") {
@@ -673,8 +673,8 @@ function renderFooter({ totalVotes, votes, comments, daoId, proposal }) {
       props: {
         daoId,
         proposal,
-        showCard: true
-      }
+        showCard: true,
+      },
     });
   }
 
@@ -703,8 +703,8 @@ function renderFooter({ totalVotes, votes, comments, daoId, proposal }) {
             </div>
           ),
           toggleContainerProps: {
-            className: "flex-fill"
-          }
+            className: "flex-fill",
+          },
         }}
       />
     );
@@ -721,7 +721,7 @@ const voted = {
   yes: checkVotes("Approve"),
   no: checkVotes("Reject"),
   spam: checkVotes("Remove"),
-  abstain: checkVotes("Abstain")
+  abstain: checkVotes("Abstain"),
 };
 
 const alreadyVoted = voted.yes || voted.no || voted.spam;
@@ -738,7 +738,7 @@ return (
         proposer,
         description,
         submission_time,
-        totalVotesNeeded
+        totalVotesNeeded,
       })}
       {renderVoteButtons({
         totalVotes,
@@ -750,16 +750,16 @@ return (
           return handleVote({
             action,
             proposalId: id,
-            proposer
+            proposer,
           });
-        }
+        },
       })}
       {renderFooter({
         totalVotes,
         votes,
         comments,
         daoId,
-        proposal: proposalData
+        proposal: proposalData,
       })}
     </Wrapper>
   </ThemeContainer>

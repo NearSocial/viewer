@@ -5,7 +5,7 @@ const { routes } = VM.require("buildhub.near/widget/config.app") ?? {
 };
 
 const { AppLayout } = VM.require("buildhub.near/widget/template.AppLayout") || {
-  AppLayout: () => <>Layout loading...</>,
+  AppLayout: () => <></>,
 };
 
 if (!page) page = Object.keys(routes)[0] || "home";

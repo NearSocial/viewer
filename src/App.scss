@@ -6,7 +6,8 @@ body {
   color-scheme: dark;
 }
 
-body, html {
+body,
+html {
   -webkit-font-smoothing: antialiased;
   height: 100%;
 }
@@ -15,10 +16,11 @@ body, html {
   cursor: pointer;
 }
 
-.btn-success, .btn-primary {
+.btn-success,
+.btn-primary {
   .text-muted {
     color: #fff !important;
-  };
+  }
 }
 
 .outline-none {
@@ -36,7 +38,7 @@ a {
 }
 
 .sidebar-items {
-  &> div {
+  & > div {
     border-right: 1px solid #e5e5e5;
     text-align: center;
     min-height: 4rem;
@@ -44,7 +46,7 @@ a {
     display: flex;
   }
 
-  &> div:not(.apps) {
+  & > div:not(.apps) {
     min-width: 4rem;
     align-items: center !important;
     justify-content: center !important;

@@ -21,7 +21,7 @@ function Viewer({ code, ...props }) {
     const defaultSrc = "buildhub.near/widget/app"; // default widget to load
     const pathSrc = path || defaultSrc; // if no path, load default widget
     return pathSrc;
-    // const lastSlashIndex = pathSrc.lastIndexOf("/", pathSrc.indexOf(".near")); 
+    // const lastSlashIndex = pathSrc.lastIndexOf("/", pathSrc.indexOf(".near"));
     // return lastSlashIndex !== -1
     //   ? pathSrc.substring(lastSlashIndex + 1)
     //   : defaultSrc;
