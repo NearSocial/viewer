@@ -153,7 +153,7 @@ const postToCustomFeed = ({ feed, text }) => {
     onCommit: () => {
       setPostContent("");
       Storage.privateSet(draftKey, props.template || "");
-      setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
+      // setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
       setComposeKey(generateUID());
     },
     onCancel: () => {
