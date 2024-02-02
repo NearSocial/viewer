@@ -53,19 +53,6 @@ const renderPost = (a) => {
 
   return (
     <div key={JSON.stringify(a)}>
-      {/* <Widget
-        loading={<div className="w-100" style={{ height: "200px" }} />}
-        src="mob.near/widget/MainPage.N.Post"
-        props={{
-          accountId: a.accountId,
-          blockHeight: a.blockHeight,
-          isPremiumFeed,
-          commentAccounts,
-          indexKey,
-          groupId,
-          permissions,
-        }}
-      /> */}
       <Post
         accountId={a.accountId}
         blockHeight={a.blockHeight}
@@ -157,20 +144,6 @@ const renderRepost = (a) => {
           />
         </span>
       </div>
-      {/* <Widget
-        loading={<div className="w-100" style={{ height: "200px" }} />}
-        src="mob.near/widget/MainPage.N.Post"
-        props={{
-          accountId: post.accountId,
-          blockHeight: post.blockHeight,
-          reposted: true,
-          isPremiumFeed,
-          commentAccounts,
-          indexKey,
-          groupId,
-          permissions,
-        }}
-      /> */}
       <Post
         accountId={post.accountId}
         blockHeight={post.blockHeight}
