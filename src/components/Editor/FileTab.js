@@ -148,8 +148,9 @@ export function FileTab(props) {
           </sup>
         )}
         <CloseButton
-          className={`ms-1 ${active ? "btn-outline-light" : "btn-outline-secondary"
-            }`}
+          className={`ms-1 ${
+            active ? "btn-outline-light" : "btn-outline-secondary"
+          }`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

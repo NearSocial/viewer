@@ -1,5 +1,6 @@
-const { Avatar } =
-  VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Avatar } = VM.require("buildhub.near/widget/components") || {
+  Avatar: () => <></>,
+};
 
 const Button = styled.div`
   line-height: 20px;
@@ -98,14 +99,17 @@ const showTime = props.showTime ?? true;
 const modalToggles = props.modalToggles;
 const setItem = props.setItem;
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
+const { href } = VM.require("buildhub.near/widget/lib.url") || {
+  href: () => {},
+};
 
 const Overlay = (props) => (
   <Link
     className="link-dark text-truncate d-inline-flex mw-100"
     to={href({
-      widgetSrc: "mob.near/widget/ProfilePage",
+      widgetSrc: "buildhub.near/widget/app",
       params: {
+        page: "profile",
         accountId,
       },
     })}
@@ -155,7 +159,7 @@ return (
           )}
         </Wrapper>
         {pinned && (
-          <span title="Pinned" className="ms-2">
+          <span title="Pinned" className="ms-2 text-white">
             <i className="bi bi-pin-angle" />
           </span>
         )}

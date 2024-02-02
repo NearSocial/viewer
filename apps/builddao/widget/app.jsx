@@ -1,11 +1,11 @@
 const { page, tab, ...passProps } = props;
 
-const { routes } = VM.require("buildhub.near/widget/config.routes") ?? {
+const { routes } = VM.require("buildhub.near/widget/config.app") ?? {
   routes: {},
 };
 
 const { AppLayout } = VM.require("buildhub.near/widget/template.AppLayout") || {
-  AppLayout: () => <>Layout loading...</>,
+  AppLayout: () => <></>,
 };
 
 if (!page) page = Object.keys(routes)[0] || "home";
@@ -25,8 +25,8 @@ const Root = styled.div`
 
   --compose-bg: #23242b;
 
-  --post-bg: #0b0c14;
-  --post-bg-hover: #17181c;
+  --post-bg: #23242b;
+  --post-bg-hover: #1d1f25;
   --post-bg-transparent: rgba(23, 24, 28, 0);
 
   --button-primary-bg: #ffaf51;

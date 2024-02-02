@@ -81,7 +81,7 @@ const MarkdownEditor = `
   }
   
   .drop-wrap {
-    top: -110px !important;
+    
     border-radius: 0.5rem !important;
   }
 
@@ -126,22 +126,41 @@ const MarkdownEditor = `
   }
 `;
 
-function TextEditor({ value, onChange, maxWidth }) {
+const Label = styled.label`
+  color: var(--label-color, #fff);
+
+  /* Body/16px */
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 170%; /* 27.2px */
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+function TextEditor({ value, label, onChange, maxWidth }) {
   return (
-    <TextareaWrapper
-      className="markdown-editor"
-      data-value={value || ""}
-      style={{ maxWidth: maxWidth ? maxWidth : "550px" }}
-    >
-      <Widget
-        src="mob.near/widget/MarkdownEditorIframe"
-        props={{
-          initialText: value,
-          embedCss: props.EditorCSS || MarkdownEditor,
-          onChange,
-        }}
-      />
-    </TextareaWrapper>
+    <Container>
+      <Label>{label}</Label>
+      <TextareaWrapper
+        className="markdown-editor"
+        data-value={value || ""}
+        style={{ maxWidth: maxWidth ? maxWidth : "550px" }}
+      >
+        <Widget
+          src="mob.near/widget/MarkdownEditorIframe"
+          props={{
+            initialText: value,
+            embedCss: props.EditorCSS || MarkdownEditor,
+            onChange,
+          }}
+        />
+      </TextareaWrapper>
+    </Container>
   );
 }
 

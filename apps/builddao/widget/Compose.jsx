@@ -1,5 +1,5 @@
-const { Avatar, Button } = VM.require("buildhub.near/widget/components") || {
-  Avatar: () => <></>,
+const { User, Button } = VM.require("buildhub.near/widget/components") || {
+  User: () => <></>,
   Button: () => <></>,
 };
 
@@ -15,13 +15,16 @@ const [postContent, setPostContent] = useState("");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
 
-setPostContent(draft || props.template);
+const [composeKey, setComposeKey] = useState(0);
+const memoizedComposeKey = useMemo(() => composeKey, [composeKey]);
 
 function generateUID() {
   const maxHex = 0xffffffff;
   const randomNumber = Math.floor(Math.random() * maxHex);
   return randomNumber.toString(16).padStart(8, "0");
 }
+
+setPostContent(draft || props.template);
 
 function tagsFromLabels(labels) {
   return labels.reduce(
@@ -85,15 +88,9 @@ function checkAndAppendHashtag(input, target) {
   }
 }
 
-const postToCustomFeed = ({ feed, text, labels }) => {
-  // if (!labels) labels = [];
-
-  // labels = labels.map((label) => label.toLowerCase());
-  // labels.push(feed.name.toLowerCase());
-
+const postToCustomFeed = ({ feed, text }) => {
   const requiredHashtags = props.requiredHashtags || ["build"];
   if (feed.hashtag) requiredHashtags.push(feed.hashtag.toLowerCase());
-  requiredHashtags.push(feed.name.toLowerCase());
   text = text + `\n\n`;
   requiredHashtags.forEach((hashtag) => {
     text = checkAndAppendHashtag(text, hashtag);
@@ -156,7 +153,8 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     onCommit: () => {
       setPostContent("");
       Storage.privateSet(draftKey, props.template || "");
-      setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
+      // setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
+      setComposeKey(generateUID());
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
@@ -171,6 +169,7 @@ const PostCreator = styled.div`
 
   padding: 1rem;
   background: var(--compose-bg, #23242b);
+  border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
   border-radius: 12px;
 
   margin-bottom: 1rem;
@@ -259,7 +258,7 @@ const MarkdownEditor = `
   }
   
   .drop-wrap {
-    top: -110px !important;
+    
     border-radius: 0.5rem !important;
   }
 
@@ -373,14 +372,7 @@ const MarkdownPreview = styled.div`
 `;
 
 const avatarComponent = useMemo(() => {
-  return (
-    <div className="d-flex align-items-start gap-2">
-      <Avatar accountId={context.accountId} />
-      <div>
-        <p className="mb-0 text-white">{context.accountId}</p>
-      </div>
-    </div>
-  );
+  return <User accountId={context.accountId} />;
 }, [context.accountId]);
 
 return (
@@ -391,7 +383,7 @@ return (
         <TextareaWrapper
           className="markdown-editor"
           data-value={postContent || ""}
-          key={props.feed.name || "Editor"}
+          key={memoizedComposeKey}
         >
           <Widget
             src="mob.near/widget/MarkdownEditorIframe"

@@ -5,11 +5,13 @@ Let's connect, collaborate, and create solutions together!
 ## Setup & Development
 
 Install packages:
+
 ```
 yarn
 ```
 
 Start development version:
+
 ```
 yarn dev
 ```
@@ -20,8 +22,7 @@ To view your local developments, either visit them through a gateway ${gateway_u
 
 For example, to use this local gateway, use:
 
-* Set the flag (something like http://127.0.0.1:4040/api/loader) at localhost:3000/flags
-
+- Set the flag (something like http://127.0.0.1:4040/api/loader) at localhost:3000/flags
 
 ### Community Page
 
@@ -29,8 +30,8 @@ For example, to use this local gateway, use:
 
 #### Features
 
-* Customizable Settings
-* Onboarding Flow
-* Leaderboard
-* Groups
-* Projects
+- Customizable Settings
+- Onboarding Flow
+- Leaderboard
+- Groups
+- Projects

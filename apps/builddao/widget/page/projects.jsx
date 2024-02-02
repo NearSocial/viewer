@@ -1,17 +1,17 @@
 const { currentPath, page, ...passProps } = props;
 
-const { routes } = VM.require("buildhub.near/widget/config.project-routes") ?? {
-  routes: {}
+const { routes } = VM.require("buildhub.near/widget/config.projects") ?? {
+  routes: {},
 };
 
 const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
-  theme: {}
+  theme: {},
 };
 
 const { SidebarLayout } = VM.require(
   "buildhub.near/widget/template.SidebarLayout"
 ) || {
-  SidebarLayout: () => <>Layout loading...</>
+  SidebarLayout: () => <></>,
 };
 
 if (!page) page = Object.keys(routes)[0] || "home";

@@ -1,5 +1,6 @@
-const { Button } =
-  VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Button } = VM.require("buildhub.near/widget/components") || {
+  Button: () => <></>,
+};
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;
@@ -288,7 +289,10 @@ const contentWidget = (
 
 return (
   <>
-    <StyledPost key={`Post-${item.path}-${item.blockHeight}`}>
+    <StyledPost
+      key={`Post-${item.path}-${item.blockHeight}`}
+      style={{ width: props.width ? props.width : "auto" }}
+    >
       <Wrapper
         className="w-100 mx-auto"
         style={

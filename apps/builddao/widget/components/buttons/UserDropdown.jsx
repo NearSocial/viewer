@@ -144,6 +144,10 @@ function LogOut() {
   );
 }
 
+const { href } = VM.require("buildhub.near/widget/lib.url") || {
+  href: () => {},
+};
+
 return (
   <StyledDropdown className="dropdown">
     <button
@@ -181,7 +185,14 @@ return (
         <Link
           className="dropdown-item"
           type="button"
-          to={`/mob.near/widget/ProfilePage?accountId=${context.accountId}`}
+          // to={`/buildhub.near/widget/app?page=profile&accountId=${context.accountId}`}
+          to={href({
+            widgetSrc: "buildhub.near/widget/app",
+            params: {
+              page: "profile",
+              accountId: context.accountId,
+            },
+          })}
         >
           <User />
           My Profile

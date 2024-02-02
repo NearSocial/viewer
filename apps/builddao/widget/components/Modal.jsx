@@ -1,4 +1,6 @@
-const { Button } = VM.require("buildhub.near/widget/components.Button");
+const { Button } = VM.require("buildhub.near/widget/components.Button") || {
+  Button: () => <></>,
+};
 
 const toggle = props.toggle ?? <Button variant="primary">Open Modal</Button>;
 

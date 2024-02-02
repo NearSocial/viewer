@@ -437,20 +437,20 @@ export default function EditorPage(props) {
     (uncommittedPreviews) => {
       return uncommittedPreviews
         ? {
-          redirectMap: Object.fromEntries(
-            Object.entries(allSaved)
-              .filter(([jpath, code]) => code !== true)
-              .map(([jpath, code]) => {
-                const path = JSON.parse(jpath);
-                return [
-                  pathToSrc(path),
-                  {
-                    code,
-                  },
-                ];
-              })
-          ),
-        }
+            redirectMap: Object.fromEntries(
+              Object.entries(allSaved)
+                .filter(([jpath, code]) => code !== true)
+                .map(([jpath, code]) => {
+                  const path = JSON.parse(jpath);
+                  return [
+                    pathToSrc(path),
+                    {
+                      code,
+                    },
+                  ];
+                })
+            ),
+          }
         : undefined;
     },
     [allSaved, pathToSrc]
@@ -696,8 +696,9 @@ export default function EditorPage(props) {
                   <button
                     className={`nav-link ${tab === Tab.Editor ? "active" : ""}`}
                     style={{
-                      background: `${tab === Tab.Editor ? "#23242b" : "#0b0c14"
-                        }`,
+                      background: `${
+                        tab === Tab.Editor ? "#23242b" : "#0b0c14"
+                      }`,
                       color: "white",
                       border: "none",
                     }}
@@ -711,8 +712,9 @@ export default function EditorPage(props) {
                   <button
                     className={`nav-link ${tab === Tab.Props ? "active" : ""}`}
                     style={{
-                      background: `${tab === Tab.Props ? "#23242b" : "#0b0c14"
-                        }`,
+                      background: `${
+                        tab === Tab.Props ? "#23242b" : "#0b0c14"
+                      }`,
                       color: "white",
                       border: "none",
                     }}
@@ -726,13 +728,15 @@ export default function EditorPage(props) {
                   <li className="nav-item">
                     <button
                       style={{
-                        background: `${tab === Tab.Metadata ? "#23242b" : "#0b0c14"
-                          }`,
+                        background: `${
+                          tab === Tab.Metadata ? "#23242b" : "#0b0c14"
+                        }`,
                         color: "white",
                         border: "none",
                       }}
-                      className={`nav-link ${tab === Tab.Metadata ? "active" : ""
-                        }`}
+                      className={`nav-link ${
+                        tab === Tab.Metadata ? "active" : ""
+                      }`}
                       aria-current="page"
                       onClick={() => setTab(Tab.Metadata)}
                     >
@@ -744,13 +748,15 @@ export default function EditorPage(props) {
                   <li className="nav-item">
                     <button
                       style={{
-                        background: `${tab === Tab.Widget ? "#23242b" : "#0b0c14"
-                          }`,
+                        background: `${
+                          tab === Tab.Widget ? "#23242b" : "#0b0c14"
+                        }`,
                         color: "white",
                         border: "none",
                       }}
-                      className={`nav-link ${tab === Tab.Widget ? "active" : ""
-                        }`}
+                      className={`nav-link ${
+                        tab === Tab.Widget ? "active" : ""
+                      }`}
                       aria-current="page"
                       onClick={() => {
                         renderPreview(code);
@@ -853,10 +859,11 @@ export default function EditorPage(props) {
                 )}
               </div>
               <div
-                className={`${tab === Tab.Metadata && props.widgets.widgetMetadataEditor
-                  ? ""
-                  : "visually-hidden"
-                  }`}
+                className={`${
+                  tab === Tab.Metadata && props.widgets.widgetMetadataEditor
+                    ? ""
+                    : "visually-hidden"
+                }`}
               >
                 <div
                   className="mb-3"
@@ -885,11 +892,12 @@ export default function EditorPage(props) {
               </div>
             </div>
             <div
-              className={`${tab === Tab.Widget ||
+              className={`${
+                tab === Tab.Widget ||
                 (layout === Layout.Split && tab !== Tab.Metadata)
-                ? layoutClass
-                : "visually-hidden"
-                }`}
+                  ? layoutClass
+                  : "visually-hidden"
+              }`}
             >
               <div className="container mt-4">
                 <div className="row">
@@ -909,8 +917,9 @@ export default function EditorPage(props) {
               </div>
             </div>
             <div
-              className={`${tab === Tab.Metadata ? layoutClass : "visually-hidden"
-                }`}
+              className={`${
+                tab === Tab.Metadata ? layoutClass : "visually-hidden"
+              }`}
             >
               <div className="container">
                 <div className="row">

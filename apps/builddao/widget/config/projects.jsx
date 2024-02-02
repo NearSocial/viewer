@@ -1,4 +1,6 @@
-const { Post } = VM.require("buildhub.near/widget/components") || (() => <></>);
+const { Post } = VM.require("buildhub.near/widget/components") || {
+  Post: () => <></>,
+};
 
 function formatDate(date) {
   const options = { year: "numeric", month: "short", day: "numeric" };

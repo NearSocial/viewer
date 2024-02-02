@@ -1,5 +1,5 @@
 /**
- * TODO: This should be more generalized. 
+ * TODO: This should be more generalized.
  * Currently only supports embed plugins
  */
 const Wrapper = styled.div`
@@ -44,9 +44,8 @@ const [activeTab, setActiveTab] = useState("data");
 function generateUID() {
   const maxHex = 0xffffffff;
   const randomNumber = Math.floor(Math.random() * maxHex);
-  return randomNumber.toString(16).padStart(8, '0');
+  return randomNumber.toString(16).padStart(8, "0");
 }
-
 
 const handleCreate = () => {
   Social.set({

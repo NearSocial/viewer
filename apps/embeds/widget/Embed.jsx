@@ -33,30 +33,30 @@ if (accountId) {
 
 const href = props.href;
 
-const assertString = s => {
+const assertString = (s) => {
   if (typeof s !== "string") {
     return null;
-  }  
-}
+  }
+};
 
 // checks for use of "**" in widgetSrc string
-const containsGlob = path => /\*\*/.test(path)
+const containsGlob = (path) => /\*\*/.test(path);
 
 const findWithKey = (key, href) => {
-  let fragments = key.split('**').filter(f => f != '')
-  const hasFragment = (str, fragment) => str.search(fragment) != -1
+  let fragments = key.split("**").filter((f) => f != "");
+  const hasFragment = (str, fragment) => str.search(fragment) != -1;
   while (fragments.length > 0) {
     if (hasFragment(href, fragments[0])) {
-      fragments.shift()
+      fragments.shift();
     } else {
-      return null
+      return null;
     }
   }
-  return true
-}
+  return true;
+};
 
 const parseUrl = (url) => {
-  assertString(url)
+  assertString(url);
   if (url.startsWith("/")) {
     url = `https://near.social${url}`;
   }
@@ -68,17 +68,17 @@ const parseUrl = (url) => {
 };
 
 const parseGlob = (path) => {
-  assertString(path)
-  const keysWithGlobs = [...EmbedMap.keys()].filter(key => containsGlob(key))
-  const keysThatMatch = keysWithGlobs.filter(key => findWithKey(key,href))
+  assertString(path);
+  const keysWithGlobs = [...EmbedMap.keys()].filter((key) => containsGlob(key));
+  const keysThatMatch = keysWithGlobs.filter((key) => findWithKey(key, href));
   if (keysThatMatch.length >= 1) {
     try {
-      return keysThatMatch[0]
+      return keysThatMatch[0];
     } catch {
-      return null
+      return null;
     }
   }
-  return null
+  return null;
 };
 
 const parsed = useMemo(() => {
@@ -92,7 +92,7 @@ const parsed = useMemo(() => {
   }
 
   // try parsing embed link to glob if url failed
-  const widgetSrc = parseGlob(href)
+  const widgetSrc = parseGlob(href);
   if (!!widgetSrc) {
     return {
       widgetSrc,
