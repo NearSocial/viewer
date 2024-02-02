@@ -185,7 +185,7 @@ return (
           type="button"
           // to={`/buildhub.near/widget/app?page=profile&accountId=${context.accountId}`}
           to={href({
-            widgetPath: "buildhub.near/widget/app",
+            widgetSrc: "buildhub.near/widget/app",
             params: {
               page: "profile",
               accountId: context.accountId,
