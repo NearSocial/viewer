@@ -50,6 +50,7 @@ const linktreeObjects = linktree.map((o, i) => {
 });
 
 const descriptionKey = `${widgetPath}-description`.replaceAll(/[._\/-]/g, "--");
+const { href } = VM.require("buildhub.near/widget/lib.url") || (() => {});
 
 return (
   <div
@@ -129,7 +130,10 @@ return (
             </button>
           )}
           <Link
-            href={`/mob.near/widget/WidgetSource?src=${widgetPath}`}
+            to={href({
+              widgetSrc: "mob.near/widget/WidgetSource",
+              params: { src: widgetPath },
+            })}
             className="btn text-white btn-sm btn-outline-secondary border-0"
             target="_blank"
           >
