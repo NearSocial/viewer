@@ -126,8 +126,9 @@ const Container = styled.div`
   }
 `;
 
-const { href: linkHref } =
-  VM.require("buildhub.near/widget/lib.url") || (() => {});
+const { href: linkHref } = VM.require("buildhub.near/widget/lib.url") || {
+  href: () => {},
+};
 
 const Component = () => {
   if (data.isDaoMember || isConnected) {
