@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
 import { Widget, useNear, useAccount } from "near-social-vm";
 import styled from "styled-components";
-import { User } from "../../icons/User";
-import { LogOut } from "../../icons/LogOut";
-import { Withdraw } from "../../icons/Withdraw";
+import { User } from "../icons/User";
+import { LogOut } from "../icons/LogOut";
+import { Withdraw } from "../icons/Withdraw";
 import { NavLink } from "react-router-dom";
-import PretendModal from "../PretendModal";
-import { Pretend } from "../../icons/Pretend";
-import { StopPretending } from "../../icons/StopPretending";
-import { QR } from "../../icons/QR";
-import MobileQRModal from "../MobileQRModal";
+import PretendModal from "./PretendModal";
+import { Pretend } from "../icons/Pretend";
+import { StopPretending } from "../icons/StopPretending";
+import { QR } from "../icons/QR";
+import MobileQRModal from "./MobileQRModal";
 
 const StyledDropdown = styled.div`
   button,

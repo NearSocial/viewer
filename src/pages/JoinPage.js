@@ -1,5 +1,5 @@
 import React from "react";
-import { UserDropdown } from "../components/navigation/desktop/UserDropdown";
+import { UserDropdown } from "../components/navigation/UserDropdown";
 import { Widget } from "near-social-vm";
 import { useBosLoaderStore } from "../stores/bos-loader";
 
