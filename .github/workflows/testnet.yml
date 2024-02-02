@@ -10,8 +10,8 @@ jobs:
     with:
       deploy-env: "testnet"
       app-name: "builddao"
-      deploy-account-address: ${{ vars.BOS_TESTNET_SIGNER_ACCOUNT_ID }} 
+      deploy-account-address: ${{ vars.BOS_TESTNET_SIGNER_ACCOUNT_ID }}
       signer-account-address: ${{ vars.BOS_TESTNET_SIGNER_ACCOUNT_ID }}
       signer-public-key: ${{ vars.BOS_TESTNET_SIGNER_PUBLIC_KEY }}
-    secrets: 
+    secrets:
       SIGNER_PRIVATE_KEY: ${{ secrets.BOS_TESTNET_SIGNER_PRIVATE_KEY }}

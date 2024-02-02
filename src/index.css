@@ -1,12 +1,12 @@
 :root {
   --slate-dark-1: #151718;
-  --slate-dark-5: #2B2F31;
+  --slate-dark-5: #2b2f31;
   --slate-dark-6: #313538;
-  --slate-dark-8: #4C5155;
+  --slate-dark-8: #4c5155;
   --slate-dark-9: #697177;
-  --slate-dark-11: #9BA1A6;
-  --slate-dark-12: #ECEDEE;
-  --blue-light-9: #0091FF;
+  --slate-dark-11: #9ba1a6;
+  --slate-dark-12: #ecedee;
+  --blue-light-9: #0091ff;
 
   --font-weight-medium: 500;
   --font-weight-bold: 600;
@@ -16,4 +16,3 @@
   --account-center-position-top: 64px;
   --account-center-position-right: -10px;
 }
-

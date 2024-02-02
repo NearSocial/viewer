@@ -85,8 +85,11 @@ function App() {
               signInContractId:
                 NetworkId == "testnet" ? "v1.social08.testnet" : "social.near",
               trialAccountSpecs: {
-                url: NetworkId == "testnet" ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY" : "https://www.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
-                modalOptions: KEYPOM_OPTIONS(NetworkId)
+                url:
+                  NetworkId == "testnet"
+                    ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY"
+                    : "https://www.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
+                modalOptions: KEYPOM_OPTIONS(NetworkId),
               },
               instantSignInSpecs: {
                 url:
