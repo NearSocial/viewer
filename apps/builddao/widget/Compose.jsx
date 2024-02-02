@@ -3,27 +3,17 @@ const { Avatar, Button } = VM.require("buildhub.near/widget/components") || {
   Button: () => <></>,
 };
 
-const draftKey = props.feed.name || "draft";
+const draftKey = props.draftKey || "draft";
 const draft = Storage.privateGet(draftKey);
-
-const autocompleteEnabled = true;
 
 if (draft === null) {
   return "";
 }
 
-State.init({
-  image: {},
-});
-
 const [view, setView] = useState("editor");
 const [postContent, setPostContent] = useState("");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
-const [showAccountAutocomplete, setShowAccountAutocomplete] = useState(false);
-const [mentionsArray, setMentionsArray] = useState([]);
-const [mentionInput, setMentionInput] = useState(null);
-const [handler, setHandler] = useState("update");
 
 setPostContent(draft || props.template);
 
@@ -31,6 +21,16 @@ function generateUID() {
   const maxHex = 0xffffffff;
   const randomNumber = Math.floor(Math.random() * maxHex);
   return randomNumber.toString(16).padStart(8, "0");
+}
+
+function tagsFromLabels(labels) {
+  return labels.reduce(
+    (newLabels, label) => ({
+      ...newLabels,
+      [label]: "",
+    }),
+    {}
+  );
 }
 
 const extractMentions = (text) => {
@@ -86,27 +86,18 @@ function checkAndAppendHashtag(input, target) {
 }
 
 const postToCustomFeed = ({ feed, text, labels }) => {
-  const postId = generateUID();
-  if (!labels) labels = [];
+  // if (!labels) labels = [];
 
-  labels = labels.map((label) => label.toLowerCase());
-  labels.push(feed.name.toLowerCase());
+  // labels = labels.map((label) => label.toLowerCase());
+  // labels.push(feed.name.toLowerCase());
 
-  const requiredHashtags = ["build"];
+  const requiredHashtags = props.requiredHashtags || ["build"];
   if (feed.hashtag) requiredHashtags.push(feed.hashtag.toLowerCase());
   requiredHashtags.push(feed.name.toLowerCase());
-
   text = text + `\n\n`;
-
   requiredHashtags.forEach((hashtag) => {
     text = checkAndAppendHashtag(text, hashtag);
   });
-
-  const content = {
-    type: "md",
-    image: state.image.cid ? { ipfs_cid: state.image.cid } : undefined,
-    text: text,
-  };
 
   const data = {
     // [feed.name]: {
@@ -123,7 +114,12 @@ const postToCustomFeed = ({ feed, text, labels }) => {
     //   },
     // },
     post: {
-      main: JSON.stringify(content),
+      main: JSON.stringify({
+        type: "md",
+        text,
+        // tags: tagsFromLabels(labels),
+        // postType: feed.name,
+      }),
     },
     index: {
       post: JSON.stringify({ key: "main", value: { type: "md" } }),
@@ -168,98 +164,16 @@ const postToCustomFeed = ({ feed, text, labels }) => {
   });
 };
 
-function textareaInputHandler(value) {
-  const words = value.split(/\s+/);
-  const allMentiones = words
-    .filter((word) => word.startsWith("@"))
-    .map((mention) => mention.slice(1));
-  const newMentiones = allMentiones.filter(
-    (item) => !mentionsArray.includes(item)
-  );
-  setMentionInput(newMentiones?.[0] ?? "");
-  setMentionsArray(allMentiones);
-  setShowAccountAutocomplete(newMentiones?.length > 0);
-  setPostContent(value);
-  setHandler("update");
-  Storage.privateSet(draftKey, value || "");
-}
-
-function autoCompleteAccountId(id) {
-  let currentIndex = 0;
-  const updatedDescription = postContent.replace(
-    /(?:^|\s)(@[^\s]*)/g,
-    (match) => {
-      if (currentIndex === mentionsArray.indexOf(mentionInput)) {
-        currentIndex++;
-        return ` @${id}`;
-      } else {
-        currentIndex++;
-        return match;
-      }
-    }
-  );
-  setPostContent(updatedDescription);
-  setShowAccountAutocomplete(false);
-  setMentionInput(null);
-  setHandler("autocompleteSelected");
-  Storage.privateSet(draftKey, updatedDescription || "");
-}
-
 const PostCreator = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 
   padding: 1rem;
-  background: #23242b;
+  background: var(--compose-bg, #23242b);
   border-radius: 12px;
 
   margin-bottom: 1rem;
-
-  .upload-image-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f1f3f5;
-    color: #11181c;
-    border-radius: 40px;
-    height: 40px;
-    min-width: 40px;
-    font-size: 0;
-    border: none;
-    cursor: pointer;
-    transition: background 200ms, opacity 200ms;
-
-    &::before {
-      font-size: 16px;
-    }
-
-    &:hover,
-    &:focus {
-      background: #d7dbde;
-      outline: none;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    span {
-      margin-left: 12px;
-    }
-  }
-
-  .d-inline-block {
-    display: flex !important;
-    gap: 12px;
-    margin: 0 !important;
-
-    .overflow-hidden {
-      width: 40px !important;
-      height: 40px !important;
-    }
-  }
 `;
 
 const TextareaWrapper = styled.div`
@@ -458,36 +372,6 @@ const MarkdownPreview = styled.div`
   }
 `;
 
-const LabelSelect = styled.div`
-  label {
-    color: #fff;
-  }
-
-  .rbt-input-multi {
-    background: #23242b !important;
-    color: #fff !important;
-  }
-
-  .rbt-token {
-    background: #202020 !important;
-    color: #fff !important;
-  }
-
-  .rbt-menu {
-    background: #23242b !important;
-    color: #fff !important;
-
-    .dropdown-item {
-      color: #fff !important;
-      transition: all 300ms;
-
-      &:hover {
-        background: #202020;
-      }
-    }
-  }
-`;
-
 const avatarComponent = useMemo(() => {
   return (
     <div className="d-flex align-items-start gap-2">
@@ -507,29 +391,19 @@ return (
         <TextareaWrapper
           className="markdown-editor"
           data-value={postContent || ""}
-          key={props.feed.name}
+          key={props.feed.name || "Editor"}
         >
           <Widget
-            src={"buildhub.near/widget/components.MarkdownEditorIframe"}
+            src="mob.near/widget/MarkdownEditorIframe"
             props={{
               initialText: postContent,
-              data: { handler: handler, content: postContent },
-              onChange: (content) => {
-                textareaInputHandler(content);
+              embedCss: props.customCSS || MarkdownEditor,
+              onChange: (v) => {
+                setPostContent(v);
+                Storage.privateSet(draftKey, v || "");
               },
-              embedCss: MarkdownEditor,
             }}
           />
-          {autocompleteEnabled && showAccountAutocomplete && (
-            <Widget
-              src="buildhub.near/widget/components.AccountAutocomplete"
-              props={{
-                term: mentionInput,
-                onSelect: autoCompleteAccountId,
-                onClose: () => setShowAccountAutocomplete(false),
-              }}
-            />
-          )}
         </TextareaWrapper>
       ) : (
         <MarkdownPreview>
@@ -537,27 +411,11 @@ return (
             src="devhub.near/widget/devhub.components.molecule.MarkdownViewer"
             props={{ text: postContent }}
           />
-          {state.image.cid && (
-            <Widget
-              src="mob.near/widget/Image"
-              props={{
-                image: state.image.cid
-                  ? { ipfs_cid: state.image.cid }
-                  : undefined,
-              }}
-            />
-          )}
         </MarkdownPreview>
       )}
     </div>
 
     <div className="d-flex gap-3 align-self-end">
-      {view === "editor" && (
-        <IpfsImageUpload
-          image={state.image}
-          className="upload-image-button bi bi-image"
-        />
-      )}
       <Button
         variant="outline"
         onClick={() => setView(view === "editor" ? "preview" : "editor")}
@@ -574,11 +432,14 @@ return (
         )}
       </Button>
       <Button
-        disabled={postContent === "" || postContent === props.template}
         variant="primary"
         style={{ fontSize: 14 }}
         onClick={() =>
-          postToCustomFeed({ feed: props.feed, text: postContent, labels })
+          postToCustomFeed({
+            feed: props.feed,
+            text: postContent,
+            labels,
+          })
         }
       >
         Post {props.feed.name}

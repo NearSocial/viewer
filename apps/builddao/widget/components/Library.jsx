@@ -147,12 +147,12 @@ const components = [
     },
     preview: (
       <>
-        {/* <div className="d-flex align-items-center gap-3 mb-3">
+        <div className="d-flex align-items-center gap-3 mb-3">
           <ProgressState status="default">1</ProgressState>
           <ProgressState status="focused">1</ProgressState>
           <ProgressState status="error">1</ProgressState>
           <ProgressState status="completed">1</ProgressState>
-        </div> */}
+        </div>
       </>
     ),
     embedCode: `
@@ -274,7 +274,11 @@ const components = [
     preview: (
       <>
         <div className="d-flex flex-column gap-3 mb-3">
-          <Checkbox label="Checkbox" />
+          <Checkbox
+            value={checked}
+            onChange={(e) => setChecked(!checked)}
+            label="Checkbox"
+          />
         </div>
       </>
     ),
@@ -672,13 +676,7 @@ const Wrapper = styled.div`
 const renderMenuItem = (c, i) => {
   const prev = i ? components[i - 1] : null;
   const res = [];
-  if (!prev || prev.category !== c.category) {
-    res.push(
-      <h5 className="category my-3 mb-2 text-white" key={c.category}>
-        {c.category}
-      </h5>
-    );
-  }
+
   const id = c.name.toLowerCase().replaceAll(" ", "-");
   res.push(
     <div className="menu-item" key={i}>
@@ -691,6 +689,7 @@ const renderMenuItem = (c, i) => {
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
 
   .main {
     grid-column: span 4 / span 4;
@@ -698,17 +697,74 @@ const Grid = styled.div`
 
   .aside {
     grid-column: span 1 / span 1;
+    border-radius: 16px;
+    border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
+    background: var(--bg-1, #0b0c14);
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    padding: 24px 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 1rem;
+
+    .menu-item {
+      width: 100%;
+      display: flex;
+    }
+
+    a {
+      all: unset;
+      display: inline-flex;
+      padding: 8px 12px;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 4px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 300ms;
+      background: var(--button-outline-bg, transparent);
+      color: var(--button-outline-color, #fff);
+      border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
+      cursor: pointer;
+      align-self: stretch;
+      width: 100%;
+      text-align: left;
+
+      &:hover {
+        background: var(--button-outline-hover-bg, rgba(255, 255, 255, 0.1));
+        color: var(--button-outline-hover-color, #fff);
+      }
+    }
   }
 
   @media screen and (max-width: 768px) {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
+    .aside {
+      flex-direction: row;
+      border: none;
+      overflow-x: auto;
+      min-height: auto;
+      gap: 2rem;
+
+      .menu-item {
+        width: max-content;
+        flex-shrink: 0;
+        a {
+          flex-shrink: 0;
+        }
+      }
+    }
   }
 `;
 
 return (
-  <Grid className="container-xl">
+  <Grid className="">
     <div className="aside">
       {components.map((component, index) => renderMenuItem(component, index))}
     </div>

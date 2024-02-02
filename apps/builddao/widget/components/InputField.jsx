@@ -6,7 +6,7 @@ const InputContainer = styled.div`
 `;
 
 const Label = styled.label`
-  color: var(--White-100, #fff);
+  color: var(--label-color, #fff);
 
   /* Body/16px */
   font-size: 16px;
@@ -24,12 +24,12 @@ const Input = styled.input`
   gap: 10px;
 
   border-radius: 8px;
-  border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
-  background: var(--Bg-1, #0b0c14);
+  border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
+  background: var(--bg-1, #0b0c14);
 
   flex: 1 0 0;
 
-  color: var(--White-50, #cdd0d5);
+  color: var(--font-muted-color, #cdd0d5);
 
   /* Body/16px */
   font-size: 16px;

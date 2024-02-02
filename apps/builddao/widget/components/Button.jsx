@@ -24,47 +24,88 @@ const StyledButton = styled.button`
   background: ${(props) => {
     switch (props.variant) {
       case "primary":
-        return "#FFAF51";
+        return "var(--button-primary-bg, #FFAF51)";
       case "outline":
-        return "transparent";
+        return "var(--button-outline-bg, transparent)";
       default:
-        return "#23242B";
+        return "var(--button-default-bg, #23242B)";
     }
   }};
 
   color: ${(props) => {
     switch (props.variant) {
       case "primary":
-        return "#000";
+        return "var(--button-primary-color, #000)";
       case "outline":
-        return "#fff";
+        return "var(--button-outline-color, #fff)";
       default:
-        return "#CDD0D5";
+        return "var(--button-default-color, #CDD0D5)";
     }
   }};
 
   border: ${(props) =>
-    props.variant === "outline" ? "1px solid rgba(255, 255, 255, 0.20)" : ""};
+    props.variant === "outline"
+      ? "1px solid var(--stroke-color, rgba(255, 255, 255, 0.20))"
+      : ""};
 
   /* Hover states */
   &:hover {
     background: ${(props) => {
       switch (props.variant) {
         case "primary":
-          return "#e49b48";
+          return "var(--button-primary-hover-bg, #e49b48)";
         case "outline":
-          return "rgba(255, 255, 255, 0.20)";
+          return "var(--button-outline-hover-bg, rgba(255, 255, 255, 0.20))";
         default:
-          return "#17181c";
+          return "var(--button-default-hover-bg, #17181c)";
       }
     }};
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
-function Button({ id, children, variant, type, onClick, className, style }) {
+function Button({
+  id,
+  disabled,
+  children,
+  variant,
+  type,
+  onClick,
+  className,
+  linkClassName,
+  href,
+  style,
+}) {
+  if (href) {
+    return (
+      <Link
+        to={href}
+        className={linkClassName}
+        style={{ textDecoration: "none" }}
+      >
+        <StyledButton
+          id={id}
+          key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
+          className={className}
+          variant={variant}
+          type={type}
+          style={style}
+          href={href}
+        >
+          {children}
+        </StyledButton>
+      </Link>
+    );
+  }
+
   return (
     <StyledButton
       id={id}
+      disabled={disabled}
       key={`Button-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
       className={className}
       variant={variant}

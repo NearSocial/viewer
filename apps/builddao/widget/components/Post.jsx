@@ -1,24 +1,23 @@
-const { User } = VM.require("buildhub.near/widget/components");
-
-User = User || (() => <></>);
+const { Button } =
+  VM.require("buildhub.near/widget/components") || (() => <></>);
 
 const StyledPost = styled.div`
   margin-bottom: 1rem;
   .post {
     border-radius: 16px;
-    border: 1px solid var(--Stroke-color, rgba(255, 255, 255, 0.2));
-    color: #b6b6b8;
+    border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
+    color: var(--font-muted-color, #b6b6b8);
     padding: 24px !important;
-    background-color: #23242b;
+    background-color: var(--post-bg, #23242b);
     transition: all 300ms;
 
     &:hover {
-      background-color: #1c1f33 !important;
+      background-color: var(--post-bg-hover, #17181c) !important;
       .expand-post {
         background-image: linear-gradient(
           to bottom,
-          rgba(28, 31, 51, 0),
-          rgba(28, 31, 51, 1) 25%
+          var(--post-bg-hover-transparent, rgba(23, 24, 28, 0)),
+          var(--post-bg-hover, #17181c) 25%
         ) !important;
       }
     }
@@ -26,7 +25,7 @@ const StyledPost = styled.div`
     .post-header {
       span,
       .text-muted {
-        color: #fff !important;
+        color: var(--font-color, #fff) !important;
       }
     }
 
@@ -38,34 +37,34 @@ const StyledPost = styled.div`
     .expand-post {
       background-image: linear-gradient(
         to bottom,
-        rgba(35, 36, 43, 0),
-        rgba(35, 36, 43, 1) 25%
+        var(--post-bg-transparent, rgba(35, 36, 43, 0)),
+        var(--post-bg, rgba(35, 36, 43, 1)) 25%
       ) !important;
     }
   }
 
   .dropdown-menu {
-    background-color: #0b0c14 !important;
-    color: #fff !important;
+    background-color: var(--post-bg, #0b0c14) !important;
+    color: var(--font-color, #fff) !important;
 
     li.dropdown-item {
-      color: #fff !important;
+      color: var(--font-color, #fff) !important;
       &:hover {
         a {
-          color: #0b0c14 !important;
+          color: var(--post-bg, #0b0c14) !important;
         }
       }
     }
 
     .link-dark,
     .dropdown-item {
-      color: #fff !important;
+      color: var(--font-color, #fff) !important;
 
       &:hover {
-        color: #0b0c14 !important;
+        color: var(--post-bg, #0b0c14) !important;
 
         span {
-          color: #0b0c14 !important;
+          color: var(--post-bg, #0b0c14) !important;
         }
       }
     }
@@ -237,6 +236,7 @@ const groupId = props.groupId ?? content.groupId;
 const indexKey = props.indexKey;
 const permissions = props.permissions;
 const fullPostLink = props.fullPostLink;
+const customActions = props.customActions;
 
 const notifyAccountId = accountId;
 const item = {
@@ -266,6 +266,7 @@ const contentWidget = (
         raw,
         truncateContent: props.truncateContent,
         noEmbed: props.noEmbed,
+        currentPath: props.currentPath,
       }}
     />
     <RepostWidgetMobile>
@@ -286,125 +287,135 @@ const contentWidget = (
 );
 
 return (
-  <StyledPost>
-    <Wrapper
-      className="w-100 mx-auto"
-      style={
-        props.hideComments || props.noBorder
-          ? undefined
-          : {
-              borderBottom: "1px solid #eee",
-            }
-      }
-    >
-      <div className={`post ${props.reposted ? "reposted" : ""}`}>
-        <div className="right d-flex flex-column gap-3">
-          <User
-            accountId={accountId}
-            blockHeight={blockHeight}
-            pinned={pinned}
-            hideMenu={hideMenu}
-            link={link}
-            postType={"post"}
-            flagItem={item}
-          />
-          {fullPostLink ? (
-            <a
-              key="full-post-link"
-              target="_blank"
-              href={fullPostLink}
-              className="text-decoration-none link-dark"
-            >
-              {contentWidget}
-            </a>
-          ) : (
-            contentWidget
-          )}
-          {props.customButtons ? (
-            props.customButtons
-          ) : !pinned && !hideButtons && blockHeight !== "now" ? (
-            <div className="buttons d-flex justify-content-between">
-              <Widget
-                loading=""
-                src="mob.near/widget/N.CommentButton"
-                props={{
-                  disabled: permissions.disableComment,
-                  onClick: () => State.update({ showReply: !state.showReply }),
-                }}
-              />
-              <RepostWidgetDesktop>
+  <>
+    <StyledPost key={`Post-${item.path}-${item.blockHeight}`}>
+      <Wrapper
+        className="w-100 mx-auto"
+        style={
+          props.hideComments || props.noBorder
+            ? undefined
+            : {
+                borderBottom: "1px solid #eee",
+              }
+        }
+      >
+        <div className={`post ${props.reposted ? "reposted" : ""}`}>
+          <div className="right d-flex flex-column gap-3">
+            <Widget
+              src="buildhub.near/widget/components.post.Header"
+              loading=""
+              props={{
+                accountId: accountId,
+                blockHeight: blockHeight,
+                pinned: pinned,
+                hideMenu: hideMenu,
+                link: link,
+                postType: "post",
+                flagItem: item,
+                customActions: customActions,
+                modalToggles: props.modalToggles,
+                setItem: props.setItem,
+              }}
+            />
+            {fullPostLink ? (
+              <a
+                key="full-post-link"
+                target="_blank"
+                href={fullPostLink}
+                className="text-decoration-none link-dark"
+              >
+                {contentWidget}
+              </a>
+            ) : (
+              contentWidget
+            )}
+            {props.customButtons ? (
+              props.customButtons
+            ) : !pinned && !hideButtons && blockHeight !== "now" ? (
+              <div className="buttons d-flex justify-content-between">
                 <Widget
                   loading=""
-                  src="mob.near/widget/N.RepostButton"
+                  src="mob.near/widget/N.CommentButton"
                   props={{
-                    disable: permissions.disableRepost,
-                    notifyAccountId,
-                    item,
-                    // indexKey,
-                    // groupId,
+                    disabled: permissions.disableComment,
+                    onClick: () =>
+                      State.update({ showReply: !state.showReply }),
                   }}
                 />
-              </RepostWidgetDesktop>
-              <Widget
-                loading=""
-                src="mob.near/widget/N.LikeButton"
-                props={{
-                  notifyAccountId,
-                  item,
-                }}
-              />
-              <Widget
-                loading=""
-                src="buildhub.near/widget/components.post.BookmarkButton"
-                props={{
-                  item,
-                }}
-              />
-              <Widget
-                loading=""
-                src="mob.near/widget/MainPage.N.Post.ShareButton"
-                props={{ accountId, blockHeight, postType: "post", groupId }}
-              />
-            </div>
-          ) : (
-            <div className="buttons-placeholder" />
-          )}
+                <RepostWidgetDesktop>
+                  <Widget
+                    loading=""
+                    src="mob.near/widget/N.RepostButton"
+                    props={{
+                      disable: permissions.disableRepost,
+                      notifyAccountId,
+                      item,
+                      // indexKey,
+                      // groupId,
+                    }}
+                  />
+                </RepostWidgetDesktop>
+                <Widget
+                  loading=""
+                  src="mob.near/widget/N.LikeButton"
+                  props={{
+                    notifyAccountId,
+                    item,
+                  }}
+                />
+                <Widget
+                  loading=""
+                  src="buildhub.near/widget/components.post.BookmarkButton"
+                  props={{
+                    item,
+                  }}
+                />
+                <Widget
+                  loading=""
+                  src="mob.near/widget/MainPage.N.Post.ShareButton"
+                  props={{ accountId, blockHeight, postType: "post", groupId }}
+                />
+              </div>
+            ) : (
+              <div className="buttons-placeholder" />
+            )}
+          </div>
         </div>
-      </div>
-      {state.showReply && (
-        <div className="border-top">
-          <Widget
-            loading=""
-            src="mob.near/widget/MainPage.N.Comment.Compose"
-            props={{
-              notifyAccountId,
-              item,
-              onComment: () => State.update({ showReply: false }),
-            }}
-          />
-        </div>
-      )}
-      {props.customComments
-        ? props.customComments
-        : !props.hideComments && (
-            <div className="ms-5 my-3">
-              <Widget
-                key="comments"
-                loading={false}
-                src="mob.near/widget/MainPage.N.Comment.Feed"
-                props={{
-                  item,
-                  highlightComment: props.highlightComment,
-                  limit: props.commentsLimit,
-                  subscribe,
-                  raw,
-                  accounts: props.commentAccounts,
-                  groupId,
-                  permissions,
-                }}
-              />
-            </div>
-          )}
-    </Wrapper>
-  </StyledPost>
+        {state.showReply && (
+          <div className="border-top">
+            <Widget
+              loading=""
+              src="mob.near/widget/MainPage.N.Comment.Compose"
+              props={{
+                notifyAccountId,
+                item,
+                onComment: () => State.update({ showReply: false }),
+              }}
+            />
+          </div>
+        )}
+        {props.customComments
+          ? props.customComments
+          : !props.hideComments && (
+              <div className="ms-5 my-3">
+                <Widget
+                  key="comments"
+                  loading={""}
+                  src="mob.near/widget/MainPage.N.Comment.Feed"
+                  props={{
+                    item,
+                    highlightComment: props.highlightComment,
+                    limit: props.commentsLimit,
+                    subscribe,
+                    raw,
+                    accounts: props.commentAccounts,
+                    groupId,
+                    permissions,
+                  }}
+                />
+              </div>
+            )}
+      </Wrapper>
+    </StyledPost>
+  </>
 );

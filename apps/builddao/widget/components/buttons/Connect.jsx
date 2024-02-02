@@ -1,6 +1,9 @@
-const { joinBtnChildren, connectedChildren, showActivity, className, href } = props;
+const { joinBtnChildren, connectedChildren, showActivity, className, href } =
+  props;
 
-const { Bullet } = VM.require("buildhub.near/widget/components.Bullet");
+const { Bullet } = VM.require("buildhub.near/widget/components.Bullet") || {
+  Bullet: () => <></>,
+};
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
 
 if (!DaoSDK) {
@@ -12,14 +15,14 @@ const userAccountId = context.accountId;
 
 const data = sdk?.checkIsMemberOrPending({
   accountId: userAccountId,
-  rolesToCheck: ["community", "council"]
+  rolesToCheck: ["community", "council"],
 });
 
 const connectEdge = Social.keys(
   `${userAccountId}/graph/connect/${daoId}`,
   undefined,
   {
-    values_only: true
+    values_only: true,
   }
 );
 
@@ -38,25 +41,25 @@ const handleJoin = () => {
     [userAccountId]: {
       graph: {
         connect: {
-          [daoId]: ""
-        }
+          [daoId]: "",
+        },
       },
       index: {
         graph: JSON.stringify({
           key: "connect",
           value: {
             type: "connect",
-            accountId: daoId
-          }
-        })
+            accountId: daoId,
+          },
+        }),
       },
       notify: JSON.stringify({
         key: daoId,
         value: {
-          type: "connect"
-        }
-      })
-    }
+          type: "connect",
+        },
+      }),
+    },
   };
 
   Near.call([
@@ -69,13 +72,13 @@ const handleJoin = () => {
           kind: {
             AddMemberToRole: {
               member_id: accountId,
-              role: roleId
-            }
-          }
-        }
+              role: roleId,
+            },
+          },
+        },
       },
       gas: 219000000000000,
-      deposit: deposit
+      deposit: deposit,
     },
     {
       contractName: "social.near",
@@ -83,8 +86,8 @@ const handleJoin = () => {
       deposit: Big(JSON.stringify(connectData).length * 16).mul(
         Big(10).pow(20)
       ),
-      args: { data: connectData }
-    }
+      args: { data: connectData },
+    },
   ]);
 };
 
@@ -123,6 +126,9 @@ const Container = styled.div`
   }
 `;
 
+const { href: linkHref } =
+  VM.require("buildhub.near/widget/lib.url") || (() => {});
+
 const Component = () => {
   if (data.isDaoMember || isConnected) {
     if (showActivity) {
@@ -131,7 +137,15 @@ const Component = () => {
           <Bullet variant="light">
             {data.isDaoMember ? "Joined" : "Pending application"}
           </Bullet>
-          <a href={"/feed"}>
+          <Link
+            // href={"/?page=feed"}
+            to={linkHref({
+              widgetSrc: "buildhub.near/widget/app",
+              params: {
+                page: "feed",
+              },
+            })}
+          >
             View Activity{" "}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +159,7 @@ const Component = () => {
                 fill="black"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       );
     }
@@ -153,14 +167,14 @@ const Component = () => {
   } else {
     if (href) {
       return (
-        <a type="button" href={href} className={className}>
+        <Link href={href} className={className}>
           {joinBtnChildren}
-        </a>
+        </Link>
       );
     } else {
       return (
         <button className={className} onClick={handleJoin}>
-           {joinBtnChildren}
+          {joinBtnChildren}
         </button>
       );
     }

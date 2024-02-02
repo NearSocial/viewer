@@ -53,13 +53,15 @@ const Wrapper = styled.div`
   }
 `;
 
+const currentPath = props.currentPath ?? "/buildhub.near/widget/app?page=feed";
+
 const [onHashtag] = useState(() => (hashtag) => (
   <span
     key={hashtag}
     className="d-inline-flex"
     style={{ color: "var(--bs-link-color)" }}
   >
-    <a href={`/?hashtag=${hashtag}`}>#{hashtag}</a>
+    <Link href={`${currentPath}&hashtag=${hashtag}`}>#{hashtag}</Link>
   </span>
 ));
 

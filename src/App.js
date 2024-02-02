@@ -1,3 +1,4 @@
+import { setupKeypom } from "@keypom/selector";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
@@ -8,8 +9,6 @@ import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
 import { setupSender } from "@near-wallet-selector/sender";
-import { setupKeypom } from "@keypom/selector";
-import { KEYPOM_OPTIONS } from "./utils/keypom-options";
 import "App.scss";
 import Big from "big.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -26,21 +25,22 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import "react-bootstrap-typeahead/css/Typeahead.css";
-import { Link, Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import {
+  Link,
+  Redirect,
+  Route,
+  BrowserRouter as Router,
+  Switch,
+} from "react-router-dom";
 import { BosLoaderBanner } from "./components/BosLoaderBanner";
-import { Navbar } from "./components/navigation/Navbar";
 import { useEthersProviderContext } from "./data/web3";
 import { NetworkId, Widgets } from "./data/widgets";
 import { useBosLoaderInitializer } from "./hooks/useBosLoaderInitializer";
 import EditorPage from "./pages/EditorPage";
-import EmbedPage from "./pages/EmbedPage";
-import FeedPage from "./pages/FeedPage";
 import Flags from "./pages/Flags";
 import JoinPage from "./pages/JoinPage";
-import ProposePage from "./pages/ProposePage";
-import ViewPage from "./pages/ViewPage";
-import ResourcesPage from "./pages/ResourcesPage";
-import LibraryPage from "./pages/LibraryPage";
+import Viewer from "./pages/Viewer";
+import { KEYPOM_OPTIONS } from "./utils/keypom-options";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos/overview";
@@ -82,13 +82,17 @@ function App() {
             setupNightly(),
             setupKeypom({
               networkId: NetworkId,
-              signInContractId: NetworkId == "testnet" ? "v1.social08.testnet" : "social.near",
+              signInContractId:
+                NetworkId == "testnet" ? "v1.social08.testnet" : "social.near",
               trialAccountSpecs: {
                 url: NetworkId == "testnet" ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY" : "https://www.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
                 modalOptions: KEYPOM_OPTIONS(NetworkId)
               },
               instantSignInSpecs: {
-                url: NetworkId == 'testnet' ? 'https://test.nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID' : 'https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID',
+                url:
+                  NetworkId == "testnet"
+                    ? "https://test.nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID"
+                    : "https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID",
               },
             }),
           ],
@@ -102,7 +106,7 @@ function App() {
             if (props.to) {
               props.to =
                 typeof props.to === "string" &&
-                  isValidAttribute("a", "href", props.to)
+                isValidAttribute("a", "href", props.to)
                   ? props.to
                   : "about:blank";
             }
@@ -192,37 +196,31 @@ function App() {
         <Router basename={process.env.PUBLIC_URL}>
           <Switch>
             <Route path={"/flags"}>
+              <BosLoaderBanner />
               <Flags {...passProps} />
             </Route>
             <Route path={"/join"}>
+              <BosLoaderBanner />
               <JoinPage {...passProps} />
             </Route>
-            <Route path={"/propose"}>
-              <ProposePage {...passProps} />
-            </Route>
             <Route path={"/library"}>
-              <Navbar {...passProps} />
-              <LibraryPage {...passProps} />
+              <Redirect to="buildhub.near/widget/app?page=library" />
+            </Route>
+            <Route path={"/propose"}>
+              <Redirect to="buildhub.near/widget/app?page=proposal" />
             </Route>
             <Route path={"/feed"}>
-              <Navbar {...passProps} />
-              <FeedPage {...passProps} />
+              <Redirect to="buildhub.near/widget/app?page=feed" />
             </Route>
             <Route path={"/resources"}>
-              <Navbar {...passProps} />
-              <ResourcesPage {...passProps} />
-            </Route>
-            <Route path={"/embed/:widgetSrc*"}>
-              <EmbedPage {...passProps} />
+              <Redirect to="buildhub.near/widget/app?page=resources" />
             </Route>
             <Route path={"/edit/:widgetSrc*"}>
-              <Navbar {...passProps} />
               <EditorPage {...passProps} />
             </Route>
-            <Route path={"/:widgetSrc*"}>
+            <Route path={"/:path*"}>
               <BosLoaderBanner />
-              <Navbar {...passProps} />
-              <ViewPage {...passProps} />
+              <Viewer {...passProps} />
             </Route>
           </Switch>
         </Router>

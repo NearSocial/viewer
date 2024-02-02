@@ -1,3 +1,10 @@
+/**
+ * We need to
+ */
+
+// We're going to save a list to create.near, just for creating things and list
+
+// create thing, list
 const StyledParagraph = styled.p`
   font-family: "Aekonik", sans-serif;
   font-weight: 500;
