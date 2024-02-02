@@ -43,7 +43,7 @@ import Viewer from "./pages/Viewer";
 import { KEYPOM_OPTIONS } from "./utils/keypom-options";
 
 export const refreshAllowanceObj = {};
-const documentationHref = "https://docs.near.org/bos";
+const documentationHref = "https://docs.near.org/bos/overview";
 
 function App() {
   const [connected, setConnected] = useState(false);
@@ -85,11 +85,8 @@ function App() {
               signInContractId:
                 NetworkId == "testnet" ? "v1.social08.testnet" : "social.near",
               trialAccountSpecs: {
-                url:
-                  NetworkId == "testnet"
-                    ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY"
-                    : "https://nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
-                modalOptions: KEYPOM_OPTIONS(NetworkId),
+                url: NetworkId == "testnet" ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY" : "https://www.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
+                modalOptions: KEYPOM_OPTIONS(NetworkId)
               },
               instantSignInSpecs: {
                 url:
