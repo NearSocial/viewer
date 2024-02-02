@@ -25,8 +25,8 @@ const Root = styled.div`
 
   --compose-bg: #23242b;
 
-  --post-bg: #0b0c14;
-  --post-bg-hover: #17181c;
+  --post-bg: #23242b;
+  --post-bg-hover: #1d1f25;
   --post-bg-transparent: rgba(23, 24, 28, 0);
 
   --button-primary-bg: #ffaf51;
