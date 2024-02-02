@@ -15,13 +15,16 @@ const [postContent, setPostContent] = useState("");
 const [hideAdvanced, setHideAdvanced] = useState(true);
 const [labels, setLabels] = useState([]);
 
-setPostContent(draft || props.template);
+const [composeKey, setComposeKey] = useState(0);
+const memoizedComposeKey = useMemo(() => composeKey, [composeKey]);
 
 function generateUID() {
   const maxHex = 0xffffffff;
   const randomNumber = Math.floor(Math.random() * maxHex);
   return randomNumber.toString(16).padStart(8, "0");
 }
+
+setPostContent(draft || props.template);
 
 function tagsFromLabels(labels) {
   return labels.reduce(
@@ -85,12 +88,7 @@ function checkAndAppendHashtag(input, target) {
   }
 }
 
-const postToCustomFeed = ({ feed, text, labels }) => {
-  // if (!labels) labels = [];
-
-  // labels = labels.map((label) => label.toLowerCase());
-  // labels.push(feed.name.toLowerCase());
-
+const postToCustomFeed = ({ feed, text }) => {
   const requiredHashtags = props.requiredHashtags || ["build"];
   if (feed.hashtag) requiredHashtags.push(feed.hashtag.toLowerCase());
   requiredHashtags.push(feed.name.toLowerCase());
@@ -157,6 +155,7 @@ const postToCustomFeed = ({ feed, text, labels }) => {
       setPostContent("");
       Storage.privateSet(draftKey, props.template || "");
       setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
+      setComposeKey(generateUID());
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
@@ -385,7 +384,7 @@ return (
         <TextareaWrapper
           className="markdown-editor"
           data-value={postContent || ""}
-          key={props.feed.name || "Editor"}
+          key={memoizedComposeKey}
         >
           <Widget
             src="mob.near/widget/MarkdownEditorIframe"
