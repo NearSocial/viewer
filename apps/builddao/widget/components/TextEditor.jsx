@@ -81,7 +81,7 @@ const MarkdownEditor = `
   }
   
   .drop-wrap {
-    top: -110px !important;
+    
     border-radius: 0.5rem !important;
   }
 
