@@ -11,7 +11,7 @@ const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
 const { SidebarLayout } = VM.require(
   "buildhub.near/widget/template.SidebarLayout"
 ) || {
-  SidebarLayout: () => <>Layout loading...</>,
+  SidebarLayout: () => <></>,
 };
 
 if (!page) page = Object.keys(routes)[0] || "home";
