@@ -172,7 +172,7 @@ return (
           />
         </div>
         <div>
-          <small className="ps-1 text-nowrap text-muted ms-auto">
+          <small className="ps-1 text-nowrap text-white ms-auto">
             <i className="bi bi-clock me-1"></i>
             <Widget
               src="mob.near/widget/TimeAgo"

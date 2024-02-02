@@ -130,11 +130,7 @@ const AppHeader = ({ page, routes, ...props }) => (
               }
               return (
                 <NavLink to={k}>
-                  <Button
-                    key={k}
-                    variant={page === k && "primary"}
-                    style={{ padding: "0.5rem 1rem", fontWeight: 500 }}
-                  >
+                  <Button key={k} variant={page === k && "primary"}>
                     {route.init.icon && <i className={route.init.icon}></i>}
                     {route.init.name}
                   </Button>
