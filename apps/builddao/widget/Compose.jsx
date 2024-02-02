@@ -91,7 +91,6 @@ function checkAndAppendHashtag(input, target) {
 const postToCustomFeed = ({ feed, text }) => {
   const requiredHashtags = props.requiredHashtags || ["build"];
   if (feed.hashtag) requiredHashtags.push(feed.hashtag.toLowerCase());
-  requiredHashtags.push(feed.name.toLowerCase());
   text = text + `\n\n`;
   requiredHashtags.forEach((hashtag) => {
     text = checkAndAppendHashtag(text, hashtag);
