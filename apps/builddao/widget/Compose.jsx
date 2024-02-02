@@ -1,5 +1,5 @@
-const { Avatar, Button } = VM.require("buildhub.near/widget/components") || {
-  Avatar: () => <></>,
+const { User, Button } = VM.require("buildhub.near/widget/components") || {
+  User: () => <></>,
   Button: () => <></>,
 };
 
@@ -171,6 +171,7 @@ const PostCreator = styled.div`
 
   padding: 1rem;
   background: var(--compose-bg, #23242b);
+  border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
   border-radius: 12px;
 
   margin-bottom: 1rem;
@@ -373,14 +374,7 @@ const MarkdownPreview = styled.div`
 `;
 
 const avatarComponent = useMemo(() => {
-  return (
-    <div className="d-flex align-items-start gap-2">
-      <Avatar accountId={context.accountId} />
-      <div>
-        <p className="mb-0 text-white">{context.accountId}</p>
-      </div>
-    </div>
-  );
+  return <User accountId={context.accountId} />;
 }, [context.accountId]);
 
 return (
