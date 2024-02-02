@@ -11,6 +11,15 @@ const feedLink = "https://nearbuilders.org/feed";
 return {
   type: "app", // every.near/type/app
   routes: {
+    all: {
+      path: "buildhub.near/widget/Feed",
+      blockHeight: "final",
+      init: {
+        name: "All", // maybe these should be moved to navbar specific
+        icon: "bi-list",
+        requiredHashtags: ["build"]
+      },
+    },
     resolutions: {
       path: "buildhub.near/widget/Feed",
       blockHeight: "final",
