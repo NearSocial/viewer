@@ -63,6 +63,8 @@ const bookmarkFillSvg = (
 const BookmarkButton = styled.div`
   line-height: 20px;
   min-height: 20px;
+  width: 20px;
+  height: 20px;
   display: inline-flex;
   align-items: center;
   justify-content: left;
@@ -72,8 +74,10 @@ const BookmarkButton = styled.div`
   .icon {
     position: relative;
     &:before {
-      margin: -8px;
+      margin: -8px -9.5px;
       content: "";
+      width: 36px;
+      height: 36px;
       position: absolute;
       top: 0;
       left: 0;
