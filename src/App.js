@@ -86,7 +86,7 @@ function App(props) {
             setupNearFi(),
             setupMathWallet(),
             setupWelldoneWallet(),
-            setupNearSnap(),
+            // setupNearSnap(),
             setupLedger(),
             setupCoin98Wallet(),
             setupRamperWallet(),
