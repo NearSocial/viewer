@@ -30,6 +30,8 @@ const StyledButton = styled.button`
         return "var(--button-primary-bg, #FFAF51)";
       case "outline":
         return "var(--button-outline-bg, transparent)";
+      case "secondary":
+        return "var(--button-secondary-bg, #23242B)";
       default:
         return "var(--button-default-bg, #23242B)";
     }
@@ -41,6 +43,8 @@ const StyledButton = styled.button`
         return "var(--button-primary-color, #000)";
       case "outline":
         return "var(--button-outline-color, #fff)";
+      case "secondary":
+        return "var(--button-secondary-color, #CDD0D5)";
       default:
         return "var(--button-default-color, #CDD0D5)";
     }
