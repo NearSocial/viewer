@@ -20,7 +20,7 @@ import {
   useAccount,
   useInitNear,
   useNear,
-  utils,
+  utils
 } from "near-social-vm";
 import React, { useCallback, useEffect, useState } from "react";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
@@ -77,7 +77,7 @@ function App() {
             setupMeteorWallet(),
             setupNeth({
               gas: "300000000000000",
-              bundle: false,
+              bundle: false
             }),
             setupNightly(),
             setupKeypom({
@@ -95,10 +95,10 @@ function App() {
                 url:
                   NetworkId == "testnet"
                     ? "https://test.nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID"
-                    : "https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID",
-              },
-            }),
-          ],
+                    : "https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID"
+              }
+            })
+          ]
         }),
         customElements: {
           Link: (props) => {
@@ -114,11 +114,11 @@ function App() {
                   : "about:blank";
             }
             return <Link {...props} />;
-          },
+          }
         },
         config: {
-          defaultFinality: undefined,
-        },
+          defaultFinality: undefined
+        }
       });
   }, [initNear]);
 
@@ -190,7 +190,7 @@ function App() {
     logOut,
     requestSignIn,
     widgets: Widgets,
-    documentationHref,
+    documentationHref
   };
 
   return (

@@ -213,7 +213,11 @@ return (
       />
       <div className="d-flex justify-content-between">
         <h3 className="text-white">Proposals</h3>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
+        <Button
+          variant="primary"
+          disabled={!context.accountId}
+          onClick={() => setShowModal(true)}
+        >
           Create Proposal
         </Button>
       </div>

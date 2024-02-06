@@ -1,9 +1,30 @@
 const { Feed } = VM.require("devs.near/widget/Feed") || {
-  Feed: () => <></>,
+  Feed: () => <></>
 };
 const { Post } = VM.require("buildhub.near/widget/components") || {
-  Post: () => <></>,
+  Post: () => <></>
 };
+
+const { Button } = VM.require("buildhub.near/widget/components") || {
+  Button: () => <></>
+};
+
+const LoginContainer = styled.div`
+  background-color: #23242b;
+  color: #fff;
+
+  width: 100%;
+  height: 16rem;
+  border-radius: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 1rem;
+`;
 
 const { name: feedName, template, requiredHashtags, customActions } = props;
 
@@ -14,7 +35,7 @@ const toggleProposeModal = () => {
   setShowProposeModal(!showProposeModal);
 };
 const modalToggles = {
-  propose: toggleProposeModal,
+  propose: toggleProposeModal
 };
 
 return (
@@ -27,17 +48,18 @@ return (
           props={{
             showModal: showProposeModal,
             toggleModal: toggleProposeModal,
-            item: item,
+            item: item
           }}
         />
       </>
     )}
     {!context.accountId ? ( // if not logged in
-      <Widget
-        loading=""
-        src="buildhub.near/widget/components.login-now"
-        props={props}
-      />
+      <LoginContainer>
+        <p>Please login in order to post.</p>
+        <Link to={"/join"}>
+          <Button variant="primary">Login</Button>
+        </Link>
+      </LoginContainer>
     ) : (
       <Widget
         loading={
@@ -51,7 +73,7 @@ return (
           draftKey: feedName,
           template: template,
           requiredHashtags: requiredHashtags,
-          feed: { ...props },
+          feed: { ...props }
         }}
       />
     )}
@@ -61,12 +83,12 @@ return (
         key: it,
         options: {
           limit: 10,
-          order: "desc",
+          order: "desc"
         },
         cacheOptions: {
-          ignoreCache: true,
+          ignoreCache: true
         },
-        required: true,
+        required: true
       }))}
       Item={(p) => (
         <Post

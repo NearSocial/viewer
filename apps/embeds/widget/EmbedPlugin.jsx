@@ -4,8 +4,6 @@ const installedEmbeds = JSON.parse(
   Social.get(`${context.accountId}/settings/every/embed`, "final") || "null"
 );
 
-console.log("installedEmbeds", installedEmbeds);
-
 if (plugin) {
   return (
     <div
@@ -16,7 +14,7 @@ if (plugin) {
         display: "flex",
         flexDirection: "column",
         // justifyContent: "space-between",
-        overflow: "hidden",
+        overflow: "hidden"
       }}
     >
       <div>
@@ -37,11 +35,11 @@ if (plugin) {
                       ...(installedEmbeds || []),
                       {
                         widgetSrc: plugin.widgetSrc,
-                        embedSrc: plugin.embedSrc,
-                      },
-                    ],
-                  },
-                },
+                        embedSrc: plugin.embedSrc
+                      }
+                    ]
+                  }
+                }
               })
             }
           >
@@ -53,8 +51,8 @@ if (plugin) {
               notifyAccountId: accountId,
               item: {
                 type: "social",
-                path: `${accountId}/${type}/${name}`,
-              },
+                path: `${accountId}/${type}/${name}`
+              }
             }}
           />
           <Widget
@@ -63,8 +61,8 @@ if (plugin) {
               notifyAccountId: accountId,
               item: {
                 type: "social",
-                path: `${accountId}/${type}/${name}`,
-              },
+                path: `${accountId}/${type}/${name}`
+              }
             }}
           />
         </div>
@@ -94,7 +92,7 @@ return (
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-between",
-      overflow: "hidden",
+      overflow: "hidden"
     }}
   >
     <div
@@ -103,7 +101,7 @@ return (
         backgroundImage: `url(${metadata.backgroundImage || defaultImage})`,
         height: "80px",
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: "center"
       }}
     />
 
@@ -145,11 +143,11 @@ return (
                     ...(installedEmbeds || []),
                     {
                       widgetSrc: data.widgetSrc,
-                      embedSrc: data.embedSrc,
-                    },
-                  ],
-                },
-              },
+                      embedSrc: data.embedSrc
+                    }
+                  ]
+                }
+              }
             })
           }
         >
@@ -161,8 +159,8 @@ return (
             notifyAccountId: accountId,
             item: {
               type: "social",
-              path: `${accountId}/${type}/${name}`,
-            },
+              path: `${accountId}/${type}/${name}`
+            }
           }}
         />
         <Widget
@@ -171,8 +169,8 @@ return (
             notifyAccountId: accountId,
             item: {
               type: "social",
-              path: `${accountId}/${type}/${name}`,
-            },
+              path: `${accountId}/${type}/${name}`
+            }
           }}
         />
       </div>

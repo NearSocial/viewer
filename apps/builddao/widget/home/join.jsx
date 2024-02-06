@@ -362,8 +362,7 @@ const Join = () => {
             props={{
               joinBtnChildren: "Join Now",
               showActivity: true,
-              className: "custom-button",
-              href: "/join",
+              className: "custom-button"
             }}
           />
         </CTAContent>
