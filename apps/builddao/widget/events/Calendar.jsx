@@ -31,11 +31,18 @@ const StyledToolbar = styled.div`
   }
 `;
 
+// implement event fetching and filtering
+
 const [selectedView, setSelectedView] = useState("month");
 const [currentDate, setCurrentDate] = useState(new Date());
 
 const [showCreateModal, setShowCreateModal] = useState(false);
 const toggleCreateModal = () => setShowCreateModal(!showCreateModal);
+
+const [showFilterModal, setShowFilterModal] = useState(false);
+const toggleFilterModal = () => setShowFilterModal(!showFilterModal);
+
+const [filters, setFilters] = useState({});
 
 const dateString = currentDate.toLocaleString("en-us", {
   month: "long",
@@ -75,7 +82,9 @@ const Toolbar = () => {
         </Button>
       </div>
       <div className="section justify-content-end" style={{ gap: 10 }}>
-        <Button variant="outline">Filter By</Button>
+        <Button variant="outline" onClick={() => setShowFilterModal(true)}>
+          Filter By
+        </Button>
         <Button variant="primary" onClick={() => setShowCreateModal(true)}>
           Add Event
         </Button>
@@ -84,14 +93,14 @@ const Toolbar = () => {
   );
 };
 
-const events = [
-  {
-    // this object will be "parsed" into an Event Object
-    title: "The Title", // a property!
-    start: "2024-02-01", // a property!
-    end: "2024-02-06", // a property! ** see important note below about 'end' **
-  },
-];
+// const events = [
+//   {
+//     // this object will be "parsed" into an Event Object
+//     title: "The Title", // a property!
+//     start: "2024-02-01", // a property!
+//     end: "2024-02-06", // a property! ** see important note below about 'end' **
+//   },
+// ];
 
 const CurrentView = () => {
   if (selectedView === "month") {
@@ -127,6 +136,16 @@ return (
       props={{
         showModal: showCreateModal,
         toggleModal: toggleCreateModal,
+      }}
+    />
+    <Widget
+      src="buildhub.near/widget/components.modals.FilterEvents"
+      loading=""
+      props={{
+        showModal: showFilterModal,
+        toggleModal: toggleFilterModal,
+        filters: filters,
+        setFilters: setFilters,
       }}
     />
     <Toolbar />

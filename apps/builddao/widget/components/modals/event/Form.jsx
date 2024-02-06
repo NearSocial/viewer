@@ -166,6 +166,19 @@ const isoDate = (date, time) => {
   return now.split("T")[0];
 };
 
+const UUID = {
+  generate: (template) => {
+    if (typeof template !== "string") {
+      template = "xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx";
+    }
+    return template.replace(/[xy]/g, (c) => {
+      var r = (Math.random() * 16) | 0;
+      var v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  },
+};
+
 const [title, setTitle] = useState("");
 const [description, setDescription] = useState("");
 const [link, setLink] = useState("");
@@ -181,6 +194,47 @@ State.init({
   image: null,
 });
 
+const onSubmit = () => {
+  const thingId = UUID.generate();
+
+  // index and store on social db
+  // need to fix this
+  Social.set(
+    {
+      thing: {
+        [thingId]: {
+          title,
+          description,
+          url: link,
+          start: `${isoDate(startDate, startTime)}T${isoTime(
+            startDate,
+            startTime
+          )}`,
+          end: `${isoDate(endDate, endTime)}T${isoTime(endDate, endTime)}`,
+          extendedProps: {
+            organizers,
+            location,
+            hashtags,
+            cover: state.image,
+          },
+        },
+        index: {
+          event: JSON.stringify({
+            key: "buildhub.near/type/testEvent",
+            value: {
+              type: "buildhub.near/type/testEvent",
+              id: thingId,
+            },
+          }),
+        },
+      },
+    },
+    {
+      onCommit: () => props.toggleModal(),
+    }
+  );
+};
+
 const onCoverChange = (target) => {
   State.update({ image: target });
 };
@@ -188,8 +242,12 @@ const onCoverChange = (target) => {
 return (
   <div data-bs-theme={bootstrapTheme}>
     <div className="form-group mb-3">
-      <label>Title</label>
+      <label htmlFor="title">
+        Title<span className="text-danger">*</span>
+      </label>
       <input
+        name="title"
+        id="title"
         type="text"
         placeholder="Enter event name"
         value={title}
@@ -197,11 +255,13 @@ return (
       />
     </div>
     <div className="form-group mb-3">
-      <label>Event Description</label>
+      <label>
+        Event Description<span className="text-danger">*</span>
+      </label>
       <TextareaWrapper
         className="markdown-editor mb-3"
         data-value={description || ""}
-        key={memoizedKey}
+        key={memoizedKey || "markdown-editor"}
       >
         <Widget
           src="mob.near/widget/MarkdownEditorIframe"
@@ -215,8 +275,12 @@ return (
         />
       </TextareaWrapper>
       <div className="form-group mb-3">
-        <label>Event Link</label>
+        <label htmlFor="link">
+          Event Link<span className="text-danger">*</span>
+        </label>
         <input
+          name="link"
+          id="link"
           type="text"
           placeholder="Enter link"
           value={link}
@@ -225,16 +289,24 @@ return (
       </div>
       <div className="form-group mb-3 d-flex" style={{ gap: 24 }}>
         <div className="form-group flex-grow-1">
-          <label>Start Date</label>
+          <label htmlFor="start-date">
+            Start Date<span className="text-danger">*</span>
+          </label>
           <input
+            id="start-date"
+            name="start-date"
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
         <div className="form-group flex-grow-1">
-          <label>End Date</label>
+          <label htmlFor="end-date">
+            End Date<span className="text-danger">*</span>
+          </label>
           <input
+            name="end-date"
+            id="end-date"
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
@@ -243,16 +315,24 @@ return (
       </div>
       <div className="form-group mb-3 d-flex" style={{ gap: 24 }}>
         <div className="form-group flex-grow-1">
-          <label>Start Time</label>
+          <label htmlFor="start-time">
+            Start Time<span className="text-danger">*</span>
+          </label>
           <input
+            name="start-time"
+            id="start-time"
             type="time"
             value={startTime}
             onChange={(e) => setStartTime(e.target.value)}
           />
         </div>
         <div className="form-group flex-grow-1">
-          <label>End Time</label>
+          <label htmlFor="end-time">
+            End Time<span className="text-danger">*</span>
+          </label>
           <input
+            id="end-time"
+            name="end-time"
             type="time"
             value={endTime}
             onChange={(e) => setEndTime(e.target.value)}
@@ -260,40 +340,50 @@ return (
         </div>
       </div>
       <div className="form-group mb-3">
-        <label>Organizers</label>
+        <label htmlFor="organizer">
+          Organizers<span className="text-danger">*</span>
+        </label>
         <Typeahead
           id="organizers"
           onChange={(e) => setOrganizers(e)}
           selected={organizers}
+          labelKey="organizer"
           multiple
+          emptyLabel="Start writing a new organizer"
           placeholder="Enter organizers"
           options={[]}
           allowNew
         />
       </div>
       <div className="form-group mb-3">
-        <label>Location</label>
+        <label htmlFor="location">
+          Location<span className="text-danger">*</span>
+        </label>
         <input
+          name="location"
+          id="location"
           type="text"
           placeholder="Enter location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
       </div>
-      <div className="form-group mb-3">
-        <label>Hashtags</label>
+      <div className="form-group mb-3" data-bs-theme={bootstrapTheme}>
+        <label htmlFor="hashtags">Hashtags</label>
         <Typeahead
           id="hashtags"
           onChange={(e) => setHashtags(e)}
           selected={hashtags}
           multiple
+          labelKey="hashtags"
+          emptyLabel="Start writing a new hashtag"
           placeholder="Enter hashtags"
           options={["build", "dao", "nft", "metaverse", "web3"]}
           allowNew
         />
       </div>
       <div className="form-group mb-3">
-        <label>Cover Image</label>
+        <label htmlFor="cover-image">Cover Image</label>
         <Widget
           src="buildhub.near/widget/components.ImageEditorTabs"
           loading=""
@@ -303,35 +393,9 @@ return (
     </div>
     <div className="d-flex justify-content-end">
       <Button
+        disabled={!title || !description || !link || !location || !organizers}
         variant="primary"
-        onClick={() => {
-          Social.set(
-            {
-              event: {
-                title,
-                description,
-                url: link,
-                start: `${isoDate(startDate, startTime)}T${isoTime(
-                  startDate,
-                  startTime
-                )}`,
-                end: `${isoDate(endDate, endTime)}T${isoTime(
-                  endDate,
-                  endTime
-                )}`,
-                extendedProps: {
-                  organizers,
-                  location,
-                  hashtags,
-                  cover: state.image,
-                },
-              },
-            },
-            {
-              onCommit: () => props.toggleModal(),
-            }
-          );
-        }}
+        onClick={onSubmit}
       >
         Submit
       </Button>
