@@ -4,18 +4,8 @@ const { Button } = VM.require("buildhub.near/widget/components") || {
 
 const bootstrapTheme = props.bootstrapTheme;
 
-const getCurrentDate = (date, time) => {
-  const currentDate = date && time ? new Date(`${date}T${time}`) : new Date();
-
-  const year = currentDate.getFullYear();
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, "0"); // Months are 0-indexed
-  const day = currentDate.getDate().toString().padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-};
-
-const [from, setFrom] = useState(props.filters.from || getCurrentDate());
-const [to, setTo] = useState(props.filters.to || getCurrentDate());
+const [from, setFrom] = useState(props.filters.from || "");
+const [to, setTo] = useState(props.filters.to || "");
 const [title, setTitle] = useState(props.filters.title || "");
 const [location, setLocation] = useState(props.filters.location || "");
 const [organizers, setOrganizers] = useState(props.filters.organizers || []);
@@ -87,8 +77,8 @@ return (
       <Button
         variant="outline"
         onClick={() => {
-          setFrom(getCurrentDate());
-          setTo(getCurrentDate());
+          setFrom();
+          setTo();
           setTitle("");
           setLocation("");
           setOrganizers([]);

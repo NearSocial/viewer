@@ -14,6 +14,8 @@ const StyledToolbar = styled.div`
   padding: 16px 24px;
   margin-bottom: 24px;
 
+  background: var(--bg-1, #0b0c14);
+
   color: var(--text-color, #fff);
   font-size: 18px;
 
@@ -101,6 +103,91 @@ const Toolbar = () => {
 
 const events = fetchEvents("test", "event");
 
+const filterEvents = () => {
+  let filteredEvents = events;
+
+  // handle date from filter
+  if (filters.from) {
+    filteredEvents = filteredEvents.filter((event) => {
+      return new Date(event.start) >= new Date(filters.from);
+    });
+  }
+
+  // handle date to filter
+  if (filters.to) {
+    filteredEvents = filteredEvents.filter((event) => {
+      return new Date(event.start) <= new Date(filters.to);
+    });
+  }
+
+  // handle cleared filters
+  if (filters == {}) {
+    return filteredEvents;
+  }
+
+  // handle title filter
+  if (filters.title) {
+    filteredEvents = filteredEvents.filter((event) => {
+      return event.title.toLowerCase().includes(filters.title.toLowerCase());
+    });
+  }
+
+  // handle location filter
+  if (filters.location) {
+    filteredEvents = filteredEvents.filter((event) => {
+      return event?.extendedProps?.location
+        .toLowerCase()
+        .includes(filters.location.toLowerCase());
+    });
+  }
+
+  // handle organizer filter
+  if (filters.organizers.length) {
+    const organizers =
+      filters.organizers.map((it) => {
+        if (it.customOption) {
+          return it.organizers;
+        }
+        return it;
+      }) ?? [];
+
+    filteredEvents = filteredEvents.filter((event) => {
+      const eventOrganizers = event?.extendedProps?.organizers.map((it) => {
+        if (it.customOption) {
+          return it.organizer;
+        }
+        return it;
+      });
+      return eventOrganizers.some((it) => organizers.includes(it));
+    });
+  }
+
+  // handle tag filter
+  if (filters.tags.length) {
+    const tags =
+      filters.tags.map((it) => {
+        if (it.customOption) {
+          return it.tags;
+        }
+        return it;
+      }) ?? [];
+
+    filteredEvents = filteredEvents.filter((event) => {
+      const eventTags = event?.extendedProps?.hashtags.map((it) => {
+        if (it.customOption) {
+          return it.hashtags;
+        }
+        return it;
+      });
+      return eventTags.some((it) => tags.includes(it));
+    });
+  }
+
+  return filteredEvents;
+};
+
+events = filterEvents();
+
 const CurrentView = () => {
   if (selectedView === "month") {
     return (
@@ -128,8 +215,12 @@ const CurrentView = () => {
   );
 };
 
+const Container = styled.div`
+  background: var(--bg-1, #0b0c14);
+`;
+
 return (
-  <div className="container-xl my-3">
+  <Container>
     <Widget
       src="buildhub.near/widget/components.modals.CreateEvent"
       loading=""
@@ -150,5 +241,5 @@ return (
     />
     <Toolbar />
     <CurrentView />
-  </div>
+  </Container>
 );

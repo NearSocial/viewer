@@ -32,7 +32,7 @@ const EventsContainer = styled.div`
 
 const StyledEvent = styled.div`
   border-radius: 16px;
-  background: var(--bg-2, #23242b);
+  background: #23242b;
   display: flex;
   padding: 24px;
   flex-direction: column;
