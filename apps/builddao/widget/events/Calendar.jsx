@@ -2,6 +2,10 @@ const { Button } = VM.require("buildhub.near/widget/components") || {
   Button: () => <></>,
 };
 
+const { fetchEvents } = VM.require("buildhub.near/widget/lib.events") || {
+  fetchEvents: () => {},
+};
+
 const StyledToolbar = styled.div`
   display: flex;
   align-items: center;
@@ -95,13 +99,7 @@ const Toolbar = () => {
   );
 };
 
-const events = Social.get("*/test/event/*", "final");
-// any post processing needed for events?
-// yeah a little needed to make it parseable for full calendar
-
-if (!events) return <p>No events found</p>;
-
-return <p>{JSON.stringify(events)}</p>;
+const events = fetchEvents("test", "event");
 
 const CurrentView = () => {
   if (selectedView === "month") {
@@ -112,6 +110,7 @@ const CurrentView = () => {
         props={{
           currentDate,
           events,
+          setSelectedView,
         }}
       />
     );

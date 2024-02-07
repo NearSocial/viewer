@@ -39,6 +39,12 @@ const customCSS = `
     }
   }
 
+  .fc .fc-daygrid-event-harness {
+    a {
+      color: var(--text-color, #fff);
+    }
+  }
+
   .fc-day-other {
     .fc-daygrid-day-frame {
       background: var(--bg-1, #0b0c14);
@@ -80,6 +86,11 @@ const code = `
       initialView: 'dayGridMonth',
       headerToolbar: false,
       events: ${JSON.stringify(events)},
+      eventClick: function(info) {
+        info.jsEvent.preventDefault(); // don't let the browser navigate
+        // Post the event details to the parent window
+        window.parent.postMessage(JSON.stringify({ handler: "event-click", data: info.event }), '*');
+      },
     });
     calendar.render();
     calendar.gotoDate(new Date(${currentDate.getTime()}));
