@@ -97,8 +97,9 @@ const Toolbar = () => {
 
 const events = JSON.parse(Social.get("*/test/event/**", "final") || "null");
 // any post processing needed for events?
+// yeah a little needed to make it parseable for full calendar
 
-// return <p>{JSON.stringify(events)}</p>;
+return <p>{JSON.stringify(events)}</p>;
 
 const CurrentView = () => {
   if (selectedView === "month") {

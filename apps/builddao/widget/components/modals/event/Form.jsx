@@ -196,10 +196,12 @@ State.init({
 
 const onSubmit = () => {
   const thingId = UUID.generate(); // we could replace this with a normalized title
+  // you mean just UUID();?
 
   Social.set(
     {
-      test: { // we'll replace this with "every" or the specific app that the event should be visible in
+      test: {
+        // we'll replace this with "every" or the specific app that the event should be visible in
         event: {
           [thingId]: {
             "": JSON.stringify({
@@ -211,11 +213,13 @@ const onSubmit = () => {
                 startTime
               )}`, // we'll want this be available for filtering... we may want to store it outside the JSON
               // or we need an indexing solution
+              // we fetch events and then apply filters after parsing them
               end: `${isoDate(endDate, endTime)}T${isoTime(endDate, endTime)}`,
               extendedProps: {
                 organizers,
                 location,
                 hashtags, // this can be moved to metadata.tags, but must be object with keys, e.g { [hashtag]: "" }
+                // this i'll leave up to you but we need them for filtering
                 cover: state.image,
               },
             }),
@@ -225,7 +229,7 @@ const onSubmit = () => {
               image: state.image,
               backgroundImage: state.image,
               type: "buildhub.near/type/testEvent",
-            }
+            },
           },
         },
       },
