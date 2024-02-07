@@ -134,15 +134,6 @@ const CTA = () => {
       <Card>
         <Logo src={logoLink} />
         <h1>Together, we can build a better future.</h1>
-        <Widget
-          src="/*__@appAccount__*//widget/components.buttons.Connect"
-          props={{
-            joinBtnChildren: "Join Now",
-            showActivity: true,
-            className: "custom-button",
-            href: "/join",
-          }}
-        />
       </Card>
       <Grid src={gridLink} />
       <LeftBlur src={leftBlur} />

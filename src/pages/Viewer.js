@@ -1,6 +1,7 @@
 import { Widget } from "near-social-vm";
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import OnboardingFlow from "../components/OnboardingFlow";
 
 const SESSION_STORAGE_REDIRECT_MAP_KEY = "nearSocialVMredirectMap";
 
@@ -59,16 +60,19 @@ function Viewer({ code, ...props }) {
   );
 
   return (
-    <Widget
-      src={!code && src}
-      code={code} // prioritize code
-      props={{
-        path: src,
-        ...passProps,
-        ...props,
-      }}
-      config={{ redirectMap }}
-    />
+    <>
+      <OnboardingFlow />
+      <Widget
+        src={!code && src}
+        code={code} // prioritize code
+        props={{
+          path: src,
+          ...passProps,
+          ...props
+        }}
+        config={{ redirectMap }}
+      />
+    </>
   );
 }
 

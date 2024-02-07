@@ -120,7 +120,7 @@ export function UserDropdown(props) {
             props={{
               accountId: account.accountId,
               className: "d-inline-block",
-              style: { width: "40px", height: "40px" },
+              style: { width: "40px", height: "40px" }
             }}
           />
           <div className="profile-info">
