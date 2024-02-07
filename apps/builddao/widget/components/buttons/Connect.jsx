@@ -2,7 +2,7 @@ const { joinBtnChildren, connectedChildren, showActivity, className, href } =
   props;
 
 const { Bullet } = VM.require("buildhub.near/widget/components.Bullet") || {
-  Bullet: () => <></>,
+  Bullet: () => <></>
 };
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
 
@@ -18,14 +18,14 @@ const userAccountId = context.accountId;
 
 const data = sdk?.checkIsMemberOrPending({
   accountId: userAccountId,
-  rolesToCheck: ["community", "council"],
+  rolesToCheck: ["community", "council"]
 });
 
 const connectEdge = Social.keys(
   `${userAccountId}/graph/connect/${daoId}`,
   undefined,
   {
-    values_only: true,
+    values_only: true
   }
 );
 
@@ -44,54 +44,44 @@ const handleJoin = () => {
     [userAccountId]: {
       graph: {
         connect: {
-          [daoId]: "",
-        },
+          [daoId]: ""
+        }
       },
       index: {
         graph: JSON.stringify({
           key: "connect",
           value: {
             type: "connect",
-            accountId: daoId,
-          },
-        }),
+            accountId: daoId
+          }
+        })
       },
       notify: JSON.stringify({
         key: daoId,
         value: {
-          type: "connect",
-        },
-      }),
-    },
+          type: "connect"
+        }
+      })
+    }
   };
-
-  Near.call([
-    {
-      contractName: daoId,
-      methodName: "add_proposal",
-      args: {
-        proposal: {
-          description: `add ${accountId} to the ${roleId} group`,
-          kind: {
-            AddMemberToRole: {
-              member_id: accountId,
-              role: roleId,
-            },
-          },
-        },
-      },
-      gas: 219000000000000,
-      deposit: deposit,
-    },
-    {
-      contractName: "social.near",
-      methodName: "set",
-      deposit: Big(JSON.stringify(connectData).length * 16).mul(
-        Big(10).pow(20)
-      ),
-      args: { data: connectData },
-    },
-  ]);
+  const socialDeposit = Big(JSON.stringify(connectData).length * 16).mul(
+    Big(10).pow(20)
+  );
+  sdk.createAddMemberProposal({
+    description: `add ${userAccountId} to the ${roleId} group`,
+    memberId: userAccountId,
+    roleId: roleId,
+    gas: 219000000000000,
+    deposit: deposit,
+    additionalCalls: [
+      {
+        contractName: "social.near",
+        methodName: "set",
+        deposit: socialDeposit.toFixed(),
+        args: { data: connectData, options: { refund_unused_deposit: true } }
+      }
+    ]
+  });
 };
 
 const isConnected = Object.keys(connectEdge || {}).length > 0;
@@ -130,7 +120,7 @@ const Container = styled.div`
 `;
 
 const { href: linkHref } = VM.require("buildhub.near/widget/lib.url") || {
-  href: () => {},
+  href: () => {}
 };
 
 const Component = () => {
@@ -146,8 +136,8 @@ const Component = () => {
             to={linkHref({
               widgetSrc: "buildhub.near/widget/app",
               params: {
-                page: "feed",
-              },
+                page: "feed"
+              }
             })}
           >
             View Activity{" "}
