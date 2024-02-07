@@ -95,9 +95,11 @@ const Toolbar = () => {
   );
 };
 
-const events = JSON.parse(Social.get("*/test/event/**", "final") || "null");
+const events = Social.get("*/test/event/*", "final");
 // any post processing needed for events?
 // yeah a little needed to make it parseable for full calendar
+
+if (!events) return <p>No events found</p>;
 
 return <p>{JSON.stringify(events)}</p>;
 
