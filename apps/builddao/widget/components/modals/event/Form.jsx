@@ -195,39 +195,52 @@ State.init({
 });
 
 const onSubmit = () => {
-  const thingId = UUID.generate();
+  const thingId = UUID.generate(); // we could replace this with a normalized title
 
-  // index and store on social db
-  // need to fix this
   Social.set(
     {
-      thing: {
-        [thingId]: {
-          title,
-          description,
-          url: link,
-          start: `${isoDate(startDate, startTime)}T${isoTime(
-            startDate,
-            startTime
-          )}`,
-          end: `${isoDate(endDate, endTime)}T${isoTime(endDate, endTime)}`,
-          extendedProps: {
-            organizers,
-            location,
-            hashtags,
-            cover: state.image,
+      test: { // we'll replace this with "every" or the specific app that the event should be visible in
+        event: {
+          [thingId]: {
+            "": JSON.stringify({
+              title,
+              description,
+              url: link,
+              start: `${isoDate(startDate, startTime)}T${isoTime(
+                startDate,
+                startTime
+              )}`, // we'll want this be available for filtering... we may want to store it outside the JSON
+              // or we need an indexing solution
+              end: `${isoDate(endDate, endTime)}T${isoTime(endDate, endTime)}`,
+              extendedProps: {
+                organizers,
+                location,
+                hashtags, // this can be moved to metadata.tags, but must be object with keys, e.g { [hashtag]: "" }
+                cover: state.image,
+              },
+            }),
+            metadata: {
+              name: title,
+              description,
+              image: state.image,
+              backgroundImage: state.image,
+              type: "buildhub.near/type/testEvent",
+            }
           },
         },
-        index: {
-          event: JSON.stringify({
-            key: "buildhub.near/type/testEvent",
-            value: {
-              type: "buildhub.near/type/testEvent",
-              id: thingId,
-            },
-          }),
-        },
       },
+      // thing: {
+
+      //   index: {
+      //     event: JSON.stringify({
+      //       key: "buildhub.near/type/testEvent",
+      //       value: {
+      //         type: "buildhub.near/type/testEvent",
+      //         id: thingId,
+      //       },
+      //     }),
+      //   },
+      // },
     },
     {
       onCommit: () => props.toggleModal(),

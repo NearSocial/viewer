@@ -85,22 +85,20 @@ const Toolbar = () => {
         <Button variant="outline" onClick={() => setShowFilterModal(true)}>
           Filter By
         </Button>
-        <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-          Add Event
-        </Button>
+        {context.accountId && (
+          <Button variant="primary" onClick={() => setShowCreateModal(true)}>
+            Add Event
+          </Button>
+        )}
       </div>
     </StyledToolbar>
   );
 };
 
-// const events = [
-//   {
-//     // this object will be "parsed" into an Event Object
-//     title: "The Title", // a property!
-//     start: "2024-02-01", // a property!
-//     end: "2024-02-06", // a property! ** see important note below about 'end' **
-//   },
-// ];
+const events = JSON.parse(Social.get("*/test/event/**", "final") || "null");
+// any post processing needed for events?
+
+// return <p>{JSON.stringify(events)}</p>;
 
 const CurrentView = () => {
   if (selectedView === "month") {
