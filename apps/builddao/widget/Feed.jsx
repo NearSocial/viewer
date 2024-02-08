@@ -1,12 +1,12 @@
 const { Feed } = VM.require("devs.near/widget/Feed") || {
-  Feed: () => <></>
+  Feed: () => <></>,
 };
 const { Post } = VM.require("buildhub.near/widget/components") || {
-  Post: () => <></>
+  Post: () => <></>,
 };
 
 const { Button } = VM.require("buildhub.near/widget/components") || {
-  Button: () => <></>
+  Button: () => <></>,
 };
 
 const LoginContainer = styled.div`
@@ -35,7 +35,7 @@ const toggleProposeModal = () => {
   setShowProposeModal(!showProposeModal);
 };
 const modalToggles = {
-  propose: toggleProposeModal
+  propose: toggleProposeModal,
 };
 
 return (
@@ -48,7 +48,7 @@ return (
           props={{
             showModal: showProposeModal,
             toggleModal: toggleProposeModal,
-            item: item
+            item: item,
           }}
         />
       </>
@@ -56,9 +56,12 @@ return (
     {!context.accountId ? ( // if not logged in
       <LoginContainer>
         <p>Please login in order to post.</p>
-        <Link to={"/join"}>
+        <a
+          href={"https://nearbuilders.org/join"}
+          style={{ textDecoration: "none" }}
+        >
           <Button variant="primary">Login</Button>
-        </Link>
+        </a>
       </LoginContainer>
     ) : (
       <Widget
@@ -73,7 +76,7 @@ return (
           draftKey: feedName,
           template: template,
           requiredHashtags: requiredHashtags,
-          feed: { ...props }
+          feed: { ...props },
         }}
       />
     )}
@@ -83,12 +86,12 @@ return (
         key: it,
         options: {
           limit: 10,
-          order: "desc"
+          order: "desc",
         },
         cacheOptions: {
-          ignoreCache: true
+          ignoreCache: true,
         },
-        required: true
+        required: true,
       }))}
       Item={(p) => (
         <Post
