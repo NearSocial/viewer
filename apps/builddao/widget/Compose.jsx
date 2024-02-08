@@ -23,6 +23,7 @@ const [showAccountAutocomplete, setShowAccountAutocomplete] = useState(false);
 const [mentionsArray, setMentionsArray] = useState([]);
 const [mentionInput, setMentionInput] = useState(null);
 const [handler, setHandler] = useState("update");
+const [showToast, setShowToast] = useState(false);
 
 const [composeKey, setComposeKey] = useState(0);
 const memoizedComposeKey = useMemo(() => composeKey, [composeKey]);
@@ -139,7 +140,9 @@ const postToCustomFeed = ({ feed, text }) => {
     onCommit: () => {
       setPostContent("");
       Storage.privateSet(draftKey, props.template || "");
+      setComposeKey(generateUID());
       setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
+      setShowToast(true);
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
@@ -444,6 +447,7 @@ return (
         <TextareaWrapper
           className="markdown-editor"
           data-value={postContent || ""}
+          key={memoizedComposeKey}
         >
           <Widget
             src={"buildhub.near/widget/components.MarkdownEditorIframe"}
@@ -522,5 +526,25 @@ return (
         {postBtnText ?? "Post"}
       </Button>
     </div>
+    <Widget
+      src="near/widget/DIG.Toast"
+      props={{
+        title: "Post Submitted Successfully",
+        type: "success",
+        open: showToast,
+        onOpenChange: (v) => showToast(v),
+        trigger: <></>,
+        action: (
+          <Button
+            variant="primary"
+            style={{ fontSize: 14 }}
+            onClick={() => showToast(false)}
+          >
+            dismiss
+          </Button>
+        ),
+        providerProps: { duration: 1000 },
+      }}
+    />
   </PostCreator>
 );
