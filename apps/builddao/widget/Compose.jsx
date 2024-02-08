@@ -19,7 +19,6 @@ State.init({
 const [view, setView] = useState("editor");
 const [postContent, setPostContent] = useState("");
 const [hideAdvanced, setHideAdvanced] = useState(true);
-const [labels, setLabels] = useState([]);
 const [showAccountAutocomplete, setShowAccountAutocomplete] = useState(false);
 const [mentionsArray, setMentionsArray] = useState([]);
 const [mentionInput, setMentionInput] = useState(null);
@@ -76,8 +75,8 @@ const extractMentionNotifications = (text, item) =>
       key: accountId,
       value: {
         type: "mention",
-        item
-      }
+        item,
+      },
     }));
 
 function checkAndAppendHashtag(input, target) {
@@ -103,31 +102,17 @@ const postToCustomFeed = ({ feed, text }) => {
   });
 
   const data = {
-    // [feed.name]: {
-    //   [postId]: {
-    //     "": JSON.stringify({
-    //       type: "md",
-    //       text,
-    //       labels,
-    //     }),
-    //     metadata: {
-    //       type: feed.name,
-    //       tags: tagsFromLabels(labels),
-    //     },
-    //   },
-    // },
     post: {
       main: JSON.stringify(content),
     },
     index: {
-      post: JSON.stringify({ key: "main", value: { type: "md" } })
-      // every: JSON.stringify({ key: feed.name, value: { type: "md" } }),
-    }
+      post: JSON.stringify({ key: "main", value: { type: "md" } }),
+    },
   };
 
   const item = {
     type: "social",
-    path: `${context.accountId}/post/main`
+    path: `${context.accountId}/post/main`,
   };
 
   const notifications = extractMentionNotifications(text, item);
@@ -144,7 +129,7 @@ const postToCustomFeed = ({ feed, text }) => {
     data.index.hashtag = JSON.stringify(
       hashtags.map((hashtag) => ({
         key: hashtag,
-        value: item
+        value: item,
       }))
     );
   }
@@ -154,12 +139,11 @@ const postToCustomFeed = ({ feed, text }) => {
     onCommit: () => {
       setPostContent("");
       Storage.privateSet(draftKey, props.template || "");
-      // setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
-      setComposeKey(generateUID());
+      setHandler("autocompleteSelected"); // this is a hack to force the iframe to update
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
-    }
+    },
   });
 };
 
@@ -448,16 +432,6 @@ const MarkdownPreview = styled.div`
   }
 `;
 
-// To handle ifram refresh in order to trigger initialText change
-const [postUUID, setPostUUID] = useState(generateUID());
-const memoizedPostUUID = useMemo(() => postUUID, [postUUID]);
-
-useEffect(() => {
-  if (postContent === "") {
-    setPostUUID(generateUID());
-  }
-}, [postContent]);
-
 const avatarComponent = useMemo(() => {
   return <User accountId={context.accountId} />;
 }, [context.accountId]);
@@ -470,7 +444,6 @@ return (
         <TextareaWrapper
           className="markdown-editor"
           data-value={postContent || ""}
-          key={memoizedComposeKey}
         >
           <Widget
             src={"buildhub.near/widget/components.MarkdownEditorIframe"}
@@ -479,10 +452,8 @@ return (
               data: { handler: handler, content: postContent },
               embedCss: props.customCSS || MarkdownEditor,
               onChange: (v) => {
-                setPostContent(v);
-                textareaInputHandler(content);
-                Storage.privateSet(draftKey, v || "");
-              }
+                textareaInputHandler(v);
+              },
             }}
           />
           {autocompleteEnabled && showAccountAutocomplete && (
@@ -545,11 +516,10 @@ return (
           postToCustomFeed({
             feed: props.feed,
             text: postContent,
-            labels
           })
         }
       >
-        {postBtnText ?? "Post" + props.feed.name}
+        {postBtnText ?? "Post"}
       </Button>
     </div>
   </PostCreator>
