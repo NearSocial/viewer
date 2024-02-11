@@ -98,18 +98,6 @@ return (
         aria-labelledby="pills-posts-tab"
       >
         <div className="mx-auto">
-          {description && (
-            <Post
-              key="desc"
-              accountId={accountId}
-              pinned={true}
-              blockHeight="now"
-              content={{
-                text: description,
-              }}
-              noBorder={true}
-            />
-          )}
           <Widget
             key="feed"
             loading=""

@@ -57,7 +57,7 @@ const MobileNavigation = styled.div`
 `;
 
 const { href } = VM.require("buildhub.near/widget/lib.url") || {
-  href: () => {},
+  href: () => {}
 };
 
 const NavLink = ({ to, children }) => (

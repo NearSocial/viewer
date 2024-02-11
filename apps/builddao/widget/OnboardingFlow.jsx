@@ -3,7 +3,7 @@ const { Modal, Button, ProgressState } = VM.require(
 ) || {
   Modal: () => <></>,
   Button: () => <></>,
-  ProgressState: () => <></>
+  ProgressState: () => <></>,
 };
 
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK");
@@ -19,7 +19,7 @@ const sdk = DaoSDK(daoID);
 const groupMembers = sdk.getMembersByGroupId({ groupId: "community" }) ?? [];
 
 const StorageKey = {
-  userCompletedOnboarding: "userCompletedOnboarding"
+  userCompletedOnboarding: "userCompletedOnboarding",
 };
 
 function onFollow(accountId) {
@@ -30,20 +30,20 @@ function onFollow(accountId) {
         key: "follow",
         value: {
           type,
-          accountId: accountId
-        }
+          accountId: accountId,
+        },
       }),
       notify: JSON.stringify({
         key: accountId,
         value: {
-          type
-        }
-      })
-    }
+          type,
+        },
+      }),
+    },
   };
 
   Social.set(data, {
-    force: true
+    force: true,
   });
 }
 
@@ -60,7 +60,7 @@ function OnboardingFlow() {
     `${context.accountId}/graph/follow/${daoID}`,
     undefined,
     {
-      values_only: true
+      values_only: true,
     }
   );
   const userAlreadyFollowDao =
@@ -125,7 +125,7 @@ function OnboardingFlow() {
         `${context.accountId}/graph/follow/${account}`,
         undefined,
         {
-          values_only: true
+          values_only: true,
         }
       );
       if (accountfollowEdge && Object.keys(accountfollowEdge).length > 0) {
@@ -213,7 +213,7 @@ function OnboardingFlow() {
                 props={{
                   template: PostTemplate,
                   requiredHashtags: requiredHashtags,
-                  postBtnText: "Create Your First Post"
+                  postBtnText: "Create Your First Post",
                 }}
               />
             </div>
