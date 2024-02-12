@@ -41,9 +41,11 @@ import Flags from "./pages/Flags";
 import JoinPage from "./pages/JoinPage";
 import Viewer from "./pages/Viewer";
 import { KEYPOM_OPTIONS } from "./utils/keypom-options";
+import { TrialAccountGenerator } from "./components/TrialAccountGenerator";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos/overview";
+const currentGateway = "nearbuilders";
 
 function App() {
   const [connected, setConnected] = useState(false);
@@ -114,7 +116,12 @@ function App() {
                   : "about:blank";
             }
             return <Link {...props} />;
-          }
+          },
+          TrialAccountGenerator: (props) => {
+            return (
+              <TrialAccountGenerator {...props}/>
+            );
+            }
         },
         config: {
           defaultFinality: undefined
@@ -190,7 +197,8 @@ function App() {
     logOut,
     requestSignIn,
     widgets: Widgets,
-    documentationHref
+    documentationHref,
+    currentGateway
   };
 
   return (
