@@ -1,0 +1,209 @@
+@import "./assets/styles/animate.scss";
+@import "./assets/styles/colors.scss";
+
+.wrapper {
+  position: relative;
+  display: flex;
+  width: 300px;
+  height: 44px;
+
+  align-items: center;
+}
+
+.activeMutation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  color: $pure-white;
+  padding: 10px;
+  height: 100%;
+  border-radius: 10px;
+  border: 1px solid $border;
+
+  background: $dark-bg;
+}
+
+.counterMutations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  padding: 0 4px;
+  height: 24px;
+  border-radius: 40px;
+  background: $green;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+}
+.starIcon {
+  cursor: pointer;
+  display: flex;
+
+  width: 16px;
+  height: 16px;
+  svg {
+    transition: all 0.3s;
+  }
+  &:hover {
+    svg {
+      transform: scale(1.5);
+      transition: all 0.3s;
+    }
+  }
+}
+.editIcon {
+  cursor: pointer;
+  display: flex;
+
+  width: 24px;
+  height: 24px;
+  svg {
+    transition: all 0.3s;
+  }
+  &:hover {
+    svg {
+      transform: scale(1.5);
+      transition: all 0.3s;
+    }
+  }
+}
+.openList {
+  cursor: pointer;
+
+  display: flex;
+
+  width: 24px;
+  height: 24px;
+  padding: 9px 6px;
+
+  animation-name: rotate-is-close;
+  animation-duration: 0.2s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  svg {
+    transition: all 0.3s;
+  }
+  &:hover {
+    svg {
+      transform: scale(1.5);
+      transition: all 0.3s;
+    }
+  }
+}
+
+.isOpen {
+  animation-name: rotate-is-open;
+  animation-duration: 0.2s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+
+.mutationList {
+  position: absolute;
+  z-index: 3;
+  top: 50px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  background: $pure-white;
+  max-height: 400px;
+  min-height: 40px;
+  height: auto;
+  border-radius: 6px;
+  animation-name: list-visibleText;
+  animation-duration: 0.2s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  box-shadow: 0px 13px 28px 0px rgba(0, 0, 0, 0.1),
+    0px 51px 51px 0px rgba(0, 0, 0, 0.09),
+    0px 115px 69px 0px rgba(0, 0, 0, 0.05),
+    0px 204px 81px 0px rgba(0, 0, 0, 0.01), 0px 318px 89px 0px rgba(0, 0, 0, 0);
+
+  padding: 10px 4px 0px 10px;
+}
+.scroll {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    cursor: pointer;
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    margin-top: 15px;
+    background: rgb(244 244 244);
+    background: linear-gradient(
+      90deg,
+      rgb(244 244 244 / 0%) 10%,
+      rgb(227 227 227 / 100%) 50%,
+      rgb(244 244 244 / 0%) 90%
+    );
+  }
+
+  &::-webkit-scrollbar-thumb {
+    width: 4px;
+    height: 2px;
+
+    background: $blue;
+    border-radius: 2px;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 9%), 0 2px 2px rgb(38 117 209 / 4%);
+  }
+}
+
+.backBlock {
+  display: flex;
+  align-items: center;
+  width: 134px;
+  justify-content: space-between;
+
+  margin: 0 auto;
+  cursor: pointer;
+  padding: 5px 10px;
+  &:hover {
+    opacity: 0.7;
+  }
+}
+.backText {
+  color: $blue;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 149%;
+}
+
+.titleMutation {
+  display: inline-block;
+  color: $pure-white;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 149%;
+
+  background: inherit;
+  min-width: 190px;
+  max-width: 218px;
+}
+
+.gradient {
+  display: block;
+  width: 250px;
+  height: 45px;
+  position: absolute;
+  bottom: 0px;
+  z-index: 100;
+  left: 0;
+  background: transparent;
+  background-image: linear-gradient(to top, white 5%, transparent 100%);
+}
+.noMutations{
+  
+}
+

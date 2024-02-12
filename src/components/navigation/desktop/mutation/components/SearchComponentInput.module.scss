@@ -1,0 +1,169 @@
+@import "../assets/styles/animate.scss";
+@import "../assets/styles/colors.scss";
+
+.pair {
+  display: flex;
+  height: 50px;
+  padding: 10px;
+
+  justify-content: center;
+  align-items: center;
+  border: 1px solid $input-border;
+  background: $pure-white;
+  border-radius: 4px;
+  position: relative;
+}
+
+.pairInput {
+  display: flex;
+  height: 100%;
+  border: none;
+  background: $pure-white;
+  width: 100%;
+  outline: none;
+}
+
+.close {
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  svg {
+    transition: all 0.3s;
+    width: 16px;
+    height: 16px;
+  }
+  &:hover {
+    svg {
+      transform: scale(1.5);
+      transition: all 0.3s;
+    }
+  }
+}
+
+.openSecondPair {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 253px;
+  border-radius: 6px;
+  background: $pure-white;
+  box-shadow: 0px 9px 20px 0px rgba(0, 0, 0, 0.05),
+    0px 36px 36px 0px rgba(0, 0, 0, 0.04), 0px 80px 48px 0px rgba(0, 0, 0, 0.03),
+    0px 142px 57px 0px rgba(0, 0, 0, 0.01), 0px 222px 62px 0px rgba(0, 0, 0, 0);
+  padding: 10px 0;
+  z-index: 3;
+  height: auto;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.openSecondPair::-webkit-scrollbar {
+  width: 0;
+}
+
+.openSecondPair::-webkit-scrollbar-thumb {
+  width: 0;
+}
+
+.openSecondPair::-webkit-scrollbar-track {
+  width: 0;
+}
+.openSecondPair::-webkit-scrollbar {
+  cursor: pointer;
+  width: 4px;
+}
+
+.openSecondPair::-webkit-scrollbar-track {
+  margin-top: 15px;
+  background: rgb(244 244 244);
+  background: linear-gradient(
+    90deg,
+    rgb(244 244 244 / 0%) 10%,
+    rgb(227 227 227 / 100%) 50%,
+    rgb(244 244 244 / 0%) 90%
+  );
+}
+
+.openSecondPair::-webkit-scrollbar-thumb {
+  width: 4px;
+  height: 2px;
+
+  background: $blue;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 9%), 0 2px 2px rgb(38 117 209 / 4%);
+}
+
+.pairItem {
+  display: flex;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: $edit-bg;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 4px;
+  border: 1px solid $input-border;
+}
+
+.pairItemBg {
+  background: $pure-white;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    background: $edit-bg-hover;
+  }
+}
+
+.blockLeft {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+}
+
+.blockRight {
+  width: calc(100% - 30px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.itemTitle {
+  width: 100%;
+  color: $content-black;
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.itemSubtitle {
+  width: 100%;
+  color: $content-black;
+  overflow: hidden;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.pairAdditional {
+  position: relative;
+  margin-top: 10px;
+  &::before {
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M15 10L20 15L15 20' stroke='%23C1C6CE' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M4 4V11C4 12.0609 4.42143 13.0783 5.17157 13.8284C5.92172 14.5786 6.93913 15 8 15H20' stroke='%23C1C6CE' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 13px;
+    left: -28px;
+    display: block;
+  }
+}

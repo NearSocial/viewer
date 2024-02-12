@@ -1,0 +1,29 @@
+@import "../assets/styles/animate.scss";
+@import "../assets/styles/colors.scss";
+
+.itemTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 41px;
+  color: $content-black;
+
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 400;
+  line-height: 149%;
+  &:hover {
+    border-radius: 4px;
+    background: $edit-bg-hover;
+    color: blue;
+  }
+}
+.disabled {
+  cursor: default;
+  &:hover {
+    border-radius: 4px;
+    background: initial;
+    color: initial;
+  }
+}
