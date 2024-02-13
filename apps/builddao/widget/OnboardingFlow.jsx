@@ -250,7 +250,7 @@ function OnboardingFlow() {
               width={120}
             />
           </div>
-          <div style={{ width: "500px" }}>
+          <div style={{width:"100%", maxWidth: "500px" }}>
             <StepsComponent />
           </div>
           <Button
