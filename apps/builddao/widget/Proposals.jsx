@@ -1,5 +1,5 @@
 const { Button } = VM.require("buildhub.near/widget/components.Button") || {
-  Button: <></>,
+  Button: <></>
 };
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
 
@@ -14,25 +14,34 @@ const sdk = DaoSDK(daoId);
 const [currentPage, setCurrentPage] = useState(0);
 const accountId = context.accountId;
 
-const [showProposalModal, setShowModal] = useState(false);
+const [showCreateProposalModal, setShowCreateProposalModal] = useState(false);
+const [showFiltersModal, setFiltersModal] = useState(false);
+
+const [selectedTypes, setSelectedTypes] = useState([]);
+const [selectedStatus, setSelectedStatus] = useState([]);
+const [proposals, setProposals] = useState([]);
+const [filteredProposals, setFilteredProposals] = useState([]);
+const [filteredLength, setFilteredLength] = useState(null);
+
 const lastProposalId = sdk.getLastProposalId();
 const reversedProposals = proposalId
   ? [
       sdk.getProposalById({
-        proposalId,
-      }),
+        proposalId
+      })
     ] || []
   : sdk.getProposals({
       offset:
         currentPage === 0
-          ? lastProposalId > 10
+          ? lastProposalId > resPerPage
             ? lastProposalId - resPerPage
-            : lastProposalId ?? 10
+            : 0
           : lastProposalId - currentPage * resPerPage,
-      limit: resPerPage,
+      limit: resPerPage
     }) || [];
 
-const proposals = reversedProposals.reverse();
+setProposals(reversedProposals.reverse());
+
 const PaginationThemeContainer = props.PaginationThemeContainer;
 
 const ThemeContainer =
@@ -82,15 +91,15 @@ const handleVote = ({ action, proposalId, proposer }) => {
               message: `${accountId} voted to ${customAction} your proposal for ${daoId} (Proposal ID: ${proposalId})`,
               params: {
                 daoId: daoId,
-                proposalId: proposalId,
+                proposalId: proposalId
               },
               type: "custom",
-              widget: "buildhub.near/widget/Proposals",
-            },
-          },
-        ]),
-      },
-    },
+              widget: "buildhub.near/widget/Proposals"
+            }
+          }
+        ])
+      }
+    }
   };
 
   sdk.actProposal({
@@ -104,9 +113,9 @@ const handleVote = ({ action, proposalId, proposer }) => {
         args: { data: notification },
         deposit: Big(JSON.stringify(notification).length * 16)
           .mul(Big(10).pow(20))
-          .toString(),
-      },
-    ],
+          .toString()
+      }
+    ]
   });
 };
 
@@ -129,11 +138,46 @@ if (Array.isArray(policy.roles)) {
 
 const proposalPeriod = policy.proposal_period;
 
+useEffect(() => {
+  if (selectedStatus.length > 0 || selectedTypes.length > 0) {
+    const offset =
+      currentPage === 0
+        ? lastProposalId > resPerPage
+          ? lastProposalId - resPerPage
+          : lastProposalId ?? resPerPage
+        : filteredProposals[0].id - currentPage * resPerPage;
+
+    sdk
+      .getFilteredProposalsByStatusAndkind({
+        resPerPage,
+        reverse: true,
+        filterStatusArray: selectedStatus,
+        filterKindArray: selectedTypes,
+        offset: offset
+      })
+      .then(({ filteredProposals, totalLength }) => {
+        setFilteredProposals(filteredProposals);
+        setFilteredLength(totalLength);
+      });
+  } else if (filteredProposals.length) {
+    setFilteredProposals([]);
+    setFilteredLength(null);
+  }
+}, [selectedStatus, selectedTypes, currentPage]);
+
 const proposalsComponent = useMemo(() => {
+  const proposalsToShow =
+    selectedStatus.length > 0 || selectedTypes.length > 0
+      ? Array.isArray(filteredProposals)
+        ? filteredProposals
+        : []
+      : Array.isArray(proposals)
+      ? proposals
+      : [];
   return (
     <div className="d-flex flex-column gap-2">
-      {Array.isArray(proposals) ? (
-        proposals.map((item) => {
+      {proposalsToShow.length > 0 ? (
+        proposalsToShow.map((item) => {
           const kindName =
             typeof item.kind === "string"
               ? item.kind
@@ -145,30 +189,30 @@ const proposalsComponent = useMemo(() => {
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteApprove,
+              actionType: actions.VoteApprove
             }),
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteReject,
+              actionType: actions.VoteReject
             }),
 
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteRemove,
-            }),
+              actionType: actions.VoteRemove
+            })
           ];
 
           const { thresholdVoteCount } =
             sdk.getVotersAndThresholdForProposalKind({
-              kindName,
+              kindName
             });
           const totalVotes = sdk.calculateVoteCountByType({
-            votes: item.votes,
+            votes: item.votes
           });
           let expirationTime = sdk.getProposalExpirationTime({
-            submissionTime: item.submission_time,
+            submissionTime: item.submission_time
           });
 
           return (
@@ -182,24 +226,24 @@ const proposalsComponent = useMemo(() => {
                   totalVotes: {
                     ...totalVotes,
                     yes: totalVotes.approve,
-                    no: totalVotes.reject,
+                    no: totalVotes.reject
                   },
-                  expirationTime,
+                  expirationTime
                 },
                 daoId: daoId,
                 comments: comments,
                 isAllowedToVote,
-                handleVote,
+                handleVote
               }}
             />
           );
         })
       ) : (
-        <></>
+        <>No proposals found.</>
       )}
     </div>
   );
-}, [proposals]);
+}, [proposals, filteredProposals]);
 
 return (
   <ThemeContainer>
@@ -207,19 +251,39 @@ return (
       <Widget
         src="buildhub.near/widget/components.modals.CreateProposal"
         props={{
-          showModal: showProposalModal,
-          toggleModal: () => setShowModal(!showProposalModal),
+          showModal: showCreateProposalModal,
+          toggleModal: () =>
+            setShowCreateProposalModal(!showCreateProposalModal)
+        }}
+      />
+      <Widget
+        src="buildhub.near/widget/components.modals.ProposalsFilters"
+        props={{
+          parentSelectedTypes: selectedTypes,
+          parentSelectedStatus: selectedStatus,
+          applyFilters: ({ selectedStatus, selectedTypes }) => {
+            setCurrentPage(0);
+            setSelectedStatus(selectedStatus);
+            setSelectedTypes(selectedTypes);
+          },
+          showModal: showFiltersModal,
+          toggleModal: () => setFiltersModal(!showFiltersModal)
         }}
       />
       <div className="d-flex justify-content-between">
         <h3 className="text-white">Proposals</h3>
-        <Button
-          variant="primary"
-          disabled={!context.accountId}
-          onClick={() => setShowModal(true)}
-        >
-          Create Proposal
-        </Button>
+        <div className="d-flex gap-3">
+          <Button variant="outline" onClick={() => setFiltersModal(true)}>
+            Filters
+          </Button>
+          <Button
+            variant="primary"
+            disabled={!context.accountId}
+            onClick={() => setShowCreateProposalModal(true)}
+          >
+            Create Proposal
+          </Button>
+        </div>
       </div>
       <div className="d-flex flex-column gap-4">{proposalsComponent}</div>
       {!proposalId && (
@@ -228,10 +292,13 @@ return (
             src={"buildhub.near/widget/components.Pagination"}
             props={{
               maxVisiblePages: 5,
-              totalPages: Math.round(lastProposalId / resPerPage),
+              totalPages:
+                selectedStatus.length > 0 || selectedTypes.length > 0
+                  ? Math.round(filteredLength / resPerPage)
+                  : Math.round(lastProposalId / resPerPage),
               onPageClick: (v) => setCurrentPage(v),
               selectedPage: currentPage,
-              ThemeContainer: PaginationThemeContainer,
+              ThemeContainer: PaginationThemeContainer
             }}
           />
         </div>
