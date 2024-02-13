@@ -188,6 +188,14 @@ return {
         requiredHashtags: ["build", "feedback"],
       },
     },
+    events: {
+      path: "buildhub.near/widget/events.Calendar",
+      blockHeight: "final",
+      init: {
+        name: "Events",
+        icon: "bi-calendar",
+      },
+    },
     bookmarks: {
       path: "buildhub.near/widget/OrderedGraphFeed",
       blockHeight: "final",
