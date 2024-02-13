@@ -25,7 +25,7 @@ const uploadFile = (files) => {
 return (
   <>
     {img ? (
-      <img src={`https://ipfs.near.social/ipfs/${img}`} />
+      <img src={`https://ipfs.near.social/ipfs/${img}`} alt="Image Preview" />
     ) : (
       <Widget
         src="mob.near/widget/Image"

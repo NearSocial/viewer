@@ -201,7 +201,7 @@ const GridItem = ({ tag, title, description, image, isFirst }) => {
   return (
     <Card>
       <div className="image">
-        <img src={image} />
+        <img src={image} alt="Item Image" />
       </div>
       <div className="content">
         <span className="tag">{tag}</span>

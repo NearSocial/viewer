@@ -109,6 +109,7 @@ const AppHeader = ({ page, routes, ...props }) => (
           <img
             style={{ width: 85, objectFit: "cover" }}
             src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya"
+            alt="Build DAO Logo"
           />
         </Link>
         <ButtonGroup style={{ flex: 1 }}>
@@ -145,6 +146,7 @@ const AppHeader = ({ page, routes, ...props }) => (
           <img
             style={{ width: 85, objectFit: "cover" }}
             src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya"
+            alt="Build DAO Logo"
           />
         </Link>
         <Button
