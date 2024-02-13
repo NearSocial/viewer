@@ -15,7 +15,7 @@ const Root = styled.div`
   --bg-1: #0b0c14;
   --bg-1-hover: #17181c;
   --bg-1-hover-transparent: rgba(23, 24, 28, 0);
-  --bg-2: ##23242b;
+  --bg-2: #23242b;
   --label-color: #fff;
   --font-color: #fff;
   --font-muted-color: #cdd0d5;
