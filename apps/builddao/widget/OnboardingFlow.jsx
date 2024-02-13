@@ -147,7 +147,7 @@ function OnboardingFlow() {
             <h3>Welcome!</h3>
             <div>
               <p className="text-muted">First off, follow our DAO</p>
-              <Container className="d-flex justify-content-between align-items-center py-3 px-4">
+              <Container className="d-flex justify-content-center align-items-center gap-2 flex-wrap py-3 px-4">
                 <Widget
                   src="mob.near/widget/Profile.ShortInlineBlock"
                   props={{ accountId: daoID }}
@@ -248,6 +248,7 @@ function OnboardingFlow() {
             <img
               src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya"
               width={120}
+              alt="Build DAO Logo"
             />
           </div>
           <div style={{ width: "100%", maxWidth: "500px" }}>
