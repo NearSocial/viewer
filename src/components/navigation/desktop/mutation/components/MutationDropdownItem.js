@@ -1,28 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { visibleText } from "../helpers/visibleText";
 import { Trash } from "../assets/icons/Trash";
 import styles from "./MutationDropdownItem.module.scss";
-import { Edit } from "../assets/icons/Edit";
+
 import cn from "classnames";
-import { StarFilled } from "../assets/icons/StarFilled";
-import { Star } from "../assets/icons/Star";
+
 import { Widget } from "near-social-vm";
 
 import LNC_LOGO from "../assets/logos/learn-near-club.jpg";
 import NDC_LOGO from "../assets/logos/ndc.jpg";
 import NDH_LOGO from "../assets/logos/near-dev-hub.png";
-// import NF_LOGO from "../assets/logos/near-foundation.jpg";
+
 import NEAR_LOGO from "../assets/logos/near.png";
 import DAPPLETS_LOGO from "../assets/logos/dapplets.png";
 
 export function MutationDropdownItem({
   mutation,
   isSelected,
-  isStarred,
   onRemoveClick,
   onMutationClick,
-  onMutationEditClick,
-  onStarClick,
 }) {
   return (
     <div
@@ -30,10 +26,6 @@ export function MutationDropdownItem({
         [styles.itemMutationBg]: isSelected,
       })}
     >
-      {/* <div onClick={onStarClick} className={styles.starIcon}>
-        {isStarred ? <StarFilled /> : <Star />}
-      </div> */}
-
       <div>
         <MutationIcon authorId={mutation.authorId} />
       </div>
@@ -43,9 +35,7 @@ export function MutationDropdownItem({
           {mutation.isLocal ? (
             <div className={cn(styles.label)}>Local</div>
           ) : null}
-          {/* {mutation.isEdited ? (
-            <div className={cn(styles.label)}>Edited</div>
-          ) : null} */}
+
           <span className={cn(styles.titleMutation)}>
             {visibleText(mutation.mutationId)}
           </span>
@@ -57,12 +47,6 @@ export function MutationDropdownItem({
         </span>
       </div>
 
-      {/* {isSelected ? (
-        <span onClick={onMutationEditClick} className={styles.editIcon}>
-          <Edit />
-        </span>
-      ) : null} */}
-
       {!isSelected && mutation.isLocal ? (
         <span className={styles.deleteUsersContainer} onClick={onRemoveClick}>
           <Trash />
@@ -72,7 +56,7 @@ export function MutationDropdownItem({
   );
 }
 
-const MutationIcon = ({ authorId, mutationId }) => {
+const MutationIcon = ({ authorId }) => {
   if (authorId === "dapplets.near") {
     return (
       <img

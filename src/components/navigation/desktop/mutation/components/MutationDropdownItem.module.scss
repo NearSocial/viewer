@@ -76,15 +76,13 @@
   cursor: pointer;
   &:hover {
     background: $edit-bg-hover;
-    // background: rgba(24, 121, 206, 0.08);
+
     .titleMutation {
       opacity: 1;
     }
   }
 
-  // &:active {
-  //   background: rgba(24, 121, 206, 0.08);
-  // }
+  
 }
 .itemMutation:last-child {
   margin-bottom: 10px;

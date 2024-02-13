@@ -7,7 +7,6 @@ const EXCLUDED_MUTATION_IDS = [
   "dapplets.near/community",
   "alsakhaev.near/nft-everywhere",
   "alsakhaev.near/red-mutation",
-  // "alsakhaev.near/red-buttons",
   "dapplets.near/CatsAndDislike",
   "dapplets.near/CatsInsteadOfPosts",
   "dapplets.near/CatsAreEverywhere",

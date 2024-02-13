@@ -1,32 +1,19 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import cn from "classnames";
 import styles from "./MutationDropdown.module.scss";
 import { Arrow } from "./assets/icons/Arrow";
 import { Back } from "./assets/icons/Back";
 import { Edit } from "./assets/icons/Edit";
-import { Star } from "./assets/icons/Star";
-
 import { visibleText } from "./helpers/visibleText";
 import { MutationDropdownItem } from "./components/MutationDropdownItem";
 import { useMutation } from "../../../../contexts/MutationContext";
-import { StarFilled } from "./assets/icons/StarFilled";
 
 export function MutationDropdown() {
-  const {
-    mutations,
-    selectMutation,
-    selectedMutation,
-    defaultMutationId,
-    selectDefaultMutation,
-    deleteLocalMutation,
-  } = useMutation();
+  const { mutations, selectMutation, selectedMutation, deleteLocalMutation } =
+    useMutation();
 
   const [isOpen, setOpen] = useState(false);
-  const [isEdit, setEdit] = useState(false);
-
-  const handleDropdownClose = () => {
-    setOpen(false);
-  };
+  const [, setEdit] = useState(false);
 
   const handleDropdownToggle = () => {
     setOpen(!isOpen);
@@ -36,10 +23,6 @@ export function MutationDropdown() {
   const handleEditMutation = () => {
     setOpen(false);
     setEdit(true);
-  };
-
-  const handleStarClick = ({ id }) => {
-    selectDefaultMutation(defaultMutationId == id ? null : id);
   };
 
   const handleMutationClick = (mutation) => {
@@ -58,23 +41,9 @@ export function MutationDropdown() {
 
   return (
     <>
-      <div
-        className={cn(styles.wrapper)}
-        // onBlur={handleDropdownClose}
-        // tabIndex={0}
-      >
+      <div className={cn(styles.wrapper)}>
         {selectedMutation ? (
           <div className={styles.activeMutation}>
-            {/* <div
-              onClick={() => handleStarClick(selectedMutation)}
-              className={styles.starIcon}
-            >
-              {defaultMutationId === selectedMutation?.id ? (
-                <StarFilled />
-              ) : (
-                <Star />
-              )}
-            </div> */}
             <span className={cn(styles.titleMutation)}>
               {visibleText(selectedMutation.mutationId)}
             </span>
@@ -96,9 +65,7 @@ export function MutationDropdown() {
             <div className={cn(styles.counterMutations)}>
               +{mutations.length}
             </div>
-            {/* <div onClick={handleEditMutation} className={cn(styles.editIcon)}>
-              <Edit />
-            </div> */}
+
             <div
               className={cn(styles.openList, { [styles.isOpen]: isOpen })}
               onClick={handleDropdownToggle}
@@ -123,11 +90,8 @@ export function MutationDropdown() {
                   key={mutation.id}
                   mutation={mutation}
                   isSelected={selectedMutation?.id === mutation.id}
-                  isStarred={defaultMutationId === mutation.id}
                   onRemoveClick={() => handleRemoveMutation(mutation)}
                   onMutationClick={() => handleMutationClick(mutation)}
-                  onMutationEditClick={handleEditMutation}
-                  onStarClick={() => handleStarClick(mutation)}
                 />
               ))}
               {!mutations.length ? (
@@ -136,8 +100,6 @@ export function MutationDropdown() {
             </div>
           </div>
         )}
-
-        {/* {isOpen ? <div className={styles.gradient}></div> : null} */}
       </div>
     </>
   );
