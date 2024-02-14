@@ -37,41 +37,13 @@ import { Engine, DappletOverlay } from "mutable-web-engine";
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
 
-const selectorPromise = setupWalletSelector({
-  network: NetworkId,
-  modules: [
-    setupNearWallet(),
-    setupMyNearWallet(),
-    setupSender(),
-    setupHereWallet(),
-    setupMeteorWallet(),
-    setupNeth({
-      gas: "300000000000000",
-      bundle: false,
-    }),
-    setupNightly(),
-  ],
-});
-
-async function initializeEngine() {
-  const selector = await selectorPromise;
-
-  const engine = new Engine({
-    networkId: NetworkId,
-    selector: selector,
-  });
-
-  await engine.start();
-}
-
-initializeEngine();
-
 function App(props) {
   const [connected, setConnected] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [signedAccountId, setSignedAccountId] = useState(null);
   const [availableStorage, setAvailableStorage] = useState(null);
   const [walletModal, setWalletModal] = useState(null);
+  const [mutationEngine, setMutationEngine] = useState(null);
   const [widgetSrc, setWidgetSrc] = useState(null);
 
   const ethersProviderContext = useEthersProviderContext();
@@ -86,7 +58,21 @@ function App(props) {
     initNear &&
       initNear({
         networkId: NetworkId,
-        selector: selectorPromise,
+        selector: setupWalletSelector({
+          network: NetworkId,
+          modules: [
+            setupNearWallet(),
+            setupMyNearWallet(),
+            setupSender(),
+            setupHereWallet(),
+            setupMeteorWallet(),
+            setupNeth({
+              gas: "300000000000000",
+              bundle: false,
+            }),
+            setupNightly(),
+          ],
+        }),
         customElements: {
           Link: (props) => {
             if (!props.to && props.href) {
@@ -123,6 +109,20 @@ function App(props) {
       setWalletModal(
         setupModal(selector, { contractId: near.config.contractName })
       );
+    });
+  }, [near]);
+
+  useEffect(() => {
+    if (!near) {
+      return;
+    }
+    near.selector.then((selector) => {
+      const engine = new Engine({
+        networkId: NetworkId,
+        selector: selector,
+      });
+
+      engine.start().then(() => setMutationEngine(engine));
     });
   }, [near]);
 
@@ -184,6 +184,7 @@ function App(props) {
     requestSignIn,
     widgets: Widgets,
     documentationHref,
+    mutationEngine,
   };
 
   return (

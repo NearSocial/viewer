@@ -1,42 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import styles from "./MutationDropdown.module.scss";
 import { Arrow } from "./assets/icons/Arrow";
 import { Back } from "./assets/icons/Back";
-import { Edit } from "./assets/icons/Edit";
 import { visibleText } from "./helpers/visibleText";
 import { MutationDropdownItem } from "./components/MutationDropdownItem";
-import { useMutation } from "../../../../contexts/MutationContext";
 
-export function MutationDropdown() {
-  const { mutations, selectMutation, selectedMutation, deleteLocalMutation } =
-    useMutation();
+export function MutationDropdown({ engine }) {
+  const [mutations, setMutations] = useState([]);
+  const [selectedMutation, setSelectedMutation] = useState(null);
+
+  useEffect(() => {
+    const init = async () => {
+      const mutations = await engine.getMutations();
+      setMutations(mutations);
+
+      const mutation = await engine.getCurrentMutation();
+      setSelectedMutation(mutation);
+    };
+    init();
+  }, [engine]);
 
   const [isOpen, setOpen] = useState(false);
-  const [, setEdit] = useState(false);
 
   const handleDropdownToggle = () => {
     setOpen(!isOpen);
-    setEdit(false);
   };
-
-  const handleEditMutation = () => {
-    setOpen(false);
-    setEdit(true);
-  };
-
-  const handleMutationClick = (mutation) => {
-    selectMutation(mutation.id);
-    setOpen(false);
+  
+  const handleMutationClick = async (mutation) => {
+    setSelectedMutation(mutation);
+    await engine.switchMutation(mutation.id);
   };
 
   const handleResetMutation = () => {
-    selectMutation(null);
-    setOpen(false);
-  };
-
-  const handleRemoveMutation = (mutation) => {
-    deleteLocalMutation(mutation.id);
+    setSelectedMutation(null);
+    engine.stop();
   };
 
   return (
@@ -45,11 +43,8 @@ export function MutationDropdown() {
         {selectedMutation ? (
           <div className={styles.activeMutation}>
             <span className={cn(styles.titleMutation)}>
-              {visibleText(selectedMutation.mutationId)}
+              {visibleText(selectedMutation.id.split('/')[2])}
             </span>
-            <div onClick={handleEditMutation} className={cn(styles.editIcon)}>
-              <Edit />
-            </div>
             <div
               className={cn(styles.openList, { [styles.isOpen]: isOpen })}
               onClick={handleDropdownToggle}
@@ -90,7 +85,6 @@ export function MutationDropdown() {
                   key={mutation.id}
                   mutation={mutation}
                   isSelected={selectedMutation?.id === mutation.id}
-                  onRemoveClick={() => handleRemoveMutation(mutation)}
                   onMutationClick={() => handleMutationClick(mutation)}
                 />
               ))}

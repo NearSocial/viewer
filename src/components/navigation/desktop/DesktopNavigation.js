@@ -84,7 +84,7 @@ export function DesktopNavigation(props) {
           </NavigationButton>
         </div>
         <div>
-          <MutationDropdown />
+          <MutationDropdown engine={props.mutationEngine} />
         </div>
         <div className="user-section">
           <StarButton {...props} />

@@ -74,6 +74,7 @@
   border-radius: 4px;
   margin-top: 10px;
   cursor: pointer;
+  gap: 10px;
   &:hover {
     background: $edit-bg-hover;
 
@@ -81,8 +82,6 @@
       opacity: 1;
     }
   }
-
-  
 }
 .itemMutation:last-child {
   margin-bottom: 10px;
