@@ -1,6 +1,6 @@
 const { User, Button } = VM.require("buildhub.near/widget/components") || {
   User: () => <></>,
-  Button: () => <></>
+  Button: () => <></>,
 };
 
 const draftKey = props.draftKey || "draft";
@@ -13,7 +13,7 @@ if (draft === null) {
 const autocompleteEnabled = true;
 
 State.init({
-  image: {}
+  image: {},
 });
 
 const [view, setView] = useState("editor");
@@ -76,8 +76,8 @@ const extractMentionNotifications = (text, item) =>
       key: accountId,
       value: {
         type: "mention",
-        item
-      }
+        item,
+      },
     }));
 
 function checkAndAppendHashtag(input, target) {
@@ -91,7 +91,7 @@ function checkAndAppendHashtag(input, target) {
 const content = {
   type: "md",
   image: state.image.cid ? { ipfs_cid: state.image.cid } : undefined,
-  text: postContent
+  text: postContent,
 };
 
 const postToCustomFeed = ({ feed, text }) => {
@@ -104,16 +104,16 @@ const postToCustomFeed = ({ feed, text }) => {
 
   const data = {
     post: {
-      main: JSON.stringify(content)
+      main: JSON.stringify(content),
     },
     index: {
-      post: JSON.stringify({ key: "main", value: { type: "md" } })
-    }
+      post: JSON.stringify({ key: "main", value: { type: "md" } }),
+    },
   };
 
   const item = {
     type: "social",
-    path: `${context.accountId}/post/main`
+    path: `${context.accountId}/post/main`,
   };
 
   const notifications = extractMentionNotifications(text, item);
@@ -130,7 +130,7 @@ const postToCustomFeed = ({ feed, text }) => {
     data.index.hashtag = JSON.stringify(
       hashtags.map((hashtag) => ({
         key: hashtag,
-        value: item
+        value: item,
       }))
     );
   }
@@ -146,7 +146,7 @@ const postToCustomFeed = ({ feed, text }) => {
     },
     onCancel: () => {
       // console.log(`Cancelled ${feed}: #${postId}`);
-    }
+    },
   });
 };
 
@@ -457,7 +457,7 @@ return (
               embedCss: props.customCSS || MarkdownEditor,
               onChange: (v) => {
                 textareaInputHandler(v);
-              }
+              },
             }}
           />
           {autocompleteEnabled && showAccountAutocomplete && (
@@ -466,7 +466,7 @@ return (
               props={{
                 term: mentionInput,
                 onSelect: autoCompleteAccountId,
-                onClose: () => setShowAccountAutocomplete(false)
+                onClose: () => setShowAccountAutocomplete(false),
               }}
             />
           )}
@@ -483,7 +483,7 @@ return (
               props={{
                 image: state.image.cid
                   ? { ipfs_cid: state.image.cid }
-                  : undefined
+                  : undefined,
               }}
             />
           )}
@@ -519,7 +519,7 @@ return (
         onClick={() =>
           postToCustomFeed({
             feed: props.feed,
-            text: postContent
+            text: postContent,
           })
         }
       >
@@ -543,7 +543,7 @@ return (
             dismiss
           </Button>
         ),
-        providerProps: { duration: 1000 }
+        providerProps: { duration: 1000 },
       }}
     />
   </PostCreator>

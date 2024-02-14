@@ -71,7 +71,7 @@ return (
             style={{ height: 400 }}
           ></div>
         }
-        src="buildhub.near/widget/Compose"
+        src="buildhub.near/widget/N.Compose"
         props={{
           draftKey: feedName,
           template: template,
