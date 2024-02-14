@@ -248,9 +248,10 @@ function OnboardingFlow() {
             <img
               src="https://ipfs.near.social/ipfs/bafkreihbwho3qfvnu4yss3eh5jrx6uxhrlzdgtdjyzyjrpa6odro6wdxya"
               width={120}
+              alt="Build DAO Logo"
             />
           </div>
-          <div style={{ width: "500px" }}>
+          <div style={{ width: "100%", maxWidth: "500px" }}>
             <StepsComponent />
           </div>
           <Button
