@@ -178,7 +178,9 @@ return (
                         },
                       }}
                     />
-                    {organizerProfile.name ?? "No name profile"}
+                    {organizerProfile.name ??
+                      organizers[0] ??
+                      "No name profile"}
                   </span>
                   <span className="d-flex align-items-center gap-1">
                     <i className="bi bi-geo-alt"></i>
