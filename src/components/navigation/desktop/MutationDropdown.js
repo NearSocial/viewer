@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Arrow } from "../../../icons/Arrow";
 import { Back } from "../../../icons/Back";
-import { MutationDropdownItem } from "./components/MutationDropdownItem";
+
+// #region MutationDropdown
 
 const MutationWrapper = styled.div`
   position: relative;
@@ -199,6 +200,77 @@ const Scroll = styled.div`
     box-shadow: 0 2px 6px rgb(0 0 0 / 9%), 0 2px 2px rgb(38 117 209 / 4%);
   }
 `;
+
+// #endregion
+
+// #region MutationItem
+
+const MutationItem = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 5px 3px 5px 5px;
+  width: 272px;
+  height: 46px;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  gap: 10px;
+  &:hover {
+    background: #d9dee1;
+
+    .titleMutation {
+      opacity: 1;
+    }
+  }
+  &:last-child {
+    margin-bottom: 10px;
+  }
+`;
+
+const MutationInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 194px;
+
+  .titleMutation {
+    color: #222;
+    opacity: 0.6;
+    font-size: 14px;
+
+    font-weight: 400;
+    line-height: 149%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 194px;
+    display: inline-block;
+  }
+`;
+
+const MutationItemTitle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
+const MutationSublitle = styled.span`
+  color: #222;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: normal;
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 194px;
+  display: inline-block;
+`;
+
+// #endregion
+
+function parseMutationId(mutationId) {
+  const [authorId, , localId] = mutationId.split("/");
+  return { authorId, localId };
+}
+
 export function MutationDropdown({ engine }) {
   const [mutations, setMutations] = React.useState([]);
   const [selectedMutation, setSelectedMutation] = React.useState(null);
@@ -231,55 +303,77 @@ export function MutationDropdown({ engine }) {
   };
 
   return (
-    <>
-      <MutationWrapper>
-        {selectedMutation ? (
-          <ActiveMutation>
-            <MutationTitle>{selectedMutation.id.split("/")[2]}</MutationTitle>
-            <OpenListDefault
-              $isOpen={isOpen && "rotate-is-open"}
-              onClick={handleDropdownToggle}
-            >
-              <Arrow />
-            </OpenListDefault>
-          </ActiveMutation>
-        ) : (
-          <ActiveMutation key={"no_enable"}>
-            <MutationTitle>No mutations applied</MutationTitle>
-            <CounterMutation>+{mutations.length}</CounterMutation>
+    <MutationWrapper>
+      {selectedMutation ? (
+        <ActiveMutation>
+          <MutationTitle>
+            {parseMutationId(selectedMutation.id).localId}
+          </MutationTitle>
+          <OpenListDefault
+            $isOpen={isOpen && "rotate-is-open"}
+            onClick={handleDropdownToggle}
+          >
+            <Arrow />
+          </OpenListDefault>
+        </ActiveMutation>
+      ) : (
+        <ActiveMutation>
+          <MutationTitle>No mutations applied</MutationTitle>
+          <CounterMutation>+{mutations.length}</CounterMutation>
 
-            <OpenListDefault
-              $isOpen={isOpen && "rotate-is-open"}
-              onClick={handleDropdownToggle}
-            >
-              <Arrow />
-            </OpenListDefault>
-          </ActiveMutation>
-        )}
+          <OpenListDefault
+            $isOpen={isOpen && "rotate-is-open"}
+            onClick={handleDropdownToggle}
+          >
+            <Arrow />
+          </OpenListDefault>
+        </ActiveMutation>
+      )}
 
-        {isOpen && (
-          <MutationList>
-            {selectedMutation ? (
-              <BackButton onClick={handleResetMutation}>
-                <Back />
-                <BackLabel>Back to origin</BackLabel>
-              </BackButton>
-            ) : null}
+      {isOpen && (
+        <MutationList>
+          {selectedMutation ? (
+            <BackButton onClick={handleResetMutation}>
+              <Back />
+              <BackLabel>Back to origin</BackLabel>
+            </BackButton>
+          ) : null}
 
-            <Scroll>
-              {mutations.map((mutation) => (
-                <MutationDropdownItem
+          <Scroll>
+            {mutations.map((mutation) => {
+              const { authorId, localId } = parseMutationId(mutation.id);
+              return (
+                <MutationItem
                   key={mutation.id}
-                  mutation={mutation}
-                  isSelected={selectedMutation?.id === mutation.id}
-                  onMutationClick={() => handleMutationClick(mutation)}
-                />
-              ))}
-              {!mutations.length ? <div>No mutations yet</div> : null}
-            </Scroll>
-          </MutationList>
-        )}
-      </MutationWrapper>
-    </>
+                  style={{
+                    background:
+                      selectedMutation?.id === mutation.id &&
+                      "rgba(24, 121, 206, 0.08)",
+                  }}
+                >
+                  <Widget
+                    src="mob.near/widget/Image"
+                    props={{
+                      image: mutation.metadata.image,
+                      style: { objectFit: "cover" },
+                      className: "h-100",
+                    }}
+                  />
+                  <MutationInfo onClick={() => handleMutationClick(mutation)}>
+                    <MutationItemTitle>
+                      <span className="titleMutation">{localId}</span>
+                    </MutationItemTitle>
+                    <MutationSublitle>
+                      {authorId ? `by ` + authorId : null}
+                    </MutationSublitle>
+                  </MutationInfo>
+                </MutationItem>
+              );
+            })}
+            {!mutations.length ? <div>No mutations yet</div> : null}
+          </Scroll>
+        </MutationList>
+      )}
+    </MutationWrapper>
   );
 }
