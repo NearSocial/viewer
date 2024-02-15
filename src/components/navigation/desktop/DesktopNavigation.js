@@ -8,7 +8,7 @@ import { SignInButton } from "../SignInButton";
 import { UserDropdown } from "./UserDropdown";
 import { DevActionsDropdown } from "./DevActionsDropdown";
 import { NotificationWidget } from "../NotificationWidget";
-import { MutationDropdown } from "./mutation/MutationDropdown";
+import { MutationDropdown } from "./MutationDropdown";
 import { StarButton } from "../StarButton";
 
 const StyledNavigation = styled.div`

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Arrow } from "../../../icons/Arrow";
-import { Back } from "../../../icons/Back";
+import { Widget } from "near-social-vm";
+import { Arrow } from "../../icons/Arrow";
+import { Back } from "../../icons/Back";
 
 // #region MutationDropdown
 
@@ -274,6 +275,7 @@ function parseMutationId(mutationId) {
 export function MutationDropdown({ engine }) {
   const [mutations, setMutations] = React.useState([]);
   const [selectedMutation, setSelectedMutation] = React.useState(null);
+  const [isOpen, setOpen] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -286,19 +288,19 @@ export function MutationDropdown({ engine }) {
     init();
   }, [engine]);
 
-  const [isOpen, setOpen] = useState(false);
-
   const handleDropdownToggle = () => {
     setOpen(!isOpen);
   };
 
   const handleMutationClick = async (mutation) => {
     setSelectedMutation(mutation);
+    setOpen(false);
     await engine.switchMutation(mutation.id);
   };
 
   const handleResetMutation = () => {
     setSelectedMutation(null);
+    setOpen(false);
     engine.stop();
   };
 
