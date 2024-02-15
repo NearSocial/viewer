@@ -189,7 +189,8 @@ return (
                 </div>
                 <div>
                   <Button
-                    href={`https://${event?.url}`}
+                    noLink
+                    href={`${event?.url}`}
                     target="_blank"
                     variant="primary"
                   >
