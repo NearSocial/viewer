@@ -37,7 +37,7 @@ for (let i = 0; i < profiles.length; i++) {
 
     results.push({
       accountId,
-      score
+      score,
     });
   }
 }
@@ -97,15 +97,15 @@ const Scroller = styled.div`
 `;
 
 const CloseButton = styled.button`
-    background: none;
-    border: none;
-    display: block;
-    padding: 12px;
-    color white;
-    transition: all 200ms;
-    &:hover {
-       transform:scale(1.2);
-    }
+  background: none;
+  border: none;
+  display: block;
+  padding: 12px;
+  color: white;
+  transition: all 200ms;
+  &:hover {
+    transform: scale(1.2);
+  }
 `;
 
 const ProfileCardWrapper = styled.div`
@@ -131,7 +131,7 @@ return (
                 avatarSize: "34px",
                 accountId: result.accountId,
                 onClick: onResultClick,
-                overlayPlacement: "bottom"
+                overlayPlacement: "bottom",
               }}
             />
           </ProfileCardWrapper>

@@ -94,7 +94,7 @@ return (
   >
     <div>
       <Widget
-        src="buildhub.near/widget/N.Common.Compose"
+        src="devs.near/widget/Common.Compose"
         props={{
           placeholder: "What's happening?",
           onChange: state.onChange,

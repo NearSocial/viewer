@@ -12,8 +12,8 @@ const index = props.index || {
 };
 
 const composeData = () => {
-  if (props.appendHashtags) {
-    state.content.text = props.appendHashtags(state.content.text);
+  if (props.appendContent) {
+    state.content.text = props.appendContent(state.content.text);
   }
   const data = {
     post: {

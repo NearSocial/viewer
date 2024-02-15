@@ -1,11 +1,8 @@
 const { Feed } = VM.require("devs.near/widget/Feed") || {
   Feed: () => <></>,
 };
-const { Post } = VM.require("buildhub.near/widget/components") || {
+const { Post, Button } = VM.require("buildhub.near/widget/components") || {
   Post: () => <></>,
-};
-
-const { Button } = VM.require("buildhub.near/widget/components") || {
   Button: () => <></>,
 };
 
@@ -71,7 +68,7 @@ return (
             style={{ height: 400 }}
           ></div>
         }
-        src="buildhub.near/widget/N.Compose"
+        src="buildhub.near/widget/Compose"
         props={{
           draftKey: feedName,
           template: template,
@@ -87,6 +84,7 @@ return (
         options: {
           limit: 10,
           order: "desc",
+          subscribe: true,
         },
         cacheOptions: {
           ignoreCache: true,
