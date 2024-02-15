@@ -7652,6 +7652,14 @@ mustache@^4.0.0:
   resolved "https://registry.npmjs.org/mustache/-/mustache-4.2.0.tgz"
   integrity sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==
 
+"mutable-web-engine@github:dapplets/mutable-web-engine":
+  version "0.1.0"
+  resolved "https://codeload.github.com/dapplets/mutable-web-engine/tar.gz/885c2915657afb9a61a6fce062abe3efbb8bc89f"
+  dependencies:
+    big.js "^6.2.1"
+    js-sha256 "^0.11.0"
+    json-stringify-deterministic "^1.0.12"
+
 nanoid@3.3.6, nanoid@^3.3.1:
   version "3.3.6"
   resolved "https://registry.npmjs.org/nanoid/-/nanoid-3.3.6.tgz"
@@ -7725,9 +7733,9 @@ near-social-vm-types@^1.0.0:
   resolved "https://registry.npmjs.org/near-social-vm-types/-/near-social-vm-types-1.0.0.tgz"
   integrity sha512-K5CxfiiKc7evzFb/1BGBOD2x4QqnEBuVaHkgRsRTGv02ctLkxA/Xf892SornWSkD75Hf0s9j/jeM5PpMfXcM9A==
 
-"near-social-vm@git+https://github.com/NearSocial/VM.git#2.5.6":
+"near-social-vm@github:dapplets/near-social-vm":
   version "2.5.6"
-  resolved "git+https://github.com/NearSocial/VM.git#fe647fe95bc68b1459f85310679cdb77389cfd32"
+  resolved "https://codeload.github.com/dapplets/near-social-vm/tar.gz/be00a35bdf468efff4694364be1b7f910693b675"
   dependencies:
     "@radix-ui/react-accordion" "^1.1.1"
     "@radix-ui/react-alert-dialog" "^1.0.3"
@@ -7784,7 +7792,6 @@ near-social-vm-types@^1.0.0:
     react-syntax-highlighter "^15.5.0"
     react-uuid "^1.0.2"
     remark-gfm "^3.0.1"
-    styled-components "^5.3.6"
     tweetnacl "^1.0.3"
 
 negotiator@0.6.3:
