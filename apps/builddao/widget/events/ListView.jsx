@@ -130,6 +130,8 @@ return (
                 return it;
               }) ?? [];
 
+            console.log(event);
+
             const organizer = organizers[0];
             const organizerProfile = Social.getr(`${organizer}/profile`);
 
@@ -189,7 +191,8 @@ return (
                 </div>
                 <div>
                   <Button
-                    href={`https://${event?.url}`}
+                    noLink
+                    href={`${event?.url}`}
                     target="_blank"
                     variant="primary"
                   >
