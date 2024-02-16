@@ -179,8 +179,7 @@ const Wrapper = styled.div`
 
   .left {
     margin-right: 12px;
-    min-width: 40px;
-    width: 40px;
+    width: auto;
     overflow: hidden;
   }
   .right {
@@ -386,13 +385,14 @@ return (
           </div>
         </div>
         {state.showReply && (
-          <div className="border-top">
+          <div className="my-3">
             <Widget
               loading=""
-              src="mob.near/widget/MainPage.N.Comment.Compose"
+              src="buildhub.near/widget/Comment.Compose"
               props={{
                 notifyAccountId,
                 item,
+                initialText: `@${accountId}, `,
                 onComment: () => State.update({ showReply: false }),
               }}
             />
@@ -401,11 +401,20 @@ return (
         {props.customComments
           ? props.customComments
           : !props.hideComments && (
-              <div className="ms-5 my-3">
+              <div
+                className="ms-5 my-3 ps-4"
+                style={{
+                  border:
+                    "2px solid var(--stroke-color, rgba(255, 255, 255, 0.2))",
+                  borderTop: 0,
+                  borderRight: 0,
+                  borderBottom: 0,
+                }}
+              >
                 <Widget
                   key="comments"
                   loading={""}
-                  src="mob.near/widget/MainPage.N.Comment.Feed"
+                  src="buildhub.near/widget/Comment.Feed"
                   props={{
                     item,
                     highlightComment: props.highlightComment,
