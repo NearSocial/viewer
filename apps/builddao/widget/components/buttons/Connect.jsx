@@ -2,7 +2,7 @@ const { joinBtnChildren, connectedChildren, showActivity, className, href } =
   props;
 
 const { Bullet } = VM.require("buildhub.near/widget/components") || {
-  Bullet: () => <></>,
+  Bullet: () => <></>
 };
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
 
@@ -18,14 +18,14 @@ const userAccountId = context.accountId;
 
 const data = sdk?.checkIsMemberOrPending({
   accountId: userAccountId,
-  rolesToCheck: ["community", "council"],
+  rolesToCheck: ["community", "council"]
 });
 
 const connectEdge = Social.keys(
   `${userAccountId}/graph/connect/${daoId}`,
   undefined,
   {
-    values_only: true,
+    values_only: true
   }
 );
 
@@ -44,29 +44,27 @@ const handleJoin = () => {
     [userAccountId]: {
       graph: {
         connect: {
-          [daoId]: "",
-        },
+          [daoId]: ""
+        }
       },
       index: {
         graph: JSON.stringify({
           key: "connect",
           value: {
             type: "connect",
-            accountId: daoId,
-          },
-        }),
+            accountId: daoId
+          }
+        })
       },
       notify: JSON.stringify({
         key: daoId,
         value: {
-          type: "connect",
-        },
-      }),
-    },
+          type: "connect"
+        }
+      })
+    }
   };
-  const socialDeposit = Big(JSON.stringify(connectData).length * 16).mul(
-    Big(10).pow(20)
-  );
+
   sdk.createAddMemberProposal({
     description: `add ${userAccountId} to the ${roleId} group`,
     memberId: userAccountId,
@@ -77,10 +75,10 @@ const handleJoin = () => {
       {
         contractName: "social.near",
         methodName: "set",
-        deposit: socialDeposit.toFixed(),
-        args: { data: connectData, options: { refund_unused_deposit: true } },
-      },
-    ],
+        deposit: 100000000000000000000000,
+        args: { data: connectData, options: { refund_unused_deposit: true } }
+      }
+    ]
   });
 };
 
@@ -120,7 +118,7 @@ const Container = styled.div`
 `;
 
 const { href: linkHref } = VM.require("buildhub.near/widget/lib.url") || {
-  href: () => {},
+  href: () => {}
 };
 
 const Component = () => {
@@ -144,8 +142,8 @@ const Component = () => {
             to={linkHref({
               widgetSrc: "buildhub.near/widget/app",
               params: {
-                page: "feed",
-              },
+                page: "feed"
+              }
             })}
           >
             View Activity{" "}

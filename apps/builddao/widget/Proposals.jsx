@@ -174,9 +174,7 @@ const handleVote = ({ action, proposalId, proposer, showNotification }) => {
               data: notification,
               options: { refund_unused_deposit: true }
             },
-            deposit: Big(JSON.stringify(notification).length * 16)
-              .mul(Big(10).pow(20))
-              .toString()
+            deposit: 100000000000000000000000
           }
         ]
       : null
