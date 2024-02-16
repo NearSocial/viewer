@@ -3,7 +3,7 @@ const { Modal, Hashtag, Button } = VM.require(
 ) || {
   Modal: () => <></>,
   Hashtag: () => <></>,
-  Button: () => <></>,
+  Button: () => <></>
 };
 
 const currentDate = props.currentDate || new Date();
@@ -140,7 +140,7 @@ return (
       }}
       style={{
         width: "100%",
-        height: "100vh",
+        height: "100vh"
       }}
     />
     {data && (
@@ -151,14 +151,14 @@ return (
               <i className="bi bi-calendar"></i> Start Date Time:{" "}
               {new Date(data.start).toLocaleDateString("en-us", {
                 hour: "2-digit",
-                minute: "numeric",
+                minute: "numeric"
               })}
             </span>
             <span>
               <i className="bi bi-calendar"></i> End Date Time:{" "}
               {new Date(data.end).toLocaleDateString("en-us", {
                 hour: "2-digit",
-                minute: "numeric",
+                minute: "numeric"
               })}
             </span>
           </div>
@@ -186,8 +186,8 @@ return (
                           width: 24,
                           height: 24,
                           borderRadius: 12,
-                          objectFit: "cover",
-                        },
+                          objectFit: "cover"
+                        }
                       }}
                     />
                     {organizerProfile.name ??
@@ -217,7 +217,7 @@ return (
         </div>
         <div>
           <Button
-            noLink
+            noLink={true}
             href={`${data?.url}`}
             target="_blank"
             variant="primary"

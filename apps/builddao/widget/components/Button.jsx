@@ -87,31 +87,8 @@ function Button({
   linkClassName,
   href,
   noLink,
-  style,
+  style
 }) {
-  if (href) {
-    return (
-      <Link
-        to={href}
-        className={linkClassName}
-        style={{ textDecoration: "none" }}
-        target={target}
-      >
-        <StyledButton
-          id={id}
-          key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
-          className={className}
-          variant={variant}
-          type={type}
-          style={style}
-          href={href}
-        >
-          {children}
-        </StyledButton>
-      </Link>
-    );
-  }
-
   if (href && noLink) {
     return (
       <a
@@ -132,6 +109,29 @@ function Button({
           {children}
         </StyledButton>
       </a>
+    );
+  }
+
+  if (href) {
+    return (
+      <Link
+        to={href}
+        className={linkClassName}
+        style={{ textDecoration: "none" }}
+        target={target}
+      >
+        <StyledButton
+          id={id}
+          key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
+          className={className}
+          variant={variant}
+          type={type}
+          style={style}
+          href={href}
+        >
+          {children}
+        </StyledButton>
+      </Link>
     );
   }
 

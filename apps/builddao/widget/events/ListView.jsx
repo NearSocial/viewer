@@ -1,6 +1,6 @@
 const { Button, Hashtag } = VM.require("buildhub.near/widget/components") || {
   Button: () => <></>,
-  Hashtag: () => <></>,
+  Hashtag: () => <></>
 };
 
 const events = props.events ?? [];
@@ -19,7 +19,7 @@ const categorizedEvents = currentMonthEvents.reduce((result, event) => {
   const eventDate = new Date(event.start)
     .toLocaleDateString("en-us", {
       day: "numeric",
-      month: "short",
+      month: "short"
     })
     .split(" ")
     .reverse()
@@ -83,7 +83,7 @@ const formatStartTime = (time) => {
   const options = {
     hour: "2-digit",
     minute: "2-digit",
-    timeZoneName: "short",
+    timeZoneName: "short"
   };
 
   return date.toLocaleString("en-US", options);
@@ -105,7 +105,7 @@ return (
                   color:
                     i === 0
                       ? "var(--text-color, #fff)"
-                      : "var(--white-50, #CDD0D5)",
+                      : "var(--white-50, #CDD0D5)"
                 }}
               >
                 {it}
@@ -152,7 +152,7 @@ return (
                       props={{
                         image: event.extendedProps.cover,
                         fallbackUrl:
-                          "https://ipfs.near.social/ipfs/bafkreibas66y6ewop5ix2n6mgybpjz6epg7opqvcplmm5jw4jlhdik5nhe",
+                          "https://ipfs.near.social/ipfs/bafkreibas66y6ewop5ix2n6mgybpjz6epg7opqvcplmm5jw4jlhdik5nhe"
                       }}
                     />
                   </div>
@@ -174,8 +174,8 @@ return (
                           width: 24,
                           height: 24,
                           borderRadius: 12,
-                          objectFit: "cover",
-                        },
+                          objectFit: "cover"
+                        }
                       }}
                     />
                     {organizerProfile.name ??
@@ -189,7 +189,7 @@ return (
                 </div>
                 <div>
                   <Button
-                    noLink
+                    noLink={true}
                     href={`${event?.url}`}
                     target="_blank"
                     variant="primary"
