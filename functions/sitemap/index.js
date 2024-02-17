@@ -22,6 +22,6 @@ export async function onRequest({ request, next, env }) {
       headers: {
         "content-type": "application/xml;charset=UTF-8",
       },
-    }
+    },
   );
 }

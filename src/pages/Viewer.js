@@ -34,7 +34,7 @@ function Viewer({ code, ...props }) {
     const fetchRedirectMap = async () => {
       try {
         const localStorageFlags = JSON.parse(
-          localStorage.getItem("flags") || "{}"
+          localStorage.getItem("flags") || "{}",
         );
         let redirectMapData;
 
@@ -44,7 +44,7 @@ function Viewer({ code, ...props }) {
           redirectMapData = data.components;
         } else {
           redirectMapData = JSON.parse(
-            sessionStorage.getItem(SESSION_STORAGE_REDIRECT_MAP_KEY) || "{}"
+            sessionStorage.getItem(SESSION_STORAGE_REDIRECT_MAP_KEY) || "{}",
           );
         }
         setRedirectMap(redirectMapData);
@@ -56,7 +56,7 @@ function Viewer({ code, ...props }) {
   }, []);
 
   console.log(
-    `gateway rendering: ${src} with props: ${JSON.stringify(passProps)}`
+    `gateway rendering: ${src} with props: ${JSON.stringify(passProps)}`,
   );
 
   return (
@@ -66,7 +66,7 @@ function Viewer({ code, ...props }) {
       props={{
         path: src,
         ...passProps,
-        ...props
+        ...props,
       }}
       config={{ redirectMap }}
     />

@@ -50,7 +50,7 @@ class MetaDescriptionInjector {
   element(element) {
     element.setAttribute(
       "content",
-      this.shortDescription?.replaceAll("\n", " ")
+      this.shortDescription?.replaceAll("\n", " "),
     );
   }
 }
@@ -93,7 +93,7 @@ async function postData(env, url, data, isPost) {
     socialGet(
       `${accountId}/post/${isPost ? "main" : "comment"}`,
       blockHeight,
-      true
+      true,
     ),
     socialGet(`${accountId}/profile/name`),
     socialGet(`${accountId}/profile/image/**`),
@@ -134,7 +134,7 @@ async function widgetData(env, url, data) {
   const accountId = parts[1];
   const widgetId = parts[3];
   const metadata = await socialGet(
-    `${accountId}/widget/${widgetId}/metadata/**`
+    `${accountId}/widget/${widgetId}/metadata/**`,
   );
 
   const name = metadata?.name || widgetId;

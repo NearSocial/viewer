@@ -681,7 +681,7 @@ const renderMenuItem = (c, i) => {
   res.push(
     <div className="menu-item" key={i}>
       <a href={`#${id}`}>{c.name}</a>
-    </div>
+    </div>,
   );
   return res;
 };

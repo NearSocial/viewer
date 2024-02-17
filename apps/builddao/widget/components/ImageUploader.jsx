@@ -11,8 +11,8 @@ const origTab = () =>
   image.nft.contractId || image.nft.tokenId
     ? Tab.NFT
     : !image.ipfs_cid && image.url
-    ? Tab.URL
-    : Tab.Upload;
+      ? Tab.URL
+      : Tab.Upload;
 
 State.init({
   origImage: image,

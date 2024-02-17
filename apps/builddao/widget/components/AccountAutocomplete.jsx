@@ -5,7 +5,7 @@ const filterAccounts = props.filterAccounts ?? []; //  hide certain accounts fro
 const profilesData = Social.get("*/profile/name", "final") || {};
 const followingData = Social.get(
   `${context.accountId}/graph/follow/**`,
-  "final"
+  "final",
 );
 if (!profilesData) return <></>;
 const profiles = Object.entries(profilesData);

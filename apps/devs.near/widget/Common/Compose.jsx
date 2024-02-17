@@ -74,8 +74,8 @@ const content = (state.text || state.image.cid || state.image.url) && {
   image: state.image.url
     ? { url: state.image.url }
     : state.image.cid
-    ? { ipfs_cid: state.image.cid }
-    : undefined,
+      ? { ipfs_cid: state.image.cid }
+      : undefined,
 };
 
 if (content && props.extraContent) {
@@ -306,12 +306,12 @@ const gifSearchWidget = useMemo(
         }}
       />
     ) : undefined,
-  [gifSearch]
+  [gifSearch],
 );
 
 const MemoizedAvatar = useMemo(
   () => <User accountId={context.accountId} />,
-  [context.accountId]
+  [context.accountId],
 );
 
 useEffect(() => {

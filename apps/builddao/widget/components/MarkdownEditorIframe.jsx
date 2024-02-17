@@ -56,4 +56,3 @@ return (
     onMessage={props.onChange}
   />
 );
-	

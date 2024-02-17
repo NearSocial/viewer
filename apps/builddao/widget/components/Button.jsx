@@ -87,7 +87,7 @@ function Button({
   linkClassName,
   href,
   noLink,
-  style
+  style,
 }) {
   if (href && noLink) {
     return (

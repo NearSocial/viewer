@@ -70,7 +70,7 @@ export function FileTab(props) {
         false,
         undefined,
         undefined,
-        c
+        c,
       );
       setChainCode(code);
     };

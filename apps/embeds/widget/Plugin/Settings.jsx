@@ -1,7 +1,7 @@
 const accountId = context.accountId;
 
 const installedEmbeds = JSON.parse(
-  Social.get(`${accountId}/settings/every/embed`, "final") || "null"
+  Social.get(`${accountId}/settings/every/embed`, "final") || "null",
 );
 
 if (!installedEmbeds) {
@@ -15,7 +15,7 @@ return (
   <>
     {installedEmbeds.map(
       (
-        embed // EmbedPlugin
+        embed, // EmbedPlugin
       ) => (
         <div
           className="card"
@@ -57,7 +57,7 @@ return (
                     settings: {
                       every: {
                         embed: installedEmbeds.filter(
-                          (it) => it.widgetSrc !== embed.widgetSrc
+                          (it) => it.widgetSrc !== embed.widgetSrc,
                         ),
                       },
                     },
@@ -69,7 +69,7 @@ return (
             </div>
           )}
         </div>
-      )
+      ),
     )}
   </>
 );

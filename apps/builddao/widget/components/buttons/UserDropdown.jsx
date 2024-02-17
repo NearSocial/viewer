@@ -164,7 +164,7 @@ return (
           props={{
             accountId: context.accountId,
             className: "d-inline-block",
-            style: { width: "40px", height: "40px" }
+            style: { width: "40px", height: "40px" },
           }}
         />
       </div>

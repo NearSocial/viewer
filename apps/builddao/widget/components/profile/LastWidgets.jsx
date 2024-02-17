@@ -10,7 +10,7 @@ const makeLink = (accountId, tag) => {
     args.push(`tag=${tag}`);
   }
   return `#/mob.near/widget/LastWidgets${args.length > 0 ? "?" : ""}${args.join(
-    "&"
+    "&",
   )}`;
 };
 
@@ -27,7 +27,7 @@ let keys = `${accountId ?? "*"}/widget/*`;
 if (tag) {
   const taggedWidgets = Social.keys(
     `${accountId ?? "*"}/widget/*/metadata/tags/${tag}`,
-    "final"
+    "final",
   );
 
   if (taggedWidgets === null) {
@@ -101,5 +101,5 @@ return render(
   <Widget
     src="mob.near/widget/ItemFeed"
     props={{ items: state.allItems || [], renderItem }}
-  />
+  />,
 );

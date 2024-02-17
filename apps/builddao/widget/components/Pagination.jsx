@@ -65,7 +65,7 @@ const handleArrowClick = (direction) => {
     setCurrentPageSet(Math.max(currentPageSet - 1, 1));
   } else {
     setCurrentPageSet(
-      Math.min(currentPageSet + 1, Math.ceil(totalPages / maxVisiblePages))
+      Math.min(currentPageSet + 1, Math.ceil(totalPages / maxVisiblePages)),
     );
   }
 };

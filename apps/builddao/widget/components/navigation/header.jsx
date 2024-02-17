@@ -1,5 +1,5 @@
 const { Button } = VM.require("buildhub.near/widget/components") || {
-  Button: () => <></>
+  Button: () => <></>,
 };
 
 const Navbar = styled.div`
@@ -57,7 +57,7 @@ const MobileNavigation = styled.div`
 `;
 
 const { href } = VM.require("buildhub.near/widget/lib.url") || {
-  href: () => {}
+  href: () => {},
 };
 
 const NavLink = ({ to, children }) => (
@@ -67,8 +67,8 @@ const NavLink = ({ to, children }) => (
     to={href({
       widgetSrc: "buildhub.near/widget/app",
       params: {
-        page: to
-      }
+        page: to,
+      },
     })}
   >
     {children}
@@ -86,7 +86,10 @@ const SignInOrConnect = () => (
         props={{ logOut: props.logOut }}
       />
     ) : (
-      <a href={"https://nearbuilders.org/join"} style={{ textDecoration: "none" }}>
+      <a
+        href={"https://nearbuilders.org/join"}
+        style={{ textDecoration: "none" }}
+      >
         <Button variant={"outline"}>Sign In</Button>
       </a>
     )}
@@ -102,8 +105,8 @@ const AppHeader = ({ page, routes, ...props }) => (
           to={href({
             widgetSrc: "buildhub.near/widget/app",
             params: {
-              page: "home"
-            }
+              page: "home",
+            },
           })}
         >
           <img
@@ -139,8 +142,8 @@ const AppHeader = ({ page, routes, ...props }) => (
           to={href({
             widgetSrc: "buildhub.near/widget/app",
             params: {
-              page: "home"
-            }
+              page: "home",
+            },
           })}
         >
           <img

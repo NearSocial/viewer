@@ -1,5 +1,5 @@
 const { ProgressState } = VM.require(
-  "buildhub.near/widget/components.ProgressState"
+  "buildhub.near/widget/components.ProgressState",
 ) || {
   ProgressState: () => <></>,
 };
@@ -45,8 +45,8 @@ function Step(props) {
             i + 1 === currentStep
               ? currentStatus
               : currentStep > i + 1
-              ? "completed"
-              : "default"
+                ? "completed"
+                : "default"
           }
         >
           {i + 1}

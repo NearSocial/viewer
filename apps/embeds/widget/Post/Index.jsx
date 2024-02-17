@@ -21,7 +21,7 @@ const notifyAccountId = accountId;
 const item = {
   type: "social",
   path: `${accountId}/post/main`,
-  blockHeight
+  blockHeight,
 };
 
 const link =
@@ -172,7 +172,7 @@ const contentWidget = (
       content,
       raw,
       truncateContent: props.truncateContent,
-      noEmbed: props.noEmbed
+      noEmbed: props.noEmbed,
     }}
   />
 );
@@ -183,7 +183,7 @@ return (
       props.hideComments || props.noBorder
         ? undefined
         : {
-            borderBottom: "1px solid #eee"
+            borderBottom: "1px solid #eee",
           }
     }
   >
@@ -206,7 +206,7 @@ return (
             hideMenu,
             link,
             postType: "post",
-            flagItem: item
+            flagItem: item,
           }}
         />
         {fullPostLink ? (
@@ -230,7 +230,7 @@ return (
               src="mob.near/widget/N.CommentButton"
               props={{
                 disabled: permissions.disableComment,
-                onClick: () => State.update({ showReply: !state.showReply })
+                onClick: () => State.update({ showReply: !state.showReply }),
               }}
             />
             <Widget
@@ -239,7 +239,7 @@ return (
               props={{
                 disable: permissions.disableRepost,
                 notifyAccountId,
-                item
+                item,
                 // indexKey,
                 // groupId,
               }}
@@ -249,7 +249,7 @@ return (
               src="mob.near/widget/N.LikeButton"
               props={{
                 notifyAccountId,
-                item
+                item,
               }}
             />
             <Widget
@@ -271,7 +271,7 @@ return (
           props={{
             notifyAccountId,
             item,
-            onComment: () => State.update({ showReply: false })
+            onComment: () => State.update({ showReply: false }),
           }}
         />
       </div>
@@ -291,7 +291,7 @@ return (
               raw,
               accounts: props.commentAccounts,
               groupId,
-              permissions
+              permissions,
             }}
           />
         )}

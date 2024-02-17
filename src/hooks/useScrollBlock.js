@@ -17,7 +17,7 @@ export default () => {
     const scrollBarWidth = window.innerWidth - html.clientWidth;
     const bodyPaddingRight =
       parseInt(
-        window.getComputedStyle(body).getPropertyValue("padding-right")
+        window.getComputedStyle(body).getPropertyValue("padding-right"),
       ) || 0;
 
     /**

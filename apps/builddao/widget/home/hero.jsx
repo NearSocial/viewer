@@ -7,7 +7,6 @@ const leftBlur =
 const rightBlur =
   "https://ipfs.near.social/ipfs/bafkreierwhnzytfajagidxim5mzdphu5fopjmlrxehatywzuy6ahr5q7pe";
 
-
 const HeroContainer = styled.div`
   width: 100%;
   position: relative;
@@ -86,7 +85,6 @@ const Tagline = styled.h1`
   }
 `;
 
-
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -97,7 +95,7 @@ const Content = styled.div`
   margin: 0 auto;
 `;
 
-const Hero = ({...props}) => {
+const Hero = ({ ...props }) => {
   return (
     <HeroContainer>
       <Content>
@@ -106,7 +104,8 @@ const Hero = ({...props}) => {
           Designed to connect and empower builders in a{" "}
           <span className="muted">multi-chain ecosystem</span>
         </Tagline>
-        <Widget src="buildhub.near/widget/components.TrialAccountBanner" 
+        <Widget
+          src="buildhub.near/widget/components.TrialAccountBanner"
           props={props}
         />
       </Content>

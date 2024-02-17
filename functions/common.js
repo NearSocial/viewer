@@ -113,10 +113,10 @@ export async function nftToImageUrl({ contractId, tokenId }) {
     tokenMedia.startsWith("data:image")
       ? tokenMedia
       : nftMetadata.base_uri
-      ? `${nftMetadata.base_uri}/${tokenMedia}`
-      : tokenMedia.startsWith("Qm") || tokenMedia.startsWith("ba")
-      ? `https://ipfs.near.social/ipfs/${tokenMedia}`
-      : tokenMedia;
+        ? `${nftMetadata.base_uri}/${tokenMedia}`
+        : tokenMedia.startsWith("Qm") || tokenMedia.startsWith("ba")
+          ? `https://ipfs.near.social/ipfs/${tokenMedia}`
+          : tokenMedia;
 
   if (!tokenMedia && tokenMetadata.reference) {
     const metadataUrl =
@@ -124,11 +124,11 @@ export async function nftToImageUrl({ contractId, tokenId }) {
       !tokenMetadata.reference.startsWith("https://")
         ? `${nftMetadata.base_uri}/${tokenMetadata.reference}`
         : tokenMetadata.reference.startsWith("https://") ||
-          tokenMetadata.reference.startsWith("http://")
-        ? tokenMetadata.reference
-        : tokenMetadata.reference.startsWith("ar://")
-        ? `https://arweave.net/${tokenMetadata.reference.split("//")[1]}`
-        : null;
+            tokenMetadata.reference.startsWith("http://")
+          ? tokenMetadata.reference
+          : tokenMetadata.reference.startsWith("ar://")
+            ? `https://arweave.net/${tokenMetadata.reference.split("//")[1]}`
+            : null;
     if (metadataUrl) {
       const res = await fetch(metadataUrl);
       const json = await res.json();

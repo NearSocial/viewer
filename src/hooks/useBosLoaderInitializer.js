@@ -46,7 +46,7 @@ export function useBosLoaderInitializer() {
         });
       }
     },
-    [setStore]
+    [setStore],
   );
 
   useEffect(() => {

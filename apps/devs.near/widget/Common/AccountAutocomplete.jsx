@@ -4,7 +4,7 @@ let results = [];
 const profilesData = Social.get("*/profile/name", "final") || {};
 const followingData = Social.get(
   `${context.accountId}/graph/follow/**`,
-  "final"
+  "final",
 );
 
 if (!profilesData || !followingData) return <></>;
