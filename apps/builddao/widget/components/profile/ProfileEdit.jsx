@@ -1,5 +1,5 @@
 const { Button, Avatar, InputField, TextEditor } = VM.require(
-  "buildhub.near/widget/components"
+  "buildhub.near/widget/components",
 ) || {
   Button: () => <></>,
   Avatar: () => <></>,
@@ -108,7 +108,7 @@ return (
               onCommit: () => {
                 setEditMode(false);
               },
-            }
+            },
           );
         }}
         id={"save-profile"}

@@ -13,7 +13,7 @@ export async function getSocialKeyPair(accountId) {
     const hereKeystore = ls.get("herewallet:keystore");
     if (hereKeystore) {
       return nearAPI.KeyPair.fromString(
-        hereKeystore[NetworkId].accounts[accountId]
+        hereKeystore[NetworkId].accounts[accountId],
       );
     }
   } catch {}

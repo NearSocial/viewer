@@ -11,7 +11,7 @@ export default function OnboardingFlow({ signedIn }) {
         <Widget
           src={"buildhub.near/widget/OnboardingFlow"}
           config={{
-            redirectMap: redirectMapStore.redirectMap
+            redirectMap: redirectMapStore.redirectMap,
           }}
         />
       </div>

@@ -56,7 +56,7 @@ const processData = useCallback(
               name: kv[0],
               metadata: Social.get(
                 `${accountId}/plugin/embed/${kv[0]}/metadata/**`,
-                "final"
+                "final",
               ),
             };
           });
@@ -66,7 +66,7 @@ const processData = useCallback(
             name: account[1].plugin.embed,
             metadata: Social.get(
               `${accountId}/plugin/embed/${account[1].plugin.embed}/metadata/**`,
-              "final"
+              "final",
             ),
           };
         }
@@ -77,7 +77,7 @@ const processData = useCallback(
     allItems.sort((a, b) => b.blockHeight - a.blockHeight);
     return allItems;
   },
-  [type]
+  [type],
 );
 
 const items = processData(plugins);

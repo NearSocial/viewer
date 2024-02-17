@@ -21,7 +21,7 @@ const EmbedMap = new Map([
 
 if (accountId) {
   const installedEmbeds = JSON.parse(
-    Social.get(`${accountId}/settings/every/embed`, "final") || "null"
+    Social.get(`${accountId}/settings/every/embed`, "final") || "null",
   );
 
   if (installedEmbeds) {

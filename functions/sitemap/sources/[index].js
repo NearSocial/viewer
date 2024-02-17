@@ -5,7 +5,7 @@ const LIMIT = 50000;
 
 export const generateSitemapSources = async (env, offset) => {
   const data = await socialKeys("*/widget/*", null, {
-    return_type: "History"
+    return_type: "History",
   });
   const urls = Object.entries(data)
     .map(([accountId, widget]) =>
@@ -18,10 +18,10 @@ export const generateSitemapSources = async (env, offset) => {
                 `  <url>
     <loc>https://nearbuilders.org/mob.near/widget/WidgetSource?src=${accountId}/widget/${widgetId}&amp;blockHeight=${blockHeight}</loc>
     <changefreq>never</changefreq>
-  </url>`
-            )
+  </url>`,
+            ),
         )
-        .flat()
+        .flat(),
     )
     .flat();
   return urls.slice(offset, offset + LIMIT).join("\n");
@@ -42,8 +42,8 @@ ${await generateSitemapSources(env, offset)}
 </urlset>`,
     {
       headers: {
-        "content-type": "application/xml;charset=UTF-8"
-      }
-    }
+        "content-type": "application/xml;charset=UTF-8",
+      },
+    },
   );
 }

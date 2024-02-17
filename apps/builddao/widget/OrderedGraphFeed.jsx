@@ -39,7 +39,7 @@ const graphItems = useMemo(() => {
   entries.sort((a, b) => (order?.[a] || 0) - (order?.[b] || 0));
   Storage.privateSet(
     StorageKey,
-    Object.fromEntries(entries.map((a, i) => [a, i + 1]))
+    Object.fromEntries(entries.map((a, i) => [a, i + 1])),
   );
   return entries;
 }, [items, order]);
@@ -54,7 +54,7 @@ let transformedArray = graphItems.map((item) => {
 });
 
 let filteredArray = transformedArray.filter(
-  (item) => item.blockHeight !== null
+  (item) => item.blockHeight !== null,
 );
 
 return (

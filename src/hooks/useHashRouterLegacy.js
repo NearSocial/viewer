@@ -12,7 +12,7 @@ export function useHashRouterLegacy() {
         history && history.replace(url);
       }
     },
-    [history]
+    [history],
   );
 
   useEffect(() => {

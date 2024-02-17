@@ -79,7 +79,7 @@ const [onImage] = useState(
           alt: props.alt ?? "inline image",
         }}
       />
-    )
+    ),
 );
 
 const onLink = useCallback((props) => {

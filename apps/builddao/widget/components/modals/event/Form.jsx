@@ -210,7 +210,7 @@ const onSubmit = () => {
               url: link,
               start: `${isoDate(startDate, startTime)}T${isoTime(
                 startDate,
-                startTime
+                startTime,
               )}`, // we'll want this be available for filtering... we may want to store it outside the JSON
               // or we need an indexing solution
               // we fetch events and then apply filters after parsing them
@@ -236,7 +236,7 @@ const onSubmit = () => {
     },
     {
       onCommit: () => props.toggleModal(),
-    }
+    },
   );
 };
 

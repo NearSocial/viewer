@@ -20,7 +20,7 @@ import {
   useAccount,
   useInitNear,
   useNear,
-  utils
+  utils,
 } from "near-social-vm";
 import React, { useCallback, useEffect, useState } from "react";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
@@ -79,7 +79,7 @@ function App() {
             setupMeteorWallet(),
             setupNeth({
               gas: "300000000000000",
-              bundle: false
+              bundle: false,
             }),
             setupNightly(),
             setupKeypom({
@@ -97,10 +97,10 @@ function App() {
                 url:
                   NetworkId == "testnet"
                     ? "https://test.nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID"
-                    : "https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID"
-              }
-            })
-          ]
+                    : "https://nearbuilders.org/#instant-url/ACCOUNT_ID/SECRET_KEY/MODULE_ID",
+              },
+            }),
+          ],
         }),
         customElements: {
           Link: (props) => {
@@ -118,14 +118,12 @@ function App() {
             return <Link {...props} />;
           },
           TrialAccountGenerator: (props) => {
-            return (
-              <TrialAccountGenerator {...props}/>
-            );
-            }
+            return <TrialAccountGenerator {...props} />;
+          },
         },
         config: {
-          defaultFinality: undefined
-        }
+          defaultFinality: undefined,
+        },
       });
   }, [initNear]);
 
@@ -135,7 +133,7 @@ function App() {
     }
     near.selector.then((selector) => {
       setWalletModal(
-        setupModal(selector, { contractId: near.config.contractName })
+        setupModal(selector, { contractId: near.config.contractName }),
       );
     });
   }, [near]);
@@ -146,7 +144,7 @@ function App() {
       walletModal.show();
       return false;
     },
-    [walletModal]
+    [walletModal],
   );
 
   const logOut = useCallback(async () => {
@@ -162,7 +160,7 @@ function App() {
 
   const refreshAllowance = useCallback(async () => {
     alert(
-      "You're out of access key allowance. Need sign in again to refresh it"
+      "You're out of access key allowance. Need sign in again to refresh it",
     );
     await logOut();
     requestSignIn();
@@ -182,7 +180,7 @@ function App() {
     setAvailableStorage(
       account.storageBalance
         ? Big(account.storageBalance.available).div(utils.StorageCostPerByte)
-        : Big(0)
+        : Big(0),
     );
   }, [account]);
 
@@ -198,7 +196,7 @@ function App() {
     requestSignIn,
     widgets: Widgets,
     documentationHref,
-    currentGateway
+    currentGateway,
   };
 
   return (

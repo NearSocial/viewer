@@ -310,7 +310,7 @@ function renderHeader({ typeName, id, status }) {
                         src="astraplusplus.ndctools.near/widget/Common.Layout.Countdown"
                         props={{
                           timeToCheck: parseInt(
-                            Big(expirationTime).div(1000000)
+                            Big(expirationTime).div(1000000),
                           ),
                         }}
                       />
@@ -367,7 +367,7 @@ function renderData({
             <div>
               <small className="secondary-text">
                 {new Date(
-                  parseInt(Big(submission_time).div(1000000))
+                  parseInt(Big(submission_time).div(1000000)),
                 ).toLocaleString()}
               </small>
             </div>
@@ -379,7 +379,7 @@ function renderData({
           <div>
             <small className="secondary-text">
               {new Date(
-                parseInt(Big(expirationTime).div(1000000))
+                parseInt(Big(expirationTime).div(1000000)),
               ).toLocaleString()}
             </small>
           </div>

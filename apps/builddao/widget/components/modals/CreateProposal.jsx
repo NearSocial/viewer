@@ -6,7 +6,7 @@ if (!daos) {
 const options = daos.map((dao) => dao.contract_id);
 
 const { Modal, Button, User } = VM.require(
-  "buildhub.near/widget/components"
+  "buildhub.near/widget/components",
 ) || {
   Modal: () => <></>,
   Button: () => <></>,
@@ -24,7 +24,7 @@ if (!showModal) {
 }
 
 const [selectedDAO, setSelectedDAO] = useState(
-  props.daoId || "build.sputnik-dao.near"
+  props.daoId || "build.sputnik-dao.near",
 );
 const [daoName, setDAOName] = useState("");
 const [selectedOption, setSelectedOption] = useState("");

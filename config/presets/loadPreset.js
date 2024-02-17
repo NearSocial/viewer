@@ -5,7 +5,7 @@ const loadPresets = (env = { presets: [] }) => {
   /** @type {string[]} */
   const mergedPresets = [].concat(...[presets]);
   const mergedConfigs = mergedPresets.map((presetName) =>
-    require(`./webpack.${presetName}.js`)(env)
+    require(`./webpack.${presetName}.js`)(env),
   );
 
   return merge({}, ...mergedConfigs);

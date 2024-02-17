@@ -90,6 +90,6 @@ module.exports = function (env) {
       ],
     },
     loadConfig(mode),
-    loadPreset(env)
+    loadPreset(env),
   );
 };

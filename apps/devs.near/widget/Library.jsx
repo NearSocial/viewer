@@ -12,8 +12,7 @@ const components = [
     title: "Feed",
     // category: "Profile",
     widgetName: "Feed",
-    description:
-      "",
+    description: "",
     // demoProps: { accountId },
     // requiredProps: {
     //   accountId: "The account ID of the profile",
@@ -28,8 +27,7 @@ const components = [
     title: "Context Menu",
     // category: "Profile",
     widgetName: "ContextMenu",
-    description:
-      "",
+    description: "",
     // demoProps: { accountId, tooltip: true },
     // requiredProps: {
     //   accountId: "The account ID of the profile",
@@ -45,8 +43,7 @@ const components = [
     title: "Router",
     // category: "Profile",
     widgetName: "Router",
-    description:
-      "",
+    description: "",
     // demoProps: { accountId, tooltip: true },
     // requiredProps: {
     //   accountId: "The account ID of the profile",
@@ -89,7 +86,7 @@ const renderComponent = (c, i) => {
   const embedCode = `<Widget\n  src="${widgetSrc}"\n  props={{${JSON.stringify(
     c.demoProps,
     undefined,
-    2
+    2,
   )
     .slice(1, -1)
     .split("\n")
@@ -162,98 +159,97 @@ const renderMenuItem = (c, i) => {
     res.push(
       <h5 className="category" key={c.category}>
         {c.category}
-      </h5>
+      </h5>,
     );
   }
   const id = c.title.toLowerCase().replaceAll(" ", "-");
   res.push(
     <div className="menu-item" key={i}>
       <a href={`#${id}`}>{c.title}</a>
-    </div>
+    </div>,
   );
   return res;
 };
 
 const Wrapper = styled.div`
-@media(min-width: 992px) {
-  .b-s {
-    border-left: 1px solid #eee;
-  }
-  .b-e {
-    border-right: 1px solid #eee;
-  }
-}
-.category:not(:first-child) {
-  margin-top: 1em;
-}
-.component {
-  padding: 0.5em 12px;
-  padding-bottom: 0;
-  margin-bottom: 3em;
-  margin: 0 -12px 3em;
-  position: relative;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.03);
-  }
-
-  .anchor {
-    position: absolute;
-    top: -70px;
-  }
-
-  table {
-    background: white;
-  }
-
-  label {
-    font-size: 20px;
-  }
-
-  .code {
-    display: inline-flex;
-    line-height: normal;
-    border-radius: 0.3em;
-    padding: 0 4px;
-    border: 1px solid #ddd;
-    background: rgba(0, 0, 0, 0.03);
-    font-family: var(--bs-font-monospace);
-  }
-  .path {
-
-  }
-  .preview {
-    background-color: white;
-    padding: 12px;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    pre {
-      margin-bottom: 0;
+  @media (min-width: 992px) {
+    .b-s {
+      border-left: 1px solid #eee;
+    }
+    .b-e {
+      border-right: 1px solid #eee;
     }
   }
-  .props {
-    .prop-key {
-      font-weight: 600;
-      &.optional {
-        font-weight: normal;
-      }
+  .category:not(:first-child) {
+    margin-top: 1em;
+  }
+  .component {
+    padding: 0.5em 12px;
+    padding-bottom: 0;
+    margin-bottom: 3em;
+    margin: 0 -12px 3em;
+    position: relative;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.03);
     }
-    .prop-desc {
-      p {
+
+    .anchor {
+      position: absolute;
+      top: -70px;
+    }
+
+    table {
+      background: white;
+    }
+
+    label {
+      font-size: 20px;
+    }
+
+    .code {
+      display: inline-flex;
+      line-height: normal;
+      border-radius: 0.3em;
+      padding: 0 4px;
+      border: 1px solid #ddd;
+      background: rgba(0, 0, 0, 0.03);
+      font-family: var(--bs-font-monospace);
+    }
+    .path {
+    }
+    .preview {
+      background-color: white;
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      pre {
         margin-bottom: 0;
       }
     }
-  }
-  .embed-code {
-    position: relative;
+    .props {
+      .prop-key {
+        font-weight: 600;
+        &.optional {
+          font-weight: normal;
+        }
+      }
+      .prop-desc {
+        p {
+          margin-bottom: 0;
+        }
+      }
+    }
+    .embed-code {
+      position: relative;
 
-    .embed-copy {
-      position: absolute;
-      top: 18px;
-      right: 10px;
+      .embed-copy {
+        position: absolute;
+        top: 18px;
+        right: 10px;
+      }
     }
   }
-}
 `;
 
 return (

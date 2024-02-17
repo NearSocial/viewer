@@ -9,8 +9,8 @@ export const generateSitemapWidgets = async (env) => {
           `  <url>
     <loc>https://nearbuilders.org/${accountId}/widget/${widgetId}</loc>
     <changefreq>monthly</changefreq>
-  </url>`
-      )
+  </url>`,
+      ),
     )
     .flat()
     .join("\n");
@@ -26,6 +26,6 @@ ${await generateSitemapWidgets(env)}
       headers: {
         "content-type": "application/xml;charset=UTF-8",
       },
-    }
+    },
   );
 }

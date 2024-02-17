@@ -28,7 +28,7 @@ const Root = styled.div`
 const sections = ["hero", "goals", "join", "governance", "cta", "footer"];
 return (
   <Root>
-    <Hero {...props}/>
+    <Hero {...props} />
     <Goals />
     <Join />
     <Governance />

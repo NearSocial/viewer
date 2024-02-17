@@ -1,12 +1,12 @@
 const { Button } = VM.require("buildhub.near/widget/components.Button");
 const { ProgressState } = VM.require(
-  "buildhub.near/widget/components.ProgressState"
+  "buildhub.near/widget/components.ProgressState",
 );
 const { Bullet } = VM.require("buildhub.near/widget/components.Bullet");
 const { Step } = VM.require("buildhub.near/widget/components.Step");
 const { InputField } = VM.require("buildhub.near/widget/components.InputField");
 const { UploadField } = VM.require(
-  "buildhub.near/widget/components.UploadField"
+  "buildhub.near/widget/components.UploadField",
 );
 const { TextBox } = VM.require("buildhub.near/widget/components.TextBox");
 const { TextEditor } = VM.require("buildhub.near/widget/components.TextEditor");

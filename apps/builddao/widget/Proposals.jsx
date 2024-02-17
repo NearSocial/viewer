@@ -1,6 +1,6 @@
 const { Button, Modal } = VM.require("buildhub.near/widget/components") || {
   Button: <></>,
-  Modal: <></>
+  Modal: <></>,
 };
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
 
@@ -37,8 +37,8 @@ const lastProposalId = sdk.getLastProposalId();
 const reversedProposals = proposalId
   ? [
       sdk.getProposalById({
-        proposalId
-      })
+        proposalId,
+      }),
     ] || []
   : sdk.getProposals({
       offset:
@@ -47,7 +47,7 @@ const reversedProposals = proposalId
             ? lastProposalId - resPerPage
             : 0
           : lastProposalId - currentPage * resPerPage,
-      limit: resPerPage
+      limit: resPerPage,
     }) || [];
 
 setProposals(reversedProposals.reverse());
@@ -109,7 +109,7 @@ const NotificationModal = () => {
                   daoId,
                   proposalId: voteDetails.proposalId,
                   proposer: voteDetails.proposer,
-                  showNotification: false
+                  showNotification: false,
                 });
                 setNotificationModal(false);
               }}
@@ -124,7 +124,7 @@ const NotificationModal = () => {
                   daoId,
                   proposalId: voteDetails.proposalId,
                   proposer: voteDetails.proposer,
-                  showNotification: true
+                  showNotification: true,
                 });
                 setNotificationModal(false);
               }}
@@ -150,15 +150,15 @@ const handleVote = ({ action, proposalId, proposer, showNotification }) => {
               message: `${accountId} voted to ${customAction} your proposal for ${daoId} (Proposal ID: ${proposalId})`,
               params: {
                 daoId: daoId,
-                proposalId: proposalId
+                proposalId: proposalId,
               },
               type: "custom",
-              widget: "buildhub.near/widget/Proposals"
-            }
-          }
-        ])
-      }
-    }
+              widget: "buildhub.near/widget/Proposals",
+            },
+          },
+        ]),
+      },
+    },
   };
 
   sdk.actProposal({
@@ -172,12 +172,12 @@ const handleVote = ({ action, proposalId, proposer, showNotification }) => {
             methodName: "set",
             args: {
               data: notification,
-              options: { refund_unused_deposit: true }
+              options: { refund_unused_deposit: true },
             },
-            deposit: 100000000000000000000000
-          }
+            deposit: 100000000000000000000000,
+          },
         ]
-      : null
+      : null,
   });
 };
 
@@ -215,7 +215,7 @@ useEffect(() => {
         reverse: true,
         filterStatusArray: selectedStatus,
         filterKindArray: selectedTypes,
-        offset: offset
+        offset: offset,
       })
       .then(({ filteredProposals, totalLength }) => {
         setFilteredProposals(filteredProposals);
@@ -234,8 +234,8 @@ const proposalsComponent = useMemo(() => {
         ? filteredProposals
         : []
       : Array.isArray(proposals)
-      ? proposals
-      : [];
+        ? proposals
+        : [];
   return (
     <div className="d-flex flex-column gap-2">
       {proposalsToShow.length > 0 ? (
@@ -251,30 +251,30 @@ const proposalsComponent = useMemo(() => {
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteApprove
+              actionType: actions.VoteApprove,
             }),
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteReject
+              actionType: actions.VoteReject,
             }),
 
             sdk.hasPermission({
               accountId,
               kindName,
-              actionType: actions.VoteRemove
-            })
+              actionType: actions.VoteRemove,
+            }),
           ];
 
           const { thresholdVoteCount } =
             sdk.getVotersAndThresholdForProposalKind({
-              kindName
+              kindName,
             });
           const totalVotes = sdk.calculateVoteCountByType({
-            votes: item.votes
+            votes: item.votes,
           });
           let expirationTime = sdk.getProposalExpirationTime({
-            submissionTime: item.submission_time
+            submissionTime: item.submission_time,
           });
 
           return (
@@ -288,9 +288,9 @@ const proposalsComponent = useMemo(() => {
                   totalVotes: {
                     ...totalVotes,
                     yes: totalVotes.approve,
-                    no: totalVotes.reject
+                    no: totalVotes.reject,
                   },
-                  expirationTime
+                  expirationTime,
                 },
                 daoId: daoId,
                 comments: comments,
@@ -298,7 +298,7 @@ const proposalsComponent = useMemo(() => {
                 handleVote: (data) => {
                   setVoteDetails(data);
                   setNotificationModal(true);
-                }
+                },
               }}
             />
           );
@@ -317,7 +317,7 @@ return (
         src="buildhub.near/widget/components.modals.CreateProposal"
         props={{
           showModal: showProposalModal,
-          toggleModal: () => setShowModal(!showProposalModal)
+          toggleModal: () => setShowModal(!showProposalModal),
         }}
       />
       <Widget
@@ -331,7 +331,7 @@ return (
             setSelectedTypes(selectedTypes);
           },
           showModal: showFiltersModal,
-          toggleModal: () => setFiltersModal(!showFiltersModal)
+          toggleModal: () => setFiltersModal(!showFiltersModal),
         }}
       />
       <div className="d-flex justify-content-between">
@@ -363,7 +363,7 @@ return (
                   : Math.round(lastProposalId / resPerPage),
               onPageClick: (v) => setCurrentPage(v),
               selectedPage: currentPage,
-              ThemeContainer: PaginationThemeContainer
+              ThemeContainer: PaginationThemeContainer,
             }}
           />
         </div>

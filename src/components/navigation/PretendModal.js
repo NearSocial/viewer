@@ -26,7 +26,7 @@ export default function PretendModal(props) {
             value={accountId}
             onChange={(e) =>
               setAccountId(
-                e.target.value.toLowerCase().replaceAll(/[^a-z0-9_.\-]/g, "")
+                e.target.value.toLowerCase().replaceAll(/[^a-z0-9_.\-]/g, ""),
               )
             }
           />

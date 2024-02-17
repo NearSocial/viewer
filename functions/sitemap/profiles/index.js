@@ -9,7 +9,7 @@ export const generateSitemapProfiles = async (env) => {
         `  <url>
     <loc>https://nearbuilders.org/mob.near/widget/ProfilePage?accountId=${accountId}</loc>
     <changefreq>monthly</changefreq>
-  </url>`
+  </url>`,
     )
     .join("\n");
 };
@@ -24,6 +24,6 @@ ${await generateSitemapProfiles(env)}
       headers: {
         "content-type": "application/xml;charset=UTF-8",
       },
-    }
+    },
   );
 }
