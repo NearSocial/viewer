@@ -18,8 +18,9 @@ const StyledButton = styled.button`
     display: flex;
     width: 40px;
     height: 40px;
-    padding: 5px;
+    padding: 0px;
     flex-shrink: 0;
+    font-size: 16px;
     border-radius: 50%;
   `}
 

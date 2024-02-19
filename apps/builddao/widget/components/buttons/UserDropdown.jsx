@@ -25,7 +25,7 @@ const StyledDropdown = styled.div`
       margin: 5px 10px;
       margin-right: 0;
       line-height: normal;
-      max-width: 140px;
+      max-width: 100px;
 
       .profile-name,
       .profile-username {
@@ -45,7 +45,7 @@ const StyledDropdown = styled.div`
   ul {
     background-color: #2b2f31;
     width: 100%;
-    width: 240px;
+    width: 210px;
 
     li {
       padding: 0 6px;
@@ -176,11 +176,7 @@ return (
         <div className="profile-username">{context.accountId}</div>
       </div>
     </button>
-    <ul
-      className="dropdown-menu"
-      aria-labelledby="dropdownMenu2222"
-      style={{ minWidth: "fit-content" }}
-    >
+    <ul className="dropdown-menu" aria-labelledby="dropdownMenu2222">
       <li>
         <Link
           className="dropdown-item"

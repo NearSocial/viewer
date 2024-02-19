@@ -44,5 +44,13 @@ return {
       },
       hide: true,
     },
+    inspect: {
+      path: "buildhub.near/widget/page.inspect",
+      blockHeight: "final",
+      init: {
+        name: "Inspect",
+      },
+      hide: true,
+    },
   },
 };

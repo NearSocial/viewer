@@ -901,7 +901,7 @@ export default function EditorPage(props) {
             >
               <div className="container mt-4">
                 <div className="row">
-                  <div className="d-inline-block position-relative overflow-hidden">
+                  <div className="position-relative">
                     {renderCode ? (
                       <Widget
                         key={`${previewKey}-${jpath}`}
@@ -923,7 +923,7 @@ export default function EditorPage(props) {
             >
               <div className="container">
                 <div className="row">
-                  <div className="d-inline-block position-relative overflow-hidden mt-4">
+                  <div className="position-relative mt-4">
                     <Widget
                       key={`metadata-${jpath}`}
                       src={props.widgets.widgetMetadata}
