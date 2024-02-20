@@ -4602,6 +4602,11 @@ bytes@3.1.2:
   resolved "https://registry.npmjs.org/bytes/-/bytes-3.1.2.tgz"
   integrity sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==
 
+caching-decorator@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/caching-decorator/-/caching-decorator-1.0.3.tgz#b676c2f3f89e253b735ee33d23dcf7be55594a25"
+  integrity sha512-WvVRdJD92CsoAWj4e79Odip3wyRQYrc/Lsk2Qx5MJrbmGAjw7PLPfimqv0qeN/lCYAdmbMLKH6PVjSaYv+OC8Q==
+
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/call-bind/-/call-bind-1.0.2.tgz"
@@ -7654,9 +7659,10 @@ mustache@^4.0.0:
 
 "mutable-web-engine@github:dapplets/mutable-web-engine":
   version "0.1.0"
-  resolved "https://codeload.github.com/dapplets/mutable-web-engine/tar.gz/885c2915657afb9a61a6fce062abe3efbb8bc89f"
+  resolved "https://codeload.github.com/dapplets/mutable-web-engine/tar.gz/0beef8686c075f70ce8513c1d4abe9934f1074a3"
   dependencies:
     big.js "^6.2.1"
+    caching-decorator "^1.0.3"
     js-sha256 "^0.11.0"
     json-stringify-deterministic "^1.0.12"
 
