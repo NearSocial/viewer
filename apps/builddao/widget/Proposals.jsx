@@ -334,9 +334,9 @@ return (
           toggleModal: () => setFiltersModal(!showFiltersModal),
         }}
       />
-      <div className="d-flex justify-content-between">
-        <h3 className="text-white">Proposals</h3>
-        <div className="d-flex gap-3">
+      <div className="d-flex align-items-center flex-wrap gap-3 justify-content-between">
+        <h3 className="text-white m-0">Proposals</h3>
+        <div className="d-flex align-items-center gap-3">
           <Button variant="outline" onClick={() => setFiltersModal(true)}>
             Filters
           </Button>

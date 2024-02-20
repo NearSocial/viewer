@@ -74,7 +74,7 @@ const Sidebar = ({ currentPath, page, routes }) => (
 // Define the new component that follows the SidebarLayout pattern
 function SidebarLayout({ currentPath, routes, page, children }) {
   return (
-    <Container className="container-xl mt-3">
+    <Container className="container-xl mt-md-3">
       <SidebarContainer>
         <Sidebar currentPath={currentPath} page={page} routes={routes} />
       </SidebarContainer>

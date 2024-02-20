@@ -189,6 +189,12 @@ const Wrapper = styled.div`
 
   .up-buttons {
     margin-top: 12px;
+
+    @media screen and (max-width: 768px) {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
   }
 `;
 
@@ -306,12 +312,12 @@ const gifSearchWidget = useMemo(
         }}
       />
     ) : undefined,
-  [gifSearch],
+  [gifSearch]
 );
 
 const MemoizedAvatar = useMemo(
   () => <User accountId={context.accountId} />,
-  [context.accountId],
+  [context.accountId]
 );
 
 useEffect(() => {
