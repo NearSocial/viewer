@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Widget } from "near-social-vm";
 import { Arrow } from "../../icons/Arrow";
 import { Back } from "../../icons/Back";
+import ls from "local-storage";
 
 // #region MutationDropdown
 
@@ -296,12 +297,14 @@ export function MutationDropdown({ engine }) {
     setSelectedMutation(mutation);
     setOpen(false);
     await engine.switchMutation(mutation.id);
+    ls.set("mutableweb:mutationId", mutation.id);
   };
 
   const handleResetMutation = () => {
     setSelectedMutation(null);
     setOpen(false);
     engine.stop();
+    ls.remove("mutableweb:mutationId");
   };
 
   return (

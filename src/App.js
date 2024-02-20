@@ -33,6 +33,7 @@ import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
 import { Engine, DappletOverlay } from "mutable-web-engine";
+import ls from "local-storage";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -122,7 +123,13 @@ function App(props) {
         selector: selector,
       });
 
-      engine.start().then(() => setMutationEngine(engine));
+      const mutationId = ls.get("mutableweb:mutationId");
+
+      if (mutationId) {
+        engine.start(mutationId).then(() => setMutationEngine(engine));
+      } else {
+        engine.start().then(() => setMutationEngine(engine));
+      }
     });
   }, [near]);
 
