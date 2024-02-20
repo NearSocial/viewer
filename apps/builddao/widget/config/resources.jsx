@@ -8,7 +8,7 @@ return {
         name: "Guide",
         icon: "bi-map",
         mdPath:
-          "https://raw.githubusercontent.com/NEARBuilders/gateway/resources-page-ideation/resources.md",
+          "https://raw.githubusercontent.com/NEARBuilders/gateway/main/resources.md",
       },
     },
     library: {
