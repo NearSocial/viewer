@@ -35,21 +35,29 @@ const modalToggles = {
   propose: toggleProposeModal,
 };
 
+customActions = [
+  {
+    type: "modal",
+    icon: "bi-file-earmark-text",
+    label: "Propose",
+    onClick: (modalToggles) => {
+      const toggle = modalToggles.propose;
+      toggle();
+    },
+  },
+];
+
 return (
   <div key={feedName}>
-    {feedName.toLowerCase() === "request" && (
-      <>
-        <Widget
-          src="buildhub.near/widget/components.modals.CreateProposal"
-          loading=""
-          props={{
-            showModal: showProposeModal,
-            toggleModal: toggleProposeModal,
-            item: item,
-          }}
-        />
-      </>
-    )}
+    <Widget
+      src="buildhub.near/widget/components.modals.CreateProposal"
+      loading=""
+      props={{
+        showModal: showProposeModal,
+        toggleModal: toggleProposeModal,
+        item: item,
+      }}
+    />
     {!context.accountId ? ( // if not logged in
       <LoginContainer>
         <p>Please login in order to post.</p>
