@@ -123,7 +123,7 @@ function App(props) {
         selector: selector,
       });
 
-      const mutationId = ls.get("mutableweb:mutationId");
+      const mutationId = window.sessionStorage.getItem("mutableweb:mutationId");
 
       if (mutationId) {
         engine.start(mutationId).then(() => setMutationEngine(engine));
