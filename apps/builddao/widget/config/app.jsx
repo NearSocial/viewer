@@ -52,5 +52,13 @@ return {
       },
       hide: true,
     },
+    projects: {
+      path: "buildhub.near/widget/page.project-feed",
+      blockHeight: "final",
+      init: {
+        name: "Project Feed",
+      },
+      hide: true,
+    },
   },
 };
