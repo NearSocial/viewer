@@ -278,6 +278,8 @@ export function MutationDropdown({ engine }) {
   const [isOpen, setOpen] = useState(false);
 
   useEffect(() => {
+    if (!engine) return;
+
     const init = async () => {
       const mutations = await engine.getMutations();
       setMutations(mutations);
@@ -285,6 +287,7 @@ export function MutationDropdown({ engine }) {
       const mutation = await engine.getCurrentMutation();
       setSelectedMutation(mutation);
     };
+
     init();
   }, [engine]);
 
