@@ -52,7 +52,7 @@ const Banner = ({ setShowbanner }) => {
 };
 
 const Wrapper = styled.div`
-  background: #33ddcb;
+  background: #4bb543;
   width: 100%;
   display: flex;
   justify-content: center;
