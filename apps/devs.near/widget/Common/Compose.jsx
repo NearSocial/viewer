@@ -189,6 +189,12 @@ const Wrapper = styled.div`
 
   .up-buttons {
     margin-top: 12px;
+
+    @media screen and (max-width: 768px) {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
   }
 `;
 

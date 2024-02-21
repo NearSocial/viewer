@@ -14,6 +14,10 @@ const Navbar = styled.div`
 
   background-color: #0b0c14;
   border-bottom: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
+
+  @media screen and (max-width: 768px) {
+    padding: 24px;
+  }
 `;
 
 const ButtonGroup = styled.div`
@@ -308,6 +312,7 @@ const AppHeader = ({ page, routes, ...props }) => (
                       key={k}
                       variant={page === k && "primary"}
                       className="w-100"
+                      onClick={() => setShowMenu(false)}
                     >
                       {route.init.icon && <i className={route.init.icon}></i>}
                       {route.init.name}
