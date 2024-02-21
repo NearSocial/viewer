@@ -312,12 +312,12 @@ const gifSearchWidget = useMemo(
         }}
       />
     ) : undefined,
-  [gifSearch]
+  [gifSearch],
 );
 
 const MemoizedAvatar = useMemo(
   () => <User accountId={context.accountId} />,
-  [context.accountId]
+  [context.accountId],
 );
 
 useEffect(() => {
