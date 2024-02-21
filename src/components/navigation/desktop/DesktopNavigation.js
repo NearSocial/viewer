@@ -30,73 +30,63 @@ const feedbackLinks = [
 export function DesktopNavigation(props) {
   const tooltipRef = useRef();
   return (
-    <StyledNavigation>
-      <div className="container">
-        {/* <Link
-          to="/"
-          className="logo-link"
-          onClick={() => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-        >
-          <Logotype />
-        </Link>
-        <div className="navigation-section">
-          <NavigationButton route="/">Home</NavigationButton>
-          <NavigationButton route="/edit">Editor</NavigationButton>
-          <NavigationButton href={props.documentationHref}>
-            Docs
-            <ArrowUpRight />
-          </NavigationButton>
-        </div> */}
-        <div className="user-section">
-          {/* <StarButton {...props} /> */}
-
-          <DevActionsDropdown {...props} />
-
-          {!props.signedIn && (
-            <SignInButton onSignIn={() => props.requestSignIn()} />
-          )}
-          {props.signedIn && (
-            <>
-              <NotificationWidget
-                notificationButtonSrc={props.widgets.notificationButton}
-              />
-              <UserDropdown {...props} />
-            </>
-          )}
-        </div>
-        <Tooltip
-          anchorSelect="#feedback-btn"
-          place={"top"}
-          clickable
-          openOnClick={true}
-          ref={tooltipRef}
-          className="feedback-container"
-        >
-          {feedbackLinks.map((link) => (
-            <a
-              href={link.url}
-              target="_blank"
-              key={link.label}
-              onClick={() => tooltipRef.current.close()}
-            >
-              {link.label}
-            </a>
-          ))}
-        </Tooltip>
-        <Feedback tooltipRef={tooltipRef} />
-      </div>
-    </StyledNavigation>
+    <>
+      <Nav>
+        {props.signedIn ? (
+          <UserDropdown {...props} />
+        ) : (
+          <SignInButton onSignIn={() => props.requestSignIn()} />
+        )}
+        {/* <DevActionsDropdown {...props} /> */}
+      </Nav>
+      <Tooltip
+        anchorSelect="#feedback-btn"
+        place={"top"}
+        clickable
+        openOnClick={true}
+        ref={tooltipRef}
+        className="feedback-container"
+      >
+        {feedbackLinks.map((link) => (
+          <a
+            href={link.url}
+            target="_blank"
+            key={link.label}
+            onClick={() => tooltipRef.current.close()}
+          >
+            {link.label}
+          </a>
+        ))}
+      </Tooltip>
+      <Feedback tooltipRef={tooltipRef} />
+    </>
   );
 }
-
+const Nav = styled.div`
+  display: flex;
+  height: 110px;
+  gap: 1rem;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  margin-right: 64px;
+  @media screen and (max-width: 768px) {
+    height: 96px;
+    margin-right: 8px;
+  }
+`;
 const StyledNavigation = styled.div`
   width: 100%;
   padding: 12px 0;
 
   .user-section {
-    margin-right: auto;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    right: 0;
     > button {
       font-size: 14px;
     }
@@ -127,10 +117,13 @@ const StyledNavigation = styled.div`
       .nav-sign-in-btn {
         margin-left: 10px;
         transition: all 300ms ease-in-out;
-        animation: gelatine infinite ease-in-out 5s both;
-        filter: drop-shadow(0 0 1px var(--slate-dark-6))
-          drop-shadow(0 0 5px var(--slate-dark-6))
-          drop-shadow(0 0 16px var(--slate-dark-6));
+        /* animation: gelatine infinite ease-in-out 5s both; */
+        transition: all 300ms ease;
+        :hover {
+          filter: drop-shadow(0 0 1px var(--slate-dark-6))
+            drop-shadow(0 0 5px var(--slate-dark-6))
+            drop-shadow(0 0 16px var(--slate-dark-6));
+        }
       }
     }
 
