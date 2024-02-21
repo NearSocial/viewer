@@ -5,7 +5,6 @@ import { Fork } from "../../icons/Fork";
 import { Code } from "../../icons/Code";
 import { useAccount } from "near-social-vm";
 import { Diff } from "../../icons/Diff";
-import { NotificationWidget } from "../NotificationWidget";
 
 const StyledDropdown = styled.div`
   .dropdown-toggle {
@@ -53,7 +52,6 @@ const StyledDropdown = styled.div`
 
     li {
       padding: 0 6px;
-      align-items: center;
     }
 
     button,
@@ -63,17 +61,13 @@ const StyledDropdown = styled.div`
       align-items: center;
       border-radius: 8px;
       padding: 12px;
-      outline: none;
-      border: none;
-      background: transparent;
+
       :hover,
       :focus {
         text-decoration: none;
         background-color: var(--slate-dark-1);
         color: white;
-        i {
-          color: white;
-        }
+
         svg {
           path {
             stroke: white;
@@ -93,23 +87,25 @@ const StyledDropdown = styled.div`
 
 export function DevActionsDropdown(props) {
   const account = useAccount();
-  return (
-    <StyledDropdown className="dropdown">
-      <button
-        className="dropdown-toggle"
-        type="button"
-        id="dropdownMenu2222"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <div className="menu">
-          <div />
-          <div />
-          <div />
-        </div>
-      </button>
-      <ul className="dropdown-menu" aria-labelledby="dropdownMenu2222">
-        {/* {props.widgetSrc?.edit && (
+
+  if (props.widgetSrc?.edit || props.widgetSrc?.view) {
+    return (
+      <StyledDropdown className="dropdown">
+        <button
+          className="dropdown-toggle"
+          type="button"
+          id="dropdownMenu2222"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <div className="menu">
+            <div />
+            <div />
+            <div />
+          </div>
+        </button>
+        <ul className="dropdown-menu" aria-labelledby="dropdownMenu2222">
+          {props.widgetSrc?.edit && (
             <li>
               <Link to={`/edit/${props.widgetSrc?.edit}`}>
                 <Fork />
@@ -118,28 +114,18 @@ export function DevActionsDropdown(props) {
                   : "Fork widget"}
               </Link>
             </li>
-          )} */}
-        {props.widgetSrc?.view && (
-          <li>
-            <Link
-              to={`/${props.widgets.viewSource}?src=${props.widgetSrc?.view}`}
-            >
-              <Code />
-              View source
-            </Link>
-          </li>
-        )}
-        {props.signedIn && (
-          <li>
-            <button>
-              <NotificationWidget
-                notificationButtonSrc={props.widgets.notificationButton}
-              />
-              Notifications
-            </button>
-          </li>
-        )}
-        {/* {props.widgets.viewHistory && props.widgetSrc?.view && (
+          )}
+          {props.widgetSrc?.view && (
+            <li>
+              <Link
+                to={`/${props.widgets.viewSource}?src=${props.widgetSrc?.view}`}
+              >
+                <Code />
+                View source
+              </Link>
+            </li>
+          )}
+          {props.widgets.viewHistory && props.widgetSrc?.view && (
             <li>
               <Link
                 to={`/${props.widgets.viewHistory}?widgetPath=${props.widgetSrc?.view}`}
@@ -148,8 +134,11 @@ export function DevActionsDropdown(props) {
                 View history
               </Link>
             </li>
-          )} */}
-      </ul>
-    </StyledDropdown>
-  );
+          )}
+        </ul>
+      </StyledDropdown>
+    );
+  } else {
+    return null;
+  }
 }
