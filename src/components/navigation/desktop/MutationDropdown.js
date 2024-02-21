@@ -310,26 +310,20 @@ export function MutationDropdown({ engine }) {
   return (
     <MutationWrapper>
       {selectedMutation ? (
-        <ActiveMutation>
+        <ActiveMutation onClick={handleDropdownToggle}>
           <MutationTitle>
             {parseMutationId(selectedMutation.id).localId}
           </MutationTitle>
-          <OpenListDefault
-            $isOpen={isOpen && "rotate-is-open"}
-            onClick={handleDropdownToggle}
-          >
+          <OpenListDefault $isOpen={isOpen && "rotate-is-open"}>
             <Arrow />
           </OpenListDefault>
         </ActiveMutation>
       ) : (
-        <ActiveMutation>
+        <ActiveMutation onClick={handleDropdownToggle}>
           <MutationTitle>No mutations applied</MutationTitle>
           <CounterMutation>+{mutations.length}</CounterMutation>
 
-          <OpenListDefault
-            $isOpen={isOpen && "rotate-is-open"}
-            onClick={handleDropdownToggle}
-          >
+          <OpenListDefault $isOpen={isOpen && "rotate-is-open"}>
             <Arrow />
           </OpenListDefault>
         </ActiveMutation>
