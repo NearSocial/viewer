@@ -22,6 +22,11 @@ const Feedback = ({ tooltipRef }) => {
 };
 
 const Container = styled.a`
+  position: fixed;
+  bottom: 3rem;
+  left: 0;
+  right: 1rem;
+  z-index: 1000;
   width: 40px;
   height: 40px;
   cursor: pointer;
@@ -31,7 +36,6 @@ const Container = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
   overflow: hidden;
   margin-left: auto;
   background: white;

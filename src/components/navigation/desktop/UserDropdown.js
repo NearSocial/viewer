@@ -4,12 +4,9 @@ import styled from "styled-components";
 import { User } from "../../icons/User";
 import { LogOut } from "../../icons/LogOut";
 import { Withdraw } from "../../icons/Withdraw";
-import { NavLink } from "react-router-dom";
-import PretendModal from "../PretendModal";
-import { Pretend } from "../../icons/Pretend";
-import { StopPretending } from "../../icons/StopPretending";
-import { QR } from "../../icons/QR";
-import MobileQRModal from "../MobileQRModal";
+import { Code } from "../../icons/Code";
+import { NavLink, Link } from "react-router-dom";
+import { NotificationWidget } from "../NotificationWidget";
 
 const StyledDropdown = styled.div`
   button,
@@ -38,13 +35,15 @@ const StyledDropdown = styled.div`
       margin: 5px 10px;
       line-height: normal;
       max-width: 140px;
-
+      font-size: 12px;
+      @media only screen and (max-width: 920px) {
+        display: none;
+      }
       .profile-name,
       .profile-username {
         text-overflow: ellipsis;
         overflow: hidden;
       }
-
       .profile-name {
         color: var(--slate-dark-12);
       }
@@ -69,13 +68,18 @@ const StyledDropdown = styled.div`
       align-items: center;
       border-radius: 8px;
       padding: 12px;
-
+      outline: none;
+      border: none;
+      background: transparent;
+      width: 100%;
       :hover,
       :focus {
         text-decoration: none;
         background-color: var(--slate-dark-1);
         color: white;
-
+        i {
+          color: white;
+        }
         svg {
           path {
             stroke: white;
@@ -102,9 +106,6 @@ export function UserDropdown(props) {
     await near.contract.storage_withdraw({}, undefined, "1");
   }, [near]);
 
-  const [showPretendModal, setShowPretendModal] = React.useState(false);
-  const [showMobileQR, setShowMobileQR] = React.useState(false);
-
   return (
     <>
       <StyledDropdown className="dropdown">
@@ -120,7 +121,7 @@ export function UserDropdown(props) {
             props={{
               accountId: account.accountId,
               className: "d-inline-block",
-              style: { width: "40px", height: "40px" },
+              style: { width: "30px", height: "30px" },
             }}
           />
           <div className="profile-info">
@@ -141,57 +142,31 @@ export function UserDropdown(props) {
             <NavLink
               className="dropdown-item"
               type="button"
-              to={`/${props.widgets.profilePage}?accountId=${account.accountId}`}
+              to={`/?tab=profile&accountId=${account.accountId}`}
             >
               <User />
               My Profile
             </NavLink>
           </li>
-          <li>
-            <button
-              className="dropdown-item"
-              type="button"
-              onClick={() => withdrawStorage()}
-            >
-              <Withdraw />
-              Withdraw {props.availableStorage.div(1000).toFixed(2)}kb
-            </button>
-          </li>
-          {account.pretendAccountId ? (
-            <li key="pretend">
-              <button
-                className="dropdown-item"
-                type="button"
-                disabled={!account.startPretending}
-                onClick={() => account.startPretending(undefined)}
+          {props.widgetSrc?.view && (
+            <li>
+              <Link
+                to={`/${props.widgets.viewSource}?src=${props.widgetSrc?.view}`}
               >
-                <StopPretending />
-                Stop pretending
+                <Code />
+                View source
+              </Link>
+            </li>
+          )}
+          {props.signedIn && (
+            <li>
+              <button>
+                <NotificationWidget
+                  notificationButtonSrc={props.widgets.notificationButton}
+                />
+                Notifications
               </button>
             </li>
-          ) : (
-            <>
-              <li key="stop-pretend">
-                <button
-                  className="dropdown-item"
-                  type="button"
-                  onClick={() => setShowPretendModal(true)}
-                >
-                  <Pretend />
-                  Pretend to be another account
-                </button>
-              </li>
-              <li>
-                <button
-                  className="dropdown-item"
-                  type="button"
-                  onClick={() => setShowMobileQR(true)}
-                >
-                  <QR />
-                  Mobile Sign-in QR
-                </button>
-              </li>
-            </>
           )}
           <li>
             <button
@@ -205,21 +180,6 @@ export function UserDropdown(props) {
           </li>
         </ul>
       </StyledDropdown>
-      {showPretendModal && (
-        <PretendModal
-          key="pretend-modal"
-          show={showPretendModal}
-          onHide={() => setShowPretendModal(false)}
-          widgets={props.widgets}
-        />
-      )}
-      {showMobileQR && (
-        <MobileQRModal
-          key="mobile-qr-modal"
-          show={showMobileQR}
-          onHide={() => setShowMobileQR(false)}
-        />
-      )}
     </>
   );
 }
