@@ -21,11 +21,11 @@ export function NavigationWrapper(props) {
   return hideMenu ? (
     <></>
   ) : (
-    <Container>
-      <DesktopNavigation {...props} />
+    <>
+      {/* <DesktopNavigation {...props} /> */}
       {JSON.parse(showBanner) && <Banner setShowbanner={setShowbanner} />}
       {/* {!matches && <MobileNavigation {...props} />} */}
-    </Container>
+    </>
   );
 }
 

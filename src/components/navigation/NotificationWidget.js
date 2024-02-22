@@ -3,12 +3,7 @@ import styled from "styled-components";
 import { Widget } from "near-social-vm";
 
 const StyledNotificationWidget = styled.div`
-  margin: 0 15px;
-  background-color: var(--slate-dark-5);
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-
+  margin-right: 7px;
   > div,
   a {
     width: 100%;
@@ -16,20 +11,15 @@ const StyledNotificationWidget = styled.div`
   }
 
   a {
-    color: var(--slate-dark-11) !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 24px;
+    height: 24px;
 
     i {
-      font-size: 18px !important;
-    }
-  }
-
-  :hover {
-    a,
-    i {
-      color: white;
+      font-size: 20px !important;
+      color: var(--slate-dark-9);
     }
   }
 `;
