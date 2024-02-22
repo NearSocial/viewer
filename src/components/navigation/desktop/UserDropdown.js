@@ -35,6 +35,7 @@ const StyledDropdown = styled.div`
       margin: 5px 10px;
       line-height: normal;
       max-width: 140px;
+      font-size: 12px;
       @media only screen and (max-width: 920px) {
         display: none;
       }
@@ -120,7 +121,7 @@ export function UserDropdown(props) {
             props={{
               accountId: account.accountId,
               className: "d-inline-block",
-              style: { width: "40px", height: "40px" },
+              style: { width: "30px", height: "30px" },
             }}
           />
           <div className="profile-info">
