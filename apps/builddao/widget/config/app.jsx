@@ -60,5 +60,13 @@ return {
       },
       hide: true,
     },
+    project: {
+      path: "buildhub.near/widget/page.project",
+      blockHeight: "final",
+      init: {
+        name: "Project Page",
+      },
+      hide: true,
+    },
   },
 };
