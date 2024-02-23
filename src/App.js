@@ -90,7 +90,7 @@ function App() {
                 url:
                   NetworkId == "testnet"
                     ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY"
-                    : "https://www.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
+                    : "https://www.nearbuilders.org/join?from=trial/#trial-url/ACCOUNT_ID/SECRET_KEY",
                 modalOptions: KEYPOM_OPTIONS(NetworkId),
               },
               instantSignInSpecs: {

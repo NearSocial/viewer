@@ -61,11 +61,10 @@ const LoginContainer = styled.div`
       align-self: stretch;
 
       border-radius: 8px;
-      border: 1px solid var(--white-100, #fff);
-      background: #fff;
+      background: #ffaf51;
 
       &:hover {
-        text-decoration: none;
+        background: #e49b48;
       }
 
       color: var(--black-100, #000);
