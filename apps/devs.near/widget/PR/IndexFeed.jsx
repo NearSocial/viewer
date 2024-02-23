@@ -29,7 +29,7 @@ const addDisplayCount = props.nextLimit ?? initialRenderLimit;
 
 index.options.limit = Math.min(
   Math.max(initialRenderLimit + addDisplayCount * 2, index.options.limit ?? 0),
-  100,
+  100
 );
 const reverse = !!props.reverse;
 
@@ -89,7 +89,7 @@ if (state.fetchFrom) {
       from: state.fetchFrom,
       subscribe: undefined,
       limit,
-    }),
+    })
   );
   if (newItems !== null) {
     State.update({
@@ -104,7 +104,7 @@ const filteredItems = state.items;
 if (filter) {
   if (filter.ignore) {
     filteredItems = filteredItems.filter(
-      (item) => !(item.accountId in filter.ignore),
+      (item) => !(item.accountId in filter.ignore)
     );
   }
 }

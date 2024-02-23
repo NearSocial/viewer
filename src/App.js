@@ -218,6 +218,9 @@ function App() {
             <Route path={"/propose"}>
               <Redirect to="buildhub.near/widget/app?page=proposal" />
             </Route>
+            <Route path={"/projects"}>
+              <Redirect to="buildhub.near/widget/app?page=projects" />
+            </Route>
             <Route path={"/feed"}>
               <Redirect to="buildhub.near/widget/app?page=feed" />
             </Route>

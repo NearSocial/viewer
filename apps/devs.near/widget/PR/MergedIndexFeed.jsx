@@ -2,7 +2,7 @@ if (!props.index) {
   return "props.index is not defined";
 }
 const indices = JSON.parse(
-  JSON.stringify(Array.isArray(props.index) ? props.index : [props.index]),
+  JSON.stringify(Array.isArray(props.index) ? props.index : [props.index])
 );
 const requiredIndices = indices.filter((index) => index.required);
 
@@ -66,7 +66,7 @@ function mergeItems(iIndex, oldItems, newItems, desc) {
 
   // Sort items by blockHeight, ascending or descending based on the `desc` flag
   mergedItems.sort((a, b) =>
-    desc ? b.blockHeight - a.blockHeight : a.blockHeight - b.blockHeight,
+    desc ? b.blockHeight - a.blockHeight : a.blockHeight - b.blockHeight
   );
 
   return mergedItems;
@@ -91,7 +91,7 @@ for (let iIndex = 0; iIndex < indices.length; ++iIndex) {
   index.options = index.options || {};
   index.options.limit = Math.min(
     Math.max(initialRenderLimit + addDisplayCount * 2, index.options.limit),
-    100,
+    100
   );
   const desc = index.options.order === "desc";
 
@@ -99,7 +99,7 @@ for (let iIndex = 0; iIndex < indices.length; ++iIndex) {
     index.action,
     index.key,
     index.options,
-    index.cacheOptions,
+    index.cacheOptions
   );
   if (initialItems === null) {
     continue;
@@ -109,7 +109,7 @@ for (let iIndex = 0; iIndex < indices.length; ++iIndex) {
   const nextFetchFrom = computeFetchFrom(
     initialItems,
     index.options.limit,
-    desc,
+    desc
   );
   if (feed.jInitialItems !== jInitialItems) {
     feed.jInitialItems = jInitialItems;
@@ -149,8 +149,8 @@ if (requiredIndices.length > 0) {
             JSON.stringify({
               blockHeight: item.blockHeight,
               accountId: item.accountId,
-            }),
-          ),
+            })
+          )
         );
       }
     } else {
@@ -214,7 +214,7 @@ while (filteredItems.length < state.displayCount) {
   const existingItemIndex = filteredItems.findIndex(
     (item) =>
       item.blockHeight === bestItem.blockHeight &&
-      item.accountId === bestItem.accountId,
+      item.accountId === bestItem.accountId
   );
 
   if (existingItemIndex === -1) {
@@ -248,7 +248,7 @@ for (let iIndex = 0; iIndex < indices.length; ++iIndex) {
         from: feed.fetchFrom,
         subscribe: undefined,
         limit,
-      }),
+      })
     );
     if (newItems !== null) {
       feed.items = mergeItems(iIndex, feed.items, newItems, desc);
