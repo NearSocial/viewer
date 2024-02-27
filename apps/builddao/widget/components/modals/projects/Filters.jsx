@@ -34,7 +34,9 @@ return (
       <label className="mb-3">Tags</label>
       <Typeahead
         multiple
-        options={["Community", "Open Source", "Weekly", "DAO"]}
+        options={
+          props.tagFilters ?? ["Community", "Open Source", "Weekly", "DAO"]
+        }
         allowNew
         placeholder="Start Typing"
         selected={tags}

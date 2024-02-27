@@ -8,6 +8,7 @@ const toggle = props.toggle;
 const bootstrapTheme = props.bootstrapTheme || "dark";
 const filters = props.filters;
 const setFilters = props.setFilters;
+const tagFilters = props.tagFilters;
 
 return (
   <Modal
@@ -24,6 +25,7 @@ return (
         toggleModal,
         filters,
         setFilters,
+        tagFilters,
       }}
     />
   </Modal>
