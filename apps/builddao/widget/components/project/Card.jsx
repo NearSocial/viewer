@@ -1,5 +1,5 @@
 const { Avatar, Hashtag, Button } = VM.require(
-  "buildhub.near/widget/components",
+  "buildhub.near/widget/components"
 ) || {
   Hashtag: () => <></>,
   Avatar: () => <></>,
@@ -7,7 +7,7 @@ const { Avatar, Hashtag, Button } = VM.require(
 };
 
 const { ProfileImages } = VM.require(
-  "buildhub.near/widget/components.ProfileImages",
+  "buildhub.near/widget/components.ProfileImages"
 ) || {
   ProfileImages: () => <></>,
 };
@@ -42,6 +42,12 @@ const Card = styled.div`
       font-weight: 700;
     }
   }
+  .bt-w {
+    flex: 1;
+    button {
+      width: 90%;
+    }
+  }
 `;
 
 const ProjectCard = ({ title, tags, people, accountId }) => {
@@ -49,10 +55,16 @@ const ProjectCard = ({ title, tags, people, accountId }) => {
     <Card>
       <Avatar accountId={accountId} />
       <div className="info">
-        <h4>{title}</h4>
-        <span>@{accountId}</span>
+        <h4>{title.length > 30 ? `${title.slice(0, 25)}...` : title}</h4>
+        <span>{`@${
+          accountId.length > 30
+            ? `${accountId.slice(0, 20)}...${accountId.slice(
+                accountId.length - 4
+              )}`
+            : accountId
+        }`}</span>
       </div>
-      <div className="d-flex align-items-center gap-2">
+      <div className="d-flex align-items-center flex-wrap gap-2">
         {tags.map((tag) => (
           <Hashtag>
             <span className="fw-bold">{tag}</span>
@@ -62,7 +74,12 @@ const ProjectCard = ({ title, tags, people, accountId }) => {
       <div>
         <ProfileImages accountIds={people} />
       </div>
-      <Button className="align-self-stretch" variant="outline">
+      <Button
+        href={`/buildhub.near/widget/app?page=project&accountId=${accountId}`}
+        // className="align-self-stretch"
+        linkClassName="align-self-stretch bt-w"
+        variant="outline"
+      >
         Open
       </Button>
     </Card>
