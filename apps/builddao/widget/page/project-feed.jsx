@@ -1,7 +1,7 @@
-const { fetchThings } = VM.require(
-  "buildhub.near/widget/lib.everything-sdk",
+const { fetchProjects } = VM.require(
+  "buildbox.near/widget/utils.projects-sdk"
 ) || {
-  fetchThings: () => {},
+  fetchProjects: () => {},
 };
 
 const { Button } = VM.require("buildhub.near/widget/components") || {
@@ -9,44 +9,111 @@ const { Button } = VM.require("buildhub.near/widget/components") || {
 };
 
 const { ProjectCard } = VM.require(
-  "buildhub.near/widget/components.project.Card",
+  "buildhub.near/widget/components.project.Card"
 ) || {
   ProjectCard: () => <></>,
 };
 
-// const projects = fetchThings("buildbox", "project");
+const app = props.app || "buildbox";
+const type = props.type || "project";
 
-const projects = [
-  {
-    title: "Build DAO",
-    accountId: "build.sputnik-dao.near",
-    tags: ["Open Source", "Community"],
-    collaborators: ["efiz.near"],
+const data = fetchProjects(app, type);
+
+if (!data) {
+  return "Loading...";
+}
+
+/* HELPER FUNCTION */
+function isNearAddress(address) {
+  if (typeof address !== "string") {
+    return false;
+  }
+
+  // Allow both ".near" and ".testnet" endings
+  if (!address.endsWith(".near") && !address.endsWith(".testnet")) {
+    return false;
+  }
+
+  const parts = address.split(".");
+  if (parts.length !== 2) {
+    return false;
+  }
+
+  if (parts[0].length < 2 || parts[0].length > 32) {
+    return false;
+  }
+
+  if (!/^[a-z0-9_-]+$/i.test(parts[0])) {
+    return false;
+  }
+
+  return true;
+}
+
+const processData = useCallback(
+  (data) => {
+    const accounts = Object.entries(data);
+
+    const allItems = accounts
+      .map((account) => {
+        const accountId = account[0];
+
+        return Object.entries(account[1][app][type]).map((kv) => {
+          const metadata = JSON.parse(kv[1]);
+          const members = metadata.teammates;
+
+          // if (members) {
+          // removing extra characters and splitting the string into an array
+          const arr = members.replace(/[\[\]\(\)@]/g, "").split(/[\s,]+/);
+
+          // filtering out teammates that are not near addresses
+          const hexRegex = /^[0-9A-F\-_]+$/i;
+          const valid = arr.filter((teammate) => {
+            if (hexRegex.test(teammate)) {
+              return teammate;
+            }
+            return isNearAddress(teammate);
+          });
+
+          valid.unshift(accountId);
+
+          // making sure the array is unique
+          const unique = [...new Set(valid)];
+          // }
+          const collaborators = unique || [];
+
+          // console.log("metadata: ", metadata);
+          return {
+            accountId,
+            type: type,
+            title: kv[0],
+            metadata,
+            tags: metadata.tracks || [],
+            collaborators,
+          };
+        });
+      })
+      .flat();
+
+    // sort by latest
+    allItems.sort((a, b) => b.blockHeight - a.blockHeight);
+    return allItems;
   },
-  {
-    title: "Build DAO 1",
-    accountId: "build.sputnik-dao.near",
-    tags: ["Open Source", "Community"],
-    collaborators: ["efiz.near", "dawnkelly.near"],
-  },
-  {
-    title: "Build DAO 2",
-    accountId: "build.sputnik-dao.near",
-    tags: ["Open Source", "Community"],
-    collaborators: ["efiz.near", "dawnkelly.near", "james.near"],
-  },
-  {
-    title: "Build DAO 3",
-    accountId: "build.sputnik-dao.near",
-    tags: ["Open Source", "Community"],
-    collaborators: [
-      "efiz.near",
-      "dawnkelly.near",
-      "james.near",
-      "itexpert120-contra.near",
-    ],
-  },
-];
+  [type]
+);
+
+const projects = processData(data);
+
+console.log("projects from buildbox", projects);
+
+// const projects = [
+//   {
+//     title: "Build DAO",
+//     accountId: "build.sputnik-dao.near",
+//     tags: ["Open Source", "Community"],
+//     collaborators: ["efiz.near"],
+//   },
+// ];
 
 if (!projects) {
   return "";
@@ -85,7 +152,7 @@ const filteredProjects = useMemo(() => {
   let filtered = projects;
   if (filters.title !== "") {
     filtered = filtered.filter((project) =>
-      project.title.toLowerCase().includes(filters.title ?? "".toLowerCase()),
+      project.title.toLowerCase().includes(filters.title ?? "".toLowerCase())
     );
   }
 
@@ -114,11 +181,21 @@ const filteredProjects = useMemo(() => {
 
   if (filters.tags.length > 0) {
     filtered = filtered.filter((project) =>
-      filters.tags.every((tag) => project.tags.includes(tag)),
+      filters.tags.every((tag) => project.tags.includes(tag))
     );
   }
   return filtered;
 }, [filters, projects]);
+
+// console.log("filteredProjects", filteredProjects.tags);
+
+const tagFilters = useMemo(() => {
+  let tags = projects.map((project) => project.tags).flat();
+  tags = [...new Set(tags)];
+  return tags;
+}, [projects]);
+
+console.log("tagFilters", tagFilters);
 
 return (
   <Wrapper
@@ -134,6 +211,7 @@ return (
         toggleModal: toggleModal,
         filters: filters,
         setFilters: setFilters,
+        tagFilters,
       }}
     />
     <div className="my-3 d-flex align-items-center justify-content-between">
