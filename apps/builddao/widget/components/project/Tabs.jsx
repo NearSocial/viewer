@@ -2,35 +2,7 @@ const { Post } = VM.require("buildhub.near/widget/components") || {
   Post: () => <></>,
 };
 
-const { validNearAddresses } = VM.require(
-  "buildhub.near/widget/lib.extract-near-addresses"
-) || {
-  validNearAddresses: () => {},
-};
-
-const {
-  title,
-  description,
-  tags,
-  collaborators,
-  projectLink,
-  demoLink,
-  contactInfo,
-  referrer,
-  learning,
-} = props.project;
-
-const accountId = props.accountId;
-
-const valid = validNearAddresses(collaborators);
-
-valid.unshift(accountId);
-
-// making sure the array is unique
-const unique = [...new Set(valid)];
-// }
-const team = unique || [];
-
+const accountId = props.accountId ?? context.accountId;
 if (!accountId) {
   return "No account ID";
 }
@@ -41,7 +13,7 @@ if (profile === null) {
   return "Loading";
 }
 
-// const description = profile.description;
+const description = profile.description;
 
 const pills = [
   { id: "overview", title: "Overview" },
@@ -110,9 +82,6 @@ return (
           loading=""
           props={{
             accountId,
-            description,
-            tags,
-            collaborators: team,
             profile,
           }}
         />

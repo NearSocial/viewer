@@ -1,12 +1,9 @@
-const { Hashtag, User } = VM.require("buildhub.near/widget/components") || {
+const { Hashtag } = VM.require("buildhub.near/widget/components") || {
   Hashtag: () => <></>,
-  User: () => <></>,
 };
 
 const accountId = props.accountId;
 const profile = props.profile;
-
-const { description, tags, collaborators } = props;
 
 const Container = styled.div`
   display: flex;
@@ -54,13 +51,15 @@ const MapIcon = () => (
   </svg>
 );
 
+const tags = Object.keys(profile.tags ?? []);
+
 return (
   <Container>
     <div className="section">
       <p className="heading">About</p>
       <p className="description">
-        {description ? (
-          <Markdown text={description} />
+        {profile.description ? (
+          <Markdown text={profile.description} />
         ) : (
           "No information available"
         )}
@@ -77,26 +76,17 @@ return (
         <p className="heading">Team Size</p>
         <p className="description d-flex align-items-center gap-2">
           <i className="bi bi-person"></i>
-          {!collaborators || !collaborators.length
-            ? "0"
-            : collaborators.length <= 10
-            ? "1-10"
-            : collaborators.length <= 50
-            ? "10-50"
-            : collaborators.length <= 100
-            ? "50-100"
-            : "100+"}
+          {!profile.members && "0"}
+          {profile.members.length <= 10 && "1-10"}
+          {profile.members.length <= 50 && "10-50"}
+          {profile.members.length <= 100 && "50-100"}
+          {profile.members.length > 100 && "100+"}
         </p>
       </div>
     </div>
     <div className="section">
       <p className="heading">Contributors</p>
-      {!collaborators && <p className="description">No Contributors</p>}
-      <div className="d-flex gap-4">
-        {collaborators.map((teammate) => (
-          <User accountId={teammate} variant={"mobile"} />
-        ))}
-      </div>
+      {!profile.contributors && <p className="description">No Contributors</p>}
     </div>
     <div className="section">
       <p className="heading">Project Tags</p>

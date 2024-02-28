@@ -6,22 +6,11 @@ const { href } = VM.require("buildhub.near/widget/lib.url") || {
   href: () => {},
 };
 
-const { id } = props;
-const extractNearAddress = (id) => {
-  const parts = id.split("/");
-  if (parts.length > 0) {
-    return parts[0];
-  }
-  return "";
-};
+const accountId = props.accountId;
 
-const data = Social.get(id + "/**", "final");
-
-if (!id || !data) {
-  return <p className="fw-bold text-white">Project not found: {id}</p>;
+if (!accountId) {
+  return <p className="fw-bold text-white">No Account ID</p>;
 }
-
-const accountId = extractNearAddress(id);
 
 const profile = Social.getr(`${accountId}/profile`);
 
@@ -80,7 +69,7 @@ const ProfileInfo = styled.div`
 
     .info {
       display: flex;
-      ${'' /* align-items: center; */}
+      align-items: center;
       gap: 4px;
       flex-direction: column;
       h3 {
@@ -107,42 +96,6 @@ const ProfileInfo = styled.div`
     }
   }
 `;
-
-function transformKeys(obj) {
-  // return array.map((obj) => {
-  //   // Rename keys
-  //   obj.tags = obj.tracks;
-  //   delete obj.tracks;
-
-  //   obj.collaborators = obj.teammates;
-  //   delete obj.teammates;
-
-  //   // Return modified object
-  //   return obj;
-  // });
-
-  obj.tags = obj.tracks;
-  delete obj.tracks;
-
-  obj.collaborators = obj.teammates;
-  delete obj.teammates;
-
-  return obj;
-}
-
-const project = transformKeys(JSON.parse(data[""]));
-
-const {
-  title,
-  description,
-  tags,
-  collaborators,
-  projectLink,
-  demoLink,
-  contactInfo,
-  referrer,
-  learning,
-} = project;
 
 return (
   <Container>
@@ -191,7 +144,7 @@ return (
       </div>
       <div className="right">
         <div className="info">
-          <h3>{project.title || profile.name}</h3>
+          <h3>{profile.name}</h3>
           <p>@{accountId}</p>
         </div>
 
@@ -212,7 +165,6 @@ return (
       loading=""
       props={{
         accountId,
-        project,
         profile,
       }}
     />
