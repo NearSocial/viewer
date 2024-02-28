@@ -12,7 +12,6 @@ export function NavigationWrapper(props) {
   const [showBanner, setShowbanner] = useState(
     sessionStorage.getItem("BannerToggle") || "true"
   );
-  console.log(JSON.parse(showBanner));
   useEffect(() => {
     window
       .matchMedia("(min-width: 992px)")
