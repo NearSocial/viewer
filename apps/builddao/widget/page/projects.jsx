@@ -20,12 +20,6 @@ const Root = styled.div`
   ${theme}// can come from config
 `;
 
-const [activeRoute, setActiveRoute] = useState(page);
-
-useEffect(() => {
-  setActiveRoute(page);
-}, [page]);
-
 function Router({ active, routes }) {
   // this may be converted to a module at devs.near/widget/Router
   const routeParts = active.split(".");
@@ -70,7 +64,6 @@ return (
     <Container>
       <SidebarLayout
         currentPath={currentPath}
-        page={activeRoute}
         routes={routes}
       >
         <Content>
