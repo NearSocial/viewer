@@ -91,15 +91,24 @@ const formatStartTime = (time) => {
 
 const dateKeys = Object.keys(categorizedEvents);
 
-const today = new Date().getDate();
-const pastEvents = dateKeys.filter((date) => {
-  const day = date.split(" ")[0];
-  return parseInt(day) < today;
-});
+const today = new Date();
+
 const futureEvents = dateKeys.filter((date) => {
-  const day = date.split(" ")[0];
-  return parseInt(day) >= today;
+  return categorizedEvents[date].some((event) => {
+    const eventStartDate = new Date(event.start);
+    const eventEndDate = new Date(event.end);
+    return eventStartDate >= today || eventEndDate > today;
+  });
 });
+
+const pastEvents = dateKeys.filter((date) => !futureEvents.includes(date));
+
+const sortEvents = (events) => {
+  return events.sort((a, b) => a.split(" ")[0] + b.split(" "[0]));
+};
+
+futureEvents.sort();
+pastEvents.sort();
 
 const EventGroup = ({ date }) => {
   const Container = styled.div`
@@ -202,6 +211,15 @@ const EventGroup = ({ date }) => {
                 <span className="d-flex align-items-center gap-1">
                   <i className="bi bi-geo-alt"></i>
                   {event?.extendedProps?.location}
+                </span>
+
+                <span className="d-flex align-items-center gap-1">
+                  <i className="bi bi-calendar"></i>
+                  Last Date:{" "}
+                  {new Date(event.end).toLocaleString("en-us", {
+                    day: "numeric",
+                    month: "short",
+                  })}
                 </span>
               </div>
               <div>
