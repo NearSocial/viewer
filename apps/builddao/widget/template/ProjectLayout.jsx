@@ -58,7 +58,7 @@ const ProfileInfo = styled.div`
 
     .info {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 4px;
       flex-direction: column;
       h3 {
@@ -107,7 +107,30 @@ const Nav = styled.div`
   }
 `;
 
-const ProjectLayout = ({ accountId, profile, routes, children }) => {
+const ProjectLayout = ({
+  accountId,
+  profile,
+  routes,
+  children,
+  project,
+  id,
+}) => {
+  const {
+    title,
+    description,
+    tags,
+    collaborators,
+    projectLink,
+    demoLink,
+    contactInfo,
+    referrer,
+    learning,
+  } = project;
+
+  const [address, app, type, titleUrl] = id.split("/");
+
+  console.log("params", { app, type, titleUrl });
+
   if (!accountId) {
     return <p className="fw-bold text-white">No Account ID</p>;
   }
@@ -159,7 +182,7 @@ const ProjectLayout = ({ accountId, profile, routes, children }) => {
         </div>
         <div className="right">
           <div className="info">
-            <h3>{profile.name}</h3>
+            <h3>{title ?? profile.name}</h3>
             <p>@{accountId}</p>
           </div>
 
@@ -182,8 +205,12 @@ const ProjectLayout = ({ accountId, profile, routes, children }) => {
               <li className="nav-item" role="presentation" key={it}>
                 <Link
                   to={href({
-                    widgetSrc: "buildhub.near/widget/app",
-                    params: { page: "project", accountId: accountId, tab: it },
+                    widgetSrc: `buildhub.near/widget/app`,
+                    params: {
+                      page: "project",
+                      id: `${accountId}/${app}/${type}/${titleUrl}`,
+                      tab: it,
+                    },
                   })}
                   key={it}
                 >
@@ -197,7 +224,7 @@ const ProjectLayout = ({ accountId, profile, routes, children }) => {
                     aria-controls={`pills-${it}`}
                     aria-selected={i === 0}
                   >
-                    {it}
+                    {it.slice(0, 1).toUpperCase() + it.slice(1)}
                   </button>
                 </Link>
               </li>

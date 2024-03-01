@@ -1,18 +1,34 @@
-const { page, tab, ...passProps } = props;
+const { page, tab, type, app, ...passProps } = props;
 
 const { routes } = VM.require("buildhub.near/widget/config.project") ?? {
   routes: {},
 };
 
-const { ProjectLayout } = VM.require("buildhub.near/widget/template.ProjectLayout") || {
+const { ProjectLayout } = VM.require(
+  "buildhub.near/widget/template.ProjectLayout"
+) || {
   ProjectLayout: () => <></>,
 };
 
+const { id } = props;
+const extractNearAddress = (id) => {
+  const parts = id.split("/");
+  if (parts.length > 0) {
+    return parts[0];
+  }
+  return "";
+};
+const accountId = extractNearAddress(id);
+
+const data = Social.get(id + "/**", "final");
+
+if (!id || !data) {
+  return "Loading...";
+}
+
 if (!page) page = Object.keys(routes)[0] || "home";
 
-const Root = styled.div`
-  
-`;
+const Root = styled.div``;
 
 function Router({ active, routes }) {
   // this may be converted to a module at devs.near/widget/Router
@@ -61,12 +77,32 @@ const Content = styled.div`
   height: 100%;
 `;
 
-const profile = Social.getr(`${props.accountId}/profile`, "final");
+function transformKeys(obj) {
+  obj.tags = obj.tracks;
+  delete obj.tracks;
+
+  obj.contributors = obj.teammates;
+  delete obj.teammates;
+
+  return obj;
+}
+
+const project = transformKeys(JSON.parse(data[""]));
+
+const profile = Social.getr(`${accountId}/profile`, "final");
 
 return (
   <Root>
     <Container>
-      <ProjectLayout profile={profile} accountId={props.accountId} page={page} routes={routes} {...props}>
+      <ProjectLayout
+        profile={profile}
+        accountId={accountId}
+        page={page}
+        routes={routes}
+        project={project}
+        id={id}
+        {...props}
+      >
         <Content>
           <Router active={page} routes={routes} />
         </Content>

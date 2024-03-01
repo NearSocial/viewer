@@ -1,7 +1,8 @@
-const { fetchProjects } = VM.require(
+const { fetchProjects, extractValidNearAddresses } = VM.require(
   "buildbox.near/widget/utils.projects-sdk"
 ) || {
   fetchProjects: () => {},
+  extractValidNearAddresses: () => {},
 };
 
 const { Button } = VM.require("buildhub.near/widget/components") || {
@@ -23,33 +24,6 @@ if (!data) {
   return "Loading...";
 }
 
-/* HELPER FUNCTION */
-function isNearAddress(address) {
-  if (typeof address !== "string") {
-    return false;
-  }
-
-  // Allow both ".near" and ".testnet" endings
-  if (!address.endsWith(".near") && !address.endsWith(".testnet")) {
-    return false;
-  }
-
-  const parts = address.split(".");
-  if (parts.length !== 2) {
-    return false;
-  }
-
-  if (parts[0].length < 2 || parts[0].length > 32) {
-    return false;
-  }
-
-  if (!/^[a-z0-9_-]+$/i.test(parts[0])) {
-    return false;
-  }
-
-  return true;
-}
-
 const processData = useCallback(
   (data) => {
     const accounts = Object.entries(data);
@@ -62,18 +36,7 @@ const processData = useCallback(
           const metadata = JSON.parse(kv[1]);
           const members = metadata.teammates;
 
-          // if (members) {
-          // removing extra characters and splitting the string into an array
-          const arr = members.replace(/[\[\]\(\)@]/g, "").split(/[\s,]+/);
-
-          // filtering out teammates that are not near addresses
-          const hexRegex = /^[0-9A-F\-_]+$/i;
-          const valid = arr.filter((teammate) => {
-            if (hexRegex.test(teammate)) {
-              return teammate;
-            }
-            return isNearAddress(teammate);
-          });
+          const valid = extractValidNearAddresses(members);
 
           valid.unshift(accountId);
 
@@ -82,7 +45,6 @@ const processData = useCallback(
           // }
           const collaborators = unique || [];
 
-          // console.log("metadata: ", metadata);
           return {
             accountId,
             type: type,
@@ -195,7 +157,6 @@ const tagFilters = useMemo(() => {
   return tags;
 }, [projects]);
 
-console.log("tagFilters", tagFilters);
 
 return (
   <Wrapper
@@ -246,12 +207,7 @@ return (
         <p className="fw-bold text-white">No Projects Found</p>
       )}
       {filteredProjects.map((project) => (
-        <ProjectCard
-          title={project.title}
-          accountId={project.accountId}
-          tags={project.tags}
-          people={project.collaborators}
-        />
+        <ProjectCard project={project} app={app} type={type} />
       ))}
     </Container>
   </Wrapper>
