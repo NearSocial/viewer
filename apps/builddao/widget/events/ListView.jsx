@@ -93,15 +93,17 @@ const dateKeys = Object.keys(categorizedEvents);
 
 const today = new Date();
 
-const futureEvents = dateKeys.filter((date) => {
-  return categorizedEvents[date].some((event) => {
-    const eventStartDate = new Date(event.start);
-    const eventEndDate = new Date(event.end);
-    return eventStartDate >= today || eventEndDate > today;
-  });
-});
+const futureEvents =
+  dateKeys.filter((date) => {
+    return categorizedEvents[date].some((event) => {
+      const eventStartDate = new Date(event.start);
+      const eventEndDate = new Date(event.end);
+      return eventStartDate >= today || eventEndDate > today;
+    });
+  }) || [];
 
-const pastEvents = dateKeys.filter((date) => !futureEvents.includes(date));
+const pastEvents =
+  dateKeys.filter((date) => !futureEvents.includes(date)) || [];
 
 const sortEvents = (events) => {
   return events.sort((a, b) => a.split(" ")[0] + b.split(" "[0]));
@@ -162,6 +164,23 @@ const EventGroup = ({ date }) => {
           const organizerProfile = Social.getr(`${organizer}/profile`);
 
           const startTime = formatStartTime(event.start);
+
+          const eventAuthor = event?.key?.split("/")[0] ?? "";
+          const eventApp = event?.key?.split("/")[1] ?? "";
+          const eventType = event?.key?.split("/")[2] ?? "";
+          const eventKey = event?.key?.split("/")[3] ?? "";
+
+          const handleDelete = () => {
+            Social.set({
+              [eventApp]: {
+                [eventType]: {
+                  [eventKey]: {
+                    "": null,
+                  },
+                },
+              },
+            });
+          };
 
           return (
             <StyledEvent key={`event-${i}`}>
@@ -236,6 +255,15 @@ const EventGroup = ({ date }) => {
                     src={event.extendedProps.customButtonSrc}
                     loading=""
                   />
+                )}
+                {eventAuthor === context.accountId && (
+                  <Button
+                    onClick={handleDelete}
+                    style={{ background: "#ff2b2b" }}
+                    variant="primary"
+                  >
+                    Delete Event
+                  </Button>
                 )}
               </div>
             </StyledEvent>
