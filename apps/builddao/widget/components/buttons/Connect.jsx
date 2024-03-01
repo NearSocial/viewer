@@ -1,8 +1,9 @@
 const { joinBtnChildren, connectedChildren, showActivity, className, href } =
   props;
 
-const { Bullet } = VM.require("buildhub.near/widget/components") || {
+const { Bullet, Button } = VM.require("buildhub.near/widget/components") || {
   Bullet: () => <></>,
+  Button: () => <></>,
 };
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
 
@@ -93,10 +94,14 @@ const Container = styled.div`
     gap: 4px;
 
     border-radius: 8px;
-    background: #ffaf51;
+    background: #eca227;
 
-    color: #000;
+    color: #fff;
     margin: 0;
+
+    a {
+      color: #fff !important;
+    }
 
     /* Other/Button_text */
     font-size: 14px;
@@ -124,12 +129,13 @@ const { href: linkHref } = VM.require("buildhub.near/widget/lib.url") || {
 const Component = () => {
   if (!context.accountId) {
     return (
-      <a
+      <Button
         href={"https://nearbuilders.org/join"}
-        style={{ textDecoration: "none" }}
+        variant="primary"
+        noLink={true}
       >
-        Sign In to Connect
-      </a>
+        Join Now
+      </Button>
     );
   } else if (data.isDaoMember || isConnected) {
     if (showActivity) {
@@ -139,6 +145,7 @@ const Component = () => {
             {data.isDaoMember ? "Joined" : "Pending application"}
           </Bullet>
           <Link
+            style={{ color: "#df9731", fontWeight: 600 }}
             to={linkHref({
               widgetSrc: "buildhub.near/widget/app",
               params: {
@@ -156,7 +163,7 @@ const Component = () => {
             >
               <path
                 d="M10.7809 7.83327L7.2049 4.25726L8.1477 3.31445L13.3332 8.49993L8.1477 13.6853L7.2049 12.7425L10.7809 9.1666H2.6665V7.83327H10.7809Z"
-                fill="black"
+                fill="#df9731"
               />
             </svg>
           </Link>

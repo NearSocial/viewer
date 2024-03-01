@@ -23,18 +23,18 @@ const pills = [
 
 const Nav = styled.div`
   .nav-pills {
-    background: var(--bg-1, #0b0c14);
+    background: var(--bg-1, #000000);
     font-weight: 500;
     --bs-nav-pills-border-radius: 0;
     --bs-nav-link-color: var(--font-color, #fff);
     --bs-nav-pills-link-active-color: var(--font-color, #fff);
-    --bs-nav-pills-link-active-bg: var(--bg-1, #0b0c14);
+    --bs-nav-pills-link-active-bg: var(--bg-1, #000000);
     --bs-nav-link-padding-y: 0.75rem;
     border-bottom: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
     padding-top: 3px;
   }
   .nav-link.active {
-    border-bottom: 2px solid var(--Yellow, #ffaf51);
+    border-bottom: 2px solid var(--Yellow, #eca227);
   }
 
   .nav-item:not(:has(> .disabled)):hover {
@@ -45,7 +45,7 @@ const Nav = styled.div`
 const StyledContent = styled.div`
   #pills-nfts {
     .nft-card {
-      background: var(--bg-1, #0b0c14);
+      background: var(--bg-1, #000000);
       border-radius: 1rem;
       border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
 

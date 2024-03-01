@@ -189,10 +189,14 @@ const [startTime, setStartTime] = useState(getCurrentTime());
 const [endTime, setEndTime] = useState(getCurrentTime());
 const [location, setLocation] = useState("");
 const [hashtags, setHashtags] = useState([]);
+const [customButtonSrc, setCustomButtonSrc] = useState("");
 
 State.init({
   image: null,
 });
+
+const app = props.app;
+const thing = props.thing;
 
 const onSubmit = () => {
   const thingId = UUID.generate(); // we could replace this with a normalized title
@@ -200,9 +204,9 @@ const onSubmit = () => {
 
   Social.set(
     {
-      every: {
+      [app]: {
         // we'll replace this with "every" or the specific app that the event should be visible in
-        event: {
+        [thing]: {
           [thingId]: {
             "": JSON.stringify({
               title,
@@ -221,6 +225,7 @@ const onSubmit = () => {
                 hashtags, // this can be moved to metadata.tags, but must be object with keys, e.g { [hashtag]: "" }
                 // this i'll leave up to you but we need them for filtering
                 cover: state.image,
+                customButtonSrc: customButtonSrc,
               },
             }),
             metadata: {
@@ -393,6 +398,24 @@ return (
           src="buildhub.near/widget/components.ImageUploader"
           loading=""
           props={{ image: state.image, onChange: onCoverChange }}
+        />
+      </div>
+      <div className="form-group flex-grow-1">
+        <div className="d-flex align-items-center justify-content-between">
+          <label htmlFor="customButton">Custom Button Souce</label>
+          <a
+            href="https://near.social/itexpert120-contra.near/widget/Button.Create"
+            target="_blank"
+          >
+            <small>Create Button Here</small>
+          </a>
+        </div>
+        <input
+          id="customButton"
+          name="customButton"
+          type="text"
+          value={customButtonSrc}
+          onChange={(e) => setCustomButtonSrc(e.target.value)}
         />
       </div>
     </div>

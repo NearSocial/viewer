@@ -97,14 +97,14 @@ const BookmarkButton = styled.div`
 
   &:not([disabled]):hover {
     opacity: 1 !important;
-    color: #ffaf51;
+    color: #eca227;
 
     .icon:before {
       background: rgba(255, 175, 81, 0.1);
     }
   }
   .bookmarked {
-    color: #ffaf51;
+    color: #eca227;
   }
 
   .loading {

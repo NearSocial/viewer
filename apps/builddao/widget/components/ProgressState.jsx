@@ -11,7 +11,7 @@ const Progress = styled.div`
   border: ${(props) => {
     switch (props.status) {
       case "focused":
-        return "1px solid var(--yellow, #FFAF51)";
+        return "1px solid var(--yellow, #eca227)";
       case "error":
         return "1px solid var(--system-red, #FD2A5C)";
       case "completed":
@@ -28,7 +28,7 @@ const Progress = styled.div`
       case "error":
         return "#2f101f";
       case "completed":
-        return "var(--yellow, #FFAF51)";
+        return "var(--yellow, #eca227)";
       default:
         return "#23242B";
     }

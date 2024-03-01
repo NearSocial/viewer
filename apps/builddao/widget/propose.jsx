@@ -8,7 +8,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
 
-  background: #0b0c14;
+  background: #000000;
   color: #fff;
 `;
 
@@ -49,12 +49,12 @@ const Card = styled.div`
     font-weight: 400;
     line-height: 170%; /* 23.8px */
 
-    background-color: #0b0c14;
+    background-color: #000000;
   }
 
   .form-control:focus {
     color: var(--white-50, rgba(255, 255, 255, 0.7));
-    background-color: #0b0c14;
+    background-color: #000000;
   }
 
   input::placeholder {
@@ -74,7 +74,7 @@ const Card = styled.div`
     gap: 4px;
 
     border-radius: 8px;
-    background: var(--Yellow, #ffaf51);
+    background: var(--Yellow, #eca227);
 
     color: var(--black-100, #000) !important;
 
@@ -129,7 +129,7 @@ const SelectionBox = ({ title, selected, value }) => {
         >
           <path
             d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM11.0026 16L18.0737 8.92893L16.6595 7.51472L11.0026 13.1716L8.17421 10.3431L6.75999 11.7574L11.0026 16Z"
-            fill="#FFAF51"
+            fill="#eca227"
           />
         </svg>
       ) : (

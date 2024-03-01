@@ -90,7 +90,7 @@ function App() {
                 url:
                   NetworkId == "testnet"
                     ? "https://test.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY"
-                    : "https://www.nearbuilders.org/#trial-url/ACCOUNT_ID/SECRET_KEY",
+                    : "https://www.nearbuilders.org/join?from=trial/#trial-url/ACCOUNT_ID/SECRET_KEY",
                 modalOptions: KEYPOM_OPTIONS(NetworkId),
               },
               instantSignInSpecs: {
@@ -216,7 +216,7 @@ function App() {
               <Redirect to="buildhub.near/widget/app?page=library" />
             </Route>
             <Route path={"/propose"}>
-              <Redirect to="buildhub.near/widget/app?page=proposal" />
+              <Redirect to="buildhub.near/widget/app?page=proposal&tab=proposals" />
             </Route>
             <Route path={"/projects"}>
               <Redirect to="buildhub.near/widget/app?page=projects" />

@@ -5,6 +5,9 @@ const { Post, Button } = VM.require("buildhub.near/widget/components") || {
   Post: () => <></>,
   Button: () => <></>,
 };
+const { Header } = VM.require("buildhub.near/widget/components.Header") || {
+  Header: () => <></>,
+};
 
 const LoginContainer = styled.div`
   background-color: #23242b;
@@ -49,6 +52,7 @@ customActions = [
 
 return (
   <div key={feedName}>
+    <Header>{feedName} Feed</Header>
     <Widget
       src="buildhub.near/widget/components.modals.CreateProposal"
       loading=""

@@ -11,7 +11,7 @@ const events = props.events || [];
 
 const customCSS = `
   :root {
-    --fc-page-bg-color: var(--bg-color, #0b0c14);
+    --fc-page-bg-color: var(--bg-color, #000000);
     --fc-border-color: var(--stroke-color, rgba(255, 255, 255, 0.20));
     --fc-today-bg-color: #424451;
   }
@@ -55,7 +55,7 @@ const customCSS = `
 
   .fc-day-other {
     .fc-daygrid-day-frame {
-      background: var(--bg-1, #0b0c14);
+      background: var(--bg-1, #000000);
     }
   }
 
@@ -164,13 +164,17 @@ return (
           </div>
           {data.extendedProps.description && (
             <div className="mb-3">
-              <h5>DESCRIPTION</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                DESCRIPTION
+              </h5>
               <p>{data.extendedProps.description}</p>
             </div>
           )}
           {organizers.length > 0 && (
             <div className="mb-3">
-              <h5>ORGANIZERS</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                ORGANIZERS
+              </h5>
               {organizers.map((organizer) => {
                 const organizerProfile = Social.getr(`${organizer}/profile`);
                 return (
@@ -200,7 +204,9 @@ return (
           )}
           {hashtags.length > 0 && (
             <div className="mb-3">
-              <h5>HASHTAGS</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                HASHTAGS
+              </h5>
               <div className="d-flex align-items-center gap-2 flex-wrap">
                 {hashtags.map((tag) => (
                   <Hashtag key={tag}>{tag}</Hashtag>
@@ -215,7 +221,7 @@ return (
             </span>
           )}
         </div>
-        <div>
+        <div className="d-flex align-items-center gap-3">
           <Button
             noLink={true}
             href={`${data?.url}`}
@@ -224,6 +230,9 @@ return (
           >
             Join Now
           </Button>
+          {data.extendedProps.customButtonSrc && (
+            <Widget src={data.extendedProps.customButtonSrc} loading="" />
+          )}
         </div>
       </Modal>
     )}

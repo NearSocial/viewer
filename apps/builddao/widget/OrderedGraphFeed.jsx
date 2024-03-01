@@ -1,3 +1,7 @@
+const { Header } = VM.require("buildhub.near/widget/components.Header") || {
+  Header: () => <></>,
+};
+
 const accountId = props.accountId ?? context.accountId;
 const itemType = props.itemType;
 const renderItem = props.renderItem;
@@ -59,6 +63,7 @@ let filteredArray = transformedArray.filter(
 
 return (
   <>
+    <Header>{itemType}s</Header>
     {(filteredArray ?? []).map((item) => renderItem(item))}
     {filteredArray.length === 0 && (
       <p className="fw-bold text-white">No {itemType}s!</p>

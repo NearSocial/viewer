@@ -8,7 +8,7 @@ const StyledHashtag = styled.span`
   flex-wrap: wrap;
 
   border-radius: 2px;
-  border: 1px solid var(--Yellow, #ffaf51);
+  border: 1px solid var(--Yellow, #eca227);
 
   color: var(--White-100, #fff);
 
@@ -19,7 +19,7 @@ const StyledHashtag = styled.span`
   line-height: normal;
 
   .tag {
-    color: var(--Yellow, #ffaf51);
+    color: var(--Yellow, #eca227);
   }
 `;
 const Hashtag = ({ children }) => {

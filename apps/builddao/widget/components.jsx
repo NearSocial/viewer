@@ -14,6 +14,7 @@ const { Checkbox } = VM.require("buildhub.near/widget/components.Checkbox");
 const { Avatar } = VM.require("buildhub.near/widget/components.Avatar");
 const { Modal } = VM.require("buildhub.near/widget/components.Modal");
 const { Hashtag } = VM.require("buildhub.near/widget/components.Hashtag");
+const { Tag } = VM.require("buildhub.near/widget/components.Tag");
 
 function Pagination({
   totalPages,
@@ -71,5 +72,6 @@ return {
   TextEditor,
   Checkbox,
   Avatar,
+  Tag,
   User,
 };

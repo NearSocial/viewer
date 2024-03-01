@@ -63,7 +63,7 @@ const TextareaWrapper = styled.div`
 
 const MarkdownEditor = `
   html {
-    background: #0b0c14;
+    background: #000000;
   }
   
   * {
@@ -91,7 +91,7 @@ const MarkdownEditor = `
   }
 
   textarea {
-    background: #0b0c14 !important;
+    background: #000000 !important;
     color: #fff !important;
 
     font-family: sans-serif !important;
@@ -103,7 +103,7 @@ const MarkdownEditor = `
   }
 
   .rc-md-navigation {
-    background: #0b0c14 !important;
+    background: #000000 !important;
     border: 1px solid #3c3d43 !important;
     border-top: 0 !important;
     border-bottom: 0 !important;

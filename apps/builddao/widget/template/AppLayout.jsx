@@ -12,7 +12,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   // margin-top: calc(-1 * var(--body-top-padding));
-  background-color: var(--bg-1, #0b0c14);
+  background-color: var(--bg-1, #000000);
 `;
 
 const ContentContainer = styled.div`
@@ -25,7 +25,8 @@ const ContentContainer = styled.div`
 
 const Header = ({ page, routes, ...props }) => (
   <Widget
-    src="buildhub.near/widget/components.navigation.header"
+    src="buildhub.near/widget/components.Navbar"
+    loading=""
     props={{ page, routes, ...props }}
   />
 );

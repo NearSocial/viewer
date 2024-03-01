@@ -1,7 +1,7 @@
 const MarkdownContainer = styled.div`
   max-width: 888px;
   padding: 0 55px 55px 55px;
-  background: var(--bg-1, #0b0c14);
+  background: var(--bg-1, #000000);
   border-radius: 23px;
 
   h1,

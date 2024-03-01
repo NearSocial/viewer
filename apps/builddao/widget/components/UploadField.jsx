@@ -17,7 +17,7 @@ const UploadContainer = styled.div`
   border-radius: 16px;
   border: 1px dashed var(--stroke-color, rgba(255, 255, 255, 0.2));
   background: ${(props) =>
-    props.background ? "var(--bg-2, #23242B)" : "var(--bg-1, #0b0c14)"};
+    props.background ? "var(--bg-2, #23242B)" : "var(--bg-1, #000000)"};
 
   p {
     color: var(--font-color, #fff);

@@ -7,8 +7,9 @@ const StyledButton = styled.button`
   gap: 4px;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: normal;
+  font-family: "Poppins", sans-serif;
 
   transition: all 300ms;
 
@@ -28,7 +29,7 @@ const StyledButton = styled.button`
   background: ${(props) => {
     switch (props.variant) {
       case "primary":
-        return "var(--button-primary-bg, #FFAF51)";
+        return "var(--button-primary-bg, #eca227)";
       case "outline":
         return "var(--button-outline-bg, transparent)";
       case "secondary":
@@ -57,7 +58,7 @@ const StyledButton = styled.button`
       : ""};
 
   /* Hover states */
-  &:hover {
+  &:hover:not(:disabled) {
     background: ${(props) => {
       switch (props.variant) {
         case "primary":
@@ -72,13 +73,14 @@ const StyledButton = styled.button`
 
   &:disabled {
     opacity: 0.5;
-    cursor: not-allowed;
+    cursor: not-allowed !important;
   }
 `;
 
 function Button({
   id,
   disabled,
+  loading,
   children,
   variant,
   type,
@@ -90,6 +92,7 @@ function Button({
   noLink,
   style,
 }) {
+  className = className + (disabled ? " disabled" : "");
   if (href && noLink) {
     return (
       <a
@@ -103,6 +106,7 @@ function Button({
           key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
           className={className}
           variant={variant}
+          disabled={disabled}
           type={type}
           style={style}
           href={href}
@@ -125,6 +129,7 @@ function Button({
           id={id}
           key={`ButtonLink-${type ?? "Normal"}-${variant ?? "Default"}-${id}`}
           className={className}
+          disabled={disabled}
           variant={variant}
           type={type}
           style={style}
@@ -148,6 +153,13 @@ function Button({
       onClick={onClick}
     >
       {children}
+      {loading ? (
+        <span
+          className="spinner-border spinner-border-sm mr-2"
+          role="status"
+          aria-hidden="true"
+        ></span>
+      ) : null}
     </StyledButton>
   );
 }
