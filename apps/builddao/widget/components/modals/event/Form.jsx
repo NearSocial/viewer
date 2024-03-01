@@ -194,15 +194,18 @@ State.init({
   image: null,
 });
 
+const app = props.app;
+const thing = props.thing;
+
 const onSubmit = () => {
   const thingId = UUID.generate(); // we could replace this with a normalized title
   // you mean just UUID();?
 
   Social.set(
     {
-      every: {
+      [app]: {
         // we'll replace this with "every" or the specific app that the event should be visible in
-        event: {
+        [thing]: {
           [thingId]: {
             "": JSON.stringify({
               title,
@@ -210,7 +213,7 @@ const onSubmit = () => {
               url: link,
               start: `${isoDate(startDate, startTime)}T${isoTime(
                 startDate,
-                startTime,
+                startTime
               )}`, // we'll want this be available for filtering... we may want to store it outside the JSON
               // or we need an indexing solution
               // we fetch events and then apply filters after parsing them
@@ -236,7 +239,7 @@ const onSubmit = () => {
     },
     {
       onCommit: () => props.toggleModal(),
-    },
+    }
   );
 };
 
