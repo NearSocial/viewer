@@ -103,7 +103,9 @@ const Toolbar = () => {
   );
 };
 
-const events = fetchThings("every", "event");
+const app = props.app ?? "every";
+const thing = props.thing ?? "event";
+const events = fetchThings(app, thing);
 
 const filterEvents = () => {
   let filteredEvents = events;
@@ -229,6 +231,8 @@ return (
       props={{
         showModal: showCreateModal,
         toggleModal: toggleCreateModal,
+        app,
+        thing,
       }}
     />
     <Widget

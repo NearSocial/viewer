@@ -194,15 +194,18 @@ State.init({
   image: null,
 });
 
+const app = props.app;
+const thing = props.thing;
+
 const onSubmit = () => {
   const thingId = UUID.generate(); // we could replace this with a normalized title
   // you mean just UUID();?
 
   Social.set(
     {
-      every: {
+      [app]: {
         // we'll replace this with "every" or the specific app that the event should be visible in
-        event: {
+        [thing]: {
           [thingId]: {
             "": JSON.stringify({
               title,

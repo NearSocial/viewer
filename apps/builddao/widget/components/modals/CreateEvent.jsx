@@ -6,6 +6,8 @@ const showModal = props.showModal;
 const toggleModal = props.toggleModal;
 const toggle = props.toggle;
 const bootstrapTheme = props.bootstrapTheme || "dark";
+const app = props.app;
+const thing = props.thing;
 
 return (
   <Modal
@@ -20,6 +22,8 @@ return (
       props={{
         bootstrapTheme,
         toggleModal,
+        app,
+        thing,
       }}
     />
   </Modal>
