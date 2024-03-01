@@ -204,6 +204,11 @@ const Root = styled.div`
     src: url("https://rsms.me/inter/font-files/InterVariable-Italic.woff2?v=4.0")
       format("woff2");
   }
+
+  /* Typeahead Fix */
+  .rbt-token-removeable {
+    background: #007bff;
+  }
 `;
 
 function Router({ active, routes }) {

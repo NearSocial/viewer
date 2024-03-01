@@ -29,7 +29,10 @@ function fetchThings(app, type) {
 
   let things = [];
   flattenedKeys.forEach((key) =>
-    things.push(JSON.parse(Social.get(key, "final"))),
+    things.push({
+      ...JSON.parse(Social.get(key, "final")),
+      key,
+    }),
   );
 
   return things;

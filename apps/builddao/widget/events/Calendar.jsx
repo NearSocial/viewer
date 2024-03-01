@@ -3,7 +3,7 @@ const { Button } = VM.require("buildhub.near/widget/components") || {
 };
 
 const { fetchThings } = VM.require(
-  "buildhub.near/widget/lib.everything-sdk"
+  "buildhub.near/widget/lib.everything-sdk",
 ) || {
   fetchThings: () => {},
 };
@@ -106,6 +106,12 @@ const Toolbar = () => {
 const app = props.app ?? "every";
 const thing = props.thing ?? "event";
 const events = fetchThings(app, thing);
+
+if (!events) {
+  return <></>;
+}
+
+events = events.filter((event) => event.title);
 
 const filterEvents = () => {
   let filteredEvents = events;
