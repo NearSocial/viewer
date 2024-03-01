@@ -1,15 +1,15 @@
-import React from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { Logotype } from "../Logotype";
-import { NavigationButton } from "../NavigationButton";
-import { ArrowUpRight } from "../../icons/ArrowUpRight";
-import { SignInButton } from "../SignInButton";
-import { UserDropdown } from "./UserDropdown";
-import { DevActionsDropdown } from "./DevActionsDropdown";
-import { NotificationWidget } from "../NotificationWidget";
-import { MutationDropdown } from "./MutationDropdown";
-import { StarButton } from "../StarButton";
+import React from 'react'
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import { Logotype } from '../Logotype'
+import { NavigationButton } from '../NavigationButton'
+import { ArrowUpRight } from '../../icons/ArrowUpRight'
+import { SignInButton } from '../SignInButton'
+import { UserDropdown } from './UserDropdown'
+import { DevActionsDropdown } from './DevActionsDropdown'
+import { NotificationWidget } from '../NotificationWidget'
+import { MutationDropdown } from './MutationDropdown'
+import { StarButton } from '../StarButton'
 
 const StyledNavigation = styled.div`
   position: sticky;
@@ -60,7 +60,7 @@ const StyledNavigation = styled.div`
       margin-left: 4px;
     }
   }
-`;
+`
 
 export function DesktopNavigation(props) {
   return (
@@ -70,7 +70,7 @@ export function DesktopNavigation(props) {
           to="/"
           className="logo-link"
           onClick={() => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
         >
           <Logotype />
@@ -83,25 +83,21 @@ export function DesktopNavigation(props) {
             <ArrowUpRight />
           </NavigationButton>
         </div>
-        <div>
+        <div className="mutable-section">
           <MutationDropdown engine={props.mutationEngine} />
         </div>
         <div className="user-section">
           <StarButton {...props} />
           <DevActionsDropdown {...props} />
-          {!props.signedIn && (
-            <SignInButton onSignIn={() => props.requestSignIn()} />
-          )}
+          {!props.signedIn && <SignInButton onSignIn={() => props.requestSignIn()} />}
           {props.signedIn && (
             <>
-              <NotificationWidget
-                notificationButtonSrc={props.widgets.notificationButton}
-              />
+              <NotificationWidget notificationButtonSrc={props.widgets.notificationButton} />
               <UserDropdown {...props} />
             </>
           )}
         </div>
       </div>
     </StyledNavigation>
-  );
+  )
 }
