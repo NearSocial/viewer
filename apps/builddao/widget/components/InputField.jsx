@@ -24,7 +24,7 @@ const Input = styled.input`
 
   border-radius: 8px;
   border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
-  background: var(--bg-1, #0b0c14);
+  background: var(--bg-1, #000000);
 
   flex: 1 0 0;
 

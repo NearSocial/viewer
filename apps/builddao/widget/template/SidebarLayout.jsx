@@ -16,7 +16,7 @@ const Container = styled.div`
 const SidebarContainer = styled.div`
   border-radius: 16px;
   border: 1px solid var(--stroke-color, rgba(255, 255, 255, 0.2));
-  background: var(--bg-1, #0b0c14);
+  background: var(--bg-1, #000000);
   width: 100%;
   min-height: 80vh;
   display: flex;
@@ -59,6 +59,7 @@ const Sidebar = ({ currentPath, page, routes }) => (
               fontSize: "14px",
               textDecoration: "none",
               cursor: "pointer",
+              fontWeight: 600,
               padding: "8px 12px",
               gap: "10px",
             }}

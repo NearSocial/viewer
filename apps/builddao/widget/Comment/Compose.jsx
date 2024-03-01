@@ -87,7 +87,7 @@ return (
             force
             className="btn rounded-3"
             style={{
-              backgroundColor: "var(--yellow, #ffaf51)",
+              backgroundColor: "var(--yellow, #eca227)",
               color: "var(--button-primary-color, #000)",
               fontSize: "14px",
               fontWeight: "500",

@@ -45,14 +45,14 @@ const StyledPost = styled.div`
   }
 
   .dropdown-menu {
-    background-color: var(--post-bg, #0b0c14) !important;
+    background-color: var(--post-bg, #000000) !important;
     color: var(--font-color, #fff) !important;
 
     li.dropdown-item {
       color: var(--font-color, #fff) !important;
       &:hover {
         a {
-          color: var(--post-bg, #0b0c14) !important;
+          color: var(--post-bg, #000000) !important;
         }
       }
     }
@@ -62,10 +62,10 @@ const StyledPost = styled.div`
       color: var(--font-color, #fff) !important;
 
       &:hover {
-        color: var(--post-bg, #0b0c14) !important;
+        color: var(--post-bg, #000000) !important;
 
         span {
-          color: var(--post-bg, #0b0c14) !important;
+          color: var(--post-bg, #000000) !important;
         }
       }
     }

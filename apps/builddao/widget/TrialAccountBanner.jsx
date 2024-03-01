@@ -27,7 +27,7 @@ const [btnText, setBtnText] = useState("Create Trial Account");
 // `;
 
 const Container = styled.div`
-  background-color: #0b0c14;
+  background-color: #000000;
   color: #fff;
   height: 100%;
 
@@ -89,7 +89,7 @@ const Container = styled.div`
       align-self: stretch;
 
       border-radius: 8px;
-      background: #ffaf51;
+      background: #eca227;
 
       &:hover:not(:disabled) {
         background: #e49b48;

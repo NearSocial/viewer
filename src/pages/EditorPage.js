@@ -53,7 +53,7 @@ const NavPill = styled.button`
 `;
 
 const Container = styled.div`
-  background: #0b0c14;
+  background: #000000;
   color: #fff;
 
   min-height: 100%;
@@ -697,7 +697,7 @@ export default function EditorPage(props) {
                     className={`nav-link ${tab === Tab.Editor ? "active" : ""}`}
                     style={{
                       background: `${
-                        tab === Tab.Editor ? "#23242b" : "#0b0c14"
+                        tab === Tab.Editor ? "#23242b" : "#000000"
                       }`,
                       color: "white",
                       border: "none",
@@ -713,7 +713,7 @@ export default function EditorPage(props) {
                     className={`nav-link ${tab === Tab.Props ? "active" : ""}`}
                     style={{
                       background: `${
-                        tab === Tab.Props ? "#23242b" : "#0b0c14"
+                        tab === Tab.Props ? "#23242b" : "#000000"
                       }`,
                       color: "white",
                       border: "none",
@@ -729,7 +729,7 @@ export default function EditorPage(props) {
                     <button
                       style={{
                         background: `${
-                          tab === Tab.Metadata ? "#23242b" : "#0b0c14"
+                          tab === Tab.Metadata ? "#23242b" : "#000000"
                         }`,
                         color: "white",
                         border: "none",
@@ -749,7 +749,7 @@ export default function EditorPage(props) {
                     <button
                       style={{
                         background: `${
-                          tab === Tab.Widget ? "#23242b" : "#0b0c14"
+                          tab === Tab.Widget ? "#23242b" : "#000000"
                         }`,
                         color: "white",
                         border: "none",
@@ -798,7 +798,7 @@ export default function EditorPage(props) {
                   <Button
                     style={{
                       color: "white",
-                      background: "#0b0c14",
+                      background: "#000000",
                       border: "1px solid white",
                     }}
                     // className={`btn ${

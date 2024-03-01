@@ -1,5 +1,5 @@
 const LoginContainer = styled.div`
-  background-color: #0b0c14;
+  background-color: #000000;
   color: #fff;
   height: 100%;
 
@@ -61,7 +61,7 @@ const LoginContainer = styled.div`
       align-self: stretch;
 
       border-radius: 8px;
-      background: #ffaf51;
+      background: #eca227;
 
       &:hover {
         background: #e49b48;

@@ -11,7 +11,7 @@ const events = props.events || [];
 
 const customCSS = `
   :root {
-    --fc-page-bg-color: var(--bg-color, #0b0c14);
+    --fc-page-bg-color: var(--bg-color, #000000);
     --fc-border-color: var(--stroke-color, rgba(255, 255, 255, 0.20));
     --fc-today-bg-color: #424451;
   }
@@ -55,7 +55,7 @@ const customCSS = `
 
   .fc-day-other {
     .fc-daygrid-day-frame {
-      background: var(--bg-1, #0b0c14);
+      background: var(--bg-1, #000000);
     }
   }
 

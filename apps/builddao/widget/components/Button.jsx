@@ -7,8 +7,9 @@ const StyledButton = styled.button`
   gap: 4px;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: normal;
+  font-family: "Poppins", sans-serif;
 
   transition: all 300ms;
 
@@ -28,7 +29,7 @@ const StyledButton = styled.button`
   background: ${(props) => {
     switch (props.variant) {
       case "primary":
-        return "var(--button-primary-bg, #FFAF51)";
+        return "var(--button-primary-bg, #eca227)";
       case "outline":
         return "var(--button-outline-bg, transparent)";
       case "secondary":
