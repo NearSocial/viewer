@@ -21,7 +21,7 @@ const Card = styled.div`
 
   border-radius: 16px;
   border: 1px solid var(--Gradient-1, #4a21a5);
-  background: #0d020f;
+  background: #000000;
   box-shadow: 4px 24px 48px 0px rgba(249, 225, 122, 0.05);
 
   img {
