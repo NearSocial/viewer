@@ -32,12 +32,8 @@ const Container = styled.div`
   }
 `;
 
-const Header = ({ children }) => {
-  return (
-    <Container>
-      <h2>{children}</h2>
-    </Container>
-  );
+const Header = ({ children, asChild }) => {
+  return <Container>{!asChild ? <h2>{children}</h2> : children}</Container>;
 };
 
 return { Header };
