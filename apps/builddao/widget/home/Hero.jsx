@@ -48,7 +48,7 @@ const Logo = styled.img`
   object-fit: cover;
 
   @media screen and (max-width: 768px) {
-    height: 64px;
+    height: 78px;
   }
 `;
 
