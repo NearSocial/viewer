@@ -105,10 +105,12 @@ const Footer = ({ noBanner }) => {
     <Container className="container-xl">
       {!noBanner && (
         <Card>
-          <img src="https://ipfs.near.social/ipfs/bafkreifcrvkgibbu4xpfxnxf3pnyhxvojqlffd2zmoxfbyapacy62rwwqu" />
-          <h3>
-            Together, we can <span>build a better future</span>.
-          </h3>
+          <div className="d-flex flex-column align-items-center">
+            <img src="https://ipfs.near.social/ipfs/bafkreidngrvtb53wlu3qp75gb2zy562wmtmiuk6wvbznd44d23h5ie7jgy" />
+            <h3>
+              Together, we can <span>build a better future</span>.
+            </h3>
+          </div>
           <Widget
             src="/*__@appAccount__*//widget/components.buttons.Connect"
             props={{
