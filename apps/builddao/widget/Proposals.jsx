@@ -2,6 +2,10 @@ const { Button, Modal } = VM.require("buildhub.near/widget/components") || {
   Button: <></>,
   Modal: <></>,
 };
+
+const { Header } = VM.require("buildhub.near/widget/components.Header") || {
+  Header: () => <></>,
+};
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
 
 if (!DaoSDK) {
@@ -334,21 +338,23 @@ return (
           toggleModal: () => setFiltersModal(!showFiltersModal),
         }}
       />
-      <div className="d-flex align-items-center flex-wrap gap-3 justify-content-between">
-        <h3 className="text-white m-0">Proposals</h3>
-        <div className="d-flex align-items-center gap-3">
-          <Button variant="outline" onClick={() => setFiltersModal(true)}>
-            Filters
-          </Button>
-          <Button
-            variant="primary"
-            disabled={!context.accountId}
-            onClick={() => setShowModal(true)}
-          >
-            Create Proposal
-          </Button>
+      <Header asChild>
+        <div className="d-flex align-items-center w-100 justify-content-between">
+          <h3 className="text-white m-0">Proposals</h3>
+          <div className="d-flex align-items-center gap-3">
+            <Button variant="outline" onClick={() => setFiltersModal(true)}>
+              Filters
+            </Button>
+            <Button
+              variant="primary"
+              disabled={!context.accountId}
+              onClick={() => setShowModal(true)}
+            >
+              Create Proposal
+            </Button>
+          </div>
         </div>
-      </div>
+      </Header>
       <NotificationModal />
       <div className="d-flex flex-column gap-4">{proposalsComponent}</div>
       {!proposalId && (

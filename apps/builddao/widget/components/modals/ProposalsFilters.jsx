@@ -29,6 +29,9 @@ const ThemeContainer =
   props.ThemeContainer ||
   styled.div`
     --primary-color: rgb(255, 175, 81);
+    span.label {
+      color: var(--label-color, #fff);
+    }
   `;
 
 const Wrapper = styled.div`
@@ -164,7 +167,7 @@ return (
     >
       <Wrapper>
         <h5 className="filter-title">Type</h5>
-        <div className="d-flex flex-wrap">
+        <div className="d-flex flex-wrap gap-3">
           {Object.keys(proposalTypeOptions).map((key) => {
             return (
               <div className="d-flex flex-column gap-1">

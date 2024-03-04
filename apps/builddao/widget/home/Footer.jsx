@@ -100,23 +100,25 @@ const LinksContainer = styled.div`
   }
 `;
 
-const Footer = () => {
+const Footer = ({ noBanner }) => {
   return (
     <Container className="container-xl">
-      <Card>
-        <img src="https://ipfs.near.social/ipfs/bafkreifcrvkgibbu4xpfxnxf3pnyhxvojqlffd2zmoxfbyapacy62rwwqu" />
-        <h3>
-          Together, we can <span>build a better future</span>.
-        </h3>
-        <Widget
-          src="/*__@appAccount__*//widget/components.buttons.Connect"
-          props={{
-            joinBtnChildren: "Join Now",
-            showActivity: true,
-            className: "custom-button",
-          }}
-        />
-      </Card>
+      {!noBanner && (
+        <Card>
+          <img src="https://ipfs.near.social/ipfs/bafkreifcrvkgibbu4xpfxnxf3pnyhxvojqlffd2zmoxfbyapacy62rwwqu" />
+          <h3>
+            Together, we can <span>build a better future</span>.
+          </h3>
+          <Widget
+            src="/*__@appAccount__*//widget/components.buttons.Connect"
+            props={{
+              joinBtnChildren: "Join Now",
+              showActivity: true,
+              className: "custom-button",
+            }}
+          />
+        </Card>
+      )}
       <FooterContainer>
         <LinksContainer>
           <a href="https://twitter.com/nearbuilders" target="_blank">
@@ -125,7 +127,7 @@ const Footer = () => {
           <a href="https://nearbuilders.com/tg-builders" target="_blank">
             <i className="bi bi-telegram"></i>
           </a>
-          <a href="https://github.near/NEARBuilders" target="_blank">
+          <a href="https://github.com/NEARBuilders" target="_blank">
             <i className="bi bi-github"></i>
           </a>
           <a href="https://devs.near.social/" target="_blank">

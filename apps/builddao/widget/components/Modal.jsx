@@ -29,7 +29,7 @@ const Content = styled.div`
   color: var(--modal-text-color, #fff);
 
   @media screen and (max-width: 768px) {
-    width: 80%;
+    width: 100%;
     max-width: 100%;
     min-width: 0;
   }
