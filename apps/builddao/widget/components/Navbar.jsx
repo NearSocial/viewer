@@ -60,15 +60,17 @@ const MobileView = styled.div`
   display: none;
 
   @media screen and (max-width: 768px) {
-    display: block;
-    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    position: fixed;
     background: var(--bg, #000);
-    z-index: 100;
-    min-height: 100vh;
+    z-index: 1001;
     padding: 24px 48px;
     top: 0;
-    height: 100%;
     left: 0;
+    height: 100%;
     width: 100%;
   }
 `;
@@ -198,8 +200,8 @@ const MobileContent = styled.div`
 
   display: flex;
   align-items: center;
-  gap: 256px;
   flex-direction: column;
+  justify-content: space-between;
 `;
 
 function Navbar(props) {
@@ -413,9 +415,11 @@ function Navbar(props) {
                   );
                 })}
             </NavLinks>
-            <div className="d-flex flex-column gap-2">
-              <div className="d-flex w-100 gap-2 justify-content-center">
+            <div className="d-flex flex-column gap-2 w-100">
+              <div className="d-flex gap-2">
                 <Button
+                  linkClassName="d-flex w-100"
+                  className="w-100"
                   href={href({
                     widgetSrc: "buildhub.near/widget/app",
                     params: {
@@ -426,7 +430,13 @@ function Navbar(props) {
                 >
                   <span>View source</span>
                 </Button>
-                <Button href={`/edit/${routes[page].path}`}>Edit Code</Button>
+                <Button
+                  linkClassName="d-flex w-100"
+                  className="w-100"
+                  href={`/edit/${routes[page].path}`}
+                >
+                  Edit Code
+                </Button>
               </div>
               {context.accountId ? (
                 <div className="mx-auto d-flex align-items-stretch ">
@@ -438,19 +448,15 @@ function Navbar(props) {
                 </div>
               ) : (
                 <>
-                  <a
-                    href={"https://nearbuilders.org/join"}
-                    style={{ textDecoration: "none" }}
+                  <Button
+                    variant="primary"
+                    linkClassName="d-flex"
+                    href="https://nearbuilders.org/join"
+                    className="w-100"
+                    onClick={() => setDropdown(false)}
                   >
-                    <Button
-                      variant="primary"
-                      linkClassName="d-flex"
-                      className="align-self-stretch w-100"
-                      onClick={() => setDropdown(false)}
-                    >
-                      Sign In
-                    </Button>
-                  </a>
+                    Sign In
+                  </Button>
                 </>
               )}
             </div>
