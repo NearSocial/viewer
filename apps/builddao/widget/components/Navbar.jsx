@@ -223,10 +223,17 @@ function Navbar(props) {
                 page: "home",
               },
             })}
+            className="d-flex align-items-center"
           >
             <img
               className="object-fit-cover"
-              src="https://ipfs.near.social/ipfs/bafkreihtv6fim7hrgtklbdg5zgq2nyscqgidh2g5zvhamkhqaywaux4hqe"
+              style={{ height: 46 }}
+              src="https://ipfs.near.social/ipfs/bafkreifgni5dca5nqhq4wlj4rsbkiwl573bvrps4thkml5qenf2u65bcli"
+            />
+            <img
+              className="object-fit-cover"
+              style={{ height: 46 }}
+              src="https://ipfs.near.social/ipfs/bafkreihqoorxml52espjokx5hlj5lpcdomtkua34llaxnl4pg2wgrf3g54"
             />
           </Link>
           <NavLinks>
@@ -343,7 +350,8 @@ function Navbar(props) {
             <img
               className="object-fit-cover"
               onClick={() => setDropdown(false)}
-              src="https://ipfs.near.social/ipfs/bafkreicevo7aeyy6nivzqyfygpsoxkz6apd4pbqwrhc6yccqtyp6qzdoqq"
+              src="https://ipfs.near.social/ipfs/bafkreidngrvtb53wlu3qp75gb2zy562wmtmiuk6wvbznd44d23h5ie7jgy"
+              style={{ height: 40 }}
               alt="BuildDAO"
             />
           </Link>
@@ -371,7 +379,8 @@ function Navbar(props) {
             >
               <img
                 onClick={() => setDropdown(false)}
-                src="https://ipfs.near.social/ipfs/bafkreicevo7aeyy6nivzqyfygpsoxkz6apd4pbqwrhc6yccqtyp6qzdoqq"
+                src="https://ipfs.near.social/ipfs/bafkreidngrvtb53wlu3qp75gb2zy562wmtmiuk6wvbznd44d23h5ie7jgy"
+                style={{ height: 40 }}
                 alt="BuildDAO"
               />
             </Link>
