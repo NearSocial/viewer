@@ -127,7 +127,7 @@ const Footer = ({ noBanner }) => {
           <a href="https://nearbuilders.com/tg-builders" target="_blank">
             <i className="bi bi-telegram"></i>
           </a>
-          <a href="https://github.near/NEARBuilders" target="_blank">
+          <a href="https://github.com/NEARBuilders" target="_blank">
             <i className="bi bi-github"></i>
           </a>
           <a href="https://devs.near.social/" target="_blank">
