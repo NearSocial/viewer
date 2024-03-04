@@ -182,7 +182,7 @@ return (
                           setSelectedTypes(
                             checked
                               ? [...selectedTypes, item.value]
-                              : selectedTypes.filter((x) => x !== item.value)
+                              : selectedTypes.filter((x) => x !== item.value),
                           );
                         },
                         label: item.title,
@@ -207,7 +207,7 @@ return (
                     setSelectedStatus(
                       checked
                         ? [...selectedStatus, item.value]
-                        : selectedStatus.filter((x) => x !== item.value)
+                        : selectedStatus.filter((x) => x !== item.value),
                     );
                   },
                   label: item.title,

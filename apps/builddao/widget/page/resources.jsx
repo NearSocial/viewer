@@ -9,7 +9,7 @@ const { Footer } = VM.require("buildhub.near/widget/home.Home") || {
 };
 
 const { SidebarLayout } = VM.require(
-  "buildhub.near/widget/template.SidebarLayout"
+  "buildhub.near/widget/template.SidebarLayout",
 ) || {
   SidebarLayout: () => <></>,
 };
