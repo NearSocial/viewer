@@ -4,8 +4,12 @@ const { routes } = VM.require("buildhub.near/widget/config.resources") ?? {
   routes: {},
 };
 
+const { Footer } = VM.require("buildhub.near/widget/home.Home") || {
+  Footer: () => <></>,
+};
+
 const { SidebarLayout } = VM.require(
-  "buildhub.near/widget/template.SidebarLayout",
+  "buildhub.near/widget/template.SidebarLayout"
 ) || {
   SidebarLayout: () => <></>,
 };
@@ -61,6 +65,7 @@ return (
           <Router active={page} routes={routes} />
         </Content>
       </SidebarLayout>
+      <Footer noBanner />
     </Container>
   </Root>
 );
