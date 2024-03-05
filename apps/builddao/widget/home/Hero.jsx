@@ -9,7 +9,7 @@ const { href } = VM.require("buildhub.near/widget/lib.url") || {
 const gridLink =
   "https://ipfs.near.social/ipfs/bafkreiay3ytllrxhtyunppqxcazpistttwdzlz3jefdbsq5tosxuryauu4";
 const logoLink =
-  "https://ipfs.near.social/ipfs/bafkreifnxc6jk66wdy377ttcinogwr4xqnllsrjfmnglvoonikafzksdui";
+  "https://ipfs.near.social/ipfs/bafkreifotevq6g6ralhvutlcssaasa7xbfjjc6mbo5hlnvgpxxgfmwswmq";
 const leftBlur =
   "https://ipfs.near.social/ipfs/bafkreiabxzgspdolrlol2gvw7gnyrtktmfg23pd2ykow5pdddtmz3ve45y";
 const rightBlur =
@@ -43,13 +43,12 @@ const Container = styled.div`
 `;
 
 const Logo = styled.img`
-  height: 80px;
-  width: 235px;
+  height: 128px;
+  width: max-content;
   object-fit: cover;
 
   @media screen and (max-width: 768px) {
-    height: 26px;
-    width: 71px;
+    height: 78px;
   }
 `;
 

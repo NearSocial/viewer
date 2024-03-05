@@ -223,10 +223,12 @@ function Navbar(props) {
                 page: "home",
               },
             })}
+            className="d-flex align-items-center"
           >
             <img
               className="object-fit-cover"
-              src="https://ipfs.near.social/ipfs/bafkreihtv6fim7hrgtklbdg5zgq2nyscqgidh2g5zvhamkhqaywaux4hqe"
+              style={{ height: 46 }}
+              src="https://ipfs.near.social/ipfs/bafkreiglw3t6b3dx2axk7x4ftzk6pwwe6ziiyexlszlkhenxist6osrlbe"
             />
           </Link>
           <NavLinks>
@@ -343,7 +345,8 @@ function Navbar(props) {
             <img
               className="object-fit-cover"
               onClick={() => setDropdown(false)}
-              src="https://ipfs.near.social/ipfs/bafkreicevo7aeyy6nivzqyfygpsoxkz6apd4pbqwrhc6yccqtyp6qzdoqq"
+              src="https://ipfs.near.social/ipfs/bafkreifotevq6g6ralhvutlcssaasa7xbfjjc6mbo5hlnvgpxxgfmwswmq"
+              style={{ height: 40 }}
               alt="BuildDAO"
             />
           </Link>
@@ -371,7 +374,8 @@ function Navbar(props) {
             >
               <img
                 onClick={() => setDropdown(false)}
-                src="https://ipfs.near.social/ipfs/bafkreicevo7aeyy6nivzqyfygpsoxkz6apd4pbqwrhc6yccqtyp6qzdoqq"
+                src="https://ipfs.near.social/ipfs/bafkreifotevq6g6ralhvutlcssaasa7xbfjjc6mbo5hlnvgpxxgfmwswmq"
+                style={{ height: 40 }}
                 alt="BuildDAO"
               />
             </Link>
