@@ -228,12 +228,7 @@ function Navbar(props) {
             <img
               className="object-fit-cover"
               style={{ height: 46 }}
-              src="https://ipfs.near.social/ipfs/bafkreifgni5dca5nqhq4wlj4rsbkiwl573bvrps4thkml5qenf2u65bcli"
-            />
-            <img
-              className="object-fit-cover"
-              style={{ height: 46 }}
-              src="https://ipfs.near.social/ipfs/bafkreihqoorxml52espjokx5hlj5lpcdomtkua34llaxnl4pg2wgrf3g54"
+              src="https://ipfs.near.social/ipfs/bafkreiglw3t6b3dx2axk7x4ftzk6pwwe6ziiyexlszlkhenxist6osrlbe"
             />
           </Link>
           <NavLinks>
@@ -350,7 +345,7 @@ function Navbar(props) {
             <img
               className="object-fit-cover"
               onClick={() => setDropdown(false)}
-              src="https://ipfs.near.social/ipfs/bafkreidngrvtb53wlu3qp75gb2zy562wmtmiuk6wvbznd44d23h5ie7jgy"
+              src="https://ipfs.near.social/ipfs/bafkreifotevq6g6ralhvutlcssaasa7xbfjjc6mbo5hlnvgpxxgfmwswmq"
               style={{ height: 40 }}
               alt="BuildDAO"
             />
@@ -379,7 +374,7 @@ function Navbar(props) {
             >
               <img
                 onClick={() => setDropdown(false)}
-                src="https://ipfs.near.social/ipfs/bafkreidngrvtb53wlu3qp75gb2zy562wmtmiuk6wvbznd44d23h5ie7jgy"
+                src="https://ipfs.near.social/ipfs/bafkreifotevq6g6ralhvutlcssaasa7xbfjjc6mbo5hlnvgpxxgfmwswmq"
                 style={{ height: 40 }}
                 alt="BuildDAO"
               />
