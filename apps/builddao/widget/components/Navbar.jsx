@@ -319,18 +319,15 @@ function Navbar(props) {
               props={props}
             />
           ) : (
-            <a
-              href={"https://nearbuilders.org/join"}
-              style={{ textDecoration: "none" }}
+            <Button
+              variant="primary"
+              linkClassName="d-flex"
+              href="https://nearbuilders.org/join"
+              noLink={true}
+              className="w-100"
             >
-              <Button
-                variant="primary"
-                linkClassName="d-flex"
-                className="align-self-stretch w-100"
-              >
-                Sign In
-              </Button>
-            </a>
+              Sign In
+            </Button>
           )}
         </Right>
         <MobileNavigation>
@@ -456,6 +453,7 @@ function Navbar(props) {
                     variant="primary"
                     linkClassName="d-flex"
                     href="https://nearbuilders.org/join"
+                    noLink={true}
                     className="w-100"
                     onClick={() => setDropdown(false)}
                   >
