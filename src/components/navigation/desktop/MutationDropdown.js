@@ -9,7 +9,6 @@ import { Back } from '../../icons/Back'
 const MutationWrapper = styled.div`
   position: relative;
   display: flex;
-  width: 300px;
   height: 44px;
 
   align-items: center;
@@ -17,8 +16,8 @@ const MutationWrapper = styled.div`
 
 const ActiveMutation = styled.div`
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   color: #fff;
   padding: 10px;
@@ -28,19 +27,20 @@ const ActiveMutation = styled.div`
   background: #313538;
 `
 
-const MutationTitle = styled.div`
+const MutationTitle = styled.p`
+  position: absolute;
+  left: 11px;
+  margin: 0;
+  width: calc(100% - 50px);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: inherit;
   color: #fff;
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
   line-height: 149%;
-
-  background: inherit;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 194px;
-  display: inline-block;
 `
 
 const CounterMutation = styled.div`
@@ -83,10 +83,9 @@ const MutationList = styled.div`
   position: absolute;
   z-index: 3;
   top: 50px;
-  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
-  width: 100%;
 
   background: #fff;
   max-height: 400px;
@@ -271,7 +270,7 @@ function parseMutationId(mutationId) {
   return { authorId, localId }
 }
 
-export function MutationDropdown({ engine }) {
+export function MutationDropdown({ engine, listPosition = 'right' }) {
   const [mutations, setMutations] = React.useState([])
   const [selectedMutation, setSelectedMutation] = React.useState(null)
   const [isOpen, setOpen] = useState(false)
@@ -312,7 +311,9 @@ export function MutationDropdown({ engine }) {
     <MutationWrapper>
       {selectedMutation ? (
         <ActiveMutation onClick={handleDropdownToggle}>
-          <MutationTitle>{parseMutationId(selectedMutation.id).localId}</MutationTitle>
+          <MutationTitle title={parseMutationId(selectedMutation.id).localId}>
+            {parseMutationId(selectedMutation.id).localId}
+          </MutationTitle>
           <OpenListDefault $isOpen={isOpen && 'rotate-is-open'}>
             <Arrow />
           </OpenListDefault>
@@ -329,7 +330,13 @@ export function MutationDropdown({ engine }) {
       )}
 
       {isOpen && (
-        <MutationList>
+        <MutationList
+          style={{
+            right: listPosition === 'right' ? '0' : '',
+            left: listPosition === 'left' ? '0' : '',
+            width: listPosition === 'right' ? 292 : 222,
+          }}
+        >
           {selectedMutation ? (
             <BackButton onClick={handleResetMutation}>
               <Back />

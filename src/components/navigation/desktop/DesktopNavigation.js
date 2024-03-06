@@ -28,7 +28,7 @@ const StyledNavigation = styled.div`
     }
   }
 
-  .container {
+  .container-xl {
     display: flex;
     align-items: center;
 
@@ -59,13 +59,20 @@ const StyledNavigation = styled.div`
     .arrow-up-right {
       margin-left: 4px;
     }
+
+    .mutable-section {
+      margin-left: auto;
+      transform: translate(-16px);
+      flex: 1;
+      max-width: 292px;
+    }
   }
 `
 
 export function DesktopNavigation(props) {
   return (
     <StyledNavigation>
-      <div className="container">
+      <div className="container-xl">
         <Link
           to="/"
           className="logo-link"
