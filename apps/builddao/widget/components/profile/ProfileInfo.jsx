@@ -3,10 +3,6 @@ const { Button, Hashtag } = VM.require("buildhub.near/widget/components") || {
   Hashtag: () => <></>,
 };
 
-if (!context.accountId || !props.accountId) {
-  return "No Account ID";
-}
-
 const accountId = props.accountId || context.accountId;
 
 const profile = Social.getr(`${accountId}/profile`);
