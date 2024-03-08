@@ -19,7 +19,7 @@ const handleDelete = () => {
 };
 
 return (
-<>
+  <>
     <div className="mb-3">
       <p className="mb-1">Are you sure you want to delete this post?</p>
       <small>
