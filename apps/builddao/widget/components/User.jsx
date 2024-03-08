@@ -91,6 +91,13 @@ return (
               props={{ isPremium, accountId }}
             />
           </div>
+          <Widget
+            loading=""
+            src="buildhub.near/widget/components.VerifiedHuman"
+            props={{
+              accountId: accountId,
+            }}
+          />
         </div>
         <p className="username">{accountId}</p>
       </Wrapper>

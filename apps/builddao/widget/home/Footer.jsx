@@ -21,7 +21,7 @@ const Card = styled.div`
 
   border-radius: 16px;
   border: 1px solid var(--Gradient-1, #4a21a5);
-  background: #0d020f;
+  background: #000000;
   box-shadow: 4px 24px 48px 0px rgba(249, 225, 122, 0.05);
 
   img {
@@ -100,32 +100,55 @@ const LinksContainer = styled.div`
   }
 `;
 
-const Footer = () => {
+const XIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <path
+      d="M8 2.75H1L9.26086 13.7645L1.44995 22.7499H4.09998L10.4883 15.401L16 22.75H23L14.3917 11.2723L21.8001 2.75H19.1501L13.1643 9.63578L8 2.75ZM17 20.75L5 4.75H7L19 20.75H17Z"
+      fill="white"
+    />
+  </svg>
+);
+
+const Footer = ({ noBanner }) => {
   return (
     <Container className="container-xl">
-      <Card>
-        <img src="https://ipfs.near.social/ipfs/bafkreifcrvkgibbu4xpfxnxf3pnyhxvojqlffd2zmoxfbyapacy62rwwqu" />
-        <h3>
-          Together, we can <span>build a better future</span>.
-        </h3>
-        <Widget
-          src="/*__@appAccount__*//widget/components.buttons.Connect"
-          props={{
-            joinBtnChildren: "Join Now",
-            showActivity: true,
-            className: "custom-button",
-          }}
-        />
-      </Card>
+      {!noBanner && (
+        <Card>
+          <div className="d-flex flex-column align-items-center">
+            <img src="https://ipfs.near.social/ipfs/bafkreifotevq6g6ralhvutlcssaasa7xbfjjc6mbo5hlnvgpxxgfmwswmq" />
+            <h3>
+              Together, we can <span>build a better future</span>.
+            </h3>
+          </div>
+          <Widget
+            src="/*__@appAccount__*//widget/components.buttons.Connect"
+            props={{
+              joinBtnChildren: "Join Now",
+              showActivity: true,
+              className: "custom-button",
+            }}
+          />
+        </Card>
+      )}
       <FooterContainer>
         <LinksContainer>
-          <a href="https://twitter.com/nearbuilders" target="_blank">
-            <i className="bi bi-twitter-x"></i>
+          <a
+            href="https://twitter.com/nearbuilders"
+            className="d-flex align-items-center"
+            target="_blank"
+          >
+            <XIcon />
           </a>
           <a href="https://nearbuilders.com/tg-builders" target="_blank">
             <i className="bi bi-telegram"></i>
           </a>
-          <a href="https://github.near/NEARBuilders" target="_blank">
+          <a href="https://github.com/NEARBuilders" target="_blank">
             <i className="bi bi-github"></i>
           </a>
           <a href="https://devs.near.social/" target="_blank">

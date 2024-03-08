@@ -245,6 +245,20 @@ const item = {
   blockHeight,
 };
 
+const modifications = Social.index("modify", item, { limit: 1, order: "desc" });
+
+const [isEdited, setIsEdited] = useState(false);
+
+if (modifications.length) {
+  const modification = modifications[0].value;
+  if (modification.type === "edit") {
+    content = modification.value;
+    setIsEdited(true);
+  } else if (modification.type === "delete") {
+    return <></>;
+  }
+}
+
 const link =
   props.link ??
   props.fullPostLink ??
@@ -309,15 +323,17 @@ return (
               loading=""
               props={{
                 accountId: accountId,
-                blockHeight: blockHeight,
+                blockHeight: modifications[0].blockHeight ?? blockHeight,
                 pinned: pinned,
                 hideMenu: hideMenu,
                 link: link,
                 postType: "post",
-                flagItem: item,
+                item: item,
+                content: content,
                 customActions: customActions,
                 modalToggles: props.modalToggles,
                 setItem: props.setItem,
+                isEdited: isEdited,
               }}
             />
             {fullPostLink ? (

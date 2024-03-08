@@ -34,6 +34,7 @@ const [showProposeModal, setShowProposeModal] = useState(false);
 const toggleProposeModal = () => {
   setShowProposeModal(!showProposeModal);
 };
+
 const modalToggles = {
   propose: toggleProposeModal,
 };
@@ -53,6 +54,7 @@ customActions = [
 return (
   <div key={feedName}>
     <Header>{feedName} Feed</Header>
+    {/* Modals */}
     <Widget
       src="buildhub.near/widget/components.modals.CreateProposal"
       loading=""
