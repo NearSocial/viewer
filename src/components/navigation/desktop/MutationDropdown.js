@@ -272,7 +272,7 @@ function parseMutationId(mutationId) {
   return { authorId, localId };
 }
 
-export function MutationDropdown({ engine }) {
+export function MutationDropdown({ engine, imageSrc }) {
   const [mutations, setMutations] = React.useState([]);
   const [selectedMutation, setSelectedMutation] = React.useState(null);
   const [isOpen, setOpen] = useState(false);
@@ -353,7 +353,7 @@ export function MutationDropdown({ engine }) {
                   }}
                 >
                   <Widget
-                    src="mob.near/widget/Image"
+                    src={imageSrc}
                     props={{
                       image: mutation.metadata.image,
                       style: { objectFit: "cover" },
