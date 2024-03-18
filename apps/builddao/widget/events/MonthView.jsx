@@ -1,6 +1,4 @@
-const { Modal, Hashtag, Button } = VM.require(
-  "buildhub.near/widget/components",
-) || {
+const { Modal, Hashtag, Button } = VM.require("buildhub.near/widget/components") || {
   Modal: () => <></>,
   Hashtag: () => <></>,
   Button: () => <></>,
@@ -8,6 +6,35 @@ const { Modal, Hashtag, Button } = VM.require(
 
 const currentDate = props.currentDate || new Date();
 const events = props.events || [];
+
+const [parsedEvents, setParsedEvents] = useState(events);
+
+// update events recurring data according to calender library requirements (ref: https://fullcalendar.io/docs/recurring-events)
+useEffect(() => {
+  if (Array.isArray(events)) {
+    const updatedEvent = events.map((event, index) => {
+      if (event.recurrence) {
+        const frequency = event.recurrence.frequency;
+        switch (frequency) {
+          case "daily":
+            return {
+              ...event,
+              groupId: event.title + "_" + index,
+            };
+          case "weekly":
+            return {
+              ...event,
+              groupId: event.title + "_" + index,
+              daysOfWeek: event.recurrence.daysOfWeek ?? [new Date(event.start).getDay()],
+            };
+          default:
+            return event;
+        }
+      } else return event;
+    });
+    setParsedEvents(updatedEvent);
+  }
+}, [events]);
 
 const customCSS = `
   :root {
@@ -93,7 +120,7 @@ const code = `
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       headerToolbar: false,
-      events: ${JSON.stringify(events)},
+      events: ${JSON.stringify(parsedEvents)},
       eventClick: function(info) {
         info.jsEvent.preventDefault(); // don't let the browser navigate
         // Post the event details to the parent window
@@ -171,9 +198,7 @@ return (
         <div style={{ maxWidth: 600 }}>
           <div className="mb-3 d-flex align-items-center gap-5 flex-wrap">
             <span>
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                START
-              </h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>START</h5>
               <i className="bi bi-calendar"></i>
               {new Date(data.start).toLocaleDateString("en-us", {
                 hour: "2-digit",
@@ -181,9 +206,7 @@ return (
               })}
             </span>
             <span>
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                END
-              </h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>END</h5>
               <i className="bi bi-calendar"></i>
               {new Date(data.end).toLocaleDateString("en-us", {
                 hour: "2-digit",
@@ -193,17 +216,13 @@ return (
           </div>
           {data.extendedProps.description && (
             <div className="mb-3">
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                DESCRIPTION
-              </h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>DESCRIPTION</h5>
               <p>{data.extendedProps.description}</p>
             </div>
           )}
           {organizers.length > 0 && (
             <div className="mb-3">
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                ORGANIZERS
-              </h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>ORGANIZERS</h5>
               <div className="d-flex align-items-center gap-3 flex-wrap">
                 {organizers.map((organizer) => {
                   const organizerProfile = Social.getr(`${organizer}/profile`);
@@ -224,9 +243,7 @@ return (
                           },
                         }}
                       />
-                      {organizerProfile.name ??
-                        organizers[0] ??
-                        "No name profile"}
+                      {organizerProfile.name ?? organizers[0] ?? "No name profile"}
                     </span>
                   );
                 })}
@@ -235,9 +252,7 @@ return (
           )}
           {hashtags.length > 0 && (
             <div className="mb-3">
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
-                HASHTAGS
-              </h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>HASHTAGS</h5>
               <div className="d-flex align-items-center gap-2 flex-wrap">
                 {hashtags.map((tag) => (
                   <Hashtag key={tag}>{tag}</Hashtag>
@@ -253,23 +268,11 @@ return (
           )}
         </div>
         <div className="d-flex align-items-center gap-3">
-          <Button
-            noLink={true}
-            href={`${data?.url}`}
-            target="_blank"
-            variant="primary"
-          >
+          <Button noLink={true} href={`${data?.url}`} target="_blank" variant="primary">
             Join Now
           </Button>
-          {data.extendedProps.customButtonSrc && (
-            <Widget src={data.extendedProps.customButtonSrc} loading="" />
-          )}
           {eventAuthor === context.accountId && (
-            <Button
-              onClick={handleDelete}
-              style={{ background: "#ff2b2b" }}
-              variant="primary"
-            >
+            <Button onClick={handleDelete} style={{ background: "#ff2b2b" }} variant="primary">
               Delete Event
             </Button>
           )}
