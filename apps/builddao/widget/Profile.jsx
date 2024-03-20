@@ -5,9 +5,6 @@ if (!accountId) {
 }
 
 const profile = Social.getr(`${accountId}/profile`);
-if (!profile) {
-  return "";
-}
 
 const ProfileContainer = styled.div`
   display: grid;

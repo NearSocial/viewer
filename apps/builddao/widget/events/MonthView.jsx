@@ -1,4 +1,6 @@
-const { Modal, Hashtag, Button } = VM.require("buildhub.near/widget/components") || {
+const { Modal, Hashtag, Button } = VM.require(
+  "buildhub.near/widget/components",
+) || {
   Modal: () => <></>,
   Hashtag: () => <></>,
   Button: () => <></>,
@@ -25,7 +27,9 @@ useEffect(() => {
             return {
               ...event,
               groupId: event.title + "_" + index,
-              daysOfWeek: event.recurrence.daysOfWeek ?? [new Date(event.start).getDay()],
+              daysOfWeek: event.recurrence.daysOfWeek ?? [
+                new Date(event.start).getDay(),
+              ],
             };
           default:
             return event;
@@ -198,7 +202,9 @@ return (
         <div style={{ maxWidth: 600 }}>
           <div className="mb-3 d-flex align-items-center gap-5 flex-wrap">
             <span>
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>START</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                START
+              </h5>
               <i className="bi bi-calendar"></i>
               {new Date(data.start).toLocaleDateString("en-us", {
                 hour: "2-digit",
@@ -206,7 +212,9 @@ return (
               })}
             </span>
             <span>
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>END</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                END
+              </h5>
               <i className="bi bi-calendar"></i>
               {new Date(data.end).toLocaleDateString("en-us", {
                 hour: "2-digit",
@@ -216,13 +224,17 @@ return (
           </div>
           {data.extendedProps.description && (
             <div className="mb-3">
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>DESCRIPTION</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                DESCRIPTION
+              </h5>
               <p>{data.extendedProps.description}</p>
             </div>
           )}
           {organizers.length > 0 && (
             <div className="mb-3">
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>ORGANIZERS</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                ORGANIZERS
+              </h5>
               <div className="d-flex align-items-center gap-3 flex-wrap">
                 {organizers.map((organizer) => {
                   const organizerProfile = Social.getr(`${organizer}/profile`);
@@ -243,7 +255,9 @@ return (
                           },
                         }}
                       />
-                      {organizerProfile.name ?? organizers[0] ?? "No name profile"}
+                      {organizerProfile.name ??
+                        organizers[0] ??
+                        "No name profile"}
                     </span>
                   );
                 })}
@@ -252,7 +266,9 @@ return (
           )}
           {hashtags.length > 0 && (
             <div className="mb-3">
-              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>HASHTAGS</h5>
+              <h5 style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+                HASHTAGS
+              </h5>
               <div className="d-flex align-items-center gap-2 flex-wrap">
                 {hashtags.map((tag) => (
                   <Hashtag key={tag}>{tag}</Hashtag>
@@ -268,11 +284,20 @@ return (
           )}
         </div>
         <div className="d-flex align-items-center gap-3">
-          <Button noLink={true} href={`${data?.url}`} target="_blank" variant="primary">
+          <Button
+            noLink={true}
+            href={`${data?.url}`}
+            target="_blank"
+            variant="primary"
+          >
             Join Now
           </Button>
           {eventAuthor === context.accountId && (
-            <Button onClick={handleDelete} style={{ background: "#ff2b2b" }} variant="primary">
+            <Button
+              onClick={handleDelete}
+              style={{ background: "#ff2b2b" }}
+              variant="primary"
+            >
               Delete Event
             </Button>
           )}

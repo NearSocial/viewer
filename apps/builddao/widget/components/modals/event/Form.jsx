@@ -1,4 +1,6 @@
-const { Modal, Button, ProgressState } = VM.require("buildhub.near/widget/components") || {
+const { Modal, Button, ProgressState } = VM.require(
+  "buildhub.near/widget/components",
+) || {
   Modal: () => <></>,
   Button: () => <></>,
   ProgressState: () => <></>,
@@ -8,7 +10,8 @@ const bootstrapTheme = props.bootstrapTheme || "dark";
 
 const Wrapper = styled.div`
   .btn-close {
-    filter: invert(39%) sepia(45%) saturate(6660%) hue-rotate(199deg) brightness(101%) contrast(104%) !important;
+    filter: invert(39%) sepia(45%) saturate(6660%) hue-rotate(199deg)
+      brightness(101%) contrast(104%) !important;
   }
   .rbt-token-label {
     color: white !important;
@@ -220,6 +223,7 @@ const [startTime, setStartTime] = useState(getCurrentTime());
 const [endTime, setEndTime] = useState(getCurrentTime());
 const [location, setLocation] = useState("");
 const [hashtags, setHashtags] = useState([]);
+// const [customButtonSrc, setCustomButtonSrc] = useState("");
 const [repeat, setRepeat] = useState(false);
 const [customModal, setCustomModal] = useState(false);
 const [customFrequency, setCustomFrequency] = useState("weekly");
@@ -343,6 +347,7 @@ const onSubmit = () => {
                 hashtags, // this can be moved to metadata.tags, but must be object with keys, e.g { [hashtag]: "" }
                 // this i'll leave up to you but we need them for filtering
                 cover: state.image,
+                // customButtonSrc: customButtonSrc,
               },
             }),
             metadata: {
@@ -426,13 +431,21 @@ const CustomRepeatInputModal = () => {
                 className="cursor-pointer"
                 onClick={() => {
                   if (customDaysOfWeek.includes(item)) {
-                    setCustomDaysOfWeek(customDaysOfWeek.filter((i) => i !== item));
+                    setCustomDaysOfWeek(
+                      customDaysOfWeek.filter((i) => i !== item),
+                    );
                   } else {
                     setCustomDaysOfWeek([...customDaysOfWeek, item]);
                   }
                 }}
               >
-                <ProgressState status={customDaysOfWeek.includes(item) ? "focused" : "default"}>{item}</ProgressState>
+                <ProgressState
+                  status={
+                    customDaysOfWeek.includes(item) ? "focused" : "default"
+                  }
+                >
+                  {item}
+                </ProgressState>
               </div>
             ))}
           </div>

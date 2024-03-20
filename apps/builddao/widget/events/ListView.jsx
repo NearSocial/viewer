@@ -20,7 +20,10 @@ const currentMonthEvents = events.filter((event) => {
       case "weekly":
       case "yearly":
       case "monthly":
-        return eventStartDate.getMonth() <= currentDate.getMonth() && eventEndDate.getMonth() >= currentDate.getMonth();
+        return (
+          eventStartDate.getMonth() <= currentDate.getMonth() &&
+          eventEndDate.getMonth() >= currentDate.getMonth()
+        );
       default:
         return eventStartDate.getMonth() === currentDate.getMonth();
     }
@@ -48,7 +51,14 @@ function formatDate(date) {
     .join(" ");
 }
 
-function scheduleEventsWeekly(result, year, month, event, interval, daysOfWeek) {
+function scheduleEventsWeekly(
+  result,
+  year,
+  month,
+  event,
+  interval,
+  daysOfWeek,
+) {
   const daysInMonth = getDaysInMonth(year, month);
   for (let day = 1; day <= daysInMonth; day++) {
     const currentDate = new Date(year, month, day);
@@ -86,14 +96,23 @@ const categorizedEvents = currentMonthEvents.reduce((result, event) => {
     switch (frequency) {
       case "daily": {
         for (let day = 1; day <= daysInMonth; day++) {
-          const formattedDate = getTimeStamp(new Date(currentYear, currentMonth, day));
+          const formattedDate = getTimeStamp(
+            new Date(currentYear, currentMonth, day),
+          );
           result[formattedDate] = result[formattedDate] || [];
           result[formattedDate].push(event);
         }
         break;
       }
       case "weekly": {
-        result = scheduleEventsWeekly(result, currentYear, currentMonth, event, interval, daysOfWeek);
+        result = scheduleEventsWeekly(
+          result,
+          currentYear,
+          currentMonth,
+          event,
+          interval,
+          daysOfWeek,
+        );
         break;
       }
       case "yearly":
@@ -101,7 +120,11 @@ const categorizedEvents = currentMonthEvents.reduce((result, event) => {
         const eventMonth = new Date(event.start).getMonth();
         if (eventMonth === currentMonth) {
           const dateTimeStamp = getTimeStamp(
-            new Date(currentDate.getFullYear(), eventMonth + 1, new Date(event.start).getDate()),
+            new Date(
+              currentDate.getFullYear(),
+              eventMonth + 1,
+              new Date(event.start).getDate(),
+            ),
           );
           if (
             (daysOfWeek && daysOfWeek.includes(currentDate.getDay())) ||
@@ -193,7 +216,8 @@ const futureEvents =
     });
   }) || [];
 
-const pastEvents = dateKeys.filter((date) => !futureEvents.includes(date)) || [];
+const pastEvents =
+  dateKeys.filter((date) => !futureEvents.includes(date)) || [];
 
 const sortEvents = (events) => {
   return events.sort((a, b) => parseInt(a) - parseInt(b));
@@ -224,7 +248,10 @@ const EventGroup = ({ date }) => {
               <span
                 style={{
                   fontSize: i === 0 ? "24px" : "16px",
-                  color: i === 0 ? "var(--text-color, #fff)" : "var(--white-50, #CDD0D5)",
+                  color:
+                    i === 0
+                      ? "var(--text-color, #fff)"
+                      : "var(--white-50, #CDD0D5)",
                 }}
               >
                 {it}
@@ -317,7 +344,9 @@ const EventGroup = ({ date }) => {
                         },
                       }}
                     />
-                    {organizerProfile.name ?? organizers[0] ?? "No name profile"}
+                    {organizerProfile.name ??
+                      organizers[0] ??
+                      "No name profile"}
                   </span>
                   <span className="d-flex align-items-center gap-1">
                     <i className="bi bi-geo-alt"></i>
@@ -334,11 +363,20 @@ const EventGroup = ({ date }) => {
                   </span>
                 </div>
                 <div className="d-flex align-items-center gap-3">
-                  <Button noLink={true} href={`${event?.url}`} target="_blank" variant="primary">
+                  <Button
+                    noLink={true}
+                    href={`${event?.url}`}
+                    target="_blank"
+                    variant="primary"
+                  >
                     Join Now
                   </Button>
                   {eventAuthor === context.accountId && (
-                    <Button onClick={handleDelete} style={{ background: "#ff2b2b" }} variant="primary">
+                    <Button
+                      onClick={handleDelete}
+                      style={{ background: "#ff2b2b" }}
+                      variant="primary"
+                    >
                       Delete Event
                     </Button>
                   )}
@@ -354,7 +392,9 @@ const EventGroup = ({ date }) => {
 const PastEvents = () => {
   return (
     <>
-      {!pastEvents.length && <p className="text-white">No past events this month.</p>}
+      {!pastEvents.length && (
+        <p className="text-white">No past events this month.</p>
+      )}
       {pastEvents.map((date, i) => (
         <EventGroup date={date} />
       ))}
@@ -366,9 +406,13 @@ const [showPastEvents, setShowPastEvents] = useState(false);
 
 return (
   <EventsContainer>
-    <Button onClick={() => setShowPastEvents((prev) => !prev)}>{showPastEvents ? "Hide" : "Show"} Past Events</Button>
+    <Button onClick={() => setShowPastEvents((prev) => !prev)}>
+      {showPastEvents ? "Hide" : "Show"} Past Events
+    </Button>
     {showPastEvents && <PastEvents />}
-    {!futureEvents.length && <p className="text-white">No upcoming events this month</p>}
+    {!futureEvents.length && (
+      <p className="text-white">No upcoming events this month</p>
+    )}
     {futureEvents.map((date, i) => (
       <EventGroup date={date} />
     ))}
