@@ -208,6 +208,7 @@ const Root = styled.div`
   /* Typeahead Fix */
   .rbt-token-removeable {
     background: #007bff;
+    color: #fff;
   }
 `;
 

@@ -9,6 +9,37 @@ const { Modal, Hashtag, Button } = VM.require(
 const currentDate = props.currentDate || new Date();
 const events = props.events || [];
 
+const [parsedEvents, setParsedEvents] = useState(events);
+
+// update events recurring data according to calender library requirements (ref: https://fullcalendar.io/docs/recurring-events)
+useEffect(() => {
+  if (Array.isArray(events)) {
+    const updatedEvent = events.map((event, index) => {
+      if (event.recurrence) {
+        const frequency = event.recurrence.frequency;
+        switch (frequency) {
+          case "daily":
+            return {
+              ...event,
+              groupId: event.title + "_" + index,
+            };
+          case "weekly":
+            return {
+              ...event,
+              groupId: event.title + "_" + index,
+              daysOfWeek: event.recurrence.daysOfWeek ?? [
+                new Date(event.start).getDay(),
+              ],
+            };
+          default:
+            return event;
+        }
+      } else return event;
+    });
+    setParsedEvents(updatedEvent);
+  }
+}, [events]);
+
 const customCSS = `
   :root {
     --fc-page-bg-color: var(--bg-color, #000000);
@@ -93,7 +124,7 @@ const code = `
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       headerToolbar: false,
-      events: ${JSON.stringify(events)},
+      events: ${JSON.stringify(parsedEvents)},
       eventClick: function(info) {
         info.jsEvent.preventDefault(); // don't let the browser navigate
         // Post the event details to the parent window
@@ -261,9 +292,6 @@ return (
           >
             Join Now
           </Button>
-          {data.extendedProps.customButtonSrc && (
-            <Widget src={data.extendedProps.customButtonSrc} loading="" />
-          )}
           {eventAuthor === context.accountId && (
             <Button
               onClick={handleDelete}
