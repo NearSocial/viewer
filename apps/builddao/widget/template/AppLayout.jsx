@@ -24,11 +24,14 @@ const ContentContainer = styled.div`
 `;
 
 const Header = ({ page, routes, ...props }) => (
-  <Widget
-    src="buildhub.near/widget/components.Navbar"
-    loading=""
-    props={{ page, routes, ...props }}
-  />
+  <>
+    <Widget src="buildhub.near/widget/components.banners.potlock" />
+    <Widget
+      src="buildhub.near/widget/components.Navbar"
+      loading=""
+      props={{ page, routes, ...props }}
+    />
+  </>
 );
 
 const Footer = (props) => {
