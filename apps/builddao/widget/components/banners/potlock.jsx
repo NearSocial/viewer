@@ -108,7 +108,7 @@ function getRemainingTimeAsString(targetDate) {
   // Calculate days, hours, minutes, and seconds
   let days = Math.floor(difference / (1000 * 60 * 60 * 24));
   let hours = Math.floor(
-    (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
   );
   let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
   let seconds = Math.floor((difference % (1000 * 60)) / 1000);
@@ -137,7 +137,7 @@ function getRemainingTimeAsString(targetDate) {
 // Apr 8 2024 8:59am
 const lastDay = new Date("2024-04-08:8:59:59");
 const [remainingTime, setRemainingTime] = useState(
-  getRemainingTimeAsString(lastDay),
+  getRemainingTimeAsString(lastDay)
 );
 
 useEffect(() => {
@@ -149,13 +149,16 @@ useEffect(() => {
 }, [remainingTime]);
 
 return (
-  <div>
+  <a
+    href="https://app.potlock.org/?tab=pot&potId=build.v1.potfactory.potlock.near"
+    style={{ textDecoration: "none" }}
+  >
     <InfoBanner>
-      <h3>Join NEAR Retroactive Builders</h3>
-      <p>Donate to matching rounds to get your contributions amplified</p>
+      <h3>NEAR Retroactive Builders Pot is currently active on Potlock</h3>
+      {/* <p>Donate today to get your contributions amplified</p> */}
     </InfoBanner>
     <CounterBanner>
-      <h3>donate ends</h3>
+      <h3>Matching round ends in</h3>
       <div className="d-flex gap-3">
         {remainingTime === "0 0 0 0" ? (
           <p>Completed</p>
@@ -169,5 +172,5 @@ return (
         )}
       </div>
     </CounterBanner>
-  </div>
+  </a>
 );
