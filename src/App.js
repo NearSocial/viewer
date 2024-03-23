@@ -54,45 +54,50 @@ function App(props) {
   const accountId = account.accountId;
 
   useEffect(() => {
-    initNear &&
-      initNear({
-        networkId: NetworkId,
-        selector: setupWalletSelector({
-          network: NetworkId,
-          modules: [
-            setupNearWallet(),
-            setupMintbaseWallet(),
-            setupMyNearWallet(),
-            setupSender(),
-            setupHereWallet(),
-            setupMeteorWallet(),
-            setupNeth({
-              gas: "300000000000000",
-              bundle: false,
-            }),
-            setupNightly(),
-          ],
-        }),
-        customElements: {
-          Link: (props) => {
-            if (!props.to && props.href) {
-              props.to = props.href;
-              delete props.href;
-            }
-            if (props.to) {
-              props.to =
-                typeof props.to === "string" &&
-                isValidAttribute("a", "href", props.to)
-                  ? props.to
-                  : "about:blank";
-            }
-            return <Link {...props} />;
-          },
+    const config = {
+      networkId: NetworkId,
+      selector: setupWalletSelector({
+        network: NetworkId,
+        modules: [
+          setupNearWallet(),
+          setupMintbaseWallet(),
+          setupMyNearWallet(),
+          setupSender(),
+          setupHereWallet(),
+          setupMeteorWallet(),
+          setupNeth({
+            gas: "300000000000000",
+            bundle: false,
+          }),
+          setupNightly(),
+        ],
+      }),
+      customElements: {
+        Link: (props) => {
+          if (!props.to && props.href) {
+            props.to = props.href;
+            delete props.href;
+          }
+          if (props.to) {
+            props.to =
+              typeof props.to === "string" &&
+              isValidAttribute("a", "href", props.to)
+                ? props.to
+                : "about:blank";
+          }
+          return <Link {...props} />;
         },
-        config: {
-          defaultFinality: undefined,
-        },
-      });
+      },
+      config: {
+        defaultFinality: undefined,
+      },
+    };
+
+    if (window.location.hostname === "near.social") {
+      config.config.nodeUrl = "https://rpc.fastnear.com";
+    }
+
+    initNear && initNear(config);
   }, [initNear]);
 
   useEffect(() => {
