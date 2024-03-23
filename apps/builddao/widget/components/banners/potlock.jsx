@@ -108,7 +108,7 @@ function getRemainingTimeAsString(targetDate) {
   // Calculate days, hours, minutes, and seconds
   let days = Math.floor(difference / (1000 * 60 * 60 * 24));
   let hours = Math.floor(
-    (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
   );
   let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
   let seconds = Math.floor((difference % (1000 * 60)) / 1000);
@@ -137,7 +137,7 @@ function getRemainingTimeAsString(targetDate) {
 // Apr 8 2024 8:59am
 const lastDay = new Date("2024-04-08:8:59:59");
 const [remainingTime, setRemainingTime] = useState(
-  getRemainingTimeAsString(lastDay)
+  getRemainingTimeAsString(lastDay),
 );
 
 useEffect(() => {
