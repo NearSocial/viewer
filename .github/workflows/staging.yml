@@ -9,7 +9,7 @@ jobs:
     uses: nearbuilders/bos-workspace/.github/workflows/deploy.yml@main
     with:
       deploy-env: "staging"
-      bw-legacy: "false"
+      bw-legacy: false
       app-name: "builddao"
       deploy-account-address: ${{ vars.BOS_STAGING_SIGNER_ACCOUNT_ID }}
       signer-account-address: ${{ vars.BOS_STAGING_SIGNER_ACCOUNT_ID }}
