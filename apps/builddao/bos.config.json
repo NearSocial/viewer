@@ -1,3 +1,8 @@
 {
-  "appAccount": "buildhub.near"
+  "account": "buildhub.near",
+  "overrides": {
+    "staging": {
+      "account": "staging.buildhub.near"
+    }
+  }
 }
