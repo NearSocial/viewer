@@ -272,8 +272,8 @@ function parseMutationId(mutationId) {
 }
 
 export function MutationDropdown({ engine, imageSrc, listPosition = "right" }) {
-  const [mutations, setMutations] = React.useState([]);
-  const [selectedMutation, setSelectedMutation] = React.useState(null);
+  const [mutations, setMutations] = useState([]);
+  const [selectedMutation, setSelectedMutation] = useState(null);
   const [isOpen, setOpen] = useState(false);
 
   useEffect(() => {
