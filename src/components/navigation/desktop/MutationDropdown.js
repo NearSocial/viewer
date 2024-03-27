@@ -321,7 +321,6 @@ export function MutationDropdown({ engine, imageSrc, listPosition = "right" }) {
         </ActiveMutation>
       ) : (
         <ActiveMutation onClick={handleDropdownToggle}>
-          <MutationTitle>No mutations applied</MutationTitle>
           {mutations.length ? (
             <CounterMutation>+{mutations.length}</CounterMutation>
           ) : null}
