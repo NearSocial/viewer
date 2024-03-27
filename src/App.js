@@ -42,6 +42,7 @@ import JoinPage from "./pages/JoinPage";
 import Viewer from "./pages/Viewer";
 import { KEYPOM_OPTIONS } from "./utils/keypom-options";
 import { TrialAccountGenerator } from "./components/TrialAccountGenerator";
+import { Analytics } from "@vercel/analytics/react";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://docs.near.org/bos/overview";
@@ -234,6 +235,7 @@ function App() {
           </Switch>
         </Router>
       </EthersProviderContext.Provider>
+      <Analytics />
     </div>
   );
 }

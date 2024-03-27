@@ -15,6 +15,7 @@
     "@near-wallet-selector/neth": "^8.5.0",
     "@near-wallet-selector/nightly": "^8.5.0",
     "@near-wallet-selector/sender": "^8.5.0",
+    "@vercel/analytics": "^1.2.2",
     "@web3-onboard/core": "^2.20.2",
     "@web3-onboard/injected-wallets": "^2.10.1",
     "@web3-onboard/ledger": "^2.4.6",
