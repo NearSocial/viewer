@@ -10,7 +10,6 @@ import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
 import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
@@ -37,6 +36,29 @@ import { isValidAttribute } from "dompurify";
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
 
+const getNetworkPreset = (networkId) => {
+  switch (networkId) {
+    case "mainnet":
+      return {
+        networkId,
+        nodeUrl: "https://rpc.mainnet.near.org",
+        helperUrl: "https://helper.mainnet.near.org",
+        explorerUrl: "https://nearblocks.io",
+        indexerUrl: "https://api.kitwallet.app",
+      };
+    case "testnet":
+      return {
+        networkId,
+        nodeUrl: "https://rpc.testnet.near.org",
+        helperUrl: "https://helper.testnet.near.org",
+        explorerUrl: "https://testnet.nearblocks.io",
+        indexerUrl: "https://testnet-api.kitwallet.app",
+      };
+    default:
+      throw Error(`Failed to find config for: '${networkId}'`);
+  }
+};
+
 function App(props) {
   const [connected, setConnected] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
@@ -54,12 +76,16 @@ function App(props) {
   const accountId = account.accountId;
 
   useEffect(() => {
+    const walletSelectorNetwork = getNetworkPreset(NetworkId);
+    if (true || window.location.hostname === "near.social") {
+      walletSelectorNetwork.nodeUrl = "https://rpc.fastnear.com";
+    }
+
     const config = {
       networkId: NetworkId,
       selector: setupWalletSelector({
-        network: NetworkId,
+        network: walletSelectorNetwork,
         modules: [
-          setupNearWallet(),
           setupMintbaseWallet(),
           setupMyNearWallet(),
           setupSender(),
