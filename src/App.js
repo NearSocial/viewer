@@ -77,7 +77,7 @@ function App(props) {
 
   useEffect(() => {
     const walletSelectorNetwork = getNetworkPreset(NetworkId);
-    if (true || window.location.hostname === "near.social") {
+    if (window.location.hostname === "near.social") {
       walletSelectorNetwork.nodeUrl = "https://rpc.fastnear.com";
     }
 
