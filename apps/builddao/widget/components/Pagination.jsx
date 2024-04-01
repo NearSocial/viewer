@@ -1,8 +1,6 @@
 const totalPages = props.totalPages ?? 12; // Assume you have 12 pages
 const maxVisiblePages = props.maxVisiblePages ?? 4;
-const onPageClick = props.onPageClick
-  ? props.onPageClick
-  : () => console.log("clicked");
+const onPageClick = props.onPageClick ? props.onPageClick : () => {};
 const pagesToShow = Math.min(totalPages, maxVisiblePages);
 const selectedPage = props.selectedPage === 0 ? 1 : props.selectedPage;
 const totalPageSets = Math.ceil(totalPages / maxVisiblePages);

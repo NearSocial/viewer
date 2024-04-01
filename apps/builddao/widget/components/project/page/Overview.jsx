@@ -15,8 +15,6 @@ const project = getProjectMeta(id);
 
 const { description, tags, contributors, accountId, profile } = project;
 
-console.log("contributors", contributors);
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;

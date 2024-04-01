@@ -135,7 +135,6 @@ return (
                     setBtnText("Creating your account...");
                     getTrialAccount()
                       .then((res) => {
-                        console.log(res);
                         setLoading(false);
                       })
                       .catch((error) => {

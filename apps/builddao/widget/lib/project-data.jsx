@@ -2,7 +2,7 @@
 // process the data and return project object with all the data needed
 
 const { extractValidNearAddresses } = VM.require(
-  "buildbox.near/widget/utils.projects-sdk"
+  "buildbox.near/widget/utils.projects-sdk",
 ) || {
   extractValidNearAddresses: () => {},
 };
@@ -32,8 +32,6 @@ const getProjectMeta = (id) => {
     const profile = Social.getr(`${accountId}/profile`, "final");
 
     const pj = JSON.parse(data[""]);
-
-    console.log("project data ini", pj);
 
     const validAddresses = pj?.teammates
       ? extractValidNearAddresses(pj.teammates)

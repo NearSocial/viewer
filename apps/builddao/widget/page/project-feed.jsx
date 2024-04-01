@@ -66,17 +66,6 @@ const processData = useCallback(
 
 const projects = processData(data);
 
-console.log("projects from buildbox", projects);
-
-// const projects = [
-//   {
-//     title: "Build DAO",
-//     accountId: "build.sputnik-dao.near",
-//     tags: ["Open Source", "Community"],
-//     collaborators: ["efiz.near"],
-//   },
-// ];
-
 if (!projects) {
   return "";
 }
@@ -148,8 +137,6 @@ const filteredProjects = useMemo(() => {
   }
   return filtered;
 }, [filters, projects]);
-
-// console.log("filteredProjects", filteredProjects.tags);
 
 const tagFilters = useMemo(() => {
   let tags = projects.map((project) => project.tags).flat();

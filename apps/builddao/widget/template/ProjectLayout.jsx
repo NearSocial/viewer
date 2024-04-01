@@ -129,8 +129,6 @@ const ProjectLayout = ({
 
   const [address, app, type, titleUrl] = id.split("/");
 
-  console.log("params", { app, type, titleUrl });
-
   if (!accountId) {
     return <p className="fw-bold text-white">No Account ID</p>;
   }
