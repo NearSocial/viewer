@@ -4964,7 +4964,7 @@ borsh@0.7.0, borsh@^0.7.0:
     bs58 "^4.0.0"
     text-encoding-utf-8 "^1.0.2"
 
-bos-workspace@^1.0.0.alpha:
+bos-workspace@^1.0.0-alpha.4:
   version "1.0.0-alpha.4"
   resolved "https://registry.yarnpkg.com/bos-workspace/-/bos-workspace-1.0.0-alpha.4.tgz#6f48bdc5fc792e320aa3d155527da11028cfc31f"
   integrity sha512-W03YKSbsaYD6uR7Vvda12sYmPzwA08zc9bUQjOtucEcKoT6AL1pfMhZqRP/mZlB5y1TnZa842Q7sRut9IISCHw==
