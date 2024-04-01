@@ -274,16 +274,25 @@ export function MutationDropdown({ engine, imageSrc, listPosition = 'right' }) {
   const [mutations, setMutations] = React.useState([])
   const [selectedMutation, setSelectedMutation] = React.useState(null)
   const [isOpen, setOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (!engine) return
 
     const init = async () => {
-      const mutations = await engine.getMutations()
-      setMutations(mutations)
+      try {
+        setIsLoading(true)
 
-      const mutation = await engine.getCurrentMutation()
-      setSelectedMutation(mutation)
+        const mutations = await engine.getMutations()
+        setMutations(mutations)
+
+        const mutation = await engine.getCurrentMutation()
+        setSelectedMutation(mutation)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     init()
@@ -296,7 +305,21 @@ export function MutationDropdown({ engine, imageSrc, listPosition = 'right' }) {
   const handleMutationClick = async (mutation) => {
     setSelectedMutation(mutation)
     setOpen(false)
-    await engine.switchMutation(mutation.id)
+    
+    try {
+      setIsLoading(true)
+
+      if (engine.started) {
+        await engine.switchMutation(mutation.id)
+      } else {
+        await engine.start(mutation.id)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+
     window.sessionStorage.setItem('mutableweb:mutationId', mutation.id)
   }
 
@@ -304,7 +327,17 @@ export function MutationDropdown({ engine, imageSrc, listPosition = 'right' }) {
     setSelectedMutation(null)
     setOpen(false)
     engine.stop()
-    window.sessionStorage.removeItem('mutableweb:mutationId')
+    window.sessionStorage.setItem('mutableweb:mutationId', 'null')
+  }
+
+  if (isLoading) {
+    return (
+      <MutationWrapper>
+        <ActiveMutation>
+          <MutationTitle>Loading...</MutationTitle>
+        </ActiveMutation>
+      </MutationWrapper>
+    )
   }
 
   return (

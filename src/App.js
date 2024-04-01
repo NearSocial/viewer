@@ -124,10 +124,12 @@ function App(props) {
 
       const mutationId = window.sessionStorage.getItem("mutableweb:mutationId");
 
-      if (mutationId) {
+      if (!mutationId) {
+        engine.start().then(() => setMutationEngine(engine));
+      } else if (mutationId !== "null") {
         engine.start(mutationId).then(() => setMutationEngine(engine));
       } else {
-        engine.start().then(() => setMutationEngine(engine));
+        setMutationEngine(engine);
       }
     });
   }, [near]);

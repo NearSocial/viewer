@@ -7664,7 +7664,7 @@ mustache@^4.0.0:
 
 "mutable-web-engine@github:dapplets/mutable-web-engine":
   version "0.1.0"
-  resolved "https://codeload.github.com/dapplets/mutable-web-engine/tar.gz/5cf05599c437956cdaa25a1ebe3d3907e7051b8e"
+  resolved "https://codeload.github.com/dapplets/mutable-web-engine/tar.gz/3c3621c8e3775ab2672746cb68df16db71bb7b4c"
   dependencies:
     big.js "^6.2.1"
     caching-decorator "^1.0.3"
