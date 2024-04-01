@@ -9,11 +9,11 @@ jobs:
     uses: nearbuilders/bos-workspace/.github/workflows/deploy.yml@main
     with:
       build-env: "staging"
-      deploy-env: "mainnet"
+      deploy-env: "testnet"
       bw-legacy: false
       app-name: "builddao"
-      deploy-account-address: ${{ vars.BOS_STAGING_SIGNER_ACCOUNT_ID }}
-      signer-account-address: ${{ vars.BOS_STAGING_SIGNER_ACCOUNT_ID }}
-      signer-public-key: ${{ vars.BOS_STAGING_SIGNER_PUBLIC_KEY }}
+      deploy-account-address: neardevs.testnet
+      signer-account-address: neardevs.testnet
+      signer-public-key: ed25519:C56jCPM2SWoPWGft9CPNkwjE4hEU58jSrZyReswH2fSg
     secrets:
       SIGNER_PRIVATE_KEY: ${{ secrets.BOS_STAGING_SIGNER_PRIVATE_KEY }}
