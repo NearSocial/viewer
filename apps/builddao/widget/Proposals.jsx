@@ -1,9 +1,9 @@
-const { Button, Modal } = VM.require("buildhub.near/widget/components") || {
+const { Button, Modal } = VM.require("${config_account}/widget/components") || {
   Button: <></>,
   Modal: <></>,
 };
 
-const { Header } = VM.require("buildhub.near/widget/components.Header") || {
+const { Header } = VM.require("${config_account}/widget/components.Header") || {
   Header: () => <></>,
 };
 const DaoSDK = VM.require("sdks.near/widget/SDKs.Sputnik.DaoSDK") || (() => {});
@@ -157,7 +157,7 @@ const handleVote = ({ action, proposalId, proposer, showNotification }) => {
                 proposalId: proposalId,
               },
               type: "custom",
-              widget: "buildhub.near/widget/Proposals",
+              widget: "${config_account}/widget/Proposals",
             },
           },
         ]),
@@ -283,7 +283,7 @@ const proposalsComponent = useMemo(() => {
 
           return (
             <Widget
-              src="buildhub.near/widget/components.ProposalCard"
+              src="${config_account}/widget/components.ProposalCard"
               props={{
                 proposalData: {
                   ...item,
@@ -318,14 +318,14 @@ return (
   <ThemeContainer>
     <Container className="d-flex flex-column gap-4">
       <Widget
-        src="buildhub.near/widget/components.modals.CreateProposal"
+        src="${config_account}/widget/components.modals.CreateProposal"
         props={{
           showModal: showProposalModal,
           toggleModal: () => setShowModal(!showProposalModal),
         }}
       />
       <Widget
-        src="buildhub.near/widget/components.modals.ProposalsFilters"
+        src="${config_account}/widget/components.modals.ProposalsFilters"
         props={{
           parentSelectedTypes: selectedTypes,
           parentSelectedStatus: selectedStatus,
@@ -360,7 +360,7 @@ return (
       {!proposalId && (
         <div className="d-flex justify-content-center my-4">
           <Widget
-            src={"buildhub.near/widget/components.Pagination"}
+            src={"${config_account}/widget/components.Pagination"}
             props={{
               maxVisiblePages: 5,
               totalPages:

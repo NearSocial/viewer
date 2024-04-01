@@ -231,7 +231,7 @@ return (
       <div className="right">
         <div className="mb-3">
           <Widget
-            src="buildhub.near/widget/components.post.Header"
+            src="${config_account}/widget/components.post.Header"
             props={{
               accountId,
               blockHeight,
@@ -296,7 +296,7 @@ return (
     {state.showReply && (
       <div className="mb-2" key="reply">
         <Widget
-          src="buildhub.near/widget/Comment.Compose"
+          src="${config_account}/widget/Comment.Compose"
           props={{
             initialText: `@${accountId}, `,
             notifyAccountId: extractNotifyAccountId(parentItem),

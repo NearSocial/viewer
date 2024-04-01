@@ -1,4 +1,6 @@
-const { Button, Hashtag } = VM.require("buildhub.near/widget/components") || {
+const { Button, Hashtag } = VM.require(
+  "${config_account}/widget/components",
+) || {
   Button: () => <></>,
   Hashtag: () => <></>,
 };
@@ -217,7 +219,7 @@ const InfoSection = () => {
       </div>
       <div>
         <Widget
-          src="buildhub.near/widget/components.profile.FollowStats"
+          src="${config_account}/widget/components.profile.FollowStats"
           loading=""
           props={{ accountId }}
         />
@@ -243,7 +245,7 @@ const InfoSection = () => {
         {profile.linktree && (
           <div className="link-section">
             <Widget
-              src="buildhub.near/widget/components.profile.Linktree"
+              src="${config_account}/widget/components.profile.Linktree"
               props={{
                 profile,
               }}
@@ -258,7 +260,7 @@ const InfoSection = () => {
 const EditSection = () => {
   return (
     <Widget
-      src="buildhub.near/widget/components.profile.ProfileEdit"
+      src="${config_account}/widget/components.profile.ProfileEdit"
       loading=""
       props={{ setEditMode }}
     />

@@ -1,5 +1,5 @@
 const { Modal, Button, ProgressState } = VM.require(
-  "buildhub.near/widget/components",
+  "${config_account}/widget/components",
 ) || {
   Modal: () => <></>,
   Button: () => <></>,
@@ -209,7 +209,7 @@ function OnboardingFlow() {
                     style={{ height: 300 }}
                   ></div>
                 }
-                src="buildhub.near/widget/Compose"
+                src="${config_account}/widget/Compose"
                 props={{
                   template: PostTemplate,
                   requiredHashtags: requiredHashtags,

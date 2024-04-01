@@ -1,17 +1,17 @@
 const { Avatar, Hashtag, Button } = VM.require(
-  "buildhub.near/widget/components"
+  "${config_account}/widget/components",
 ) || {
   Hashtag: () => <></>,
   Avatar: () => <></>,
   Button: () => <></>,
 };
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || {
+const { href } = VM.require("${config_account}/widget/lib.url") || {
   href: () => {},
 };
 
 const { ProfileImages } = VM.require(
-  "buildhub.near/widget/components.ProfileImages"
+  "${config_account}/widget/components.ProfileImages",
 ) || {
   ProfileImages: () => <></>,
 };
@@ -75,7 +75,7 @@ const ProjectCard = ({ project, type, app }) => {
           <span>{`@${
             accountId.length > 30
               ? `${accountId.slice(0, 20)}...${accountId.slice(
-                  accountId.length - 4
+                  accountId.length - 4,
                 )}`
               : accountId
           }`}</span>
@@ -94,9 +94,9 @@ const ProjectCard = ({ project, type, app }) => {
       <div className="w-100">
         <Button
           href={
-            // `/buildhub.near/widget/app?page=project&id=${accountId}/${app}/${type}/${title}`
+            // `/${config_account}/widget/app?page=project&id=${accountId}/${app}/${type}/${title}`
             href({
-              widgetSrc: `buildhub.near/widget/app`,
+              widgetSrc: `${config_account}/widget/app`,
               params: {
                 page: "project",
                 id: `${accountId}/${app}/${type}/${title}`,

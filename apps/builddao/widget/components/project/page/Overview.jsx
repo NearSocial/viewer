@@ -1,10 +1,10 @@
-const { User, Hashtag } = VM.require("buildhub.near/widget/components") || {
+const { User, Hashtag } = VM.require("${config_account}/widget/components") || {
   User: () => <></>,
   Hashtag: () => <></>,
 };
 
 const { getProjectMeta } = VM.require(
-  "buildhub.near/widget/lib.project-data"
+  "${config_account}/widget/lib.project-data",
 ) || {
   getProjectMeta: () => {},
 };
@@ -91,12 +91,12 @@ return (
           {!contributors || !contributors.length
             ? "0"
             : contributors.length <= 10
-            ? "1-10"
-            : contributors.length <= 50
-            ? "10-50"
-            : contributors.length <= 100
-            ? "50-100"
-            : "100+"}
+              ? "1-10"
+              : contributors.length <= 50
+                ? "10-50"
+                : contributors.length <= 100
+                  ? "50-100"
+                  : "100+"}
         </p>
       </div>
     </div>

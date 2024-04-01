@@ -1,15 +1,15 @@
 const { currentPath, page, ...passProps } = props;
 
-const { routes } = VM.require("buildhub.near/widget/config.projects") ?? {
+const { routes } = VM.require("${config_account}/widget/config.projects") ?? {
   routes: {},
 };
 
-const { theme } = VM.require("buildhub.near/widget/config.theme") ?? {
+const { theme } = VM.require("${config_account}/widget/config.theme") ?? {
   theme: {},
 };
 
 const { SidebarLayout } = VM.require(
-  "buildhub.near/widget/template.SidebarLayout"
+  "${config_account}/widget/template.SidebarLayout",
 ) || {
   SidebarLayout: () => <></>,
 };

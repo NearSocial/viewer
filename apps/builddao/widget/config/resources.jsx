@@ -2,7 +2,7 @@ return {
   type: "app",
   routes: {
     guide: {
-      path: "buildhub.near/widget/Resources",
+      path: "${config_account}/widget/Resources",
       blockHeight: "final",
       init: {
         name: "Guide",
@@ -12,7 +12,7 @@ return {
       },
     },
     deployWeb4: {
-      path: "buildhub.near/widget/Resources",
+      path: "${config_account}/widget/Resources",
       blockHeight: "final",
       init: {
         name: "Deploying to Web4",

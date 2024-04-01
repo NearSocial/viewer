@@ -1,4 +1,4 @@
-const { Post } = VM.require("buildhub.near/widget/components") || {
+const { Post } = VM.require("${config_account}/widget/components") || {
   Post: () => <></>,
 };
 
@@ -101,7 +101,7 @@ return (
           <Widget
             key="feed"
             loading=""
-            src="buildhub.near/widget/components.profile.AccountFeed"
+            src="${config_account}/widget/components.profile.AccountFeed"
             props={{ accounts: [accountId] }}
           />
         </div>
@@ -128,7 +128,7 @@ return (
       >
         {state.loadwidget && (
           <Widget
-            src="buildhub.near/widget/components.profile.LastWidgets"
+            src="${config_account}/widget/components.profile.LastWidgets"
             loading=""
             props={{ accountId }}
           />

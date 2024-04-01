@@ -191,7 +191,7 @@ return (
           </span>
         </>
       ) : (
-        <Widget src="/*__@appAccount__*//widget/propose-widget" />
+        <Widget src="${config_account}/widget/propose-widget" />
       )}
     </Card>
   </Container>

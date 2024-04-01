@@ -127,7 +127,7 @@ const Footer = ({ noBanner }) => {
             </h3>
           </div>
           <Widget
-            src="/*__@appAccount__*//widget/components.buttons.Connect"
+            src="${config_account}/widget/components.buttons.Connect"
             props={{
               joinBtnChildren: "Join Now",
               showActivity: true,

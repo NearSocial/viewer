@@ -1,9 +1,9 @@
-const { Button } = VM.require("buildhub.near/widget/components") || {
+const { Button } = VM.require("${config_account}/widget/components") || {
   Button: () => <></>,
 };
 
 const { fetchThings } = VM.require(
-  "buildhub.near/widget/lib.everything-sdk",
+  "${config_account}/widget/lib.everything-sdk",
 ) || {
   fetchThings: () => {},
 };
@@ -202,7 +202,7 @@ const CurrentView = () => {
   if (selectedView === "month") {
     return (
       <Widget
-        src="buildhub.near/widget/events.MonthView"
+        src="${config_account}/widget/events.MonthView"
         loading=""
         props={{
           currentDate,
@@ -215,7 +215,7 @@ const CurrentView = () => {
 
   return (
     <Widget
-      src="buildhub.near/widget/events.ListView"
+      src="${config_account}/widget/events.ListView"
       loading=""
       props={{
         currentDate,
@@ -232,7 +232,7 @@ const Container = styled.div`
 return (
   <Container className="mb-3 mx-3">
     <Widget
-      src="buildhub.near/widget/components.modals.CreateEvent"
+      src="${config_account}/widget/components.modals.CreateEvent"
       loading=""
       props={{
         showModal: showCreateModal,
@@ -242,7 +242,7 @@ return (
       }}
     />
     <Widget
-      src="buildhub.near/widget/components.modals.FilterEvents"
+      src="${config_account}/widget/components.modals.FilterEvents"
       loading=""
       props={{
         showModal: showFilterModal,

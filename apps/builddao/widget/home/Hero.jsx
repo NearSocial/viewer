@@ -1,8 +1,8 @@
-const { Button } = VM.require("buildhub.near/widget/components") || {
+const { Button } = VM.require("${config_account}/widget/components") || {
   Button: () => <></>,
 };
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || {
+const { href } = VM.require("${config_account}/widget/lib.url") || {
   href: () => {},
 };
 
@@ -247,7 +247,7 @@ const Hero = (props) => {
             <>
               <Button
                 href={href({
-                  widgetSrc: "buildhub.near/widget/app",
+                  widgetSrc: "${config_account}/widget/app",
                   params: {
                     page: "feed",
                   },

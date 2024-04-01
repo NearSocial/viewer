@@ -23,7 +23,7 @@ const StyledWidgetSource = styled.div`
 return (
   <StyledWidgetSource className="container-xl my-3" data-bs-theme="dark">
     <Widget
-      src="buildhub.near/widget/inspect.WidgetSource"
+      src="${config_account}/widget/inspect.WidgetSource"
       props={{
         src: props.widgetPath,
       }}

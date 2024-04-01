@@ -1,8 +1,8 @@
-const { Button } = VM.require("buildhub.near/widget/components") || {
+const { Button } = VM.require("${config_account}/widget/components") || {
   Button: () => <></>,
 };
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || {
+const { href } = VM.require("${config_account}/widget/lib.url") || {
   href: () => {},
 };
 
@@ -141,7 +141,7 @@ const ProjectLayout = ({
         <Link
           style={{ textDecoration: "none" }}
           to={href({
-            widgetSrc: "buildhub.near/widget/app",
+            widgetSrc: "${config_account}/widget/app",
             params: {
               page: "projects",
             },
@@ -189,7 +189,7 @@ const ProjectLayout = ({
           <div className="links">
             <span>Links</span>
             <Widget
-              src="buildhub.near/widget/components.profile.Linktree"
+              src="${config_account}/widget/components.profile.Linktree"
               loading=""
               props={{
                 profile,
@@ -205,7 +205,7 @@ const ProjectLayout = ({
               <li className="nav-item" role="presentation" key={it}>
                 <Link
                   to={href({
-                    widgetSrc: `buildhub.near/widget/app`,
+                    widgetSrc: `${config_account}/widget/app`,
                     params: {
                       page: "project",
                       id: `${accountId}/${app}/${type}/${titleUrl}`,

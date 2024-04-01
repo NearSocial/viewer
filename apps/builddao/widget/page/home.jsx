@@ -1,5 +1,5 @@
 const { Hero, Goals, Join, Purposes, AboutUs, Governance, Footer } = VM.require(
-  "buildhub.near/widget/home.Home",
+  "${config_account}/widget/home.Home",
 ) || {
   Hero: () => <></>,
   Goals: () => <></>,

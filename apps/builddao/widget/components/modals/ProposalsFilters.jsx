@@ -1,11 +1,13 @@
-const { daos } = VM.require("buildhub.near/widget/fetch.daos") || { daos: [] };
+const { daos } = VM.require("${config_account}/widget/fetch.daos") || {
+  daos: [],
+};
 
 if (!daos) {
   return "";
 }
 const options = daos.map((dao) => dao.contract_id);
 
-const { Modal, Button } = VM.require("buildhub.near/widget/components") || {
+const { Modal, Button } = VM.require("${config_account}/widget/components") || {
   Modal: () => <></>,
   Button: () => <></>,
 };

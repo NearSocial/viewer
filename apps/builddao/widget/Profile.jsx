@@ -29,13 +29,13 @@ return (
   <ProfileContainer>
     <SideContainer>
       <Widget
-        src="buildhub.near/widget/components.profile.ProfileInfo"
+        src="${config_account}/widget/components.profile.ProfileInfo"
         props={{ accountId }}
       />
     </SideContainer>
     <MainContainer>
       <Widget
-        src="buildhub.near/widget/components.profile.ProfileTabs"
+        src="${config_account}/widget/components.profile.ProfileTabs"
         props={{
           accountId,
           profile,

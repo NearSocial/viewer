@@ -1,9 +1,9 @@
-const { Button } = VM.require("buildhub.near/widget/components") || {
+const { Button } = VM.require("${config_account}/widget/components") || {
   Button: () => <></>,
 };
 
 const { getProjectMeta } = VM.require(
-  "buildhub.near/widget/lib.project-data"
+  "${config_account}/widget/lib.project-data",
 ) || {
   getProjectMeta: () => {},
 };

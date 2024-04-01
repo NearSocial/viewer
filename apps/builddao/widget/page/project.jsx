@@ -1,11 +1,11 @@
 const { page, tab, type, app, ...passProps } = props;
 
-const { routes } = VM.require("buildhub.near/widget/config.project") ?? {
+const { routes } = VM.require("${config_account}/widget/config.project") ?? {
   routes: {},
 };
 
 const { ProjectLayout } = VM.require(
-  "buildhub.near/widget/template.ProjectLayout"
+  "${config_account}/widget/template.ProjectLayout",
 ) || {
   ProjectLayout: () => <></>,
 };
@@ -57,7 +57,7 @@ function Router({ active, routes }) {
       <Widget
         src={src}
         props={{
-          currentPath: `/buildhub.near/widget/app?page=${page}&tab=${tab}`,
+          currentPath: `/${config_account}/widget/app?page=${page}&tab=${tab}`,
           page: tab,
           ...passProps,
           ...defaultProps,

@@ -1,4 +1,4 @@
-const { Avatar } = VM.require("buildhub.near/widget/components") || {
+const { Avatar } = VM.require("${config_account}/widget/components") || {
   Avatar: () => <></>,
 };
 

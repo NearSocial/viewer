@@ -1,16 +1,16 @@
 const { fetchProjects, extractValidNearAddresses } = VM.require(
-  "buildbox.near/widget/utils.projects-sdk"
+  "buildbox.near/widget/utils.projects-sdk",
 ) || {
   fetchProjects: () => {},
   extractValidNearAddresses: () => {},
 };
 
-const { Button } = VM.require("buildhub.near/widget/components") || {
+const { Button } = VM.require("${config_account}/widget/components") || {
   Button: () => <></>,
 };
 
 const { ProjectCard } = VM.require(
-  "buildhub.near/widget/components.project.Card"
+  "${config_account}/widget/components.project.Card",
 ) || {
   ProjectCard: () => <></>,
 };
@@ -61,7 +61,7 @@ const processData = useCallback(
     allItems.sort((a, b) => b.blockHeight - a.blockHeight);
     return allItems;
   },
-  [type]
+  [type],
 );
 
 const projects = processData(data);
@@ -114,7 +114,7 @@ const filteredProjects = useMemo(() => {
   let filtered = projects;
   if (filters.title !== "") {
     filtered = filtered.filter((project) =>
-      project.title.toLowerCase().includes(filters.title ?? "".toLowerCase())
+      project.title.toLowerCase().includes(filters.title ?? "".toLowerCase()),
     );
   }
 
@@ -143,7 +143,7 @@ const filteredProjects = useMemo(() => {
 
   if (filters.tags.length > 0) {
     filtered = filtered.filter((project) =>
-      filters.tags.every((tag) => project.tags.includes(tag))
+      filters.tags.every((tag) => project.tags.includes(tag)),
     );
   }
   return filtered;
@@ -157,7 +157,6 @@ const tagFilters = useMemo(() => {
   return tags;
 }, [projects]);
 
-
 return (
   <Wrapper
     className="container-xl mx-auto"
@@ -165,7 +164,7 @@ return (
     data-bs-theme="dark"
   >
     <Widget
-      src="buildhub.near/widget/components.modals.FilterProjects"
+      src="${config_account}/widget/components.modals.FilterProjects"
       loading=""
       props={{
         showModal: showModal,

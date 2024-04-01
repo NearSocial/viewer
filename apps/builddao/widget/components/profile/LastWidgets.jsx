@@ -77,7 +77,7 @@ const renderItem = (a) => {
   return (
     <div className="mb-3" key={JSON.stringify(a)} style={{ minHeight: "10em" }}>
       <Widget
-        src="buildhub.near/widget/components.profile.WidgetMetadata"
+        src="${config_account}/widget/components.profile.WidgetMetadata"
         props={{
           accountId: a.accountId,
           widgetName: a.widgetName,

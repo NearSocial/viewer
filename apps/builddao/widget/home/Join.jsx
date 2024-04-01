@@ -1,4 +1,4 @@
-const { Tag, Button } = VM.require("buildhub.near/widget/components") || {
+const { Tag, Button } = VM.require("${config_account}/widget/components") || {
   Tag: () => <></>,
 };
 
@@ -273,7 +273,7 @@ const Join = () => {
         <div className="z-3 left">
           <h3>Let's Join</h3>
           <Widget
-            src="/*__@appAccount__*//widget/components.buttons.Connect"
+            src="${config_account}/widget/components.buttons.Connect"
             props={{
               joinBtnChildren: "Join Now",
               showActivity: true,

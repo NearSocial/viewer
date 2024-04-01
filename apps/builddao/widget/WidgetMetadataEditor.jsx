@@ -10,7 +10,7 @@ if (metadata === null) {
 return (
   <Widget
     key={widgetPath}
-    src="/*__@appAccount__*//widget/MetadataEditor"
+    src="${config_account}/widget/MetadataEditor"
     props={{
       initialMetadata: metadata,
       onChange,

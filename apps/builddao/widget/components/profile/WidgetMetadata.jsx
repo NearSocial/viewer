@@ -50,7 +50,7 @@ const linktreeObjects = linktree.map((o, i) => {
 });
 
 const descriptionKey = `${widgetPath}-description`.replaceAll(/[._\/-]/g, "--");
-const { href } = VM.require("buildhub.near/widget/lib.url") || {
+const { href } = VM.require("${config_account}/widget/lib.url") || {
   href: () => {},
 };
 
@@ -173,7 +173,7 @@ return (
         <div className="flex-grow-1 me-1 text-truncate text-white">
           <span className="text-white me-1">By</span>
           <Widget
-            src="buildhub.near/widget/components.profile.ProfileLine"
+            src="${config_account}/widget/components.profile.ProfileLine"
             props={{ accountId, link: props.profileLink }}
           />
         </div>

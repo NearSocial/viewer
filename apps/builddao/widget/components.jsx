@@ -1,20 +1,24 @@
-const { Button } = VM.require("buildhub.near/widget/components.Button");
+const { Button } = VM.require("${config_account}/widget/components.Button");
 const { ProgressState } = VM.require(
-  "buildhub.near/widget/components.ProgressState",
+  "${config_account}/widget/components.ProgressState",
 );
-const { Bullet } = VM.require("buildhub.near/widget/components.Bullet");
-const { Step } = VM.require("buildhub.near/widget/components.Step");
-const { InputField } = VM.require("buildhub.near/widget/components.InputField");
+const { Bullet } = VM.require("${config_account}/widget/components.Bullet");
+const { Step } = VM.require("${config_account}/widget/components.Step");
+const { InputField } = VM.require(
+  "${config_account}/widget/components.InputField",
+);
 const { UploadField } = VM.require(
-  "buildhub.near/widget/components.UploadField",
+  "${config_account}/widget/components.UploadField",
 );
-const { TextBox } = VM.require("buildhub.near/widget/components.TextBox");
-const { TextEditor } = VM.require("buildhub.near/widget/components.TextEditor");
-const { Checkbox } = VM.require("buildhub.near/widget/components.Checkbox");
-const { Avatar } = VM.require("buildhub.near/widget/components.Avatar");
-const { Modal } = VM.require("buildhub.near/widget/components.Modal");
-const { Hashtag } = VM.require("buildhub.near/widget/components.Hashtag");
-const { Tag } = VM.require("buildhub.near/widget/components.Tag");
+const { TextBox } = VM.require("${config_account}/widget/components.TextBox");
+const { TextEditor } = VM.require(
+  "${config_account}/widget/components.TextEditor",
+);
+const { Checkbox } = VM.require("${config_account}/widget/components.Checkbox");
+const { Avatar } = VM.require("${config_account}/widget/components.Avatar");
+const { Modal } = VM.require("${config_account}/widget/components.Modal");
+const { Hashtag } = VM.require("${config_account}/widget/components.Hashtag");
+const { Tag } = VM.require("${config_account}/widget/components.Tag");
 
 function Pagination({
   totalPages,
@@ -25,7 +29,7 @@ function Pagination({
 }) {
   return (
     <Widget
-      src="buildhub.near/widget/components.Pagination"
+      src="${config_account}/widget/components.Pagination"
       props={{
         totalPages,
         maxVisiblePages,
@@ -41,7 +45,7 @@ function Post(props) {
   return (
     <Widget
       loading={<div className="w-100" style={{ height: "200px" }} />}
-      src={"buildhub.near/widget/components.Post"}
+      src={"${config_account}/widget/components.Post"}
       props={{ ...props }}
     />
   );
@@ -51,7 +55,7 @@ function User(props) {
   return (
     <Widget
       loading={<div style={{ widget: "3rem", height: "3rem" }} />}
-      src="buildhub.near/widget/components.User"
+      src="${config_account}/widget/components.User"
       props={{ ...props }}
     />
   );

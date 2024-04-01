@@ -19,7 +19,7 @@ return (
     <Markdown text={text} />
     <h3>Dependencies</h3>
     <Widget
-      src="buildhub.near/widget/inspect.WidgetDependencies"
+      src="${config_account}/widget/inspect.WidgetDependencies"
       props={{ src, code }}
     />
   </>

@@ -2,7 +2,7 @@
  * This is a standard layout with a header, body, and a footer
  */
 
-const { Button } = VM.require("buildhub.near/widget/components") || {
+const { Button } = VM.require("${config_account}/widget/components") || {
   Button: () => <></>,
 };
 
@@ -25,9 +25,9 @@ const ContentContainer = styled.div`
 
 const Header = ({ page, routes, ...props }) => (
   <>
-    <Widget src="buildhub.near/widget/components.banners.potlock" />
+    <Widget src="${config_account}/widget/components.banners.potlock" />
     <Widget
-      src="buildhub.near/widget/components.Navbar"
+      src="${config_account}/widget/components.Navbar"
       loading=""
       props={{ page, routes, ...props }}
     />

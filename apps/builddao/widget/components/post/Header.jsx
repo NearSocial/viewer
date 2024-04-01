@@ -1,4 +1,4 @@
-const { Avatar, Modal } = VM.require("buildhub.near/widget/components") || {
+const { Avatar, Modal } = VM.require("${config_account}/widget/components") || {
   Modal: () => <></>,
   Avatar: () => <></>,
 };
@@ -101,7 +101,7 @@ const modalToggles = props.modalToggles;
 const setItem = props.setItem;
 const content = props.content;
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || {
+const { href } = VM.require("${config_account}/widget/lib.url") || {
   href: () => {},
 };
 
@@ -110,7 +110,7 @@ const Overlay = (props) => (
     className="link-dark text-truncate d-inline-flex mw-100"
     key={accountId}
     to={href({
-      widgetSrc: "buildhub.near/widget/app",
+      widgetSrc: "${config_account}/widget/app",
       params: {
         page: "profile",
         accountId,
@@ -186,7 +186,7 @@ const MemoizedOverlay = useMemo(
             </div>
             <Widget
               loading=""
-              src="buildhub.near/widget/components.VerifiedHuman"
+              src="${config_account}/widget/components.VerifiedHuman"
               props={{
                 accountId: accountId,
               }}
@@ -233,7 +233,7 @@ const closeModal = () => {
 
 const plugins = {
   edit: {
-    path: "buildhub.near/widget/components.modals.EditPost",
+    path: "${config_account}/widget/components.modals.EditPost",
     init: {
       item: item,
       content: content,
@@ -248,7 +248,7 @@ const plugins = {
     },
   },
   delete: {
-    path: "buildhub.near/widget/components.modals.DeletePost",
+    path: "${config_account}/widget/components.modals.DeletePost",
     init: {
       item: item,
       closeModal: closeModal,

@@ -1,5 +1,5 @@
 const { Button, Avatar, InputField, TextEditor } = VM.require(
-  "buildhub.near/widget/components",
+  "${config_account}/widget/components",
 ) || {
   Button: () => <></>,
   Avatar: () => <></>,
@@ -126,7 +126,7 @@ return (
     <div className="d-flex flex-column" style={{ gap: 24 }}>
       <ProfileImageContainer className="d-flex align-items-center gap-1">
         <Widget
-          src="buildhub.near/widget/components.profile.ImageUploader"
+          src="${config_account}/widget/components.profile.ImageUploader"
           loading=""
           props={{
             image: profile.image,

@@ -1,5 +1,5 @@
 const { ProgressState } = VM.require(
-  "buildhub.near/widget/components.ProgressState",
+  "${config_account}/widget/components.ProgressState",
 ) || {
   ProgressState: () => <></>,
 };

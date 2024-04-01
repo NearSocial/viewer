@@ -1,4 +1,4 @@
-const { Post } = VM.require("buildhub.near/widget/components") || {
+const { Post } = VM.require("${config_account}/widget/components") || {
   Post: () => <></>,
 };
 
@@ -14,7 +14,7 @@ return {
   type: "app", // every.near/type/app
   routes: {
     request: {
-      path: "buildhub.near/widget/Feed",
+      path: "${config_account}/widget/Feed",
       blockHeight: "final",
       init: {
         name: "Request",
@@ -43,7 +43,7 @@ return {
       },
     },
     proposals: {
-      path: "buildhub.near/widget/Proposals",
+      path: "${config_account}/widget/Proposals",
       blockHeight: "final",
       init: {
         name: "Proposals",

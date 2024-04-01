@@ -1,4 +1,4 @@
-const { Button } = VM.require("buildhub.near/widget/components") || {
+const { Button } = VM.require("${config_account}/widget/components") || {
   Button: () => <></>,
 };
 
@@ -159,7 +159,7 @@ return (
         <div className="px-3">
           <Widget
             key="post-preview"
-            src="buildhub.near/widget/components.Post"
+            src="${config_account}/widget/components.Post"
             props={{
               accountId: context.accountId,
               content: state.content || { type: "md", text: "" },

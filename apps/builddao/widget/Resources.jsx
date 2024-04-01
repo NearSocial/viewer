@@ -1,12 +1,12 @@
-const { Header } = VM.require("buildhub.near/widget/components.Header") || {
+const { Header } = VM.require("${config_account}/widget/components.Header") || {
   Header: () => <></>,
 };
 
-const { Post } = VM.require("buildhub.near/widget/components") || {
+const { Post } = VM.require("${config_account}/widget/components") || {
   Post: () => <></>,
 };
 
-const { MarkdownView } = VM.require("buildhub.near/widget/md-view") || {
+const { MarkdownView } = VM.require("${config_account}/widget/md-view") || {
   MarkdownView: () => <></>,
 };
 

@@ -1,4 +1,4 @@
-const { Post } = VM.require("buildhub.near/widget/components") || {
+const { Post } = VM.require("${config_account}/widget/components") || {
   Post: () => <></>,
 };
 

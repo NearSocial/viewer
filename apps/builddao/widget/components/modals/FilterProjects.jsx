@@ -1,4 +1,4 @@
-const { Modal } = VM.require("buildhub.near/widget/components") || {
+const { Modal } = VM.require("${config_account}/widget/components") || {
   Modal: () => <></>,
 };
 
@@ -18,7 +18,7 @@ return (
     toggle={toggle}
   >
     <Widget
-      src="buildhub.near/widget/components.modals.projects.Filters"
+      src="${config_account}/widget/components.modals.projects.Filters"
       loading=""
       props={{
         bootstrapTheme,

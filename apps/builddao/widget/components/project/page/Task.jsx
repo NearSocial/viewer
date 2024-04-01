@@ -1,9 +1,9 @@
 const { Modal, Button, ProgressState } = VM.require(
-  "buildhub.near/widget/components"
+  "${config_account}/widget/components",
 ) || {
   Modal: () => <></>,
   Button: () => <></>,
-  ProgressState: () => <></>
+  ProgressState: () => <></>,
 };
 
 const ThemeContainer =
@@ -102,7 +102,7 @@ const projectID = "";
 const StatusValues = {
   PROPOSED: "proposed",
   PROGRESS: "progress",
-  COMPLETED: "completed"
+  COMPLETED: "completed",
 };
 
 const listItem = { title: "", isCompleted: false };
@@ -112,7 +112,7 @@ const task = {
   author: "",
   tags: "",
   list: [], // listItem
-  status: ""
+  status: "",
 };
 
 const dummyTask = {
@@ -121,13 +121,13 @@ const dummyTask = {
   author: "megha19.near",
   tags: "test, build",
   list: [{ title: "UX Design", isCompleted: false }],
-  status: "proposed"
+  status: "proposed",
 };
 
 const [tasks, setTasks] = useState([
   dummyTask,
   { ...dummyTask, status: "progress" },
-  { ...dummyTask, status: "completed" }
+  { ...dummyTask, status: "completed" },
 ]);
 const [proposedTasks, setProposedTasks] = useState([]);
 const [progressTasks, setProgresTasks] = useState([]);
@@ -151,7 +151,7 @@ useEffect(() => {
 const onEdit = () => {
   const modifications = Social.index("modify", item, {
     limit: 1,
-    order: "desc"
+    order: "desc",
   });
 
   if (modifications.length) {
@@ -167,7 +167,7 @@ const onEdit = () => {
 const updateTaskDetail = (data) => {
   setTaskDetail((prevState) => ({
     ...prevState,
-    ...data
+    ...data,
   }));
 };
 
@@ -180,7 +180,7 @@ const updateTaskListItem = (index, updatedItem) => {
 const deleteTaskListItem = (index) => {
   const updatedList = [
     ...taskDetail.list.slice(0, index),
-    ...taskDetail.list.slice(index + 1)
+    ...taskDetail.list.slice(index + 1),
   ];
   updateTaskDetail({ list: updatedList });
 };
@@ -306,7 +306,7 @@ const AddTaskModal = () => {
             <div
               onClick={() =>
                 updateTaskDetail({
-                  list: [...(taskDetail.list ?? []), { ...listItem }]
+                  list: [...(taskDetail.list ?? []), { ...listItem }],
                 })
               }
             >
@@ -325,7 +325,7 @@ const AddTaskModal = () => {
                       onChange={(e) =>
                         updateTaskListItem(index, {
                           title: item.title,
-                          isCompleted: e.target.checked
+                          isCompleted: e.target.checked,
                         })
                       }
                     />
@@ -336,7 +336,7 @@ const AddTaskModal = () => {
                       onChange={(e) =>
                         updateTaskListItem(index, {
                           title: e.target.value,
-                          isCompleted: false
+                          isCompleted: false,
                         })
                       }
                     />
@@ -462,7 +462,7 @@ const columns = [
     addTask: () => {
       setTaskDetail({ ...task, status: StatusValues.PROPOSED });
       setShowAddTaskModal(true);
-    }
+    },
   },
   {
     title: "In Progress",
@@ -470,7 +470,7 @@ const columns = [
     addTask: () => {
       setTaskDetail({ ...task, status: StatusValues.PROGRESS });
       setShowAddTaskModal(true);
-    }
+    },
   },
   {
     title: "Completed",
@@ -478,8 +478,8 @@ const columns = [
     addTask: () => {
       setTaskDetail({ ...task, status: StatusValues.COMPLETED });
       setShowAddTaskModal(true);
-    }
-  }
+    },
+  },
 ];
 
 return (

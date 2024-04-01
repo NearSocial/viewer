@@ -13,7 +13,7 @@ dependencySources = dependencySources
     return { src, accountId: parts[0], widgetName: parts[2] };
   });
 
-const { href } = VM.require("buildhub.near/widget/lib.url") || {
+const { href } = VM.require("${config_account}/widget/lib.url") || {
   href: () => {},
 };
 
@@ -32,7 +32,7 @@ return (
                 className="btn btn-outline-secondary"
                 //href={`#/mob.near/widget/WidgetSource?src=${widgetPath}`}
                 to={href({
-                  widgetSrc: "buildhub.near/widget/app",
+                  widgetSrc: "${config_account}/widget/app",
                   params: {
                     page: "inspect",
                     widgetPath: widgetPath,
