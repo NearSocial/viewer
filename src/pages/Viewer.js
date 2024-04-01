@@ -55,10 +55,6 @@ function Viewer({ code, ...props }) {
     fetchRedirectMap();
   }, []);
 
-  console.log(
-    `gateway rendering: ${src} with props: ${JSON.stringify(passProps)}`,
-  );
-
   return (
     <Widget
       src={!code && src}
