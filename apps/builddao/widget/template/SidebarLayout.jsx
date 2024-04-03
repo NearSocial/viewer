@@ -38,8 +38,9 @@ const ContentContainer = styled.div`
   grid-column: span 4 / span 4;
 `;
 
-const Sidebar = ({ currentPath, page, routes }) => (
+const Sidebar = ({ currentPath, page, routes, header }) => (
   <>
+    {header && header.children}
     {routes &&
       (Object.keys(routes) || []).map((k) => {
         const route = routes[k];
@@ -51,10 +52,8 @@ const Sidebar = ({ currentPath, page, routes }) => (
             id={k}
             variant={page === k ? "primary" : "outline"}
             href={`${currentPath}&tab=${k}`}
-            className={
-              "justify-content-start fw-medium align-self-stretch w-100"
-            }
-            linkClassName={"d-flex w-100"}
+            className={"justify-content-start fw-medium align-self-stretch"}
+            linkClassName={"d-flex col-md-12 "}
             style={{
               fontSize: "14px",
               textDecoration: "none",
@@ -62,6 +61,7 @@ const Sidebar = ({ currentPath, page, routes }) => (
               fontWeight: 600,
               padding: "8px 12px",
               gap: "10px",
+              width: "100%",
             }}
           >
             {route.init.icon && <i className={`bi ${route.init.icon} `} />}
@@ -73,11 +73,16 @@ const Sidebar = ({ currentPath, page, routes }) => (
 );
 
 // Define the new component that follows the SidebarLayout pattern
-function SidebarLayout({ currentPath, routes, page, children }) {
+function SidebarLayout({ currentPath, routes, header, page, children }) {
   return (
     <Container className="container-xl mt-md-3">
       <SidebarContainer>
-        <Sidebar currentPath={currentPath} page={page} routes={routes} />
+        <Sidebar
+          currentPath={currentPath}
+          page={page}
+          header={header}
+          routes={routes}
+        />
       </SidebarContainer>
       <ContentContainer key={page}>{children}</ContentContainer>
     </Container>

@@ -1,7 +1,10 @@
 const { currentPath, page, ...passProps } = props;
 
-const { routes } = VM.require("${config_account}/widget/config.feed") ?? {
+const { routes, header } = VM.require(
+  "${config_account}/widget/config.feed",
+) ?? {
   routes: {},
+  header: {},
 };
 
 const { SidebarLayout } = VM.require(
@@ -56,7 +59,12 @@ const Content = styled.div`
 return (
   <Root>
     <Container>
-      <SidebarLayout currentPath={currentPath} page={page} routes={routes}>
+      <SidebarLayout
+        currentPath={currentPath}
+        header={header}
+        page={page}
+        routes={routes}
+      >
         <Content>
           <Router active={page} routes={routes} />
         </Content>

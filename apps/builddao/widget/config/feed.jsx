@@ -1,5 +1,6 @@
-const { Post } = VM.require("${config_account}/widget/components") || {
+const { Post, Button } = VM.require("${config_account}/widget/components") || {
   Post: () => <></>,
+  Button: () => <></>,
 };
 
 function formatDate(date) {
@@ -12,6 +13,24 @@ const feedLink = "https://nearbuilders.org/feed";
 
 return {
   type: "app", // every.near/type/app
+  header: {
+    children: (
+      <Button
+        variant="outline"
+        href="/${config_account}/widget/app?page=feed&tab=addNew"
+        className="align-self-stretch flex-shrink-0 px-3 py-0 mb-md-3 px-md-3 py-md-1"
+        linkClassName="d-flex col-md-12 flex-shrink-0 justify-content-start fw-medium align-self-stretch"
+        style={{
+          width: "-webkit-fill-available",
+          display: context.accountId === "${config_account}" ? "" : "none",
+        }}
+      >
+        Add New <i style={{ fontSize: 24 }} className="bi bi-plus"></i>
+      </Button>
+    ),
+    path: "${config_account}/widget/FeedEditor",
+    blockHeight: "final",
+  },
   routes: {
     all: {
       path: "${config_account}/widget/Feed",
@@ -97,6 +116,11 @@ return {
         app: "every",
         thing: "event",
       },
+    },
+    addNew: {
+      path: "${config_account}/widget/FeedEditor",
+      blockHeight: "final",
+      hide: true,
     },
     bookmarks: {
       path: "${config_account}/widget/OrderedGraphFeed",
