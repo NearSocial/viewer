@@ -271,30 +271,30 @@ function parseMutationId(mutationId) {
   return { authorId, localId };
 }
 
-export function MutationDropdown({ engine, imageSrc, listPosition = 'right' }) {
-  const [mutations, setMutations] = useState([])
-  const [selectedMutation, setSelectedMutation] = useState(null)
-  const [isOpen, setOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+export function MutationDropdown({ engine, imageSrc, listPosition = "right" }) {
+  const [mutations, setMutations] = useState([]);
+  const [selectedMutation, setSelectedMutation] = useState(null);
+  const [isOpen, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!engine) return;
 
     const init = async () => {
       try {
-        setIsLoading(true)
+        setIsLoading(true);
 
-        const mutations = await engine.getMutations()
-        setMutations(mutations)
+        const mutations = await engine.getMutations();
+        setMutations(mutations);
 
-        const mutation = await engine.getCurrentMutation()
-        setSelectedMutation(mutation)
+        const mutation = await engine.getCurrentMutation();
+        setSelectedMutation(mutation);
       } catch (err) {
-        console.error(err)
+        console.error(err);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
     init();
   }, [engine]);
@@ -304,32 +304,32 @@ export function MutationDropdown({ engine, imageSrc, listPosition = 'right' }) {
   };
 
   const handleMutationClick = async (mutation) => {
-    setSelectedMutation(mutation)
-    setOpen(false)
-    
+    setSelectedMutation(mutation);
+    setOpen(false);
+
     try {
-      setIsLoading(true)
+      setIsLoading(true);
 
       if (engine.started) {
-        await engine.switchMutation(mutation.id)
+        await engine.switchMutation(mutation.id);
       } else {
-        await engine.start(mutation.id)
+        await engine.start(mutation.id);
       }
     } catch (err) {
-      console.error(err)
+      console.error(err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
 
-    window.sessionStorage.setItem('mutableweb:mutationId', mutation.id)
-  }
+    window.sessionStorage.setItem("mutableweb:mutationId", mutation.id);
+  };
 
   const handleResetMutation = () => {
-    setSelectedMutation(null)
-    setOpen(false)
-    engine.stop()
-    window.sessionStorage.setItem('mutableweb:mutationId', 'null')
-  }
+    setSelectedMutation(null);
+    setOpen(false);
+    engine.stop();
+    window.sessionStorage.setItem("mutableweb:mutationId", "null");
+  };
 
   if (isLoading) {
     return (
@@ -338,7 +338,7 @@ export function MutationDropdown({ engine, imageSrc, listPosition = 'right' }) {
           <MutationTitle>Loading...</MutationTitle>
         </ActiveMutation>
       </MutationWrapper>
-    )
+    );
   }
 
   return (
@@ -354,6 +354,8 @@ export function MutationDropdown({ engine, imageSrc, listPosition = 'right' }) {
         </ActiveMutation>
       ) : (
         <ActiveMutation onClick={handleDropdownToggle}>
+          <MutationTitle>No mutations applied</MutationTitle>
+
           {mutations.length ? (
             <CounterMutation>+{mutations.length}</CounterMutation>
           ) : null}
