@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Close } from "../../icons/Close";
 import { Home } from "../../icons/Home";
@@ -7,10 +7,11 @@ import { Code } from "../../icons/Code";
 import { LogOut } from "../../icons/LogOut";
 import { Fork } from "../../icons/Fork";
 import { UserCircle } from "../../icons/UserCircle";
-import { Widget } from "near-social-vm";
+import { Widget, useNear } from "near-social-vm";
 import { NavigationButton } from "../NavigationButton";
 import { SignInButton } from "../SignInButton";
 import { Link } from "react-router-dom";
+import { Withdraw } from "../../icons/Withdraw";
 
 const StyledMenu = styled.div`
   position: fixed;
@@ -154,6 +155,11 @@ const StyledMenu = styled.div`
 `;
 
 export function Menu(props) {
+  const near = useNear();
+  const withdrawStorage = useCallback(async () => {
+    await near.contract.storage_withdraw({}, undefined, "1");
+  }, [near]);
+
   return (
     <StyledMenu className={props.showMenu ? "show" : ""}>
       <div className="left-side">
@@ -238,12 +244,26 @@ export function Menu(props) {
             </li>
           )}
           {props.signedIn && (
-            <li>
-              <button onClick={() => props.logOut()} className="log-out-button">
-                <LogOut />
-                Sign Out
-              </button>
-            </li>
+            <>
+              <li>
+                <button
+                  className="log-out-button"
+                  onClick={() => withdrawStorage()}
+                >
+                  <Withdraw />
+                  Withdraw {props.availableStorage.div(1000).toFixed(2)}kb
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => props.logOut()}
+                  className="log-out-button"
+                >
+                  <LogOut />
+                  Sign Out
+                </button>
+              </li>
+            </>
           )}
         </ul>
         <button className="close-button" onClick={props.onCloseMenu}>
