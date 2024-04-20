@@ -74,11 +74,20 @@ function App(props) {
   const account = useAccount();
 
   const accountId = account.accountId;
+  const injectedConfig = window?.InjectedConfig;
 
   useEffect(() => {
     const walletSelectorNetwork = getNetworkPreset(NetworkId);
     if (window.location.hostname === "near.social") {
       walletSelectorNetwork.nodeUrl = "https://rpc.fastnear.com";
+    }
+
+    const features = {};
+    if (injectedConfig?.skipConfirmations) {
+      features.commitModalBypass = {
+        bypassAll: true,
+      };
+      features.bypassTransactionConfirmation = true;
     }
 
     const config = {
@@ -117,6 +126,7 @@ function App(props) {
       config: {
         defaultFinality: undefined,
       },
+      features,
     };
 
     if (window.location.hostname === "near.social") {
