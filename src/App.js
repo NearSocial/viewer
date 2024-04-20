@@ -83,7 +83,7 @@ function App(props) {
     }
 
     const features = {};
-    if (true || injectedConfig?.skipConfirmations) {
+    if (injectedConfig?.skipConfirmations) {
       features.commitModalBypass = {
         bypassAll: true,
       };
