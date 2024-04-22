@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Widget } from "near-social-vm";
 import { Arrow } from "../../icons/Arrow";
 import { Back } from "../../icons/Back";
+import { fallbackImage } from "../../icons/FallbackImage";
 
 // #region MutationDropdown
 
@@ -341,7 +342,7 @@ export function MutationDropdown({ engine, imageSrc, listPosition = "right" }) {
       </MutationWrapper>
     );
   }
-
+  console.log(mutations);
   return (
     <MutationWrapper>
       {selectedMutation ? (
@@ -400,6 +401,7 @@ export function MutationDropdown({ engine, imageSrc, listPosition = "right" }) {
                       image: mutation.metadata.image,
                       style: { objectFit: "cover" },
                       className: "h-100",
+                      fallbackUrl: fallbackImage,
                     }}
                   />
                   <MutationInfo onClick={() => handleMutationClick(mutation)}>
