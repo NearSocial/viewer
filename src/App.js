@@ -130,9 +130,7 @@ function App(props) {
       },
       config: {
         defaultFinality: undefined,
-        config: {
-          nodeUrl: rpcUrl,
-        },
+        nodeUrl: rpcUrl,
       },
       features,
     };
