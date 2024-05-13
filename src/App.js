@@ -32,7 +32,7 @@ import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
-import { Engine, DappletOverlay } from "mutable-web-engine";
+import { Engine, customElements } from "mutable-web-engine";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -134,7 +134,8 @@ function App(props) {
           }
           return <Link {...props} />;
         },
-        DappletOverlay,
+        DappletOverlay: customElements.DappletOverlay,
+        MuWebWrapperPortal: customElements.MuWebWrapperPortal,
       },
       config: {
         defaultFinality: undefined,
