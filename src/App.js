@@ -119,6 +119,8 @@ function App(props) {
       },
       config: {
         defaultFinality: undefined,
+      },
+      features: {
         enableComponentPropsDataKey: true,
         enableComponentSrcDataKey: true,
         skipTxConfirmationPopup: true,
@@ -151,6 +153,8 @@ function App(props) {
       const engine = new Engine({
         networkId: NetworkId,
         selector: selector,
+        gatewayId: "near-social",
+        bosElementStyleSrc: "/bootstrap.min.css",
       });
 
       const mutationId = window.sessionStorage.getItem("mutableweb:mutationId");

@@ -79,6 +79,10 @@ module.exports = function (env) {
               },
               noErrorOnMissing: true,
             },
+            {
+              from: `${paths.nodeModulesPath}/bootstrap/dist/css/bootstrap.min.css`,
+              to: 'bootstrap.min.css',
+            },
           ],
         }),
         new HTMLWebpackPlugin({
