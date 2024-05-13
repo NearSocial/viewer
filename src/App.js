@@ -76,12 +76,31 @@ function App(props) {
   const account = useAccount();
 
   const accountId = account.accountId;
+  const injectedConfig = window?.InjectedConfig;
 
   useEffect(() => {
-    const walletSelectorNetwork = getNetworkPreset(NetworkId);
-    if (window.location.hostname === "near.social") {
-      walletSelectorNetwork.nodeUrl = "https://rpc.fastnear.com";
+    const features = {
+      enableComponentPropsDataKey: true,
+      enableComponentSrcDataKey: true,
+      skipTxConfirmationPopup: true,
+    };
+
+    const rpcUrl =
+      injectedConfig?.rpcUrl ??
+      (window.location.hostname === "near.social"
+        ? "https://rpc.fastnear.com"
+        : NetworkId === "mainnet"
+        ? "https://free.rpc.fastnear.com"
+        : "https://rpc.testnet.near.org");
+    if (injectedConfig?.skipConfirmations) {
+      features.commitModalBypass = {
+        bypassAll: true,
+      };
+      features.bypassTransactionConfirmation = true;
     }
+
+    const walletSelectorNetwork = getNetworkPreset(NetworkId);
+    walletSelectorNetwork.nodeUrl = rpcUrl;
 
     const config = {
       networkId: NetworkId,
@@ -119,17 +138,10 @@ function App(props) {
       },
       config: {
         defaultFinality: undefined,
+        nodeUrl: rpcUrl,
       },
-      features: {
-        enableComponentPropsDataKey: true,
-        enableComponentSrcDataKey: true,
-        skipTxConfirmationPopup: true,
-      },
+      features,
     };
-
-    if (window.location.hostname === "near.social") {
-      config.config.nodeUrl = "https://rpc.fastnear.com";
-    }
 
     initNear && initNear(config);
   }, [initNear]);
