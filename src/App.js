@@ -33,6 +33,7 @@ import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
 import { Engine, customElements } from "mutable-web-engine";
+import { OverlayTrigger } from "react-bootstrap";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -135,7 +136,9 @@ function App(props) {
           return <Link {...props} />;
         },
         DappletOverlay: customElements.DappletOverlay,
-        MuWebWrapperPortal: customElements.MuWebWrapperPortal,
+        DappletOverlayTrigger: customElements.OverlayTrigger,
+        DappletTooltip: customElements.Tooltip,
+        DappletPortal: customElements.MuWebWrapperPortal,
       },
       config: {
         defaultFinality: undefined,
