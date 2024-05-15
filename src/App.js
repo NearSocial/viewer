@@ -135,10 +135,7 @@ function App(props) {
           }
           return <Link {...props} />;
         },
-        DappletOverlay: customElements.DappletOverlay,
-        DappletOverlayTrigger: customElements.OverlayTrigger,
-        DappletTooltip: customElements.Tooltip,
-        DappletPortal: customElements.MuWebWrapperPortal,
+        ...customElements,
       },
       config: {
         defaultFinality: undefined,
