@@ -91,7 +91,10 @@ export function DesktopNavigation(props) {
           </NavigationButton>
         </div>
         <div className="mutable-section">
-          <MutationDropdown imageSrc={props.widgets.image} />
+          <MutationDropdown
+            engine={props.mutationEngine}
+            imageSrc={props.widgets.image}
+          />
         </div>
         <div className="user-section">
           <StarButton {...props} />

@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import { Widget } from "near-social-vm";
-import { Arrow } from "../../icons/Arrow";
-import { Back } from "../../icons/Back";
-import fallbackImage from "../../../images/fallback_image.svg";
-import { useMutableWeb } from "../../../contexts/mutable-web-context";
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { Widget } from 'near-social-vm'
+import { Arrow } from '../../icons/Arrow'
+import { Back } from '../../icons/Back'
+import fallbackImage from '../../../images/fallback_image.svg'
 
 // #region MutationDropdown
 
@@ -14,7 +13,7 @@ const MutationWrapper = styled.div`
   height: 44px;
 
   align-items: center;
-`;
+`
 
 const ActiveMutation = styled.div`
   display: flex;
@@ -28,7 +27,7 @@ const ActiveMutation = styled.div`
   border: 1px solid #4c5155;
   background: #313538;
   cursor: pointer;
-`;
+`
 
 const MutationTitle = styled.p`
   position: absolute;
@@ -44,7 +43,7 @@ const MutationTitle = styled.p`
   font-style: normal;
   font-weight: 600;
   line-height: 149%;
-`;
+`
 
 const CounterMutation = styled.div`
   display: flex;
@@ -58,7 +57,7 @@ const CounterMutation = styled.div`
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
-`;
+`
 
 const BackButton = styled.div`
   display: flex;
@@ -72,7 +71,7 @@ const BackButton = styled.div`
   &:hover {
     opacity: 0.7;
   }
-`;
+`
 
 const BackLabel = styled.div`
   color: #3d7fff;
@@ -80,7 +79,7 @@ const BackLabel = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: 149%;
-`;
+`
 
 const MutationList = styled.div`
   position: absolute;
@@ -114,13 +113,12 @@ const MutationList = styled.div`
   animation-duration: 0.2s;
   animation-timing-function: ease;
   animation-fill-mode: forwards;
-  box-shadow: 0px 13px 28px 0px rgba(0, 0, 0, 0.1),
-    0px 51px 51px 0px rgba(0, 0, 0, 0.09),
-    0px 115px 69px 0px rgba(0, 0, 0, 0.05),
-    0px 204px 81px 0px rgba(0, 0, 0, 0.01), 0px 318px 89px 0px rgba(0, 0, 0, 0);
+  box-shadow: 0px 13px 28px 0px rgba(0, 0, 0, 0.1), 0px 51px 51px 0px rgba(0, 0, 0, 0.09),
+    0px 115px 69px 0px rgba(0, 0, 0, 0.05), 0px 204px 81px 0px rgba(0, 0, 0, 0.01),
+    0px 318px 89px 0px rgba(0, 0, 0, 0);
 
   padding: 10px 4px 0px 10px;
-`;
+`
 
 const OpenListDefault = styled.div`
   cursor: pointer;
@@ -156,7 +154,7 @@ const OpenListDefault = styled.div`
       transform: rotate(0deg);
     }
   }
-  animation-name: ${(props) => props.$isOpen || "rotate-is-close"};
+  animation-name: ${(props) => props.$isOpen || 'rotate-is-close'};
   animation-duration: 0.2s;
   animation-timing-function: ease;
   animation-fill-mode: forwards;
@@ -169,7 +167,7 @@ const OpenListDefault = styled.div`
       transition: all 0.3s;
     }
   }
-`;
+`
 
 const Scroll = styled.div`
   display: flex;
@@ -202,7 +200,7 @@ const Scroll = styled.div`
     border-radius: 2px;
     box-shadow: 0 2px 6px rgb(0 0 0 / 9%), 0 2px 2px rgb(38 117 209 / 4%);
   }
-`;
+`
 
 // #endregion
 
@@ -228,7 +226,7 @@ const MutationItem = styled.div`
   &:last-child {
     margin-bottom: 10px;
   }
-`;
+`
 
 const MutationInfo = styled.div`
   display: flex;
@@ -247,13 +245,13 @@ const MutationInfo = styled.div`
     width: 194px;
     display: inline-block;
   }
-`;
+`
 
 const MutationItemTitle = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-`;
+`
 
 const MutationSublitle = styled.span`
   color: #222;
@@ -265,94 +263,101 @@ const MutationSublitle = styled.span`
   text-overflow: ellipsis;
   width: 194px;
   display: inline-block;
-`;
+`
 
 // #endregion
 
 function parseMutationId(mutationId) {
-  const [authorId, , localId] = mutationId.split("/");
-  return { authorId, localId };
+  const [authorId, , localId] = mutationId.split('/')
+  return { authorId, localId }
 }
 
-export function MutationDropdown({ imageSrc, listPosition = "right" }) {
-  const { engine, mutations, selectedMutation, switchMutation } =
-    useMutableWeb();
-
-  const [isOpen, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+export function MutationDropdown({ engine, imageSrc, listPosition = 'right' }) {
+  const [mutations, setMutations] = useState([])
+  const [selectedMutation, setSelectedMutation] = useState(null)
+  const [isOpen, setOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (engine) setIsLoading(false);
-  }, [engine]);
+    if (!engine) return
 
-  const handleDropdownToggle = () => {
-    setOpen(!isOpen);
-  };
+    const init = async () => {
+      try {
+        setIsLoading(true)
 
-  const handleMutationClick = async (mutation) => {
-    setOpen(false);
+        const mutations = await engine.getMutations()
+        setMutations(mutations)
 
-    try {
-      setIsLoading(true);
-
-      if (engine.started) {
-        await switchMutation(mutation.id);
-      } else {
-        await engine.start(mutation.id);
+        const mutation = await engine.getCurrentMutation()
+        setSelectedMutation(mutation)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setIsLoading(false)
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
     }
 
-    window.sessionStorage.setItem("mutableweb:mutationId", mutation.id);
-  };
+    init()
+  }, [engine])
+
+  const handleDropdownToggle = () => {
+    setOpen(!isOpen)
+  }
+
+  const handleMutationClick = async (mutation) => {
+    setSelectedMutation(mutation)
+    setOpen(false)
+
+    try {
+      setIsLoading(true)
+
+      if (engine.started) {
+        await engine.switchMutation(mutation.id)
+      } else {
+        await engine.start(mutation.id)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+
+    window.sessionStorage.setItem('mutableweb:mutationId', mutation.id)
+  }
 
   const handleResetMutation = () => {
-    setOpen(false);
-    engine.stop();
-    window.sessionStorage.setItem("mutableweb:mutationId", "null");
-  };
+    setSelectedMutation(null)
+    setOpen(false)
+    engine.stop()
+    window.sessionStorage.setItem('mutableweb:mutationId', 'null')
+  }
 
   if (isLoading) {
     return (
       <MutationWrapper
         data-mweb-context-type="mweb-gateway"
-        data-mweb-context-parsed={JSON.stringify({ id: "mutation-wrapper" })}
+        data-mweb-context-parsed={JSON.stringify({ id: 'mutation-wrapper' })}
       >
-        <div
-          data-mweb-insertion-point="mutation-wrapper"
-          style={{ display: "none" }}
-        ></div>
+        <div data-mweb-insertion-point="mutation-wrapper" style={{ display: 'none' }}></div>
         <ActiveMutation>
           <MutationTitle>Loading...</MutationTitle>
         </ActiveMutation>
       </MutationWrapper>
-    );
+    )
   }
 
   return (
     <MutationWrapper
       data-mweb-context-type="mweb-gateway"
-      data-mweb-context-parsed={JSON.stringify({ id: "mutation-wrapper" })}
+      data-mweb-context-parsed={JSON.stringify({ id: 'mutation-wrapper' })}
     >
-      <div
-        data-mweb-insertion-point="mutation-wrapper"
-        style={{ display: "none" }}
-      ></div>
+      <div data-mweb-insertion-point="mutation-wrapper" style={{ display: 'none' }}></div>
       {selectedMutation ? (
         <ActiveMutation onClick={handleDropdownToggle}>
-          <MutationTitle
-            title={
-              selectedMutation.metadata?.name ||
-              parseMutationId(selectedMutation.id).localId
-            }
-          >
-            {selectedMutation.metadata?.name ||
-              parseMutationId(selectedMutation.id).localId}
+          <MutationTitle title={parseMutationId(selectedMutation.id).localId}>
+            {parseMutationId(selectedMutation.id).localId}
           </MutationTitle>
-          <OpenListDefault $isOpen={isOpen && "rotate-is-open"}>
+          <OpenListDefault $isOpen={isOpen && 'rotate-is-open'}>
             <Arrow />
           </OpenListDefault>
         </ActiveMutation>
@@ -360,11 +365,9 @@ export function MutationDropdown({ imageSrc, listPosition = "right" }) {
         <ActiveMutation onClick={handleDropdownToggle}>
           <MutationTitle>No mutations applied</MutationTitle>
 
-          {mutations.length ? (
-            <CounterMutation>+{mutations.length}</CounterMutation>
-          ) : null}
+          {mutations.length ? <CounterMutation>+{mutations.length}</CounterMutation> : null}
 
-          <OpenListDefault $isOpen={isOpen && "rotate-is-open"}>
+          <OpenListDefault $isOpen={isOpen && 'rotate-is-open'}>
             <Arrow />
           </OpenListDefault>
         </ActiveMutation>
@@ -373,17 +376,14 @@ export function MutationDropdown({ imageSrc, listPosition = "right" }) {
       {isOpen && (
         <MutationList
           style={{
-            right: listPosition === "right" ? "0" : "",
-            left: listPosition === "left" ? "0" : "",
-            width: listPosition === "right" ? 292 : 222,
+            right: listPosition === 'right' ? '0' : '',
+            left: listPosition === 'left' ? '0' : '',
+            width: listPosition === 'right' ? 292 : 222,
           }}
           data-mweb-context-type="mweb-gateway"
-          data-mweb-context-parsed={JSON.stringify({ id: "mutations-list" })}
+          data-mweb-context-parsed={JSON.stringify({ id: 'mutations-list' })}
         >
-          <div
-            data-mweb-insertion-point="mutations-list"
-            style={{ display: "none" }}
-          ></div>
+          <div data-mweb-insertion-point="mutations-list" style={{ display: 'none' }}></div>
           {selectedMutation ? (
             <BackButton onClick={handleResetMutation}>
               <Back />
@@ -393,42 +393,36 @@ export function MutationDropdown({ imageSrc, listPosition = "right" }) {
 
           <Scroll>
             {mutations.map((mutation) => {
-              const { authorId, localId } = parseMutationId(mutation.id);
+              const { authorId, localId } = parseMutationId(mutation.id)
               return (
                 <MutationItem
                   key={mutation.id}
                   style={{
-                    background:
-                      selectedMutation?.id === mutation.id &&
-                      "rgba(24, 121, 206, 0.08)",
+                    background: selectedMutation?.id === mutation.id && 'rgba(24, 121, 206, 0.08)',
                   }}
                 >
                   <Widget
                     src={imageSrc}
                     props={{
                       image: mutation.metadata.image,
-                      style: { objectFit: "cover" },
-                      className: "h-100",
+                      style: { objectFit: 'cover' },
+                      className: 'h-100',
                       fallbackUrl: fallbackImage,
                     }}
                   />
                   <MutationInfo onClick={() => handleMutationClick(mutation)}>
                     <MutationItemTitle>
-                      <span className="titleMutation">
-                        {mutation.metadata?.name || localId}
-                      </span>
+                      <span className="titleMutation">{localId}</span>
                     </MutationItemTitle>
-                    <MutationSublitle>
-                      {authorId ? `by ` + authorId : null}
-                    </MutationSublitle>
+                    <MutationSublitle>{authorId ? `by ` + authorId : null}</MutationSublitle>
                   </MutationInfo>
                 </MutationItem>
-              );
+              )
             })}
             {!mutations.length ? <div>No mutations yet</div> : null}
           </Scroll>
         </MutationList>
       )}
     </MutationWrapper>
-  );
+  )
 }
