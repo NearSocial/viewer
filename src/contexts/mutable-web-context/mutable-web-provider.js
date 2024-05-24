@@ -9,6 +9,8 @@ const MutableWebProvider = ({ children, engine }) => {
   const [mutationApps, setMutationApps] = useState([]);
   const [favoriteMutationId, setFavoriteMutationId] = useState(null);
 
+  console.log("engine in MutableWebProvider", engine);
+
   const loadMutations = async (engine) => {
     if (!engine) return;
     const [mutations, allApps, selectedMutation, favoriteMutationId] =
