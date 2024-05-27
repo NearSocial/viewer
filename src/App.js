@@ -34,6 +34,8 @@ import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
 import { Engine, customElements } from "mutable-web-engine";
 import { OverlayTrigger } from "react-bootstrap";
+import { MutableWebProvider } from "./contexts/mutable-web-context";
+import SidePanel from "./components/muw-overlay";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -246,25 +248,28 @@ function App(props) {
   return (
     <div className="App">
       <EthersProviderContext.Provider value={ethersProviderContext}>
-        <Router basename={process.env.PUBLIC_URL}>
-          <Switch>
-            <Route path={"/signin"}>
-              <NavigationWrapper {...passProps} />
-              <SignInPage {...passProps} />
-            </Route>
-            <Route path={"/embed/:widgetSrc*"}>
-              <EmbedPage {...passProps} />
-            </Route>
-            <Route path={"/edit/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
-              <EditorPage {...passProps} />
-            </Route>
-            <Route path={"/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
-              <ViewPage {...passProps} />
-            </Route>
-          </Switch>
-        </Router>
+        <MutableWebProvider engine={mutationEngine}>
+          <Router basename={process.env.PUBLIC_URL}>
+            <Switch>
+              <Route path={"/signin"}>
+                <NavigationWrapper {...passProps} />
+                <SignInPage {...passProps} />
+              </Route>
+              <Route path={"/embed/:widgetSrc*"}>
+                <EmbedPage {...passProps} />
+              </Route>
+              <Route path={"/edit/:widgetSrc*"}>
+                <NavigationWrapper {...passProps} />
+                <EditorPage {...passProps} />
+              </Route>
+              <Route path={"/:widgetSrc*"}>
+                <NavigationWrapper {...passProps} />
+                <ViewPage {...passProps} />
+              </Route>
+            </Switch>
+          </Router>
+          <SidePanel />
+        </MutableWebProvider>
       </EthersProviderContext.Provider>
     </div>
   );
