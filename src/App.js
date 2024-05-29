@@ -35,7 +35,7 @@ import { isValidAttribute } from "dompurify";
 import { Engine, customElements } from "mutable-web-engine";
 import { OverlayTrigger } from "react-bootstrap";
 import { MutableWebProvider } from "./contexts/mutable-web-context";
-import SidePanel from "./components/muw-overlay";
+import MutableOverlayContainer from "./components/navigation/MutableOverlayContainer";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -268,7 +268,7 @@ function App(props) {
               </Route>
             </Switch>
           </Router>
-          <SidePanel />
+          <MutableOverlayContainer />
         </MutableWebProvider>
       </EthersProviderContext.Provider>
     </div>
