@@ -10,7 +10,6 @@ import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import EditorPage from "./pages/EditorPage";
 import ViewPage from "./pages/ViewPage";
 import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupNearWallet } from "@near-wallet-selector/near-wallet";
 import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
 import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
@@ -37,6 +36,29 @@ import { isValidAttribute } from "dompurify";
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
 
+const getNetworkPreset = (networkId) => {
+  switch (networkId) {
+    case "mainnet":
+      return {
+        networkId,
+        nodeUrl: "https://rpc.mainnet.near.org",
+        helperUrl: "https://helper.mainnet.near.org",
+        explorerUrl: "https://nearblocks.io",
+        indexerUrl: "https://api.kitwallet.app",
+      };
+    case "testnet":
+      return {
+        networkId,
+        nodeUrl: "https://rpc.testnet.near.org",
+        helperUrl: "https://helper.testnet.near.org",
+        explorerUrl: "https://testnet.nearblocks.io",
+        indexerUrl: "https://testnet-api.kitwallet.app",
+      };
+    default:
+      throw Error(`Failed to find config for: '${networkId}'`);
+  }
+};
+
 function App(props) {
   const [connected, setConnected] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
@@ -52,47 +74,68 @@ function App(props) {
   const account = useAccount();
 
   const accountId = account.accountId;
+  const injectedConfig = window?.InjectedConfig;
 
   useEffect(() => {
-    initNear &&
-      initNear({
-        networkId: NetworkId,
-        selector: setupWalletSelector({
-          network: NetworkId,
-          modules: [
-            setupNearWallet(),
-            setupMintbaseWallet(),
-            setupMyNearWallet(),
-            setupSender(),
-            setupHereWallet(),
-            setupMeteorWallet(),
-            setupNeth({
-              gas: "300000000000000",
-              bundle: false,
-            }),
-            setupNightly(),
-          ],
-        }),
-        customElements: {
-          Link: (props) => {
-            if (!props.to && props.href) {
-              props.to = props.href;
-              delete props.href;
-            }
-            if (props.to) {
-              props.to =
-                typeof props.to === "string" &&
-                isValidAttribute("a", "href", props.to)
-                  ? props.to
-                  : "about:blank";
-            }
-            return <Link {...props} />;
-          },
+    const features = {};
+    const rpcUrl =
+      injectedConfig?.rpcUrl ??
+      (window.location.hostname === "near.social"
+        ? "https://rpc.fastnear.com"
+        : NetworkId === "mainnet"
+        ? "https://free.rpc.fastnear.com"
+        : "https://rpc.testnet.near.org");
+    if (injectedConfig?.skipConfirmations) {
+      features.commitModalBypass = {
+        bypassAll: true,
+      };
+      features.bypassTransactionConfirmation = true;
+    }
+
+    const walletSelectorNetwork = getNetworkPreset(NetworkId);
+    walletSelectorNetwork.nodeUrl = rpcUrl;
+
+    const config = {
+      networkId: NetworkId,
+      selector: setupWalletSelector({
+        network: walletSelectorNetwork,
+        modules: [
+          setupMintbaseWallet(),
+          setupMyNearWallet(),
+          setupSender(),
+          setupHereWallet(),
+          setupMeteorWallet(),
+          setupNeth({
+            gas: "300000000000000",
+            bundle: false,
+          }),
+          setupNightly(),
+        ],
+      }),
+      customElements: {
+        Link: (props) => {
+          if (!props.to && props.href) {
+            props.to = props.href;
+            delete props.href;
+          }
+          if (props.to) {
+            props.to =
+              typeof props.to === "string" &&
+              isValidAttribute("a", "href", props.to)
+                ? props.to
+                : "about:blank";
+          }
+          return <Link {...props} />;
         },
-        config: {
-          defaultFinality: undefined,
-        },
-      });
+      },
+      config: {
+        defaultFinality: undefined,
+        nodeUrl: rpcUrl,
+      },
+      features,
+    };
+
+    initNear && initNear(config);
   }, [initNear]);
 
   useEffect(() => {
