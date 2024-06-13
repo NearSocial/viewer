@@ -61,7 +61,7 @@ export async function socialGet(keys, blockHeight, parse) {
 }
 
 export async function viewCall({ contractId, method, args }) {
-  const res = await fetch("https://rpc.mainnet.near.org", {
+  const res = await fetch("https://go.getblock.io/75e825521eeb49c9bbb15e6c977b147c", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

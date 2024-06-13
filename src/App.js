@@ -45,7 +45,7 @@ const getNetworkPreset = (networkId) => {
     case "mainnet":
       return {
         networkId,
-        nodeUrl: "https://rpc.mainnet.near.org",
+        nodeUrl: "https://go.getblock.io/75e825521eeb49c9bbb15e6c977b147c",
         helperUrl: "https://helper.mainnet.near.org",
         explorerUrl: "https://nearblocks.io",
         indexerUrl: "https://api.kitwallet.app",
@@ -93,7 +93,7 @@ function App(props) {
       (window.location.hostname === "near.social"
         ? "https://rpc.fastnear.com"
         : NetworkId === "mainnet"
-        ? "https://free.rpc.fastnear.com"
+        ? "https://go.getblock.io/75e825521eeb49c9bbb15e6c977b147c"
         : "https://rpc.testnet.near.org");
     if (injectedConfig?.skipConfirmations) {
       features.commitModalBypass = {
