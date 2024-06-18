@@ -45,7 +45,7 @@ const getNetworkPreset = (networkId) => {
     case "mainnet":
       return {
         networkId,
-        nodeUrl: "https://go.getblock.io/75e825521eeb49c9bbb15e6c977b147c",
+        nodeUrl: "https://mainnet.near.dapplets.org",
         helperUrl: "https://helper.mainnet.near.org",
         explorerUrl: "https://nearblocks.io",
         indexerUrl: "https://api.kitwallet.app",
