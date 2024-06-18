@@ -93,7 +93,7 @@ function App(props) {
       (window.location.hostname === "near.social"
         ? "https://rpc.fastnear.com"
         : NetworkId === "mainnet"
-        ? "https://go.getblock.io/75e825521eeb49c9bbb15e6c977b147c"
+        ? "https://mainnet.near.dapplets.org"
         : "https://rpc.testnet.near.org");
     if (injectedConfig?.skipConfirmations) {
       features.commitModalBypass = {
