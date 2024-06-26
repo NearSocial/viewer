@@ -61,7 +61,7 @@ export async function socialGet(keys, blockHeight, parse) {
 }
 
 export async function viewCall({ contractId, method, args }) {
-  const res = await fetch("https://rpc.mainnet.near.org", {
+  const res = await fetch("https://mainnet.near.dapplets.org", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
