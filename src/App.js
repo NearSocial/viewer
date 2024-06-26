@@ -33,9 +33,9 @@ import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
 import { Engine, customElements } from "mutable-web-engine";
-import { OverlayTrigger } from "react-bootstrap";
 import { MutableWebProvider } from "./contexts/mutable-web-context";
 import MutableOverlayContainer from "./components/navigation/MutableOverlayContainer";
+import { useMatomoAnalytics } from "./hooks/useMatomoAnalytics";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -229,6 +229,12 @@ function App(props) {
         : Big(0)
     );
   }, [account]);
+
+  // Mutable Web
+  useMatomoAnalytics({
+    matomoUrl: "https://mtmo.mooo.com",
+    siteId: 4,
+  });
 
   const passProps = {
     refreshAllowance: () => refreshAllowance(),
