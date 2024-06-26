@@ -6,7 +6,6 @@ RUN yarn
 COPY . .
 RUN yarn build
 
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+FROM socialengine/nginx-spa:latest
+COPY --from=build /app/dist /app
+RUN chmod -R 777 /app
