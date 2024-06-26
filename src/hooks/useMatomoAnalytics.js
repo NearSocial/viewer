@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
 
 export function useMatomoAnalytics({ siteId, matomoUrl }) {
   useEffect(() => {
@@ -16,17 +15,4 @@ export function useMatomoAnalytics({ siteId, matomoUrl }) {
     window._paq.push(["setTrackerUrl", `${matomoUrl}/matomo.php`]);
     window._paq.push(["setSiteId", siteId]);
   }, [siteId, matomoUrl]);
-
-  const history = useHistory();
-
-  useEffect(() => {
-    const unlisten = history.listen((location) => {
-      window._paq.push(["setCustomUrl", location.pathname]);
-      window._paq.push(["trackPageView"]);
-    });
-
-    return () => {
-      unlisten();
-    };
-  }, [history]);
 }
