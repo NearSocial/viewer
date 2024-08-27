@@ -17,6 +17,7 @@ import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
 import { setupNeth } from "@near-wallet-selector/neth";
 import { setupNightly } from "@near-wallet-selector/nightly";
+import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
 import {
@@ -100,7 +101,7 @@ function App(props) {
       selector: setupWalletSelector({
         network: walletSelectorNetwork,
         modules: [
-          setupMintbaseWallet(),
+          setupBitteWallet(),
           setupMyNearWallet(),
           setupSender(),
           setupHereWallet(),
@@ -110,6 +111,7 @@ function App(props) {
             bundle: false,
           }),
           setupNightly(),
+          setupMintbaseWallet(),
         ],
       }),
       customElements: {

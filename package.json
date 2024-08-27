@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@monaco-editor/react": "^4.4.6",
+    "@near-wallet-selector/bitte-wallet": "^8.9.7",
     "@near-wallet-selector/core": "^8.9.7",
     "@near-wallet-selector/here-wallet": "^8.9.7",
     "@near-wallet-selector/meteor-wallet": "^8.9.7",

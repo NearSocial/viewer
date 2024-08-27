@@ -1907,6 +1907,15 @@
     nanoid "3.3.6"
     query-string "^7.1.3"
 
+"@mintbase-js/wallet@0.6.0-beta.10":
+  version "0.6.0-beta.10"
+  resolved "https://registry.yarnpkg.com/@mintbase-js/wallet/-/wallet-0.6.0-beta.10.tgz#26a6ef1d9a46c117dc4389441b2f780c292afd43"
+  integrity sha512-i0U5cGLu7WySdfzOPlPO+eN/iQlVaPWo0E12UPWFNjAUrn76WJFvHM0RDHZYg9p+Ex5VTp2lU0vkJu6KtJO9Tw==
+  dependencies:
+    "@near-wallet-selector/wallet-utils" "^8.9.5"
+    bn.js "^5.2.1"
+    near-api-js "^3.0.0"
+
 "@mintbase-js/wallet@0.6.0-beta.3":
   version "0.6.0-beta.3"
   resolved "https://registry.yarnpkg.com/@mintbase-js/wallet/-/wallet-0.6.0-beta.3.tgz#31ee107f2cf888fa120e8ca07f47e5dcd278ca26"
@@ -2269,6 +2278,13 @@
     "@near-js/utils" "0.1.0"
     bn.js "5.2.1"
     borsh "1.0.0"
+
+"@near-wallet-selector/bitte-wallet@^8.9.7":
+  version "8.9.12"
+  resolved "https://registry.yarnpkg.com/@near-wallet-selector/bitte-wallet/-/bitte-wallet-8.9.12.tgz#e27eda48aa9af194dedbcb421f0e340ba0e70ec0"
+  integrity sha512-yzEL/9KAc3eqLjvfFBM1YZzzbfObEfj9PZPbljdESPm/vW93GfhLq3MPvQmRyahT3areDqeHqMUlWObvrYcLaQ==
+  dependencies:
+    "@mintbase-js/wallet" "0.6.0-beta.10"
 
 "@near-wallet-selector/core@8.9.5":
   version "8.9.5"
@@ -7905,7 +7921,7 @@ near-api-js@^2.1.3:
     node-fetch "^2.6.1"
     tweetnacl "^1.0.1"
 
-near-api-js@^3.0.1:
+near-api-js@^3.0.0, near-api-js@^3.0.1:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/near-api-js/-/near-api-js-3.0.4.tgz#5ee094ce53e30239cc817ca942ec3e9739296dbb"
   integrity sha512-qKWjnugoB7kSFhzZ5GXyH/eABspCQYWBmWnM4hpV5ctnQBt89LqgEu9yD1z4sa89MvUu8BuCxwb1m00BE8iofg==
