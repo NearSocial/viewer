@@ -2470,14 +2470,14 @@
     "@near-js/utils" "0.2.2"
     borsh "1.0.0"
 
-"@near-wallet-selector/bitte-wallet@^8.9.12":
+"@near-wallet-selector/bitte-wallet@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/bitte-wallet/-/bitte-wallet-8.9.12.tgz#e27eda48aa9af194dedbcb421f0e340ba0e70ec0"
   integrity sha512-yzEL/9KAc3eqLjvfFBM1YZzzbfObEfj9PZPbljdESPm/vW93GfhLq3MPvQmRyahT3areDqeHqMUlWObvrYcLaQ==
   dependencies:
     "@mintbase-js/wallet" "0.6.0-beta.10"
 
-"@near-wallet-selector/core@8.9.12", "@near-wallet-selector/core@^8.9.12":
+"@near-wallet-selector/core@8.9.12", "@near-wallet-selector/core@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/core/-/core-8.9.12.tgz#6ce355fa70f4102122e812365726f82f884472a9"
   integrity sha512-S23/IDi07kCr6JN28jxQZPQOwtp3MwZgMVbtwqZz2BP2N1puAFHIvKpUDrS2l2iZPBImHnU3tdOBvw6Yec7DjQ==
@@ -2499,7 +2499,7 @@
     js-sha256 "0.9.0"
     rxjs "7.8.1"
 
-"@near-wallet-selector/here-wallet@^8.9.12":
+"@near-wallet-selector/here-wallet@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/here-wallet/-/here-wallet-8.9.12.tgz#dadc4b5e9bfeb905e0f43b5850aa750576c2be56"
   integrity sha512-rE1TWI52y8zIk/+MSpJdyqV2Rgh5GZVlcZkDEQpvlNdQoT3sQeroyAgmQIJMw85WvjoZHmNf3gXMpQ3IHmMIkg==
@@ -2507,7 +2507,7 @@
     "@here-wallet/core" "3.3.1"
     "@near-wallet-selector/core" "8.9.12"
 
-"@near-wallet-selector/meteor-wallet@^8.9.12":
+"@near-wallet-selector/meteor-wallet@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/meteor-wallet/-/meteor-wallet-8.9.12.tgz#357a8a71828501770384686ff8186e28c1f8cb94"
   integrity sha512-AB7q7Un+JVxltxNCWFOFZO5PajXWP+kCaHC1JgrBPxbJv6WvQ/7QydPghDFs4d2aDhcb9E5Ujbim7U1Ga/Echg==
@@ -2516,14 +2516,14 @@
     "@near-wallet-selector/core" "8.9.12"
     near-api-js "4.0.3"
 
-"@near-wallet-selector/mintbase-wallet@^8.9.12":
+"@near-wallet-selector/mintbase-wallet@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/mintbase-wallet/-/mintbase-wallet-8.9.12.tgz#d2e720e9c9f7153b01eed88e765a6399a53acb3b"
   integrity sha512-kG4w/EM1bu+LFfokvHXv0Id1iDGMVQ4Pzgooeux/UStXRNDADeZ52XdGyEUIshH5MYJO/J6vhkWDZW2zk8Ihhw==
   dependencies:
     "@mintbase-js/wallet" "0.6.0-beta.10"
 
-"@near-wallet-selector/modal-ui@^8.9.12":
+"@near-wallet-selector/modal-ui@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/modal-ui/-/modal-ui-8.9.12.tgz#4a97c5dd0702b8a65b4cd10ab685218bc4981d77"
   integrity sha512-U+KHKbJNvqwl6aAj3tOXLPVHEUDI9i4g51kPuH64QXyZnEJHaho5njT1LOSttoBaI+zPs0Zj1VHjQssWHeXV4w==
@@ -2534,7 +2534,7 @@
     react "18.2.0"
     react-dom "18.2.0"
 
-"@near-wallet-selector/my-near-wallet@^8.9.12":
+"@near-wallet-selector/my-near-wallet@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/my-near-wallet/-/my-near-wallet-8.9.12.tgz#c0d3394031f64649d176ab6bbc77631c49f71ada"
   integrity sha512-fBhKz+dHJ7KDnIGlRjwoGEViZBaYxmi8eIyfaWaZF/03FKRRldf60VHHNZyPaPMm5oLZW2xeC666XLtsIR7zBA==
@@ -2543,7 +2543,7 @@
     "@near-wallet-selector/wallet-utils" "8.9.12"
     near-api-js "4.0.3"
 
-"@near-wallet-selector/neth@^8.9.12":
+"@near-wallet-selector/neth@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/neth/-/neth-8.9.12.tgz#2b437d5b13ae1db6792f86e01ac247dca77beda3"
   integrity sha512-ssrm3NTzD+bGPuuXOcSFSIHYXGrCDNdE12JDR1drhaq84HMMYCKeCOzcOzLYTw+fBzu/ofjcJr8Ad5cyc7VpNg==
@@ -2555,7 +2555,7 @@
     near-api-js "4.0.3"
     near-seed-phrase "0.2.0"
 
-"@near-wallet-selector/nightly@^8.9.12":
+"@near-wallet-selector/nightly@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/nightly/-/nightly-8.9.12.tgz#a4c657f7af2a2a3c1b5678c329ffdc92c1edb0aa"
   integrity sha512-UPcThvciSSjMwSqZAcD5dRVDpcLEShBdD+h9Qa6GZh5SgefldAtucWa8vH3YE9ZWf20qfdzVQmQ643jR0CViMw==
@@ -2565,7 +2565,7 @@
     is-mobile "4.0.0"
     near-api-js "4.0.3"
 
-"@near-wallet-selector/sender@^8.9.12":
+"@near-wallet-selector/sender@^8.9.7":
   version "8.9.12"
   resolved "https://registry.yarnpkg.com/@near-wallet-selector/sender/-/sender-8.9.12.tgz#3b48fb5ed50272e3fbc7639d65934d59c7754a00"
   integrity sha512-UFnSoMQxGPoEfNkMcjg1K14GgyTFkiuYd3JaU4fza6O8YzHa2+Yo8pssHLEmm8V6oTC1SXGG4puPvurC4/B7bw==
