@@ -33,6 +33,10 @@ import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
+import { Engine, customElements } from "mutable-web-engine";
+import { MutableWebProvider } from "./contexts/mutable-web-context";
+import MutableOverlayContainer from "./components/navigation/MutableOverlayContainer";
+import { useMatomoAnalytics } from "./hooks/useMatomoAnalytics";
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -42,7 +46,7 @@ const getNetworkPreset = (networkId) => {
     case "mainnet":
       return {
         networkId,
-        nodeUrl: "https://rpc.mainnet.near.org",
+        nodeUrl: "https://mainnet.near.dapplets.org",
         helperUrl: "https://helper.mainnet.near.org",
         explorerUrl: "https://nearblocks.io",
         indexerUrl: "https://api.kitwallet.app",
@@ -66,6 +70,7 @@ function App(props) {
   const [signedAccountId, setSignedAccountId] = useState(null);
   const [availableStorage, setAvailableStorage] = useState(null);
   const [walletModal, setWalletModal] = useState(null);
+  const [mutationEngine, setMutationEngine] = useState(null);
   const [widgetSrc, setWidgetSrc] = useState(null);
 
   const ethersProviderContext = useEthersProviderContext();
@@ -78,13 +83,18 @@ function App(props) {
   const injectedConfig = window?.InjectedConfig;
 
   useEffect(() => {
-    const features = {};
+    const features = {
+      enableComponentPropsDataKey: true,
+      enableComponentSrcDataKey: true,
+      skipTxConfirmationPopup: true,
+    };
+
     const rpcUrl =
       injectedConfig?.rpcUrl ??
       (window.location.hostname === "near.social"
         ? "https://rpc.fastnear.com"
         : NetworkId === "mainnet"
-        ? "https://free.rpc.fastnear.com"
+        ? "https://mainnet.near.dapplets.org"
         : "https://rpc.testnet.near.org");
     if (injectedConfig?.skipConfirmations) {
       features.commitModalBypass = {
@@ -129,6 +139,7 @@ function App(props) {
           }
           return <Link {...props} />;
         },
+        ...customElements,
       },
       config: {
         defaultFinality: undefined,
@@ -148,6 +159,30 @@ function App(props) {
       setWalletModal(
         setupModal(selector, { contractId: near.config.contractName })
       );
+    });
+  }, [near]);
+
+  useEffect(() => {
+    if (!near) {
+      return;
+    }
+    near.selector.then((selector) => {
+      const engine = new Engine({
+        networkId: NetworkId,
+        selector: selector,
+        gatewayId: "near-social",
+        bosElementStyleSrc: "/bootstrap.min.css",
+      });
+
+      const mutationId = window.sessionStorage.getItem("mutableweb:mutationId");
+
+      if (!mutationId) {
+        engine.start().then(() => setMutationEngine(engine));
+      } else if (mutationId !== "null") {
+        engine.start(mutationId).then(() => setMutationEngine(engine));
+      } else {
+        setMutationEngine(engine);
+      }
     });
   }, [near]);
 
@@ -197,6 +232,12 @@ function App(props) {
     );
   }, [account]);
 
+  // Mutable Web
+  useMatomoAnalytics({
+    matomoUrl: "https://mtmo.mooo.com",
+    siteId: 4,
+  });
+
   const passProps = {
     refreshAllowance: () => refreshAllowance(),
     setWidgetSrc,
@@ -209,30 +250,34 @@ function App(props) {
     requestSignIn,
     widgets: Widgets,
     documentationHref,
+    mutationEngine,
   };
 
   return (
     <div className="App">
       <EthersProviderContext.Provider value={ethersProviderContext}>
-        <Router basename={process.env.PUBLIC_URL}>
-          <Switch>
-            <Route path={"/signin"}>
-              <NavigationWrapper {...passProps} />
-              <SignInPage {...passProps} />
-            </Route>
-            <Route path={"/embed/:widgetSrc*"}>
-              <EmbedPage {...passProps} />
-            </Route>
-            <Route path={"/edit/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
-              <EditorPage {...passProps} />
-            </Route>
-            <Route path={"/:widgetSrc*"}>
-              <NavigationWrapper {...passProps} />
-              <ViewPage {...passProps} />
-            </Route>
-          </Switch>
-        </Router>
+        <MutableWebProvider engine={mutationEngine}>
+          <Router basename={process.env.PUBLIC_URL}>
+            <Switch>
+              <Route path={"/signin"}>
+                <NavigationWrapper {...passProps} />
+                <SignInPage {...passProps} />
+              </Route>
+              <Route path={"/embed/:widgetSrc*"}>
+                <EmbedPage {...passProps} />
+              </Route>
+              <Route path={"/edit/:widgetSrc*"}>
+                <NavigationWrapper {...passProps} />
+                <EditorPage {...passProps} />
+              </Route>
+              <Route path={"/:widgetSrc*"}>
+                <NavigationWrapper {...passProps} />
+                <ViewPage {...passProps} />
+              </Route>
+            </Switch>
+          </Router>
+          <MutableOverlayContainer />
+        </MutableWebProvider>
       </EthersProviderContext.Provider>
     </div>
   );

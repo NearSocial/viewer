@@ -6,6 +6,7 @@ import { NearSocialLogo } from "../../icons/NearSocialLogo";
 import { NotificationWidget } from "../NotificationWidget";
 import { SignInButton } from "../SignInButton";
 import { StarButton } from "../StarButton";
+import { MutationDropdown } from "../desktop/MutationDropdown";
 
 const StyledNavigation = styled.div`
   position: sticky;
@@ -19,6 +20,17 @@ const StyledNavigation = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  .left-controls {
+    display: flex;
+    width: calc(50% - 12px - 3vw);
+
+    .mutable-section {
+      margin-left: 3vw;
+      flex: 1;
+      max-width: 222px;
+    }
+  }
 
   .logo-link {
     position: absolute;
@@ -45,10 +57,15 @@ const StyledNavigation = styled.div`
 export function Navigation(props) {
   return (
     <StyledNavigation>
-      <MobileMenuButton
-        onClick={props.onClickShowMenu}
-        currentPage={props.currentPage}
-      />
+      <div className="left-controls">
+        <MobileMenuButton
+          onClick={props.onClickShowMenu}
+          currentPage={props.currentPage}
+        />
+        <div className="mutable-section">
+          <MutationDropdown listPosition="left" />
+        </div>
+      </div>
       <Link
         to="/"
         className="logo-link"

@@ -1,10 +1,13 @@
 const TestnetDomains = {
   "test.near.social": true,
   "127.0.0.1": true,
+  "mutable-near-social-testnet.netlify.app": true,
+  "social.test.dapplets.org": true,
 };
 
 export const NetworkId =
   window.location.hostname in TestnetDomains ? "testnet" : "mainnet";
+
 const TestnetWidgets = {
   image: "eugenethedream/widget/Image",
   default: "eugenethedream/widget/Welcome",
