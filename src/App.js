@@ -29,7 +29,7 @@ import {
 } from "near-social-vm";
 import Big from "big.js";
 import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
-import { NetworkId, Widgets } from "./data/widgets";
+import { ContractId, NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
@@ -98,8 +98,8 @@ function App(props) {
           setupMeteorWallet(),
           setupMyNearWallet(),
           setupBitteWallet({
-            lak:
-              NetworkId === "testnet" ? "v1.social08.testnet" : "social.near",
+            lak: ContractId,
+            contractId: ContractId,
           }),
           setupHereWallet(),
           setupNearMobileWallet(),
