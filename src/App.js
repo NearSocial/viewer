@@ -42,7 +42,7 @@ const getNetworkPreset = (networkId) => {
     case "mainnet":
       return {
         networkId,
-        nodeUrl: "https://rpc.mainnet.near.org",
+        nodeUrl: "https://free.rpc.fastnear.com",
         helperUrl: "https://helper.mainnet.near.org",
         explorerUrl: "https://nearblocks.io",
         indexerUrl: "https://api.kitwallet.app",
@@ -50,7 +50,7 @@ const getNetworkPreset = (networkId) => {
     case "testnet":
       return {
         networkId,
-        nodeUrl: "https://rpc.testnet.near.org",
+        nodeUrl: "https://test.rpc.fastnear.com",
         helperUrl: "https://helper.testnet.near.org",
         explorerUrl: "https://testnet.nearblocks.io",
         indexerUrl: "https://testnet-api.kitwallet.app",
@@ -79,13 +79,6 @@ function App(props) {
 
   useEffect(() => {
     const features = {};
-    const rpcUrl =
-      injectedConfig?.rpcUrl ??
-      (window.location.hostname === "near.social"
-        ? "https://rpc.fastnear.com"
-        : NetworkId === "mainnet"
-        ? "https://free.rpc.fastnear.com"
-        : "https://rpc.testnet.near.org");
     if (injectedConfig?.skipConfirmations) {
       features.commitModalBypass = {
         bypassAll: true,
@@ -94,6 +87,7 @@ function App(props) {
     }
 
     const walletSelectorNetwork = getNetworkPreset(NetworkId);
+    const rpcUrl = injectedConfig?.rpcUrl ?? walletSelectorNetwork.nodeUrl;
     walletSelectorNetwork.nodeUrl = rpcUrl;
 
     const config = {
