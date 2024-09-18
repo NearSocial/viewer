@@ -15,7 +15,7 @@ import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
-import { setupNeth } from "@near-wallet-selector/neth";
+import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
 import { setupNightly } from "@near-wallet-selector/nightly";
 import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
 import { setupModal } from "@near-wallet-selector/modal-ui";
@@ -101,15 +101,15 @@ function App(props) {
       selector: setupWalletSelector({
         network: walletSelectorNetwork,
         modules: [
-          setupBitteWallet(),
-          setupMyNearWallet(),
-          setupSender(),
-          setupHereWallet(),
           setupMeteorWallet(),
-          setupNeth({
-            gas: "300000000000000",
-            bundle: false,
+          setupMyNearWallet(),
+          setupBitteWallet({
+            lak:
+              NetworkId === "testnet" ? "v1.social08.testnet" : "social.near",
           }),
+          setupHereWallet(),
+          setupNearMobileWallet(),
+          setupSender(),
           setupNightly(),
           setupMintbaseWallet(),
         ],
