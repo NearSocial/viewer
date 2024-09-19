@@ -102,7 +102,13 @@ function App(props) {
             contractId: ContractId,
           }),
           setupHereWallet(),
-          setupNearMobileWallet(),
+          setupNearMobileWallet({
+            dAppMetadata: {
+              name: "Near Social",
+              icon: "https://near.social/app.png",
+              url: "https://near.social",
+            },
+          }),
           setupSender(),
           setupNightly(),
           setupMintbaseWallet(),
