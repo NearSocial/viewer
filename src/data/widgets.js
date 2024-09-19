@@ -5,6 +5,8 @@ const TestnetDomains = {
 
 export const NetworkId =
   window.location.hostname in TestnetDomains ? "testnet" : "mainnet";
+export const ContractId =
+  NetworkId === "testnet" ? "v1.social08.testnet" : "social.near";
 const TestnetWidgets = {
   image: "eugenethedream/widget/Image",
   default: "eugenethedream/widget/Welcome",

@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.18.18",
+  "version": "0.18.19",
   "homepage": "/",
   "private": true,
   "dependencies": {
@@ -12,7 +12,7 @@
     "@near-wallet-selector/mintbase-wallet": "^8.9.7",
     "@near-wallet-selector/modal-ui": "^8.9.7",
     "@near-wallet-selector/my-near-wallet": "^8.9.7",
-    "@near-wallet-selector/neth": "^8.9.7",
+    "@near-wallet-selector/near-mobile-wallet": "=8.9.7",
     "@near-wallet-selector/nightly": "^8.9.7",
     "@near-wallet-selector/sender": "^8.9.7",
     "@web3-onboard/core": "^2.20.2",
