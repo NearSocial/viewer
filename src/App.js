@@ -19,6 +19,8 @@ import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet"
 import { setupNightly } from "@near-wallet-selector/nightly";
 import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
 import { setupModal } from "@near-wallet-selector/modal-ui";
+import { setupEthereumWallets } from '@near-wallet-selector/ethereum-wallets';
+import { wagmiConfig, web3Modal } from './data/web3modal';
 import EmbedPage from "./pages/EmbedPage";
 import {
   useAccount,
@@ -95,6 +97,7 @@ function App(props) {
       selector: setupWalletSelector({
         network: walletSelectorNetwork,
         modules: [
+          setupEthereumWallets({ wagmiConfig, web3Modal, alwaysOnboardDuringSignIn: true }),
           setupMeteorWallet(),
           setupMyNearWallet(),
           setupBitteWallet({
