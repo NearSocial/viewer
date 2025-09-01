@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-// side-effect imports
 import "@near-wallet-selector/modal-ui/styles.css";
 import "App.scss";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -9,7 +8,6 @@ import "error-polyfill";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 
-// external libs
 import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
 import { setupWalletSelector } from "@near-wallet-selector/core";
 import { setupHotWallet } from "@near-wallet-selector/hot-wallet";
@@ -30,9 +28,8 @@ import {
 } from "near-social-vm";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 
-// local files
 import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
-import { ContractId, NetworkId, Widgets } from "./data/widgets";
+import { NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import EmbedPage from "./pages/EmbedPage";
 import EditorPage from "./pages/EditorPage";
