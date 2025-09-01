@@ -115,18 +115,20 @@ function App(props) {
       }),
       customElements: {
         Link: (props) => {
-          if (!props.to && props.href) {
-            props.to = props.href;
-            delete props.href;
+          const newProps = { ...props };
+          
+          if (!newProps.to && newProps.href) {
+            newProps.to = newProps.href;
+            delete newProps.href;
           }
-          if (props.to) {
-            props.to =
-              typeof props.to === "string" &&
-                isValidAttribute("a", "href", props.to)
-                ? props.to
+          if (newProps.to) {
+            newProps.to =
+              typeof newProps.to === "string" &&
+                isValidAttribute("a", "href", newProps.to)
+                ? newProps.to
                 : "about:blank";
           }
-          return <Link {...props} />;
+          return <Link {...newProps} />;
         },
       },
       config: {
