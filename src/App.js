@@ -1,40 +1,44 @@
 import React, { useCallback, useEffect, useState } from "react";
-import "error-polyfill";
-import "bootstrap-icons/font/bootstrap-icons.css";
+
+// side-effect imports
 import "@near-wallet-selector/modal-ui/styles.css";
-import "react-bootstrap-typeahead/css/Typeahead.css";
-import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
-import "bootstrap/dist/js/bootstrap.bundle";
 import "App.scss";
-import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
-import EditorPage from "./pages/EditorPage";
-import ViewPage from "./pages/ViewPage";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "bootstrap/dist/js/bootstrap.bundle";
+import "error-polyfill";
+import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
+import "react-bootstrap-typeahead/css/Typeahead.css";
+
+// external libs
+import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
 import { setupWalletSelector } from "@near-wallet-selector/core";
-import { setupMyNearWallet } from "@near-wallet-selector/my-near-wallet";
-import { setupSender } from "@near-wallet-selector/sender";
-import { setupHereWallet } from "@near-wallet-selector/here-wallet";
-import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
+import { setupHotWallet } from "@near-wallet-selector/hot-wallet";
+import { setupIntearWallet } from "@near-wallet-selector/intear-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
+import { setupModal } from "@near-wallet-selector/modal-ui";
 import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
 import { setupNightly } from "@near-wallet-selector/nightly";
-import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
-import { setupModal } from "@near-wallet-selector/modal-ui";
-import { setupEthereumWallets } from '@near-wallet-selector/ethereum-wallets';
-import { wagmiConfig, web3Modal } from './data/web3modal';
-import EmbedPage from "./pages/EmbedPage";
+import { setupSender } from "@near-wallet-selector/sender";
+import Big from "big.js";
+import { isValidAttribute } from "dompurify";
 import {
+  EthersProviderContext,
   useAccount,
   useInitNear,
   useNear,
   utils,
-  EthersProviderContext,
 } from "near-social-vm";
-import Big from "big.js";
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+
+// local files
 import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
 import { ContractId, NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
+import EmbedPage from "./pages/EmbedPage";
+import EditorPage from "./pages/EditorPage";
 import SignInPage from "./pages/SignInPage";
-import { isValidAttribute } from "dompurify";
+import ViewPage from "./pages/ViewPage";
+
 
 export const refreshAllowanceObj = {};
 const documentationHref = "https://social.near-docs.io/";
@@ -97,14 +101,10 @@ function App(props) {
       selector: setupWalletSelector({
         network: walletSelectorNetwork,
         modules: [
-          setupEthereumWallets({ wagmiConfig, web3Modal, alwaysOnboardDuringSignIn: true }),
           setupMeteorWallet(),
-          setupMyNearWallet(),
-          setupBitteWallet({
-            lak: ContractId,
-            contractId: ContractId,
-          }),
-          setupHereWallet(),
+          setupBitteWallet(),
+          setupHotWallet(),
+          setupIntearWallet(),
           setupNearMobileWallet({
             dAppMetadata: {
               name: "Near Social",
@@ -114,7 +114,6 @@ function App(props) {
           }),
           setupSender(),
           setupNightly(),
-          setupMintbaseWallet(),
         ],
       }),
       customElements: {
@@ -126,7 +125,7 @@ function App(props) {
           if (props.to) {
             props.to =
               typeof props.to === "string" &&
-              isValidAttribute("a", "href", props.to)
+                isValidAttribute("a", "href", props.to)
                 ? props.to
                 : "about:blank";
           }

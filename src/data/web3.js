@@ -4,7 +4,6 @@ import { init, useConnectWallet } from "@web3-onboard/react";
 import injectedModule from "@web3-onboard/injected-wallets";
 import walletConnectModule from "@web3-onboard/walletconnect";
 import ledgerModule from "@web3-onboard/ledger";
-import { ethers } from "ethers";
 import ls from "local-storage";
 import icon from "../images/near_social_icon.svg";
 
@@ -264,7 +263,7 @@ export const useEthersProviderContext = singletonHook(
 
         const previouslyConnectedWallets = ls.get(web3onboardKey) || [];
 
-        if (previouslyConnectedWallets) {
+        if (previouslyConnectedWallets.length) {
           // You can also auto connect "silently" and disable all onboard modals to avoid them flashing on page load
           await onboard.connectWallet({
             autoSelect: {
