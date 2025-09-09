@@ -15,8 +15,9 @@ import { setupSender } from "@near-wallet-selector/sender";
 import { setupHereWallet } from "@near-wallet-selector/here-wallet";
 import { setupMintbaseWallet } from "@near-wallet-selector/mintbase-wallet";
 import { setupMeteorWallet } from "@near-wallet-selector/meteor-wallet";
-import { setupNeth } from "@near-wallet-selector/neth";
+import { setupNearMobileWallet } from "@near-wallet-selector/near-mobile-wallet";
 import { setupNightly } from "@near-wallet-selector/nightly";
+import { setupBitteWallet } from "@near-wallet-selector/bitte-wallet";
 import { setupModal } from "@near-wallet-selector/modal-ui";
 import EmbedPage from "./pages/EmbedPage";
 import {
@@ -28,7 +29,7 @@ import {
 } from "near-social-vm";
 import Big from "big.js";
 import { NavigationWrapper } from "./components/navigation/NavigationWrapper";
-import { NetworkId, Widgets } from "./data/widgets";
+import { ContractId, NetworkId, Widgets } from "./data/widgets";
 import { useEthersProviderContext } from "./data/web3";
 import SignInPage from "./pages/SignInPage";
 import { isValidAttribute } from "dompurify";
@@ -41,7 +42,7 @@ const getNetworkPreset = (networkId) => {
     case "mainnet":
       return {
         networkId,
-        nodeUrl: "https://rpc.mainnet.near.org",
+        nodeUrl: "https://free.rpc.fastnear.com",
         helperUrl: "https://helper.mainnet.near.org",
         explorerUrl: "https://nearblocks.io",
         indexerUrl: "https://api.kitwallet.app",
@@ -49,7 +50,7 @@ const getNetworkPreset = (networkId) => {
     case "testnet":
       return {
         networkId,
-        nodeUrl: "https://rpc.testnet.near.org",
+        nodeUrl: "https://test.rpc.fastnear.com",
         helperUrl: "https://helper.testnet.near.org",
         explorerUrl: "https://testnet.nearblocks.io",
         indexerUrl: "https://testnet-api.kitwallet.app",
@@ -78,13 +79,6 @@ function App(props) {
 
   useEffect(() => {
     const features = {};
-    const rpcUrl =
-      injectedConfig?.rpcUrl ??
-      (window.location.hostname === "near.social"
-        ? "https://rpc.fastnear.com"
-        : NetworkId === "mainnet"
-        ? "https://free.rpc.fastnear.com"
-        : "https://rpc.testnet.near.org");
     if (injectedConfig?.skipConfirmations) {
       features.commitModalBypass = {
         bypassAll: true,
@@ -93,6 +87,7 @@ function App(props) {
     }
 
     const walletSelectorNetwork = getNetworkPreset(NetworkId);
+    const rpcUrl = injectedConfig?.rpcUrl ?? walletSelectorNetwork.nodeUrl;
     walletSelectorNetwork.nodeUrl = rpcUrl;
 
     const config = {
@@ -100,16 +95,23 @@ function App(props) {
       selector: setupWalletSelector({
         network: walletSelectorNetwork,
         modules: [
-          setupMintbaseWallet(),
-          setupMyNearWallet(),
-          setupSender(),
-          setupHereWallet(),
           setupMeteorWallet(),
-          setupNeth({
-            gas: "300000000000000",
-            bundle: false,
+          setupMyNearWallet(),
+          setupBitteWallet({
+            lak: ContractId,
+            contractId: ContractId,
           }),
+          setupHereWallet(),
+          setupNearMobileWallet({
+            dAppMetadata: {
+              name: "Near Social",
+              logoUrl: "https://near.social/app.png",
+              url: "https://near.social",
+            },
+          }),
+          setupSender(),
           setupNightly(),
+          setupMintbaseWallet(),
         ],
       }),
       customElements: {

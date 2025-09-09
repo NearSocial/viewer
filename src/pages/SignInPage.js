@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Widget } from "near-social-vm";
 import { useHistory } from "react-router-dom";
 import * as nearAPI from "near-api-js";
-import { NetworkId } from "../data/widgets";
+import { ContractId, NetworkId } from "../data/widgets";
 import ls from "local-storage";
 
 const WalletSelectorDefaultValues = {
   "near-wallet-selector:selectedWalletId": "near-wallet",
   "near-wallet-selector:recentlySignedInWallets": ["near-wallet"],
   "near-wallet-selector:contract": {
-    contractId: NetworkId === "testnet" ? "v1.social08.testnet" : "social.near",
+    contractId: ContractId,
     methodNames: [],
   },
 };
