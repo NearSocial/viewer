@@ -52,6 +52,7 @@ module.exports = () => {
                 implementation: require("sass"),
                 sassOptions: {
                   quietDeps: true,
+                  silenceDeprecations: ['legacy-js-api'],
                 },
               },
             },

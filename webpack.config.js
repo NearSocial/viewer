@@ -50,6 +50,7 @@ module.exports = function (env) {
           https: require.resolve("https-browserify"),
           fs: false,
           path: require.resolve("path-browserify"),
+          vm: require.resolve("vm-browserify"),
           zlib: require.resolve("browserify-zlib"),
         },
         // Fix for using `yarn link "near-social-vm"`
