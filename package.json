@@ -13,7 +13,7 @@
     "@near-wallet-selector/modal-ui": "^9.4.0",
     "@near-wallet-selector/my-near-wallet": "^9.4.0",
     "@near-wallet-selector/near-mobile-wallet": "^9.4.0",
-    "@near-wallet-selector/nightly": "9.4.0",
+    "@near-wallet-selector/nightly": "^9.4.0",
     "@near-wallet-selector/sender": "^9.4.0",
     "@web3-onboard/core": "^2.20.2",
     "@web3-onboard/injected-wallets": "^2.10.1",
